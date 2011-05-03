@@ -88,7 +88,6 @@ Returns the clusters that are active in this pipeline builder.
     # create a lookup hash of disabled clusters
     my %dis_clusters = map { $_ => undef } @{$self->getWorkflowMask->getDisabledClusters};
     my $clusters = $self->getPipeline->getClusters();
-    defined $self->getActiveAlternateClusters and push(@$clusters, @{$self->getActiveAlternateClusters});
 
     return [grep { ! exists $dis_clusters{$_} } @$clusters];
   }
@@ -177,7 +176,6 @@ by other components.
     # grab components
 
     my $components = $self->getActiveComponents();
-
     my $inputs = ISGA::ClusterInput->query( Component => $components );    
     for (@$inputs){
       $results{ $_->getType } = $_;

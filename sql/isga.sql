@@ -1,1 +1,1 @@
-isga-1.3.sql
+isga-1.2.sql

@@ -24,10 +24,6 @@
     ___train_for_glimmer3_iteration.train_for_glimmer___
     ___glimmer3.iter2___
   Name: ORF Prediction
-- Description: Process user supplied gene prediction coordinate results to create necessary BSML files needed downstream in the pipeline.
-  LayoutXML: |
-    ___geneprediction2bsml.default___
-  Name: Alternate Gene Prediction
 - Description: Process gene prediction coordinate results to create all necessary files needed downstream in the pipeline.
   LayoutXML: |
     <commandSet type="parallel">

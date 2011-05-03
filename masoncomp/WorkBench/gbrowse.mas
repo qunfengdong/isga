@@ -12,7 +12,7 @@ my @runs = grep { $_->hasGBrowseData() } @{ISGA::Run->query( CreatedBy => $accou
 %   foreach my $run (@runs) {
 <tr>
 <td><% $run->getName %></td>
-%     if ( $run->hasGBrowseInstallation ) {
+%     if ( $run->hasGbrowseInstallation ) {
 <td><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></td>
 %     } else {
 <td><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></td>

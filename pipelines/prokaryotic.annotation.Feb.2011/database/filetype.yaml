@@ -57,5 +57,3 @@
   Name: Lipoprotein Motif Result
 - Help: The results produced by Prosite Scan. The main result is the raw result file.  This is described in more detail at ftp://ftp.expasy.org/databases/prosite/tools/ps_scan/README
   Name: Prosite Scan Result
-- Help: 'ORF prediction results produced by gene prediction algorithms such as Glimmer3.  The raw data is ORF coordinate, reading frame, strand, and score information used to extract a nucleotide sequence from a sequence data file.  However, the extracted genes in FASTA format are included in this file type as well.  When supplying as input, this can simply be a set of genes in FASTA format.  When retrieving as output from a pipeline you are receiving the raw coordinate data.  We also provide the extracted ORFs in FASTA format as another file type'
-  Name: User ORF Prediction Raw Evidence

@@ -60,7 +60,7 @@ sub SiteConfiguration::Edit {
     }
 
     # process paths
-    foreach ( qw( file_repository gbrowse_directory) ) {
+    foreach ( qw( file_repository ) ) {
       my $new_value = $form->get_input($_);
       $new_value =~ s{/$}{};
       if ( $new_value ne ISGA::SiteConfiguration->value($_) ) {

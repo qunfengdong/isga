@@ -54,7 +54,6 @@ sub EditDetails {
 	TITLE => 'Pipeline Name',
 	REQUIRED => 1,
 	LABEL => 'name',
-        MAXLEN => 32,
 	ERROR => ['not_null', 'Text::checkHTML'],
 	VALUE => $pBuilder->getName,
        },

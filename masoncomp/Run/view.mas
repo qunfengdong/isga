@@ -87,7 +87,7 @@ $(document).ready(function() {
       $("a.clickmeupdate").attr("href", "#");
       window.location = link;
       document.getElementById('ajax_loader').innerHTML = 'Loading data into GBrowse<br><img src="/include/img/loader.gif" />'
-      this.id="disabled";
+      this.id="diabled";
       return false;
   });
 });

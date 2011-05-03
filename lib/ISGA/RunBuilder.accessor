@@ -55,8 +55,6 @@ be safely interpretted as a perl variable by ergatis scripts.
     $id_root =~ s/\./_/g;
     $id_root = "My_$id_root" if $id_root =~ /^[0-9]/;
     
-    # formatdb fails for long strings, so let's control the length
-    length($id_root) > 39 and $id_root = substr($id_root, 0, 39);
     return $id_root;
   }
 

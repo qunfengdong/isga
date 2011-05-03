@@ -70,7 +70,7 @@ sub updateStatus {
     ISGA::DB->begin_work();
 
     my $sge=ISGA::SGEScheduler->new(
-       -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
+       -executable  => {qsub=>'/cluster/sge/bin/sol-amd64/qsub', qstat=>'/cluster/sge/bin/sol-amd64/qstat'},
     );
 
     my $new_status = $sge->checkStatus( $pid );

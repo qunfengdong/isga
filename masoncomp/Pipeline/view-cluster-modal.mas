@@ -47,10 +47,6 @@
         <td><em class="red">Has no parameters to be set.</em></td>
       </tr>
 %}
-% my $hasParams = grep {ISGA::ComponentBuilder->new($_)} @{$components};
-% if (not $hasParams){
-<tr><td colspan="2"><% $cluster->getName %> does not have any parameters.</td></tr>
-% }
     </tbody>
   </table>
 </div>

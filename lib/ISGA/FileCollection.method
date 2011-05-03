@@ -23,12 +23,10 @@ archive reference. This nests a file collection inside another one.
     foreach ( @$contents ) {
 
       if ( $_->isa('ISGA::File') ) {
-        my $logical_path = $prefix . "/" . $_->getUserName;
-        my ( $file ) = $archive->add( $logical_path, $_->getPath );
 
-#	my ( $file ) = $archive->add_files( $_->getPath );
-#	$file->rename( $_->getUserName );
-#	$file->prefix( $prefix );
+	my ( $file ) = $archive->add_files( $_->getPath );
+	$file->rename( $_->getUserName );
+	$file->prefix( $prefix );
 
       # process nested collections
       } else {
@@ -36,8 +34,7 @@ archive reference. This nests a file collection inside another one.
       }
     }
 
-#    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
-
+    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
   }
 
 #------------------------------------------------------------------------

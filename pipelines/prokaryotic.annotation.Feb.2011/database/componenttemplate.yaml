@@ -36,4 +36,3 @@
 - Name: start_site_curation
 - Name: split_multifasta
 - Name: concatenate_files
-- Name: geneprediction2bsml

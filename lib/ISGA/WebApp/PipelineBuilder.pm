@@ -56,18 +56,13 @@ sub PipelineBuilder::Create {
   # count runs
   my $pipelines = ISGA::UserPipeline->exists( CreatedBy => $account );
   $pipelines++;
-  my $runs = ISGA::Run->exists( CreatedBy => $account, Type => $pipeline );
-  $runs++;
 
-  my $pipeline_name = $account->getEmailUsername;
-
-  my $default_name = length($pipeline_name) > (39 - length(" Pipeline $pipelines Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Pipeline $pipelines Run $runs")) . " Pipeline $pipelines" : $pipeline_name . " Pipeline $pipelines";
+  my $default_name = $account->getEmailUsername . "  Pipeline $pipelines";
 
   while( ISGA::UserPipeline->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount ) ||
          ISGA::PipelineBuilder->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount)){
        $pipelines++;
-       $default_name = length($pipeline_name) > (39 - length(" Pipeline $pipelines")) ? substr($pipeline_name, 0, 39 - length(" Pipeline $pipelines")) . " Pipeline $pipelines" : $pipeline_name . " Pipeline $pipelines";
-
+       $default_name = $account->getEmailUsername . "  Pipeline $pipelines";
   }
 
   my $pipeline_template;

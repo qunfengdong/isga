@@ -4,14 +4,14 @@ package ISGA::GlobalPipeline::ProkaryoticAnnotation;
 
 =head1 NAME
 
-ISGA::GlobalPipeline::ProkaryoticAnnotation provides functionality shared
+ISGA::RunBuilderProkaryoticAnnotation provides functionality shared
 across versions of the prokaryotic annotation pipeline.
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
-ISGA::GlobalPipeline::ProkaryoticAnnotation provides functionality shared
+ISGA::RunBuilderProkaryoticAnnotation provides functionality shared
 across versions of the prokaryotic annotation pipeline. This class
 does not provide full pipeline functionality and should only be used
 by a release of the prokaryotic annotation pipeline.

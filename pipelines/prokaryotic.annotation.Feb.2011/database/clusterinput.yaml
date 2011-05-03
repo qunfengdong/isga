@@ -119,11 +119,3 @@
   IsIterator: 0
   Name: Genome_Contigs
   Type: Genome Sequence
-- DefaultValue: ''
-  Dependency: Required
-  ErgatisFormat: File List
-  Format: Glimmer3 Prediction Results
-  HasParameters: 0
-  IsIterator: 0
-  Name: Gene_Coords
-  Type: User ORF Prediction Raw Evidence

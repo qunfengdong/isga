@@ -55,9 +55,10 @@ sub new {
     $self->{status} = $options{status};
   }
 
+
   # retrieve Ergatis Install
   $self->{ergatis_install} = ISGA::ErgatisInstall->new( Name => $self->{ergatis_install} );
-
+ 
   # retrieve pipeline version
   $self->loadVersion();
    
@@ -80,11 +81,6 @@ sub getVersion { return shift->{version}; }
 sub getErgatisInstall { return shift->{ergatis_install}; }
 sub getSourcePath { return shift->{source_path}; }
 sub getClassName { return shift->{pipeline_class}; }
-
-sub isAlreadyInstalled {
-  my $self = shift;
-  return ISGA::GlobalPipeline->exists( SubClass => $self->getClassName );
-}
 
 sub getStatus {
   my $self = shift;
@@ -157,19 +153,17 @@ sub install {
   $self->installMasonFiles();
   $self->installLibraryFiles();
 
-  unless ( $self->isAlreadyInstalled ) {
+  ISGA::ModuleInstaller::FileFormat->load($self);
+  ISGA::ModuleInstaller::FileType->load($self);
+  ISGA::ModuleInstaller::ComponentTemplate->load($self);
+  ISGA::ModuleInstaller::ClusterInput->load($self);
+  ISGA::ModuleInstaller::Cluster->load($self);
+  ISGA::ModuleInstaller::Component->load($self);
+  ISGA::ModuleInstaller::ClusterOutput->load($self);
+  ISGA::ModuleInstaller::GlobalPipeline->load($self);
+  ISGA::ModuleInstaller::Workflow->load($self);
+  ISGA::ModuleInstaller::PipelineInput->load($self);
 
-    ISGA::ModuleInstaller::FileFormat->load($self);
-    ISGA::ModuleInstaller::FileType->load($self);
-    ISGA::ModuleInstaller::ComponentTemplate->load($self);
-    ISGA::ModuleInstaller::ClusterInput->load($self);
-    ISGA::ModuleInstaller::Cluster->load($self);
-    ISGA::ModuleInstaller::Component->load($self);
-    ISGA::ModuleInstaller::ClusterOutput->load($self);
-    ISGA::ModuleInstaller::GlobalPipeline->load($self);
-    ISGA::ModuleInstaller::Workflow->load($self);
-    ISGA::ModuleInstaller::PipelineInput->load($self);
-  }
 }
 
 #------------------------------------------------------------------------

@@ -17,7 +17,7 @@ $(document).ready(function() {
 });
 </sys:script>
 
-<table id="runbuilder-list" width="100%" class="<% $table_class %> list fixed">
+<table id="runbuilder-list" width="100%" class="<% $table_class %> list">
 <thead>
  <tr>
 % if ( $show_account ) {

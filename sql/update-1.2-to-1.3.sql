@@ -720,11 +720,14 @@ UPDATE component SET component_index = 30 WHERE component_ergatisname = 'train_f
 UPDATE component SET component_index = 20 WHERE component_ergatisname = 'bsml2fasta.pre_overlap_analysis';
 UPDATE component SET component_index = 30 WHERE component_ergatisname = 'xdformat.pre_overlap_analysis';
 UPDATE component SET component_index = 0 WHERE component_ergatisname = 'bsml2featurerelationships.pre_overlap_analysis';
+
 UPDATE component SET component_index = 10 WHERE component_ergatisname = 'overlap_analysis.default';
 UPDATE component SET component_index = 20 WHERE component_ergatisname = 'start_site_curation.default';
 UPDATE component SET component_index = 30 WHERE component_ergatisname = 'parse_evidence.hypothetical';
 UPDATE component SET component_index = 40 WHERE component_ergatisname = 'translate_sequence.translate_new_models';
 UPDATE component SET component_index = 20 WHERE component_ergatisname = 'mast.default';
+
+
 UPDATE component SET component_index = 180 WHERE component_ergatisname = 'translate_sequence.final_polypeptides';
 UPDATE component SET component_index = 190 WHERE component_ergatisname = 'bsml2fasta.final_cds';
 UPDATE component SET component_index = 30 WHERE component_ergatisname = 'p_func.default';
@@ -732,6 +735,7 @@ UPDATE component SET component_index = 40 WHERE component_ergatisname = 'pipelin
 UPDATE component SET component_index = 50 WHERE component_ergatisname = 'cgb_bsml2tbl.default';
 UPDATE component SET component_index = 60 WHERE component_ergatisname = 'tbl2asn.default';
 UPDATE component SET component_index = 70 WHERE component_ergatisname = 'bsml2gff3.default';
+
 UPDATE component SET component_index = 80 WHERE component_ergatisname = 'bsml2fasta.workbench';
 UPDATE component SET component_index = 100 WHERE component_ergatisname = 'translate_sequence.workbench';
 UPDATE component SET component_index = 110 WHERE component_ergatisname = 'join_multifasta.workbench';
@@ -739,6 +743,7 @@ UPDATE component SET component_index = 130 WHERE component_ergatisname = 'cgb_fo
 UPDATE component SET component_index = 140 WHERE component_ergatisname = 'cgb_format.workbench_prot';
 UPDATE component SET component_index = 10 WHERE component_ergatisname = 'translate_sequence.translate_prediction';
 UPDATE component SET component_index = 20 WHERE component_ergatisname = 'bsml2fasta.prediction_CDS';
+
 UPDATE component SET component_index = 30 WHERE component_ergatisname = 'promote_gene_prediction.promote_prediction';
 UPDATE component SET component_index = 40 WHERE component_ergatisname = 'translate_sequence.translate';
 UPDATE component SET component_index = 50 WHERE component_ergatisname = 'join_multifasta.gene_predict_translated';
@@ -746,6 +751,7 @@ UPDATE component SET component_index = 150 WHERE component_ergatisname = 'asn2al
 UPDATE component SET component_index = 80 WHERE component_ergatisname = 'wu-blastp.post_overlap_analysis';
 UPDATE component SET component_index = 320 WHERE component_ergatisname = 'ncbi-blastp.asgard';
 UPDATE component SET component_index = 310 WHERE component_ergatisname = 'join_multifasta.asgard';
+
 UPDATE component SET component_index = 130 WHERE component_ergatisname = 'bsml2fasta.oligopicker';
 UPDATE component SET component_index = 100 WHERE component_ergatisname = 'priam_ec_assignment.default';
 UPDATE component SET component_index = 110 WHERE component_ergatisname = 'parse_evidence.priam_ec';
@@ -753,6 +759,7 @@ UPDATE component SET component_index = 80 WHERE component_ergatisname = 'parse_e
 UPDATE component SET component_index = 40 WHERE component_ergatisname = 'parse_evidence.tmhmm';
 UPDATE component SET component_index = 270 WHERE component_ergatisname = 'bsml2interevidence_fasta.default';
 UPDATE component SET component_index = 280 WHERE component_ergatisname = 'split_multifasta.split_interevidence_regions';
+
 UPDATE component SET component_index = 110 WHERE component_ergatisname = 'bsml2fasta.post_overlap_analysis';
 UPDATE component SET component_index = 120 WHERE component_ergatisname = 'xdformat.post_overlap_analysis';
 UPDATE component SET component_index = 130 WHERE component_ergatisname = 'bsml2featurerelationships.post_overlap_analysis';
@@ -772,6 +779,10 @@ UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'b
 UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'parse_evidence.hmmpfam_post';
 UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'parse_evidence.hmmpfam_pre';
 UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'hmmpfam.post_overlap_analysis';
+
+UPDATE component SET component_dependson = NULL WHERE component_ergatisname = '';
+UPDATE component SET component_dependson = NULL WHERE component_ergatisname = '';
+UPDATE component SET component_dependson = NULL WHERE component_ergatisname = '';
 
 UPDATE cluster SET cluster_layoutxml = '___sff_to_CA.default___' WHERE cluster_name = 'SFF Preperation';
 
@@ -803,15 +814,3 @@ UPDATE pipeline SET pipelinestatus_id = ( SELECT pipelinestatus_id FROM pipeline
                                               WHERE pipelinestatus_name = 'Available' )
        WHERE pipeline_id = ( SELECT pipeline_id FROM globalpipeline
                              WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010' );
-
--- fix run subclasses
-
-UPDATE run SET run_subclass = 'ProkaryoticAnnotation::Jan2010' WHERE pipeline_id = 1;
-
--------------------------------------------------------------------
--------------------------------------------------------------------
--- Allow ClusterOptions to be seen while not logged in
--------------------------------------------------------------------
--------------------------------------------------------------------
-UPDATE usecase SET usecase_requireslogin = FALSE WHERE usecase_name = '/Pipeline/ClusterOptions';
-UPDATE usecase SET usecase_requireslogin = FALSE WHERE usecase_name = '/Pipeline/ViewParameters';
