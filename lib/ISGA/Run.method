@@ -105,7 +105,8 @@ outputs.
 
       my ($finished, $working) = @{$self->_getCurrentStatus};
 
-      my $ergatis_status = ISGA::ErgatisRunStatus->new( $self, $finished );
+      my $ergatis_status = 
+	ISGA::ErgatisRunStatus->new( $self->getErgatisKey, $finished );
 
       my $new_status = ucfirst( $$ergatis_status{'start pipeline:'}->{state} );
     

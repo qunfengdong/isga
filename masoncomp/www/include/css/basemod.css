@@ -28,15 +28,12 @@
     font-size: 11px;
   }
 
-  /* documentation div */
-  .documentation { background:  #f7f7d4;}
-
   /*
   #nav { overflow:hidden; }
   #nav_main {  }
   */
 
-  #main { margin: 10px 0; background: #fff; word-wrap: break-word; }
+  #main { margin: 10px 0; background: #fff; }
   #footer { padding: 10px 20px; color:#666; background: #fff; border-top: 5px #efefef solid; text-align: center;  }
 
   /* (en) navigation: horizontal adjustment | (de) horizontale Ausrichtung  */
@@ -116,7 +113,7 @@
 
 /* *** BUTTONS *** */
   .button {
-	padding: .4em 1em;
+	padding: .2em 1em;
 	text-decoration: none;
 	font: bold 12px Arial, Geneva, sans-serif;
 	border-style:solid;
@@ -132,9 +129,6 @@
 	background: #fff;
 }
 
-  a.button.cancel {
-        padding: .5em 1em;
-  }
 /* *** LOGIN DROP DOWN *** */
   a:focus {
 	outline: none;
@@ -191,7 +185,7 @@
        background:  #eee;
        font-size: 95%;
        font-weight: normal;  
-       padding: 0pt; 
+       padding: 0pt;
        border-bottom: solid 1px #00184C;
   }
 
@@ -199,7 +193,7 @@
        background: #fff; /* #F8FAFC; */
        font-size: 95%;
        font-weight: normal;  
-       padding: 0pt; 
+       padding: 0pt;
        border-bottom: solid 1px #00184C;
   }
 
@@ -225,12 +219,9 @@
   .list td {
     padding: 3px 10px 3px 5px; 
     margin: 0 0 0 0;
-    vertical-align: middle; 
+    vertical-align: top; 
     empty-cells: show; 
     text-align: left;
-  }
-  .list td.pad_button {
-    padding: 10px 10px 10px 5px;
   }
   .list th {
     color: #fff;
@@ -398,39 +389,6 @@ li.unordered{
   line-height: 1em;
   margin-bottom: 0.3em;
 }
-
-/* /Pipelines/List CSS */
-div.list-container{
-  clear: both;
-  height: 240px;
-}
-img.thumbnail{
-  width: 180px;
-  height: 180px;
-  float: left;
-  margin: 0;
-  padding 0;
-}
-p.description{
-  margin: 25px 200px;
-}
-
-ul.listmenu{
-  float: right;
-  width 180px;
-  margin: 0;
-  padding: 0;
-}
-
-#col3_content {
-  word-wrap: break-word;
-  overflow: hidden;
-}
-
-table.fixed {
-  table-layout:fixed;
-}
-
 /* END SECTION */
 
 

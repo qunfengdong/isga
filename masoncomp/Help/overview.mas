@@ -1,5 +1,3 @@
-% my $support_email = ISGA::SiteConfiguration->value('support_email');
-
 <h1>Support</h1>
 
 <h2>Overviews</h2>
@@ -23,7 +21,7 @@ tutorials to guide first time users.</p>
 
 <p>If you are not able to find an answer to your question on the
 website, you may contact us at
-<a href="mailto:<% $support_email %>"><% $support_email %></a>, or
+<a href="mailto:biohelp@cgb.indiana.edu">biohelp@cgb.indiana.edu</a>, or
 <a href="/Support/ContactUs">Contact us</a> directly through the
 website.</p>
 

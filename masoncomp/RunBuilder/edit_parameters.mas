@@ -9,12 +9,11 @@
 
 <h1>Submission Builder: Organism Information</h1>
 
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $run_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-run-builder-edit-parameters.mas");
-}
-</%perl>
+<div class="hidden documentation editRunParameters"><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>In this section, you can edit any required parameters for your pipeline submission.  Genus and 
+Species information will always be required.  Additional information will be required depending 
+on which modules are being ran as well.</p>
+</div></div>
 
 <% $form->get %>
 

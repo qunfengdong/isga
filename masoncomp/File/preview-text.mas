@@ -2,15 +2,12 @@
  $file
 </%args>
 
-% if ( $file->getSize < 5000000 ) {
-%   open my $fh, '<', $file->getPath;
+% open my $fh, '<', $file->getPath;
 <div class="preview">
 <pre>
-%   while ( <$fh> ) {
+% while ( <$fh> ) {
 <% $_ %>
-%   }
+% }
 </pre>
 </div>
-% } else {
-<p>This file is two big to preview in your browser, please use the download link on the right.</p>
-% }
+

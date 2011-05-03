@@ -128,9 +128,12 @@ div.pipelineList{
    width: 500px;
 }
 div.pipelineView{
-   position: relative;
-   background-color: #FFFFFF;
-   border: 4px solid #D8E47E;
+   top: 350px;
+   left: 675px;
+   width: 315px;
+}
+.pipelineView div#WT_arrow_right{
+   right: -15px;
 }
 
 div.pipelineViewClickMe{
@@ -146,9 +149,13 @@ div.pipelineViewClickMe{
 
 div.builderView{
    position: relative;
+   top: 10px;
+   left: 10px;
+   width: 100%;
    border: 4px solid #D8E47E;
    background-color: #fff;
 }
+
 
 div.runPipelineClickMe{
   position: absolute;

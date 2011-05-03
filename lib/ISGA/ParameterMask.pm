@@ -28,7 +28,7 @@ use overload
 
 #------------------------------------------------------------------------
 
-=item public ParameterMask new(string $yaml);
+=item public WorkflowMask new(string $yaml);
 
 Creates a new mask object based on the YAML string provided.
 

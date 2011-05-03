@@ -4,17 +4,17 @@
 <div class="list">
 <table width="100%">
 <thead>
-<tr><th width="30%">Name</th><th>Value</th></tr>
+<tr><th width="25%">Name</th><th width="27%">Value</th><th width="48%">Description</th></tr>
 </thead>
 <tbody>
 
 % foreach ( @sorted ) {
 %   my ($var, $config) = @$_;
 <tr>
- <td><strong><% $var->getName %></strong></td>
+ <td><% $var->getName %></td>
  <td><% $config->getValue %></td>
+ <td><% $var->getDescription %></td>
 </tr>
-<tr><td colspan="2" ><div class="documentation"><% $var->getDescription %></div></td></tr>
 % }
 
 </tbody>

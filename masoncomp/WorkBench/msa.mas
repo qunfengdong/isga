@@ -1,0 +1,11 @@
+<%args>
+ $form
+ $select_sequence
+ $job
+</%args>
+
+<h1>Multiple Sequence Alignment</h1>
+
+<% $form->get %>
+
+

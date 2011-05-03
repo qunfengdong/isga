@@ -213,7 +213,6 @@ sub Account::Request {
     do { 
       $code = Digest::MD5::md5_base64($password, $email, time);
     } while ( ISGA::AccountRequest->exists(Hash => $code) );    
-
     $code =~ s/\+/-/go;
     $code =~ s/\//_/go;
 
@@ -222,21 +221,24 @@ sub Account::Request {
     
     if ( ! $ar or $ar->getStatus eq 'Expired' ) {
     
-	my %form_args = 
-	    ( 
-	      Password => Digest::MD5::md5_hex($password), Hash => $code,
-	      Name => $form->get_input('name'), Email => $email, Status => 'Open',
-	      Institution => $form->get_input('institution'),
-	      IsPrivate => 1, CreatedAt => ISGA::Timestamp->new(),
-	    );
-	
-	$ar = ISGA::AccountRequest->create(%form_args);
-    }
+    my %form_args = 
+      ( 
+       Password => Digest::MD5::md5_hex($password),
+       Hash => $code,
+       Name => $form->get_input('name'), 
+       Email => $email, 
+       Status => 'Open',
+       Institution => $form->get_input('institution'),
+       IsPrivate => 1,
+       CreatedAt => ISGA::Timestamp->new(),
+        );
     
-    ISGA::EmailNotification->create( Email => $email, Var1 => $ar,
-				     Type =>  ISGA::NotificationType->new( Name => 'Account Request Confirmation'));
+    $ar = ISGA::AccountRequest->create(%form_args);
 
-    $self->redirect( uri => '/Account/Requested' );
+  }
+
+
+    $self->redirect( uri => "/Account/Requested?account_request=$ar" );
   }
 
   # bounce!!!!!
@@ -327,11 +329,8 @@ sub Account::OutageNotification{
 
   ISGA::AccountNotification->create( Account => $account,
                                      Type =>  ISGA::NotificationType->new( Name => 'Service Outage Restored'));
-  my $url = 
-    ISGA::Utility->url( Path => $web_args->{target}, Query => $web_args->{target_args} );
 
-
-  $self->redirect( uri => $url );
+  $self->redirect( uri => '/Success' );
 }
 
 

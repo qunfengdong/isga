@@ -1,26 +1,21 @@
 <%args> # -*- cperl -*-
  $run_builder
- $pipeline_input => undef
- $run_builder_input => undef
 </%args>
 
-% $pipeline_input ||= $run_builder_input->getPipelineInput;
-
 <sys:script type="text/javascript">
-  $(document).ready(confirm_upload);
-  function confirm_upload() {
-  $(".upload")
-   .click(
-     function(){
-      $.ajax({
-        url: "/RunBuilder/UploadInput?run_builder=<% $run_builder %>&pipeline_input=<% $pipeline_input %>",
-        success: function(html){
-          $('#modal_content').append(html);
-        }
-      });
-      return false;
-     });
-  }
+$(document).ready(toggleInputFields);
+function toggleInputFields() {
+ $('#toggleInput').click(function(){
+    $('.hide').toggle('fast');
+    $('.show').toggle('fast');
+    var el = $('#toggleInput');
+    if (el.html().match(/Select Previously Uploaded File/)) {
+        el.html(el.html().replace(/Select Previously Uploaded File/ig, "Upload New File"));
+    } else {
+        el.html(el.html().replace(/Upload New File/ig, "Select Previously Uploaded File"));
+    }
+ });
+}
 </sys:script>
 
 <%perl> 

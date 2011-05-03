@@ -24,6 +24,14 @@ INSERT INTO groupmembership (accountgroup_id, party_id) VALUES (
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Change Default User Site Configuration
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE siteconfiguration SET siteconfiguration_value = 'External User' WHERE configurationvariable_id = 
+  ( SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'default_user_class' );
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- Add User Class Configuration settings
 -------------------------------------------------------------------
 -------------------------------------------------------------------

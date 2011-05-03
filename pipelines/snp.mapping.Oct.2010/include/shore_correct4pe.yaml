@@ -1,5 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: 'Shore Correct4PE'
-Description: 'This component applies a correction for paired-end reads.'
-InputParams:
-  - { input: 'Shore_Input_Pair', NAME: 'insertsize', TITLE: 'Expected Insert Size', REQUIRED: 1, VALUE: '380', ERROR: [ 'Number::isNumber' ], DESCRIPTION: 'The expected size of the insert between the paired ends.  Default value is 380.', CONFIGLINE: '___insertsize___' }

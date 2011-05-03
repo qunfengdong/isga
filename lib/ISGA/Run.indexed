@@ -9,7 +9,6 @@ attributes:
   - { name: Type, type: Pipeline, options: [ REQUIRED ] }
   - { name: Name, type: string, options: [ REQUIRED ] }
   - { name: Description, type: string, options: [ REQUIRED ] }
-  - { name: SubClass, type: string }
   - { name: FileCollection, type: FileCollection, options: [ REQUIRED ] }
   - { name: RawDataStatus, type: string, options: [ REQUIRED ] }
   - { name: IsHidden, type: boolean, options: [ REQUIRED ] }
