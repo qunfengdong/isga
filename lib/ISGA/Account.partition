@@ -4,4 +4,3 @@ partition_of: Party
 attributes:
   - { name: Email, type: string, options: [ REQUIRED, UNIQUE ] }
   - { name: Password, type: string, options: [ REQUIRED ] }
-  - { name: UserClass, type: UserClass, options: [ REQUIRED ] }

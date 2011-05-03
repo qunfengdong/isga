@@ -81,7 +81,17 @@ mapping:
      type:    text
      required:    yes
 
+    "file_repository":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
     "tmp_file_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+    "ergatis_submit_directory":
      type:    text
      required:    yes
      pattern:    /^\/\S+(\/\S+)*[^\/]$/
@@ -96,15 +106,44 @@ mapping:
      required:    yes
      pattern:    /^\d+(m|h)$/
 
+    "ergatis_output_repository":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "ergatis_runtime_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "support_email":
+     type:    text
+     required:    yes
+     pattern:    /[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/
+
     "base_uri":
      type:    text
      required:    yes
      pattern:    /^(http|https)\:\/\/\S+/
 
+    "cgview_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "gbrowse_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
     "database_path":
      type:    text
      required:    yes
      pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "ergatis_project":
+     type:    text
+     required:    yes
 
     "scripts_bin":
      type:    text
@@ -152,30 +191,4 @@ mapping:
      type:    text
      required:    yes
      pattern:    /^\/\S+(\/\S+)*[^\/]$/
-
-    "SGE_QUEUE":
-     type:    text
-     required:    yes
-
-    "toAmos_executable":
-     type:    text
-     required:    yes
-     pattern:    /^\/\S+(\/\S+)*\/toAmos$/
-
-    "bank_transact_executable":
-     type:    text
-     required:    yes
-     pattern:    /^\/\S+(\/\S+)*\/bank-transact$/
-    "sffToCA_executable":
-     type:    text
-     required:    yes
-     pattern:    /^\/\S+(\/\S+)*\/sffToCA$/
-    "amos2sq_executable":
-     type:    text
-     required:    yes
-     pattern:    /^\/\S+(\/\S+)*\/amos2sq$/
-    "clustalw_executable":
-     type:    text
-     required:    yes
-     pattern:    /^\/\S+(\/\S+)*\/clustalw2$/
 

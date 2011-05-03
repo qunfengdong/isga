@@ -27,15 +27,13 @@ the underlying cluster is complete to avoid getting partial results.
     my $account = ISGA::Login->getAccount();
     my $now = ISGA::Timestamp->new();
 
-    my $raw_output =  join( '/', $run->getType->getErgatisOutputRepository, $cout->getFileLocation );
+    my $raw_output = '___ergatis_output_repository___' . $cout->getFileLocation;
     $raw_output =~ s/___id___/$id/go;
     
     -e $raw_output or X::File::NotFound->throw( $raw_output );  
 
-    my $format = $cout->getFormat;
-
     # build args hash for create statements
-    my %args = ( Type => $cout->getType, Format => $format, IsHidden => 0,
+    my %args = ( Type => $cout->getType, Format => $cout->getFormat, IsHidden => 0,
 		 CreatedAt => $now, CreatedBy => $account, ExistsOutsideCollection => 0,
 		 Description => "Output from $run_name" );
     
@@ -56,7 +54,7 @@ the underlying cluster is complete to avoid getting partial results.
 	
 	$args{UserName} = basename($_);
 
-	my $file = ISGA::File->addToRepository( $fh, %args );
+	my $file = ISGA::File->upload( $fh, %args );
 	push @files, $file;
       }
 
@@ -90,16 +88,12 @@ the underlying cluster is complete to avoid getting partial results.
     } else {
       my @files;
       open my $fh, '<', $raw_output or X::File->throw( error => "Cant open $_ - $!" );
-
-
-      # set run output based on run name and extension
-      # what about when the run has more than one output of the same type?
-      $args{UserName} =  $run_name . '.' . $format->getExtension;
-
-      my $file = ISGA::File->addToRepository( $fh, %args );
+      $args{UserName} = basename($raw_output);
+      my $file = ISGA::File->upload( $fh, %args );
       push @files, $file;
 
-      $run_collection->addContents(\@files);
-      $self->edit( FileResource => $files[0] );
+        $run_collection->addContents(\@files);
+        $self->edit( FileResource => $files[0] );
+#      X::API->throw( error => 'non-File List output hasnt been implemented' );
     }
   }

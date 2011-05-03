@@ -82,7 +82,7 @@ Build a FormEngine object for creating news entries.
 	 {
 	  NAME  => 'archive_on',
 	  TITLE => 'Archive On',
-	  HINT  => 'YYYY-MM-DD',
+	  HINT  => 'This should be a date picker',
 	 },
 	]
        });

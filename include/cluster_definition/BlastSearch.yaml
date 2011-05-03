@@ -1,0 +1,4 @@
+--- !perl/ISGA::ClusterBuilder
+Cluster: BLAST Search
+Description: 'The BLAST search cluster performs a BLAST homology search using a set of translated sequences as input against a non-redundant database comprised of several sources including NCBI, SwissProt, PDB, etc.  The BLAST result is then used as input for the BER algorithm.  A modified Smith-Waterman alignment is performed on the protein against the mini-database of BLAST hits. In order to identify potential frameshifts or point mutations in the sequence, the gene is extended 300 nucleotides upstream and downstream of the predicted coding region. The output of this cluster includes BLAST raw results in both full format and btab format and also BER raw results in btab format.'
+

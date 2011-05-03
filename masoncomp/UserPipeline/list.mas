@@ -19,13 +19,13 @@
 <sys:script type="text/javascript">
 $(document).ready(function() { 
     // call the tablesorter plugin, the magic happens in the markup
-    $("#user-pipelines")
-    .tablesorter({widgets: ['zebra']});
+    $("table")
+    .tablesorter2({widgets: ['zebra']});
 //    .tablesorterPager({container: $("#tablesorterpager2")});
 });
 </sys:script>
 
-<table id="user-pipelines" width="100%" class="tablesorter list">
+<table width="100%" class="tablesorter2 list">
 <thead>
  <tr>
   <th>Name</th>

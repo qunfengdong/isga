@@ -1,0 +1,10 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+my $pbuilders = ISGA::PipelineBuilder->query( CreatedBy => $account, OrderBy => 'StartedOn' );
+</%perl>
+
+<& /PipelineBuilder/list_my.mas, account => $account, pbuilders => $pbuilders &>

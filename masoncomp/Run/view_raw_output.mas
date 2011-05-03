@@ -2,19 +2,6 @@
  $run
 </%args>
 
-<sys:script type="text/javascript">
-$(document).ready(function() {
-$('.downloadRemove').livequery('click', function(){
-   var $this = $(this);
-   if ($this.data('executing'))
-      return;
-   $this.data('executing', true)
-   var $td = this.parentNode;
-   $td.innerHTML = 'Preparing files for download.  <img src="/include/img/loader.gif" />';
-  });
-});
-</sys:script>
-
 <h2>Raw Output</h2>
 
 % my $raw_status = $run->getRawDataStatus;
@@ -31,10 +18,8 @@ $('.downloadRemove').livequery('click', function(){
 
 %   } else { # we are in the safe period
 
-% my $uc = $run->getCreatedBy->getUserClass();
-% my $raw_data_persist = ISGA::UserClassConfiguration->value('raw_data_retention', UserClass => $uc);
-% my $cutoff_date = $run->getFinishedAt || $run->getCreatedAt;
-% my $deadline = $cutoff_date->getDate + "${raw_data_persist}D";
+% my $raw_data_persist = ISGA::Variable->value('raw_data_retention');
+% my $deadline = ISGA::Date->new() + "${raw_data_persist}D";
 
 <p>As per our <a href="/Help/Policies#DataRetention">data retention policy</a>, your raw output may be deleted on or after <% $deadline->letter() %>. If this data is important to you, download these files before that date.</p>
 
@@ -59,10 +44,10 @@ $('.downloadRemove').livequery('click', function(){
 %     my $cname = $cluster->getName;
   <tr class="<% $tr_class %>">
    <td><% $cname %></td>
-<td>\
+   <td>\
 %     if ( $run_cluster->getStatus == $complete ) {
 %       my $download = $run_cluster->getEvidenceDownloadName();
-<a class="downloadRemove" href="/Download/<% $download %>?run_cluster=<% $run_cluster %>"> <% $download %></a>\
+<a href="/Download/<% $download %>?run_cluster=<% $run_cluster %>"> <% $download %></a>\
 %     } else {
 Not Available Yet\
 %     }

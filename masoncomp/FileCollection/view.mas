@@ -15,9 +15,8 @@
   <th>Name</th><td colspan="3"><% $file_collection->getUserName %></td>
  </tr>
 
-% my $description = $file_collection->getDescription();
  <tr>
-  <th>Description</th><td colspan="3"><% defined $description ? $description : '' %></td>
+  <th>Description</th><td colspan="3"><% $file_collection->getDescription %></td>
  </tr>
 
  <tr>
