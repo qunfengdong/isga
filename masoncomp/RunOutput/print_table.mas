@@ -7,7 +7,7 @@
 
 my %results = ( Pipeline => {} );
 
-foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
+foreach ( @{SysMicro::RunOutput->query( Run => $run)} ) {
   
   my $coutput = $_->getClusterOutput;
   my $visibility = $coutput->getVisibility;
@@ -21,8 +21,6 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
 }
 
 </%perl>
-
-%# use subhead class table
 
 % my $parent = '';
 
@@ -76,7 +74,7 @@ $(document).ready(function()  {
 %       my $file = $run_output->getFileResource;
 %       if ( $file ) {
 <td>\
-%         if ( $file->isa('ISGA::File') ) {
+%         if ( $file->isa('SysMicro::File') ) {
 <a href="/File/View?file=<% $file %>">\
 %         } else {
 <a href="/FileCollection/View?file_collection=<% $file %>">\
@@ -116,13 +114,30 @@ $(document).ready(function()  {
 % }
 
 
+% my @classes = ();
+% $parent and push @classes, "child-of-$parent";
+
+  <tr id="class-node-evidence" \
+% if ( @classes ) {
+    class="<% join ' ', @classes %>"\
+% }
+  >
+   <td colspan="4">Evidence</td>
+  </tr>
+
+% foreach my $run_cluster ( @{$run->getClusters} ) {
+%   my $cluster = $run_cluster->getCluster;
+%   my $cluster_node = "c-$cluster-node-$run-evidence";
+%   my $cname = $cluster->getName;
+  <tr id="<% $cluster_node %>" class="child-of-class-node-evidence expanded" >
+   <td colspan="4"><a \
+href="/Download/<% $run_cluster->getEvidenceDownloadName %>?run_cluster=<% $run_cluster %>"> <% $cname %></a>
+   </td>
+  </tr>
+% }
 % # print the table
+
 % if ( ! $embed ) {
  </tbody>
 </table>
 % }
-
-
-<%once>
-my $complete = ISGA::RunStatus->new( Name => 'Complete' );
-</%once>

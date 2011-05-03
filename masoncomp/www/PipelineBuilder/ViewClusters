@@ -1,0 +1,27 @@
+<%args> #! -*- cperl -*-
+ $pipeline_builder
+</%args>
+
+<& /PipelineBuilder/view_clusters.mas, pipeline_builder => $pipeline_builder &>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+   $("area.cluster")
+   .click(function(){return false});
+}
+
+</sys:script>
+

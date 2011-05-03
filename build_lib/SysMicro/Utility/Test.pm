@@ -1,13 +1,13 @@
-package ISGA::Utility::Test;
+package SysMicro::Utility::Test;
 #------------------------------------------------------------------------
 
 =head1 NAME
 
-ISGA::Utility::Test
+SysMicro::Utility::Test
 
 =head1 SYNOPSIS
 
-Test methods for the ISGA::Utility class.
+Test methods for the SysMicro::Utility class.
 
 =head1 METHODS
 
@@ -27,32 +27,32 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA::X;
+use SysMicro::X;
 
-use ISGA::Utility;
+use SysMicro::Utility;
 
 use base 'Test::Class';
 
 sub cleanEmail : Test( 5 ) {
 
   my $test = "chemmeri\@indiana.edu";
-  is( ISGA::Utility->cleanEmail($test), 'chemmeri@indiana.edu');
+  is( SysMicro::Utility->cleanEmail($test), 'chemmeri@indiana.edu');
 
   # confirm that domain is case incensitive
   $test = "chemmeri\@INDIANA.EDU";
-  is( ISGA::Utility->cleanEmail($test), 'chemmeri@indiana.edu');
+  is( SysMicro::Utility->cleanEmail($test), 'chemmeri@indiana.edu');
 
   # confirm that username is case sensitive
   $test = "CHEMMERI\@INDIANA.EDU";
-  is( ISGA::Utility->cleanEmail($test), 'CHEMMERI@indiana.edu');
+  is( SysMicro::Utility->cleanEmail($test), 'CHEMMERI@indiana.edu');
 
   # survives + bug
   $test = "chemmeri+1\@indiana.edu";
-  is( ISGA::Utility->cleanEmail($test), 'chemmeri+1@indiana.edu');
+  is( SysMicro::Utility->cleanEmail($test), 'chemmeri+1@indiana.edu');
  
   # check for exceptions
   $test = "chemmeri but not valid";
-  throws_ok { ISGA::Utility->cleanEmail($test) } 'X::API::Parameter::Invalid::MalformedEmail';
+  throws_ok { SysMicro::Utility->cleanEmail($test) } 'X::API::Parameter::Invalid::MalformedEmail';
 
 };
 
@@ -60,39 +60,39 @@ sub cleanEmail : Test( 5 ) {
 sub parseAndCleanEmails : Test( 8 ) {
 
   my $test = "chemmeri\@indiana.edu";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu' ] );
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu' ] );
 
   $test = "no email\@here";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ ] );
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ ] );
 
   $test = "chemmeri+1\@indiana.edu";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'chemmeri+1@indiana.edu' ] );
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'chemmeri+1@indiana.edu' ] );
 
   # test for invalid addresses
   $test = "chemmeri\@indiana.edu, no email";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu' ] );
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu' ] );
 
   # test comma separated
   $test = "chemmeri\@indiana.edu, chemmeri\@a.com";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu', 
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu', 
 							       'chemmeri@a.com' ] );
 
   # test white space separated
   # fails with Email::AddressParser
   $test = "chemmeri\@indiana.edu chemmeri\@a.com";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu', 
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'chemmeri@indiana.edu', 
 							       'chemmeri@a.com' ] );
 
   # test newline separated
   # fails with Email::AddressParser
   $test = "a\@b.com, c\@d.com\nchemmeri+1\@indiana.edu";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'a@b.com',
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'a@b.com',
 							     'c@d.com',
 							     'chemmeri+1@indiana.edu' ] );
 
   # test case tools
   $test = "a\@B.com, C\@d.com\nchemmeri+1\@indiana.edu";
-  cmp_deeply( ISGA::Utility->parseAndCleanEmails($test), [ 'a@b.com',
+  cmp_deeply( SysMicro::Utility->parseAndCleanEmails($test), [ 'a@b.com',
 							     'C@d.com',
 							     'chemmeri+1@indiana.edu' ] );
 
@@ -118,7 +118,7 @@ END
 
 END
 
-  my $tags = ISGA::Utility->extractSiteTags( \$test );
+  my $tags = SysMicro::Utility->extractSiteTags( \$test );
 
   is( $test, $answer );
   cmp_deeply( $tags, { style => [ '<style type="text/css" media="screen"> 
@@ -134,16 +134,16 @@ END
 blargh wharble wharble asdasd
 END
 
-  $tags = ISGA::Utility->extractSiteTags( \$test );
+  $tags = SysMicro::Utility->extractSiteTags( \$test );
   is( $test, $answer );
   cmp_deeply( $tags, { meta => [ '<meta http-equiv="refresh" content="30">' ] } );
 
   # test tag at beginning of string
-  $test = '<sys:title>ISGA Pipeline Service</sys:title> and stuff';
+  $test = '<sys:title>SysMicro Pipeline Service</sys:title> and stuff';
   $answer = ' and stuff';
-  $tags = ISGA::Utility->extractSiteTags( \$test );
+  $tags = SysMicro::Utility->extractSiteTags( \$test );
   is( $test, $answer );
-  cmp_deeply( $tags, { title => '<title>ISGA Pipeline Service</title>' } );
+  cmp_deeply( $tags, { title => '<title>SysMicro Pipeline Service</title>' } );
   
   
 

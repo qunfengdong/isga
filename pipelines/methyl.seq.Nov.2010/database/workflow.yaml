@@ -1,9 +1,0 @@
----
- - Cluster: 'Map Bisulfite-treated Reads'
-   Coordinates: '288,31,476,129'
-   IsRequired: 1 
-   Customization: Standard
- - Cluster: 'Convert Output'
-   Coordinates: '288,282,476,377'
-   IsRequired: 1
-   Customization: Standard

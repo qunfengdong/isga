@@ -1,44 +1,33 @@
 <%perl> # -*- cperl -*-
 
-# declare style and doc vars with defaults in case of error.
-my $style = '2columnright';
-my $doc = 0;
+my $use = SysMicro::Login->getUseCase;
+my $style = $use->getStyle;
+my $doc = $use->hasDocumentation;
 
 # retrieve the data as a string so we can post-process
 my $html;
+eval { $html = $m->scomp( $m->fetch_next, %ARGS ) };
 
-# make sure there weren't any web app errors we want to handle inline
-my $session_args = $ISGA::WebApp->saved_args();
-
-if ( exists $session_args->{error} ) {
-
-  $html = $m->scomp('.show_error', e => $session_args->{error});
-
-  $html .= "<sys:title>Error</sys:title>";
-
-
-} else {
+if ( $@ ) {
   
-  # use case is ok, so grab specific details
-  my $use = ISGA::Login->getUseCase;
-  $style = $use->getStyle;
-  $doc = $use->hasDocumentation;
+  # don't catch aborts
+  $m->aborted and die $@;
 
-  eval { $html = $m->scomp( $m->fetch_next, %ARGS ) };
+  # otherwise catch the exception object
+  my $e = X->caught() || X::Dropped->new( error => $@ );
+  SysMicro::Log->logWebException($r, $e);
 
-  if ( $@ ) {
-
-    # don't catch aborts
-    $m->aborted and die $@;
-    
-    # otherwise catch the exception object
-    my $e = X->caught() || X::Dropped->new( error => $@ );
-    
-    $html = $m->scomp('.show_error', e => $e);
+  # print error message
+  if ( $e->isa('X::User::Denied') ) {
+    $html = $m->scomp('/site/error/denied.mas');
+  } elsif ( $e->isa('X::User') ) {
+    $html = $m->scomp('/site/error/user.mas');
+  } else { 
+    $html = $m->scomp('/site/error/unrecoverable.mas', e => $e);
   }
 }
 
-my $siteTags = ISGA::Utility->extractSiteTags( \$html );
+my $siteTags = SysMicro::Utility->extractSiteTags( \$html );
 
 </%perl>
 % if ( $style eq 'none' ) {
@@ -49,27 +38,3 @@ my $siteTags = ISGA::Utility->extractSiteTags( \$html );
 <& "/site/$style.mas", siteTags => $siteTags, html => $html &>
 <& /site/footer.mas &>
 % }
-<%def .show_error>
-
-<%args>
-  $e
-</%args>
-
-<%perl>
-
-unless( $e->isa( 'X::User' ) ) {
-  ISGA::Log->logWebException($r, $e);
-}    
-
-# print error message
-if ( $e->isa('X::User::Denied::RequiresLogin') ) {
-  $m->comp('/site/error/denied-login.mas');
-} elsif ( $e->isa('X::User::Denied') ) {
-  $m->comp('/site/error/denied.mas');
-} elsif ( $e->isa('X::User') ) {
-  $m->comp('/site/error/user_error.mas');
-} else { 
-  $m->comp('/site/error/system_error.mas');
-}
-</%perl>
-</%def>

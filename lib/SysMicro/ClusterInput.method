@@ -1,0 +1,201 @@
+# -*- cperl -*-
+
+my %_p_func_input = 
+  ( 'parse_evidence.hmmpfam_pre' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_hmmpfam_pre/parse_evidence.tab.list',
+    
+    'parse_evidence.hmmpfam_post' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_hmmpfam_post/parse_evidence.tab.list',
+    
+    'parse_evidence.ber_pre' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_ber_pre/parse_evidence.tab.list',
+    
+    'parse_evidence.ber_post' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_ber_post/parse_evidence.tab.list',
+    
+    'parse_evidence.tmhmm' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_tmhmm/parse_evidence.tab.list',
+    
+    'parse_evidence.lipoprotein' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_lipoprotein/parse_evidence.tab.list',
+
+    'parse_evidence.priam_ec' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_priam_ec/parse_evidence.tab.list',
+
+    'parse_evidence.hypothetical' => '$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_hypothetical/parse_evidence.tab.list',
+  );
+
+my %_Overlap_Analysis_RNA_input =
+  ( 'tRNAscan-SE.find_tRNA' => '$;REPOSITORY_ROOT$;/output_repository/tRNAscan-SE/$;PIPELINEID$;_find_tRNA/tRNAscan-SE.bsml.list',
+    'RNAmmer.default' => '$;REPOSITORY_ROOT$;/output_repository/RNAmmer/$;PIPELINEID$;_default/RNAmmer.bsml.list',
+  );
+
+my %_Overlap_Analysis_Evidence_input =
+  ( 'hmmpfam.pre_overlap_analysis' => '$;REPOSITORY_ROOT$;/output_repository/hmmpfam/$;PIPELINEID$;_pre_overlap_analysis/hmmpfam.bsml.list',
+    'ber.pre_overlap_analysis' => '$;REPOSITORY_ROOT$;/output_repository/ber/$;PIPELINEID$;_pre_overlap_analysis/ber.bsml.list',
+
+  );
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_p_func_evidence_list( Pipeline $pipeline );
+
+Calculates the inputs to use for p_func for the given pipeline.
+
+=cut 
+#------------------------------------------------------------------------
+  sub _process_p_func_evidence_list {
+
+    my ($self, $pipeline) = @_;
+
+    my @input;
+
+    my %components;
+
+    # retrieve all the components in this pipeline
+    foreach ( @{$pipeline->getComponents} ) {
+      $components{ $_->getErgatisName } = 1;
+    }
+
+    while ( my ($key, $value) = each %_p_func_input ) {
+      exists $components{ $key } and push @input, $value;
+    }
+
+    return join (',', @input);
+  }
+      
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_parse_evidence_feature_list( Pipeline $pipeline );
+
+Calculates the inputs to use for p_func for the given pipeline.
+
+=cut 
+#------------------------------------------------------------------------
+  sub _process_parse_evidence_feature_list {
+    my ($self, $pipeline) = @_;
+
+    my %components = map{ $_->getErgatisName => '1' } @{$pipeline->getComponents};
+
+    if ( exists $components{'start_site_curation.default'} ){
+      return '$;REPOSITORY_ROOT$;/output_repository/start_site_curation/$;PIPELINEID$;_default/start_site_curation.bsml.list';
+    }else{
+      return '$;REPOSITORY_ROOT$;/output_repository/promote_gene_prediction/$;PIPELINEID$;_promote_prediction/promote_gene_prediction.bsml.list';
+    }
+
+  }
+
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_translated_list( Pipeline $pipeline );
+
+Calculates the inputs to use for p_func for the given pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub _process_translated_list {
+    my ($self, $pipeline) = @_;
+
+    my %components = map{ $_->getErgatisName => '1' } @{$pipeline->getComponents};
+
+    if ( exists $components{'start_site_curation.default'} ){
+      return '$;REPOSITORY_ROOT$;/output_repository/translate_sequence/$;PIPELINEID$;_final_polypeptides/translate_sequence.fsa.list';
+    }else{
+      return '$;REPOSITORY_ROOT$;/output_repository/translate_sequence/$;PIPELINEID$;_translate/translate_sequence.fsa.list';
+    }
+
+  }
+
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_overlap_analysis_RNA_list( Pipeline $pipeline );
+
+Calculates the RNA inputs to use for overlap_analysis for the given pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub _process_overlap_analysis_RNA_list {
+
+    my ($self, $pipeline) = @_;
+
+    my @input;
+
+    my %components;
+
+    # retrieve all the components in this pipeline
+    foreach ( @{$pipeline->getComponents} ) {
+      $components{ $_->getErgatisName } = 1;
+    }
+
+    while ( my ($key, $value) = each %_Overlap_Analysis_RNA_input ) {
+      exists $components{ $key } and push @input, $value;
+    }
+
+    return join (',', @input);
+  }
+ 
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_overlap_analysis_evidence_list( Pipeline $pipeline );
+
+Calculates the evidence inputs to use for overlap_analysis for the given pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub _process_overlap_analysis_evidence_list {
+
+    my ($self, $pipeline) = @_;
+
+    my @input;
+
+    my %components;
+
+    # retrieve all the components in this pipeline
+    foreach ( @{$pipeline->getComponents} ) {
+      $components{ $_->getErgatisName } = 1;
+    }
+
+    while ( my ($key, $value) = each %_Overlap_Analysis_Evidence_input ) {
+      exists $components{ $key } and push @input, $value;
+    }
+
+    return join (',', @input);
+  }
+ 
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_COG_list( Pipeline $pipeline );
+
+Calculates the COG BSML input to use for pipeline_summary for the given pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub _process_COG_list {
+    my ($self, $pipeline) = @_;
+
+    my %components = map{ $_->getErgatisName => '1' } @{$pipeline->getComponents};
+
+    if ( exists $components{'wu-blastp.COGS'} ){
+      return '$;REPOSITORY_ROOT$;/output_repository/wu-blastp/$;PIPELINEID$;_COGS/wu-blastp.bsml.list';
+    }else{
+      return '';
+    }
+
+  }
+#------------------------------------------------------------------------
+
+=item PRIVATE string _process_CDS_list( Pipeline $pipeline );
+
+Calculates the CDS input to use for pipeline_summary for the given pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub _process_CDS_list {
+    my ($self, $pipeline) = @_;
+
+    my %components = map{ $_->getErgatisName => '1' } @{$pipeline->getComponents};
+
+    if ( exists $components{'bsml2fasta.final_cds'} ){
+      return '$;REPOSITORY_ROOT$;/output_repository/bsml2fasta/$;PIPELINEID$;_final_cds/bsml2fasta.fsa.list ';
+#    }elsif (( exists $components{'bsml2fasta.pre_overlap_analysis'} ){
+#      return '$;REPOSITORY_ROOT$;/output_repository/bsml2fasta/$;PIPELINEID$;_pre_overlap_analysis/bsml2fasta.fsa.list';
+    }else{
+      return '$;REPOSITORY_ROOT$;/output_repository/bsml2fasta/$;PIPELINEID$;_prediction_CDS/bsml2fasta.fsa.list';
+    }
+
+  }
+
+#------------------------------------------------------------------------
+

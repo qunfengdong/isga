@@ -4,7 +4,7 @@
 </%args>
 <%perl>
 
-my $builder = ISGA::ComponentBuilder->new( $component );
+my $builder = SysMicro::ComponentBuilder->new( $component );
 
 </%perl>
 <% $builder->getParameterDescription( $name ) %>

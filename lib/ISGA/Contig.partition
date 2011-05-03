@@ -1,6 +1,0 @@
---- !perl/MasonX::Foundation::Class::Partition
-class: Contig
-partition_of: GenomeFeature
-attributes:
-  - { name: Sequence, type: Sequence, options: [ REQUIRED ] }
-  - { name: Run, type: Run, options: [ REQUIRED ] }

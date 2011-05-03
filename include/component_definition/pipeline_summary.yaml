@@ -1,0 +1,6 @@
+--- !perl/SysMicro::ComponentBuilder
+Name: Pipeline Summary
+Description: 'Summarizes the important results of the pipeline.'
+RunBuilderParams:
+  - { NAME: 'genus', TITLE: 'Genus', REQUIRED: 1, DESCRIPTION: 'Organism Genus', CONFIGLINE: '___genus___' }
+  - { NAME: 'species', TITLE: 'Species', REQUIRED: 1, DESCRIPTION: 'Organism Species', CONFIGLINE: '___species___' }

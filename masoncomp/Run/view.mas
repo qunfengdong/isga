@@ -2,50 +2,115 @@
  $run
 </%args>
 
-<h1><% $run->getType->getName %> Run Status</h1>
+<h1>Results: <% $run->getType->getName %> </h1>
 
-% my $running = $run->isRunning;
-% my $canceled = ( $running ? 0 : $run->getStatus eq 'Canceled' );
+% if ( $run->getStatus ne 'Complete' ) {
 
-% if ( $running ) {
-
-% my $now = ISGA::Timestamp->new;
+% my $now = SysMicro::Timestamp->new;
 % my $new = $now + '5m';
-% my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
-
-% if ( ! $accepting_jobs ) {
-<div class="downtime"><p>Your pipeline is waiting for assistance from an administrator. 
-ISGA is currently not accepting new jobs.  Please see the latest news for more information.  Please complete this <a href="#">Form</a> 
-to receive an email notification when the service is returned.</p></div>
-% }
 
 <p>This page was refreshed at <% $now->brief %>. It will refresh next at <% $new->brief %>.
 
 <sys:meta http-equiv="refresh" content="300">
 % }
 
-<& view_header.mas, run => $run &>
+% my $input_names = $run->getInputFileNames;
 
-<h2>Results</h2>
+<div class="data">
 
-% if ( $canceled ) {
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th>Name</th><td><% $run->getName %></td>
+   <th>Status</th><td><% $status_map{ $run->getStatus->getName } %></td>
+  </tr>
+  <tr>
+   <th>ID</th><td><% $run->getErgatisKey %></td>
+   <th></th><td></td>
+  </tr>
+  <tr>
+    <th>Description</th><td colspan="3"><% $run->getDescription %></td>
+  </tr>
+  <tr>
+    <th rowspan="<% scalar @{$input_names}  %>">Input Files</th><td><% shift @{$input_names} %></td>
+  </tr>
+% foreach (@{$input_names}){
+<tr><td><% $_ %></td></tr>
+% }
 
-<p>Results are not available for canceled runs because they may be
-incorrect. The cancelation note above will explain why your run was
-canceled and what changes need to be made before resubmitting a
-run.</p>
+ </tbody>
+</table>
 
-% } else {
+</div> 
+
+<h2>Status</h2>
+
+% my $counter = 1;
 
 <div class="list">
+<table width="100%" >
+<tr><th>Job</th><th>State</th><th>Progress</th><th>Start</th><th>End</th></tr>
 
-<& /RunOutput/print_table2.mas, run => $run, embed => 0 &>
+<tr class="list_label">
+ <td>Pipeline</td>
+ <td><% $status_map{ $run->getStatus->getName } %></td>
+ <td></td>
+ <td><% $run->getCreatedAt->brief %></td>
+ <td>\
+% # if ( $run->getStatus eq 'Complete' ) {</td>
+% if ( $run->getStatus eq 'Complete' ) {
+%# my %finished_components;
+%# my $ergatis_status = SysMicro::ErgatisRunStatus->new( $run->getErgatisKey, \%finished_components );
+%# my $pipeline_end = $ergatis_status->{'start pipeline:'}->{'endTime'};
+%# my $end_object = bless \$pipeline_end, 'SysMicro::Timestamp';
+<% $run->getFinishedAt->brief  %>
+% }
+ </td>
+</tr>
+<tr class="spacer"></tr>
+
+% foreach my $run_cluster ( sort { $a <=> $b } @{$run->getClusters} ){
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+
+<tr class="<% $tr_class %>" >
+ <td><% $run_cluster->getCluster->getName %></td>
+%   my $status = $run_cluster->getStatus;
+ <td><% $status_map{ $status->getName } %></td>
+%   my $fa = $run_cluster->getFinishedActions;
+%   my $ta = $run_cluster->getTotalActions;
+
+ <td>\
+%   if ( $fa ) {
+<% $fa %>/<% $ta %>\
+%     if ( $status ne 'Complete' ) {
++
+%     }
+%   }
+ </td>
+
+ <td>\
+%   my $start = $run_cluster->getStartedAt;
+%   if ( $start ) {
+<% $start->brief %>
+%   } 
+ </td>
+
+ <td>
+%   my $fin   = $run_cluster->getFinishedAt; 
+%   if ( $fin ) {
+<% $fin->brief %>
+%   }
+ </td>
+
+</tr>
+% }
+<table>
 
 </div>
 
-<& /Run/view_raw_output.mas, run => $run &>
+<h2>Results</h2>
 
-% }
+<& /RunOutput/print_table.mas, run => $run, embed => 0 &>
 
 <sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
@@ -53,86 +118,24 @@ run.</p>
 <sys:style type="text/css" media="screen">
   @import "/include/css/jtip.css";
 </sys:style>
-<sys:style type="text/css" media="screen">
-  @import "/include/css/modal.css";
-</sys:style>
+
 <sys:style type="text/css" media="all">
  @import "/include/css/jquery.treeTable.css";
 </sys:style>
 <sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
-<sys:script type="text/javascript">
-$(document).ready(function() {
-    $('#show_run').click(function() {
-      var dataString = 'runs='+<% $run %>;
-      $.ajax({
-        dataType: "html",
-        type: "POST",
-        url: "/submit/Run/Show",
-        data: dataString,
-        success: function(data) {
-          if(data.match(/Success/)){
-            window.location.reload();
-          }
-        }
-      });
-      return false;
-   });
-});
-</sys:script>
-
-<sys:script type="text/javascript">
-$(document).ready(function() {
-  $('.clickmeupdate').livequery('click', function(event){
-      var link = $("a.clickmeupdate").attr("href");
-      $("a.clickmeupdate").attr("href", "#");
-      window.location = link;
-      document.getElementById('ajax_loader').innerHTML = 'Loading data into GBrowse<br><img src="/include/img/loader.gif" />'
-      this.id="disabled";
-      return false;
-  });
-});
-</sys:script>
-
-
-<sys:script type="text/javascript">
-$(document).ready(function() {
-  $('#disabled').livequery('click', function(event){
-      return false;
-  });
-});
-</sys:script>
 
 <%once>
-my $complete = ISGA::RunStatus->new( Name => 'Complete' );
+
+ my %status_map = 
+ ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',
+   Canceled => '<span style="font-weight:bold; color:red" >Canceled</span>',
+   Error => '<span style="font-weight:bold; color:red" >Error</span>',
+   Interrupted => '<span style="font-weight:bold; color:purple">Interrupted</span>',
+   Running  => '<span style="font-weight:bold; color:blue" >Running</span>',
+   Incomplete => '<span style="font-weight:bold" >Incomplete</span>',
+   Submitting => '<span style="font-weight:bold; color:blue" >Submitting</span>',
+   Held => '<span style="font-weight:bold; color:purple">Held</span>',
+   Complete => '<span style="font-weight:bold; color:green">Complete</span>',
+ );
+
 </%once>
-
-
-% my $is_admin = ISGA::Login->hasGroup( ISGA::Group->new( Name => 'Run Administrators' ));
-
-<sys:rightmenu>
-<ul>
-% if ( ! $running and ! $canceled ) {
-%   if ( ! $is_admin or $run->getCreatedBy == ISGA::Login->getAccount ) {
-% my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
-<& "/plugin/$plugin/run-right-menu.mas", run => $run &>
-%   }
-% }
-
-% if ( $is_admin ) {
-%   my $ergatis_uri = $run->getErgatisURI;
-<li class="title">Admin Tools</li>
-<li class="rmbutton pointer"><a href="<% $ergatis_uri %>">View Run In Ergatis</a></li>
-<li class="pointer onclick="window.location='<% $ergatis_uri %>'"><p>View this run in the Ergatis administrative interface.</p></li>
-
-%   if ( ! $canceled and $running ) {
-
-<li class="rmbutton pointer"><a href="/Run/Cancel?run=<% $run %>">Cancel This Run</a></li>
-<li class="pointer" onclick="window.location='/Run/Cancel?run=<% $run %>'"><p>Cancel a run that can not be succesfully completed.</p></li>
-
-<li class="rmbutton pointer"><a href="/Run/Clone?run=<% $run %>">Clone This Run</a></li>
-<li class="pointer" onclick="window.location='/Run/Clone?run=<% $run %>'"><p>Clone a run that can not be succesfully completed. The run must be manually cloned in ergatis and you must have the new ergatis pipeline id.</p></li>
-%   }
-% }
-</ul>
-
-</sys:rightmenu>

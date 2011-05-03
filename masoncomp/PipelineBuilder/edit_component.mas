@@ -10,13 +10,13 @@
   @import "/include/css/jtip.css";
 </sys:style>
 
-<h1>Pipeline Building: Edit Parameters</h1>
+<h1>Pipeline Builder: Edit Parameters</h1>
 
 % #<h1><% $pipeline->getName %></h1>
 
 <div class="hidden documentation editComponent"><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
-<p>This is the form to edit this softwares parameters.  The form has two sections, 
-<span class="highlight">Required Parameters</span> and <span class="highlight">
+<p>This is the form to edit this components parameters.  The form has two sections, 
+<span class="highlight">Requeired Parameters</span> and <span class="highlight">
 Optional Parameters</span>.  The Optional Parameters section is hidden by default.  
 To show this section of the form, click on the <span class="highlight">"+"</span> 
 symbol next to Optional Parameters.  To collapse or hide this section, click on 
@@ -24,7 +24,7 @@ the <span class="highlight">"-"</span> symbol.</p>
 
 <p>Next to each parameter is a <span class="highlight">question mark</span>.  
 Hovering over this question mark with your mouse will display a tip for this 
-parameter.  Parameters will always be assigned a default value if necessary.  
+parameter.  Parameters willalways be assigned a default value if necessary.  
 The default values are what the original pipeline designers chose for these 
 values and can provide a good first guess for a value.</p>
 

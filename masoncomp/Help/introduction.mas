@@ -1,22 +1,29 @@
-<h2>Welcome to The Center For Genomics and Bioinformatics Integrative Services for Genomic Analysis</h2>
+<h2>Welcome to the Center For Genomics and Bioinformatics Systems Microbiology Pipeline Service</h2>
 <hr />
-<p>ISGA is a service created for the purpose of providing an enhanced user
-interface to the genome annotation process powered by <a class="normal" href="http://ergatis.sourceforge.net/">Ergatis</a> workflow. We
-provide you the following:
-</p>
+<p>This service was created for the purpose of providing a enhanced user interface to the automated 
+genome annotation process.  In the current environment, their seem to be two extremes in the annotation 
+process.  Either you provide your sequence to a service and they perform the computations for you or 
+you are forced to install and maintain several software components, some of which are very complex to 
+install and/or use.</p>
 
-<ul class="unordered">
-<li class="unordered">You can select which bioinformatics programs you want for your annotation process.</li>
-<li class="unordered">You have complete control over the parameters being used for each selected program.</li>
-<li class="unordered">You have the ability to track individual analysis runs, i.e., you are able to see 
-updated progress of where your analysis is and what is currently being performed.</li>
-<li class="unordered">You can do everything simply with a standard web browser without the need to install 
-or maintain complex software.</li>
-</ul>
+<p>If you choose to submit your sequence to a service, you have limited or no control over what 
+types of computations are performed and what parameters are used to perform those computations.  You 
+are also forced to wait with little feedback on the progress of your genome.  Running iterations of 
+annotations can be time consuming.</p>
 
-<p>
-You simply <a class="normal" href="/Account/Request">register an account</a> to begin using the service or read more on
-our <a class="normal" href="/Help/Tutorial">tutorials</a>.
-</p>
+<p>With the other extreme, while you will have complete control over how the analysis is performed, 
+you will find yourself spending significant time maintaing computers and software.  Many times you will 
+need to perform some custom programming to move from one analysis to another.  Many groups may not have 
+the time nor the resources to perform such tasks.  The time could better be spent on data analysis 
+instead of performing these complex tasks to produce the data.</p>
+
+<p>Our service provides a balance between these two extremes.  The computational analysis is no longer 
+a black box.  We provide you complete control over the parameters being used for these computations.  We 
+even allow you to choose which types of analysis to run.  With our service, you have the ability to customize 
+and track individual analysis runs.  You are able to see updated progress of where your analysis is and what
+is currently being performed.  You will more easily be able to perform several analysis using different 
+parameters to later compare the results.  We provide all this without the need to install or maintain 
+complex software.  You simply register an account to begin using the service.</p>
+
 <& right_menu.mas &>
 

@@ -9,16 +9,16 @@
   @import "/include/css/jtip.css";
 </sys:style>
 
-<h1>Pipeline - Review Inputs</h1>
+<h1>Pipeline Builder - Review Inputs</h1>
 
-<p>Based on the modules you have selected, the following input files
+<p>Based on the clusters you have selected, the following input files
 will be required to run this pipeline.</p>
 
 <div class="list">
 
 <table width="100%">
 <tr>
- <th>Input</th><th>Format</th><th>Module</th></tr>
+ <th>Input</th><th>Format</th><th>Cluster</th></tr>
 % my $counter =0;
 % foreach my $input ( @{$pipeline_builder->getInputs} ) {
 %   next if($input->getDependency eq 'Internal Only');

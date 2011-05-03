@@ -1,128 +1,36 @@
-<h4>Pipeline Tutorial</h4>
+<h1>Pipeline Tutorial</h1>
 <p class="justify">
-Pipelines are the initial process of our service.  When you first begin, there is currently only one pipeline 
-to choose from.  The Prokaryotic Annotation Pipeline is a pipeline that allows you to provide a 
+Pipelines are the core of our service.  When you first begin, there is currently only one pipeline 
+to choose from.  The Prokaryote Annotation Pipeline is a pipeline that allows you to provide a 
 FASTA sequence and have ORF predicition and protein annotation assigned to the predicted ORF.  It 
 also will predict rRNA and tRNA sequences as well.
 </p>
 
-<p class="justify">Clicking on <span class="tutorialHighlight">Build Pipelines</span> from the drop down menu you will take 
-you to our default Prokaryotic Annotation Pipeline.  On the left of the page, you will see an infographic describing the 
-modules for the current pipeline.  The toolbox on the right provides links to view the details of your pipeline.  You can 
-view the inputs required to run the pipeline.  You can view the outputs produced by the pipeline.  You can view the parameter 
-values for the pipeline as well.  There are also links to run or customize the pipeline.</p>
+<p class="justify">Clicking on "Pipelines" from the navigation menu you will be presented with the screen below.</p>
 
-<h4>Pipeline Customization</h4>
+<img class="tutorial" src="/include/img/tutorial/pipeline_list.png" alt="Pipeline List Page">
 
-%#<p class="justify">If you choose to begin the customization process you will be presented 
-%#with the following form.</p>
+<p class="justify">From here you can choose to view the details, run the pipeline, or customize the pipeline.  Choosing 
+<span class="tutorialHighlight">View Details</span> will take you to the overview page for the pipeline.  Here 
+you can see what is being performed, view the required inputs, view what outputs are produced, and see 
+set parameter values for individual components.  Choosing <span class="tutorialHighlight">Run Pipeline will</span> 
+will take you to the beginning of the Run Builder process.  The pipeline will be ran with all default options 
+for components and parameter values.  Choosing <span class="tutorialHighlight">Customize Pipeline</span> will take 
+you to the beginning of the Pipeline Builder process.  It is in this section where you customize your 
+pipeline, choosing which clusters and components to run, but also what values to use for program parameters 
+such as the e-value to use for BLASTP.  If you choose to beging the customization process you will be presented 
+with the following form.</p>
 
-%#<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_create_form.png" alt="Pipeline Create Form" width="100%">
+<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_create_form.png" alt="Pipeline List Page">
 
-%#<p class="justify">In the form you will be required to enter a unique name for your pipeline.  It is also recommended 
-%#that you enter a description for your pipeline to later help you identify it.</p>
+<p class="justify">In the form you will be required to enter a unique name for your pipeline.  It is also recommended 
+that you enter a description for your pipeline to later help you identify it.</p>
 
-<p class="justify">If you choose to begin the customization process you will be taken to the Pipeline Building Overview page.  
-On the left of the page, you will see an infographic describing which modules are active for the current 
-pipeline.  A module colored green means that the module is active and will be run.  A red colored module 
-signifies a module that has been deactivated and will not be run.  A yellow module signifies a module
-that is only partially active.  Meaning some portions of that module are being executed, but other optional portions 
-have been deactivated.  Finally, a module that is grey signifies a module that is required and must be run.  These 
-modules form the core of the pipeline and are necessary to produce meaningful results.  You will also notice that hovering 
-over a module with your mouse will cause a pop-up tip to appear.  These tips provide useful information about what is being 
-performed within each module.  On the right of the page, you will see the Pipeline Customization Tool box.  The toolbox provides 
-links to information describing your current pipeline settings as well as links to Finalize or Cancel your pipeline.</p>
-
-<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_overview.png" alt="Pipeline Overview" width="100%">
-
-<p class="justify">To begin customizing your pipeline, you can click on any module you wish to modify.  Clicking on a module will 
-bring up the available actions for that module, allowing you to activate or deactivate it and also edit any associated parameters. 
-It should be noted that some modules can be partially deactivated while keeping other parts of it active.  A module that can only be 
-actived or deactivated will turn either red or green upon being turned off or on.  However, clicking a module that can be partially 
-deactivated will bring up a pop-up with software options that can be selected or deselected.  Clicking on a module's <span class="tutorialHighlight">
-Edit Parameters</span> link will bring you to a page with list of software which is being executed in that module.  Each item listed 
-has parameters that you are able to change.  Software may have Required Parameters, Optional Parameters, or both.  Clicking the link 
-for a particular piece of software will bring you to that softwares form.</p>
-
-<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_edit_component_form.png" alt="Pipeline Edit Parameters Form">
-
-<p class="justify">The form has two sections, Required Parameters and Optional Parameters. The Optional Parameters section is 
-hidden by default. To show this section of the form, click on the <span class="tutorialHighlight">"+"</span> symbol next to 
-Optional Parameters. To collapse or hide this section, click on the <span class="tutorialHighlight">"-"</span> symbol.  Next to 
-each parameter is a question mark. Hovering over this question mark with your mouse will display a tip for this parameter. 
-Parameters will always be assigned a default value if necessary. The default values are what the original pipeline designers 
-chose for these values and can provide a good first guess for a value.  Clicking the Reset Form button will return the form values 
-to what they were when you browsed to this form. It will NOT return them to their original default value. However, the default 
-value is often listed within the tip for each parameter.  After changing your values, simply click <span class="tutorialHighlight">
-Save Parameter</span>.  You will be taken to a page to make notes about your changes.</p>
-
-<p class="justify">Creating notes is not required but can be helpful.  These notes can be used as helpful reminders as to why a 
-parameter was changed or a certain value chosen.  To create a note, type it into the provided text box beneath its associated 
-parameter.  When finished click <span class="tutorialHighlight">Save Notes</span> to save the notes. You will be taken to 
-the Overview page for your pipeline where you can continue to customize your pipeline.</p>
-
-<p class="justify">These steps can be performed in any order you wish.  Be aware, however, that editing parameters for software in modules you have 
-deacitved will not cause that software or module to be executed.  When you are satisfied with your pipeline, click on <span class="tutorialHighlight">
-Finalize Pipeline</span>.  A confirmation box will pop up.  To proceed click <span class="tutorialHighlight">Yes</span>.  This will 
-save your pipeline, and you will be brought to a confirmation page where links are provided to view the details of your newly created 
-pipeline or to run you new pipeline.</p>
-
-
-<h4>Pipeline Submission Tutorial</h4>
-<p class="justify">Run building is the process of setting up a pipeline to run.  This 
-involves a few steps, naming your run, providing organism specific information, and selecting a 
-file to use for your run.  Choosing to create a run will bring you to the page below.</p>
-
-%#<img class="tutorial" src="/include/img/tutorial/create_a_new_run.png" alt="Create Run Form" width="100%">
-
-%#<p class="justify">In the form you will be required to enter a unique name for your run.  
-%#It is also recommended that you enter a description for your run to later help you 
-%#identify it.  After entering a name and description, you will be taken to the page below.</p>
-
-<img class="tutorial" src="/include/img/tutorial/view_runbuilder.png" alt="Run View" width="100%">
-
-<p class="justify">After arriving to the Submission Builder page, the following steps can be performed 
-in any order.  There are two processes that need to be completed before submitting your run, 
-provide organism information and provide input data.  The <span class="tutorialHighlight">Submit Run</span> 
-link will be disabled until all required actions are taken.  To set organism information, click 
-<span class="tutorialHighlight">Provide Organism Information</span> in the toolbox on the right.  
-You will be taken to a page with a form to set parameters that are relevant to your input.  These 
-can include Genus and Species information, as well as Gram-type.  The form will change based on the 
-modules and software active in the pipeline.  After entering and saving the appropriate information, you 
-will be returned to the Submission Builder page.  The Organism Information section should now be updated with the 
-information just entered.</p>
-
-<p class="justify">The other step in the run building process requires you to select any input 
-files that are necessary.  The Input Data section of the Submission Builder page displays all input types 
-and formats required to run this pipeline.  You may either upload a new file to be used as input or 
-choose an existing file that you have previously uploaded.  To select a file to be used as a run input 
-click on <span class="tutorialHighlight">Provide Input Data</span> from the toolbox on the right.  A pop-up 
-similar to the one pictured below will appear on the screen.</p>
-
-<img class="tutorial" src="/include/img/tutorial/select_input_popup.png" alt="Select Input Popup">
-
-<p class="justify">From the pop-up click on <span class="tutorialHighlight">Select File</span> for 
-the file type you wish to choose.  This will bring you the page below.</p>
-
-<img class="tutorial" src="/include/img/tutorial/select_input_list.png" alt="Select Input Page">
-
-<p class="justify">If you wish upload a file, click the Browse button to select a file to upload from your 
-computer.</p>
-
-<p>Alternatively, you can use a file you have previously uploaded.  Click the <span class="tutorialHighlight">
-Select Previously Uploaded File</span> link to show previously uploaded files.</p> 
-
-<img class="tutorial" src="/include/img/tutorial/select_input_list_2.png" alt="Select Input Page 2">
-
-<p>In the Compatible Files selection box, you will see a list of compatible files for the File Type you chose.  
-Highlight the file of your chose by clicking on it.  You can select multiple files by pressing the ctrl key on 
-your keyboard and clicking on several files.  When you have selected the file(s) of your chose, click the Save button.  
-You will be returned to the Submission Builder page.  The Input Data section will be updated displaying your current file.</p>
-
-<p class="justify">Once all the steps are completed, the <span class="tutorialHighlight">Submit Run</span> 
-link will now become active.  To submit your run, click on the <span class="tutorialHighlight">Submit Run
-</span> link.  A confirmation pop-up will appear.  Click <span class="tutorialHighlight">Yes</span> and 
-your run will be submitted.  You will then be redirected to your Run View Status page.</p>
-
-<img class="tutorial" src="/include/img/tutorial/view_runbuilder_complete.png" alt="Run View Complete" width="100%">
-
+<p class="justify">After entering a name and description you will be taken to the Pipeline Builder Overview page.  
+On the left of the page, you will see an infographic describing which clusters are active for the current 
+pipeline.  A cluster colored green means that the cluster is active and will be run.  A white colored cluster 
+signifies a cluster that has been deactivated and will not be run.  A green-striped cluster signifies a cluster 
+this is only partially active.  Meaning some portions of that cluster are being executed, but other optional portions 
+have been deactivated.  Finally, a cluster that is yellow signifies a cluster that is required and must be run.  These 
+clusters form the core of the pipeline and are necessary to produce meaningful results.  On the right of the page, you 
+will see the Pipeline Builder Toolbar.  The toolbar contains links to all the tools needed to customize a pipeline.</p>

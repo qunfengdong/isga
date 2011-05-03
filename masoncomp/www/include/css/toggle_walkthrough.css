@@ -4,10 +4,10 @@
 	background-position: left top;
 	position: absolute;
 	z-index:1;
-	left:-17px;
-	height:27px;
-	width:13px;
-        top:-4px;
+	left:-14px;
+	height:23px;
+	width:10px;
+        top:-5px;
 }
 
 #WT_arrow_right{
@@ -34,7 +34,7 @@
 
 #WT {
 	position: absolute;
-	z-index:2;
+	z-index:1;
 	border: 4px solid #D8E47E;
 	background-color: #fff;
 }
@@ -112,15 +112,14 @@
 }
 
 span.highlight{
-        color: #CC9900;
-       /*font-size: 17px;*/
+        color: #2EA7C2;
+        font-size: 17px;
 }
 
 /* Individual Pages */
 div.index{
-   top: -140px;
-   left: 165px;
-   width: 55%;
+   top: -37px;
+   left: 180px;
 }
 div.pipelineList{
    top: 190px;
@@ -128,9 +127,12 @@ div.pipelineList{
    width: 500px;
 }
 div.pipelineView{
-   position: relative;
-   background-color: #FFFFFF;
-   border: 4px solid #D8E47E;
+   top: 5px;
+   right: 13px;
+   width: 350px;
+}
+.pipelineView div#WT_arrow_right{
+   right: -15px;
 }
 
 div.pipelineViewClickMe{
@@ -139,15 +141,8 @@ div.pipelineViewClickMe{
   top: 385px;
   right: 13px;
 }
-
 .pipelineViewClickMe div#WT_arrow_right_clickme{
    right: -13px;
-}
-
-div.builderView{
-   position: relative;
-   border: 4px solid #D8E47E;
-   background-color: #fff;
 }
 
 div.runPipelineClickMe{
@@ -175,32 +170,28 @@ div.createRun{
 
 
 div.editWorkflow{
-/*   top: 525px; */
-   position: relative;
-   top: 10px;
+   top: 525px;
    width: 93%;
-   border: 4px solid #D8E47E;
-   background-color: #fff;
 }
 
 div.editWorkflowClickMe{
   position: absolute;
   border: 4px solid #D8E47E; 
-  top: 350px;
-  left: 615px;
+  top: 280px;
+  left: 428px;
   border-bottom-width: 0;
 }
 
 div.editWorkflowClickMe2{
   position: absolute;
   border: 4px solid #D8E47E;  
-  top: 310px;
-  left: 125px;
+  top: 355px;
+  left: 320px;
   border-bottom-width: 0;
 }
 div.viewClusters{
-   top: 202px;
-   left: 320px;
+   top: 115px;
+   left: 270px;
 /*   width: 350px;*/
 }
 div.editCluster{
@@ -214,8 +205,8 @@ div.editComponent{
    background-color: #fff;
 }
 div.success{
-   top: 100px;
-   left: 275px;
+   top: 115px;
+   left: 155px;
    width: 690px;
 }
 div.runView{

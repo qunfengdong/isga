@@ -22,7 +22,7 @@ $(document).ready(function()  {
 });
 </sys:script>
 
-<h1>Pipeline - Outputs</h1>
+<h1>Pipeline Builder - Outputs</h1>
 
 <p>The output files produced by this pipeline. Expand intermediate
 output to see supporting data files and other auxiliary output.</p>

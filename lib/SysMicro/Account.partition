@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: Account
+partition_of: Party
+attributes:
+  - { name: Email, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: Password, type: string, options: [ REQUIRED ] }

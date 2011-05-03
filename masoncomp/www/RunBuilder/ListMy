@@ -3,9 +3,8 @@
 
 <%perl>
 
-my $account = ISGA::Login->getAccount;
-my $rbs = ISGA::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );
-
-$m->comp( '/RunBuilder/ListMy.mas', run_builders => $rbs);
-
+my $account = SysMicro::Login->getAccount;
+my $rbs = SysMicro::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );   
 </%perl>
+
+<& /RunBuilder/list_my.mas, account => $account, rbs => $rbs &>

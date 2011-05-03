@@ -1,0 +1,41 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public Run getRunOutput();
+
+If this file was created by a run, the RunOutput object is
+returned. Otherwise returns undef.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getRunOutput {
+
+    my $self = shift;
+
+    my ($ro) = SysMicro::RunOutput->query( File => $self );
+
+    $ro and return $ro;
+    return;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getPath();
+
+Returns the filesystem path to the file.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getPath {
+
+    my $self = shift;
+
+    my $name = $self->getName;
+
+    # hash directories on first two characters
+    my $p1 = substr($name, 0, 1);
+    my $p2 = substr($name, 1, 1); 
+
+    return "___file_repository___/$p1/$p2/$name";
+  }
