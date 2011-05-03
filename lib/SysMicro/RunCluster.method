@@ -1,0 +1,130 @@
+# -*- cperl -*-
+
+use List::Util qw( min reduce sum );
+
+# initialize status rank.  Lower number is higher priority
+my %status_rank = ( "error" => "1",
+		    failed => 2,
+		    "interrupted" => 3,
+		    "running" => 4,
+		    "incomplete" => 5,
+		    "complete" => 6,
+		  );
+
+my %status_reverse = ( 1 => 'Error',
+		       2 => 'Failed',
+		       3 => 'Interrupted',
+		       4 => 'Running',
+		       5 => 'Incomplete',
+		       6 => 'Complete',
+		       7 => 'Incomplete',
+		     );
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus(hashref $ergatis);
+
+
+This will update the run cluster status, as well as pull information
+for outputs, using the supplied hash ref summarizing the pipeline.xml
+output.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my ($self, $ergatis, $components) = @_;
+
+  # hash to store changes to runcluster object
+  my %edit;
+  
+  # to start with we are off the charts
+  my $key = 7;
+  
+  my $run = $self->getRun;
+
+  # don't process complete clusters
+  my $status = $self->getStatus;
+  return if $status eq 'Complete';
+
+  my @component_names = grep { exists $ergatis->{$_} } map { $_->getErgatisName } @$components;
+
+  # go through each component in a cluster and take the lowest number
+  $key = min( $key, $status_rank{ $ergatis->{$_}{state} } ) for @component_names;
+
+  # if we've started the cluster since the last update, grab the start time
+  if ( $status eq 'Incomplete' and $key != 5 ) {
+    
+    my @timestamps;
+    
+    foreach ( grep { exists $ergatis->{$_}->{startTime} } @component_names ) {
+      push @timestamps, SysMicro::Timestamp->new( $ergatis->{$_}->{startTime}  );
+    }
+
+    $edit{ StartedAt } = reduce { $a < $b ? $a : $b } @timestamps;
+  }
+  
+  # if we've finished the cluster since the last update, grab the end time
+  if ( $key == 6 ) {
+    
+    my @timestamps;
+    
+    foreach ( grep { exists $ergatis->{$_}->{endTime} } @component_names ) {
+      push @timestamps, SysMicro::Timestamp->new( $ergatis->{$_}->{endTime}  );
+    }   
+    
+    $edit{ FinishedAt } = reduce { $a > $b ? $a : $b } @timestamps;
+  }
+ 
+  # if we've started the component, calculate the steps
+  if ( $key != 5 ) {
+
+    $edit{FinishedActions} = 
+      sum map { $ergatis->{$_}{complete} || 0 } @component_names;
+    
+    $edit{TotalActions} = 
+      sum map { $ergatis->{$_}{total} || 0 } @component_names;
+  }
+  
+  # update status if it has changed
+  if ( $status ne $status_reverse{ $key } ) {
+
+    $edit{Status} = SysMicro::RunStatus->new( Name => $status_reverse{ $key } );
+  }
+
+  # if it's complete we want to get all of the output
+  if ( $key == 6 ) {
+    
+    # find the outputs of this cluster
+    foreach my $cout ( @{SysMicro::ClusterOutput->query( Component => $components )} ) {
+      next if $cout->getVisibility eq 'Internal';
+
+      # find the outputs of this cluster
+      foreach ( @{SysMicro::RunOutput->query( ClusterOutput => $cout, Run => $run )} ) {
+	next if $_->getFileResource;
+
+	# sometimes ergatis will list a component as finished before all the output has been
+	# finalized. When this happens, we don't set the status to complete so that the 
+	# next pass can pick it up.
+	eval { $_->saveErgatisOutput() };
+	  
+	if ( $@ ) {
+	  if ( X::File::NotFound->caught() ) {
+	    delete $edit{Status};
+	  } else {
+	    my $e = X->caught() || X::Dropped->new( message => $@ );
+	    $e->rethrow();
+	  }
+	}
+
+      }      
+    }
+
+  }
+
+
+
+
+  # only edit if something has changed
+  keys %edit and  $self->edit(%edit);
+}

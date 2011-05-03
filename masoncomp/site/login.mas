@@ -1,15 +1,14 @@
-<div id="login_content" style='clear:both;'>
-<div id="message"></div>
+<div style='clear:both;'>
 <form id="form" action="" method="post" class='uniForm inlineLabels'>
   <fieldset class='inlineLabels'>
-  <legend></legend>
+  <legend>Login</legend>
     <div class='ctrlHolder'>
       <label>Email Address</label>
-      <input id="username" name="username" type="text" size="30">
+      <input id="username" name="username" type="text">
     </div>
     <div class='ctrlHolder'>
       <label>Password</label>
-       <input id="password" name="password" type="password" size="30">
+       <input id="password" name="password" type="password">
       </div>
   </fieldset>
 

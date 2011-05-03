@@ -1,13 +1,26 @@
 <%args> # -*- cperl -*-
- $show_canceled => 0
- $show_hidden => 0
 </%args>
 
 <%perl>
 
-my $account = ISGA::Login->getAccount;
-my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+use Benchmark ':hireswallclock';
 
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+
+#sub test {
+#  eval { $_->updateStatus() } for @$runs;
+#}
+
+#timethese( 10,
+#	   { test => 'test()', } );
+
+#foreach ( @$runs ) {
+#  eval { $_->updateStatus() };
+#}
 </%perl>
 
-<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => $show_canceled, show_hidden => $show_hidden &>
+
+<% timethis( 1, sub { eval { $_->updateStatus()} for @$runs; })  %>
+
+<& /Run/list_my.mas, account => $account, runs => $runs &>

@@ -3,41 +3,10 @@
  $pipeline_builder
 </%args>
 
-<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
-<sys:style type="text/css" media="screen">
-  @import "/include/css/jtip.css";
-</sys:style>
-
-<h1>Pipeline Building: Edit Parameters</h1>
+<h1>Pipeline Builder: Edit Parameters</h1>
 
 % #<h1><% $pipeline->getName %></h1>
 
-<div class="hidden documentation editComponent"><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
-<p>This is the form to edit this softwares parameters.  The form has two sections, 
-<span class="highlight">Required Parameters</span> and <span class="highlight">
-Optional Parameters</span>.  The Optional Parameters section is hidden by default.  
-To show this section of the form, click on the <span class="highlight">"+"</span> 
-symbol next to Optional Parameters.  To collapse or hide this section, click on 
-the <span class="highlight">"-"</span> symbol.</p>
-
-<p>Next to each parameter is a <span class="highlight">question mark</span>.  
-Hovering over this question mark with your mouse will display a tip for this 
-parameter.  Parameters will always be assigned a default value if necessary.  
-The default values are what the original pipeline designers chose for these 
-values and can provide a good first guess for a value.</p>
-
-<p>Clicking the Reset Form button will return the form values to what they 
-were when you browsed to this form.  It will NOT return them to their original 
-default value.  However, the default value is often listed within the tip for 
-each parameter.</p>
-
-<p>Edit any parameter values you feel necessary and click Save Parameters.  You 
-will be taken to a screen where you can make notes about your paramenter changes.</p>
-</div></div>
-
 <% $form->get %>
-
 
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>

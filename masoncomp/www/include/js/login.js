@@ -12,7 +12,7 @@
       success: function() {
         $('#modal').html("<div id='message'></div>");
         $('#message').html("<h2>Contact Form Submitted!</h2>")
-        .append("/LoginSuccess");
+        .append("/login_success.html");
       }
     });
     return false; 

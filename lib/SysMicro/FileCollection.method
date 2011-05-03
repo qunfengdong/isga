@@ -1,0 +1,31 @@
+# -*- cperl -*-
+
+use File::Copy;
+
+#------------------------------------------------------------------------
+
+=item public void stage(string $dir);
+
+Stages this file for an ergatis run.
+
+=cut 
+#------------------------------------------------------------------------
+  sub stage {
+
+    my ($self, $dir) = @_;
+
+    my $name = $self->getName;
+
+    # open file for writing
+    open my $fh, '>', "$dir/$name" or X::File->throw( error => $! );
+
+    foreach ( @{$self->getFlattenedContents} ) {
+
+      # write the file to the file system
+      $_->stage($dir);
+
+      print $fh $dir, "/", $_->getName, "\n";
+    }
+    
+    close $fh;
+  }

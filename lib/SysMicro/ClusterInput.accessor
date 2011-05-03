@@ -1,0 +1,56 @@
+# -*- cperl -*-
+
+  my %custom_inputs = 
+  ( 'P_Func_Evidence' => '_process_p_func_evidence_list' ); 
+		     
+
+#------------------------------------------------------------------------
+
+=item public string getValue(Pipeline $pipeline);
+
+Calculates the file name(s) for a component input value.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getValue {
+
+    my $self = shift;
+
+    my $name = $self->getName;
+
+    # if we have defined a special method for this input, use it
+    if ( exists $custom_inputs{$name} ) {
+      my $method = $custom_inputs{$name};
+      return $self->$method(@_);
+    }
+
+    # otherwise use default value
+    return $self->getDefaultValue;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getComponent();
+
+Retrieves the component for a component input value.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponent {
+    my $self = shift;
+    return SysMicro::Component->query( ClusterInput => $self );
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getCluster();
+
+Retrieves the cluster for a component input value.
+
+=cut
+#------------------------------------------------------------------------
+  sub getCluster {
+    my $self = shift;
+    my $component = $self->getComponent;
+    return @{$component}[0]->getCluster;
+  }

@@ -1,0 +1,6 @@
+--- !perl/SysMicro::ComponentBuilder
+Name: RNAmmer
+Description: 'RNAmmer predicts 5s/8s, 16s/18s, and 23s/28s ribosomal RNA in full genome sequences.  It predicts the location of ribosomal RNA genes in full genome sequences by using Hidden Markov Models based on alignments from a highly cureated dataset of structurally aligned sequnces.'
+Params:
+  - { templ: 'select', NAME: 'molecules', TITLE: 'rRNA Molecules', REQUIRED: 1, OPTION: ['ssu (5/8s rRNA)', 'lsu (16/18s rRNA)', 'tsu (23/28s rRNA)', 'ssu and lsu', 'ssu and tsu', 'lsu and tsu', 'ssu, lsu, and tsu'], OPT_VAL: ['ssu', 'lsu', 'tsu', 'ssu,lsu', 'ssu,tsu', 'lsu,tsu', 'ssu,lsu,tsu'], VALUE: 'ssu,lsu,tsu', DESCRIPTION: 'Declare what rRNA molecule types to search for.', CONFIGLINE: '___molecule___' }
+

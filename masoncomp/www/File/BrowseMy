@@ -1,22 +1,16 @@
 <%args> # -*- cperl -*-
  $show_hidden => undef
- $show => 'all'
 </%args>
 
 <%perl>
 
-my $account = ISGA::Login->getAccount;
+my $account = SysMicro::Login->getAccount;
 
 my %args = ( CreatedBy => $account, OrderBy => 'CreatedAt', ExistsOutsideCollection => 1 );
 
 $show_hidden or $args{IsHidden} = 0;
 
-
-if ( $show eq 'File' or $show eq 'FileCollection' ) {
-  $args{FileResourcePartition} = $show;
-}
-
-my $files = ISGA::FileResource->query( %args );
+my $files = SysMicro::FileResource->query( %args );
 </%perl>
 
-<& /File/browse_my.mas, files => $files, show_hidden => $show_hidden, show => $show &>
+<& /File/browse_my.mas, files => $files, show_hidden => $show_hidden &>

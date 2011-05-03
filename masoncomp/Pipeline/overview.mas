@@ -1,0 +1,58 @@
+
+<h1>Pipeline Overview</h1>
+
+<p>The following pipelines are available for your use. Under most
+cases, you will only need to supply the input file(s) for the first
+step. The pipelines are completely automated, and as parts of the
+pipeline finish, their results are immediately available for
+download.</p>
+
+<h2>Public Pipelines</h2>
+
+<p>These pipelines are available for all users to run as is, or further customize.</p>
+
+% my $pipelines = SysMicro::GlobalPipeline->query( OrderBy => 'Name' );
+
+% foreach my $pipeline ( @$pipelines ) {
+<h3><% $pipeline->getName %></h3>
+
+<% $pipeline->getDescription %>
+% if($pipeline->getName eq 'Complete Prokaryote Annotation Pipeline'){ 
+	<p class='unavailable'><a class="button" href="/Pipeline/View?pipeline=<% $pipeline %>">View Details</a> <strong> Note: </strong> This is not available in the current release</p>
+% } else{ 
+	<p><a class="button" href="/Pipeline/View?pipeline=<% $pipeline %>">View Details</a></p>
+% } 
+% }
+
+% if ( SysMicro::Login->exists ) {
+
+<h2>Customized Piplines</h2>
+
+%   my $pipelines = SysMicro::UserPipeline->exists( CreatedBy => SysMicro::Login->getAccount );
+
+<p>You have <% $pipelines %> customized pipelines.</p>
+
+%   if ( $pipelines ) {
+
+<a class="button" href="/Pipeline/ListMy">List My Customized Pipelines</a>
+
+%   } else {
+
+<p>If you would like to customize a
+pipeline, select the pipeline you would like to use as a template from
+the list above.  On the details page for that  pipeline, you can begin
+the customization process.</p>
+
+%   }
+% }
+
+<%once>
+
+my %component_lookup =
+  ( 'Complete Prokaryote Annotation Pipeline' 
+    => '/Pipeline/complete_pipeline_overview.mas',
+    'Express Prokaryote Annotation Pipeline',
+    => '/Pipeline/express_pipeline_overview.mas',
+  );
+
+</%once>

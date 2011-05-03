@@ -1,7 +1,6 @@
 <%args>
  @files
  $show_hidden
- $show
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
@@ -22,7 +21,7 @@ $(document).ready(function() {
 });
 </sys:script>
 
-<h1>My Files and Collections</h1>
+<h1>My Files</h1>
 
 % if ( @files ) {
 
@@ -33,40 +32,21 @@ $(document).ready(function() {
   <th>Type</th>
   <th>Format</th>
   <th>Created At</th>
-  <th>Hide</th>
  </tr>
 </thead>
 <tbody>
 %   foreach ( @files ) {
  <tr>
-% if ( $_->isa('ISGA::File') ) {
+% if ( $_->isa('SysMicro::File') ) {
   <td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td>
   <td><% $_->getType->getName %></td>
   <td><% $_->getFormat->getName %></td>
-  <td><% $_->getCreatedAt->brief %></td>
-%   if( $_->isHidden ){
-  <td><a class="normal" href="/submit/File/Restore?file=<% $_ %>&redirect=<% $r->uri %>">Restore</a></td>
-%   }else{
-  <td><a class="normal" href="/submit/File/Hide?file=<% $_ %>&redirect=<% $r->uri %>">Hide</a></td>
-%   }
 % } else {
   <td><a href="/FileCollection/View?file_collection=<% $_ %>"><% $_->getUserName %></a></td>
-  <td>\
-%   if ( $_->getType eq 'Run Results' ) {
-Collection of Run Results
-%   } else {
-File Archive
-%   }
-</td>
-  <td>Tar</td>
-  <td><% $_->getCreatedAt->brief %></td>
-%   if( $_->isHidden ){
-  <td><a class="normal" href="/submit/File/Restore?file_collection=<% $_ %>&redirect=<% $r->uri %>">Restore</a></td>
-%   }else{
-  <td><a class="normal" href="/submit/File/Hide?file_collection=<% $_ %>&redirect=<% $r->uri %>">Hide</a></td>
-%   }
+  <td></td>
+  <td></td>
 % }
-%#  <td><% $_->getCreatedAt->brief %></td>
+  <td><% $_->getCreatedAt->brief %></td>
  </tr>
 %   }
 </tbody>
@@ -91,72 +71,35 @@ File Archive
 
 % } else {
 
-<p>You do not have any files. Visit the <a href="/Pipeline/List">Pipeline</a> section for instructions on preparing and running a pipeline to generate results.</p>
+<p>You do not have any files. Visit the <a href="/Pipeline/Overview">Pipeline</a> section for instructions on preparing and running a pipeline to generate results.</p>
 
 % }
 
 <sys:rightmenu>
 
 <ul>
-
-<%doc>
 <li class="title">Tools</li>
+
+<li class="rmbutton"><a href="/File/Upload">Upload File</a></li>
+
+<li><p>Upload a new file. You can load this file into a pipeline and share it with other users.
+</p></li>
 
 % if ( $show_hidden ) {
 
-<li class="rmbutton pointer"><a href="/File/BrowseMy">Stop Showing Hidden Files & Collections</a></li>
-<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>You are currently viewing all files, including hidden ones. This tool will hide your hidden files again.</p></li>
+<li class="rmbutton"><a href="/File/BrowseMy">Hide Hidden Files</a></li>
+
+<li><p>You are currently viewing all files, including hidden ones. This tool will hide your hidden files again.</p></li>
+
 
 % } else { 
 
-<li class="rmbutton pointer"><a href="/File/BrowseMy?show_hidden=1">Show Hidden Files & Collections</a></li>
-<li class="pointer" onclick="window.location='/File/BrowseMy?show_hidden=1'"><p>Show files that you have hidden. If you wish to permenantly unhide a file, select it and use the unhide tool.</p></li>
+<li class="rmbutton"><a href="/File/BrowseMy?show_hidden=1">Show Hidden Files</a></li>
+
+<li><p>Show files that you have hidden. If you wish to permenantly unhide a file, select it and use the unhide tool.</p></li>
+
 
 % }
-</%doc>
-
-<li class="title">Viewing Options</li>
-
-
-
-<span>
-<form action="/File/BrowseMy" name="options">
-
-<li>
-<p>
-<input type="radio" name="show" value="all" \
-% if ( $show eq 'all' ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show files and collections <br>
-
-<input type="radio" name="show" value="File" \
-% if ( $show eq 'File' ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show files only <br>
-
-<input type="radio" name="show" value="FileCollection" \
-% if ( $show eq 'FileCollection' ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show collections only <br>
-</p>
-</li>
-
-<li>
-<p>
-<input type="checkbox" name="show_hidden" value="1" \
-% if ( $show_hidden ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show hidden files and collections <br>
-</p>
-</li>
-</form>
-</span>
-
-</ul>
 
 
 </sys:rightmenu>

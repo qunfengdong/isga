@@ -1,24 +1,11 @@
-% my $account = ISGA::Login->getAccount;
+% my $account = SysMicro::Login->getAccount;
 
-<& view_header.mas, account => $account &>
+<h1><% $account->getName %></h1>
 
-% my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
-%                                  Status => { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) } );
-% if ( @$runs ) {
-
-<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => 0, show_hidden => 0 &>
-% }
-
-% my $userpipes = ISGA::UserPipeline->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
-% if ( @$userpipes ) {
-<h2>Customized Pipelines</h2>
-<& /UserPipeline/list.mas, pipelines => $userpipes &>
-% }
-
-<& right_menu.mas &>
-
-
-
+<ol>
+<li>Email: <% $account->getEmail %></li>
+<li>Institution: <% $account->getInstitution %></li>
+</ol>
 
 
 <%doc>
@@ -27,7 +14,7 @@
 
 % if ( my @groups = @{$account->getUserGroups} ) {
 <div id="list">
-<table>
+<table width="100%">
  <tr>
   <th>Name</th>
   <th>Created By</th>
@@ -50,3 +37,4 @@
 
 </%doc>
 
+<& right_menu.mas &>

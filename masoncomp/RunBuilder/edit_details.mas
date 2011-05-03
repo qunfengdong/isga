@@ -3,7 +3,7 @@
  $form
 </%args>
 
-<h1>Edit Run Name and Description</h1>
+<h1>Run Builder: Edit Details</h1>
 
 <% $form->get %>
 

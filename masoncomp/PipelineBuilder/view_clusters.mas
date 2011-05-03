@@ -1,0 +1,46 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<h1>Pipeline Builder: Edit Parameters</h1>
+
+<p>Click on a Component to select to edit its parameters.</p>
+
+<div id="workflow">
+
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
+
+<map name="clusters" >
+
+% my $pipeline = $pipeline_builder->getPipeline;
+% foreach ( @{SysMicro::Workflow->query( Pipeline => $pipeline )} ) {
+%   my $cluster = $_->getCluster;
+<area \
+  shape="rect"
+  id="<% $_ %>" \
+  alt="<% $cluster->getName %>" \
+  title="<% $cluster->getName %>" \
+  class="noborder nofade cluster jTip" \
+  coords="<% $_->getCoordinates %>" \
+%#   if (exists $cluster_builder->{NoParamsFlag}){
+%#  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>" \
+%#    }else{
+  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>&link=<% "/PipelineBuilder/EditCluster?pipeline_builder=$pipeline_builder&cluster=$cluster" | u %>" \
+%#    } 
+> 
+% }
+</map>
+
+</div>
+
+<br>
+
+<div class="buttonHolder">
+
+
+
+<a class="resetButton button" href="/PipelineBuilder/Overview?pipeline_builder=<% $pipeline_builder %>">Cancel</a>
+
+</div>
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

@@ -5,25 +5,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 % if ( exists $siteTags{title} ) {
 <% $siteTags{title} %>
 % } else {
-<title><% ISGA::Login->getUseCase->getTitle %></title>
+<title><% SysMicro::Login->getUseCase->getTitle %></title>
 % }
 
 <script type="text/javascript" src="/include/js/jquery-1.3.1.min.js"></script>
 <script type="text/javascript" src="/include/js/jquery.smartmodal.js"></script>
 <script type="text/javascript" src="/include/js/jquery.droppy.js"></script>
-<script type="text/javascript" src="/include/js/toggle_walkthrough.js"></script>
+
+%# /* adds firebug to IE */
+%# <!--[if lte IE 7]>
+%#  <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+%# <![endif]-->
 
 <style type="text/css" media="all">
   @import "/include/css/yaml/core/base.css";
   @import "/include/css/yaml/navigation/nav_plain.css";
   @import "/include/css/<% $style %>_basemod.css";
   @import "/include/css/droppy.css";
-  @import "/include/css/toggle_walkthrough.css";
+  @import "/include/css/modal.css";
 </style>
 
 <script type="text/javascript">
@@ -32,21 +35,8 @@
   });
 </script>
 
-% if ( ! ISGA::Login->exists ) {
-<style type="text/css" media="all"> 
-  @import "/include/css/uni-form.css";
-  @import "/include/css/login.css";    
-</style>
-
-<script type="text/javascript">
-$(document).ready(hideWalkthrough);
-function hideWalkthrough() {
-  $(".documentation").remove();
-  return false;
-}
-</script>
-
-
+% if ( ! SysMicro::Login->exists ) {
+<style>	@import "/include/css/uni-form.css";	</style>
 <script type="text/javascript">
 $(document).ready(function() {
   var processLogin = function() {
@@ -54,7 +44,7 @@ $(document).ready(function() {
       var $inputs = $('#modal_content input');
       var values = {};
       $inputs.each(function(i, el) {
-        values[el.name] = escape($(el).val());
+        values[el.name] = $(el).val();
       });
       var username = values['username'];
       var password = values['password'];
@@ -65,22 +55,14 @@ $(document).ready(function() {
         url: "/submit/Login?caller_url="+window.location,
         data: dataString,
         success: function(data) {
-          if(data.match(/Login Success/))
+          if(data=='Login Success\n\n')
           {
-              var regex = /Account\/Confirmed/;
-              var url = window.location.href;
-              if(url.match(regex))
-              {
-                $(".documentation").slideDown("fast");
-                window.location = "<% ISGA::Site->getBaseURI  %>";
-              }
-              else
-              {
-                window.location.reload();
-              }
+              window.location.reload(); 
           } 
           else
           {
+//            $('#moDal_content').append(data);
+
               var elem = document.getElementById('modal_content');
               for(var i = 0; i < elem.childNodes.length; i++){
                 if(elem.childNodes[i].id=="message"){
@@ -90,7 +72,7 @@ $(document).ready(function() {
            }
         },
         error: function() {
-          $('#modal_content').append("<h2>There was an error processing your request.  Please try again.</h2>");
+          $('#modal_content').append("<h2>There was an error processing your request.  Pleast try again.</h2>");
         }
      });
      return false;
@@ -100,53 +82,14 @@ $(document).ready(function() {
   $('.modal').modal({hide_on_overlay_click:false, show:processLogin });		
 });
 </script>
-%  } else {
-
-<style type="text/css" media="all">
- @import "/include/css/modal.css";
-</style>
-
-<script type="text/javascript">
-$(document).ready(function() {
-  var isHidden = "<% ISGA::Login->getAccount->isWalkthroughHidden %>";
-  if (isHidden == "0") {
-      $(".documentation").show();
-  }; 
-  if ($(".documentation").is(":hidden")) {
-        $('.showOrHide').remove();
-        var a = $("<span>Show Walkthrough<\/span>").addClass("showOrHide");
-        $('.btn-slide').append(a);
-  }else{
-        $('.showOrHide').remove();
-        var a = $("<span>Hide Walkthrough<\/span>").addClass("showOrHide");
-        $('.btn-slide').append(a);
-
-  }
-});
-</script>
-
-
-%   if ( ISGA::Login->getAccount->isWalkthroughDisabled ){
-<script type="text/javascript">
-$(document).ready(disableWalkthrough);
-function disableWalkthrough() {
-  $(".documentation").remove();
-  $(".disableWalkthrough").remove();
-  return false;
-}
-</script>
-%    }
-
-
 % }
-
+%#
 <!--[if lte IE 7]>
-%# <link href="/include/css/patches/patch_<% $style %>.css" rel="stylesheet" type="text/css" >
-<link href="/include/css/yaml/core/iehacks.css" rel="stylesheet" type="text/css" >
-<link href="/include/css/toggle_walkthrough_iehack.css" rel="stylesheet" type="text/css" >
+<link href="/include/css/patches/patch_<% $style %>.css" rel="stylesheet" type="text/css" >
 <script type="text/javascript" src="/include/js/buttonfix.js"></script>
 <![endif]-->
 
+%#<link rel="Shortcut Icon" href="/img/favicon.ico" type="image/x-icon">
 
 % foreach my $tag ( qw(script style link meta) ) {
 %   if ( exists $siteTags{$tag} ) {
@@ -162,22 +105,19 @@ function disableWalkthrough() {
 <div id="page_margins">
  <div id="header">
   <div id="topnav">
-% if ( ! ISGA::Login->exists ) {
-  <a href="#" rel='modal_hidden' class="modal">Login</a> | <a href="/Account/Request">Request Account</a> |\
+% if ( ! SysMicro::Login->exists ) {
+  <a href="#" rel='modal_hidden' class="modal">Login</a> |\
   <div class="modal_hidden hidden" id="modal">
-    <h1>Login</h1>
     <div id="message"></div>
     <& /site/login.mas &>
   </div>
 % } else {
-  <span style="color: #FFFFFF;">Welcome <% ISGA::Login->getAccount->getName %></span> | 
   <a href="/submit/Logout">Logout</a> |\
 % }
-  <a href="/Help/ContactUs">Contact Us</a>
-
+  <a href="/Support/ContactUs">Contact Us</a>
   </div>
 
-<a href="/Home"><img src="/include/img/isga_banner.png" alt="Integrative Services for Genomic Analysis"></a>
+<img src="/include/img/cgb-logo.png" alt="The Center for Genomics and Bioinformatics">
 
   </div>
 

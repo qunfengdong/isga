@@ -4,12 +4,12 @@
  */
 $.fn.droppy = function(options) {
     
-    options = $.extend({speed: 1}, options || {});  // default 250
-
+    options = $.extend({speed: 250}, options || {});  // default 250
+  
   this.each(function() {
     
-//    var root = this, zIndex = 1000;
-    var root = this, zIndex = 1;  
+    var root = this, zIndex = 1000;
+    
     function getSubnav(ele) {
       if (ele.nodeName.toLowerCase() == 'li') {
         var subnav = $('> ul', ele);
@@ -35,7 +35,7 @@ $.fn.droppy = function(options) {
         if (!$.data(subnav, 'cancelHide')) {
           $(subnav).slideUp(options.speed);
         }
-      }, 400);
+      }, 100);
     }
   
     function show() {

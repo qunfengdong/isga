@@ -1,8 +1,0 @@
---- !perl/MasonX::Foundation::Class::Partition
-class: Gene
-partition_of: GenomeFeature
-attributes:
-  - { name: Locus, type: string, options: [ REQUIRED ] }
-  - { name: Contig, column: gene_contig, type: Contig, options: [ REQUIRED ] }
-  - { name: Note, column: gene_note, type: string, options: [ REQUIRED ] }
-  - { name: Type, type: string, options: [ REQUIRED ] }

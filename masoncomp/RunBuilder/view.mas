@@ -1,0 +1,123 @@
+<%args>
+ $run_builder
+</%args>
+
+<%perl>
+use List::Util qw(min);
+</%perl>
+
+<sys:style type="text/css" media="screen"> 
+  @import "/include/css/uni-form.css"; 
+</sys:style>
+
+% my $account = SysMicro::Login->getAccount;
+
+<h1>Run Builder</h1>
+
+<p>Before submitting your run, you must select the data files the run
+will process. Additionaly, you may need to set parameters specific to
+the file being submitted.</p>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr>
+   <th width="15%">Name</th><td width="35%"><% $run_builder->getName %></td>
+% my $pipeline = $run_builder->getPipeline;
+   <th width="15%">Pipeline</th>
+   <td width="35%">
+    <a href="/Pipeline/View?pipeline=<% $pipeline %>"><% $pipeline->getName %></a>
+   </td>
+  </tr>
+  <tr>
+   <th>Description</th>
+   <td colspan="3"><% $run_builder->getDescription %></td>
+  </tr> 
+ </tbody>
+</table>
+
+</div>
+
+<h2>Run Parameters</h2>
+
+<p>The following parameters will be used for this run. You may set or
+edit these using the tool to the left.</p>
+
+<div class="list">
+
+<table width="100%">
+<thead>
+ <tr><th width="30%">Cluster</th><th width="30%">Parameter</th><th>Value</th></tr>
+</thead>
+<tbody>
+% foreach ( @{$run_builder->getParameterDetails} ) {
+ <tr><td><% $_->[0] %></td><td><% $_->[1] %></td><td><% $_->[2] %></td></tr>
+% }
+</tbody>
+</table>
+</div>
+
+
+<h2>Run Inputs</h2>
+
+<p>The following files will be used as input for this run. You can use
+the tool to the left to upload a new file or select an existing file
+for input.</p>
+
+% my @required = @{$run_builder->getRequiredInputs};
+% my @optional = @{$run_builder->getOptionalInputs};
+
+<div class="list">
+
+
+<table width="100%">
+<thead>
+<tr><th width="30%">Input</th><th width="20%">Format</th><th>File</th></tr>
+</thead>
+
+<tbody>
+% if ( @required ) {
+
+<tr><th class="subhead" colspan="3">Required</th></tr>
+%   foreach ( @required ) {
+%     my $type = $_->getType;
+%     my $format = $_->getFormat;
+%     my ( $run_builder_input ) = 
+%       @{SysMicro::RunBuilderInput->query( PipelineInput => $_, RunBuilder => $run_builder)};
+%     my $current_file = $run_builder_input && $run_builder_input->getFileResource || 0;
+ 
+<tr>
+ <td><% $type->getName %></td>
+ <td><% $format->getName %></td>
+ <td>\
+%     if ( $current_file ) {
+%       if ( $_->getErgatisFormat eq 'File List' ) {
+<% join "<br>", map { $_->getUserName } @{$current_file->getFlattenedContents} %>
+%       } else {
+<% $current_file->getUserName %>\
+%       }
+%     } else {
+<span class="alert">None</span>\
+%     }
+ </td>
+</tr>
+%   }
+% }
+
+% if ( @optional ) {
+<tr><th class="subhead" colspan="3">Optional</th></tr>
+%   foreach ( @optional ) {
+<tr>
+ <td><% $_->getType->getName %></td>
+ <td><% $_->getFormat->getName %></td>
+ <td>No Matching Files Available.</td>
+</tr>
+%   }
+% }
+</tbody>
+</table>
+
+</div>
+
+<& right_menu.mas, run_builder => $run_builder &>

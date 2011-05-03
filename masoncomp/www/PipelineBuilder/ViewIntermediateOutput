@@ -1,0 +1,17 @@
+<%args> # -*- cperl -*-
+ $pipeline_builder
+</%args>
+
+<%perl>
+
+my @results;
+
+foreach ( @{$pipeline_builder->getActiveClusters} ) {
+
+  my $outputs = SysMicro::ClusterOutput->query( Cluster => $_, Visibility => 'Intermediate' );
+  @$outputs and push @results, { Cluster => $_, Output => $outputs };
+}
+
+</%perl>
+
+<& /PipelineBuilder/intermediate_output, results => \@results &>

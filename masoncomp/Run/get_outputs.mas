@@ -1,0 +1,13 @@
+<%args>
+ $run
+ $all
+ @results
+</%args>
+
+<h3><% $run->getName %> - <% $run->getCreatedAt->brief %></h3>
+<& /RunOutput/view_table.mas, run => $run, results => \@results &>
+% if ( $all ) {
+<a href="javascript:updateOutput(<% $run %>, 0)" class="button">Hide Intermediate Results</a>
+% } else {
+<a href="javascript:updateOutput(<% $run %>, 1)" class="button">Show All Results</a>
+% }

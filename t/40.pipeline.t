@@ -5,6 +5,6 @@ use strict;
 
 use lib 'build_lib';
 
-use ISGA::Pipeline::Test;
+use SysMicro::Pipeline::Test;
 
 Test::Class->runtests;

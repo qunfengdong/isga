@@ -1,0 +1,56 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<h1>Pipeline Builder: Select Programs</h1>
+
+<p>Clusters highlighted in green will be executed. Hold your mouse
+over a cluster to get a desciption of the programs run, and click on a
+cluster to toggle it and its children off and on.</p>
+
+<div id="workflow">
+
+% my $pipeline = $pipeline_builder->getPipeline;
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
+
+<map name="clusters" >
+
+% foreach ( @{SysMicro::Workflow->query( Pipeline => $pipeline )} ) {
+% my $cluster = $_->getCluster;
+<area \
+  shape="rect" 
+  id="<% $_ %>" \
+  alt="<% $_->getCluster->getName %>" \
+  title="<% $_->getCluster->getName %>" \
+  coords="<% $_->getCoordinates %>" \
+% if($_->getCluster->getName eq 'Additional Gene Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+  rel="gene_analysis" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+% }elsif($_->getCluster->getName eq 'Additional Genome Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+  rel="genome_analysis" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+% }else{
+  class="noborder nofade cluster jTip" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>&link=<% "/PipelineBuilder/EditWorkflow?pipeline_builder=$pipeline_builder&cluster=$cluster" | u %>" \
+% }
+ >
+% }
+</map>
+</div>
+
+% my $cluster = SysMicro::Cluster->query( Name => 'Additional Gene Analysis');
+
+<div id="gene_analysis" class="hidden">
+<& choose_gene_component.mas, pipeline_builder => $pipeline_builder, cluster => $cluster &>
+</div>
+
+% $cluster = SysMicro::Cluster->query( Name => 'Additional Genome Analysis');
+
+<div id="genome_analysis" class="hidden">
+<& choose_genome_component.mas, pipeline_builder => $pipeline_builder, cluster => $cluster &>
+</div>
+<br>
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

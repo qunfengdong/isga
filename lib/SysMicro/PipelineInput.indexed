@@ -1,0 +1,9 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: PipelineInput
+attributes:
+  - { name: Dependency, type: InputDependency, options: [ REQUIRED ] }
+  - { name: Pipeline, type: Pipeline, options: [ REQUIRED ] }
+  - { name: Type, type: FileType, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }
+  - { name: ClusterInput, type: ClusterInput, options: [ REQUIRED ] }
+  - { name: ErgatisFormat, type: string, options: [ REQUIRED ] }

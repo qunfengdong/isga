@@ -25,7 +25,7 @@
 		});		
 	}
 	//the default config vars
-	$.fn.modal.defaults = {show:false, hide:false, modal_styles:{display:"block", zIndex:2001}, resize:true, hide_on_overlay_click:true };
+	$.fn.modal.defaults = {show:false, hide:false, modal_styles:{display:"block", zIndex:1001}, resize:true, hide_on_overlay_click:true };
 	//the over riden stuff
 	$.modal = {
 		hash:{}, //the hash used to store all the configs & targets
@@ -51,14 +51,14 @@
 		},
 		open:function(ele){
 			var pos = ele._modal;
-			var h = H[pos];		
+			var h = H[pos];			
 			$.modal.insert_overlay();
 			$.modal.insert_content_container();
 			var content = $.modal.get_content($(h.target_modal));
-			jQ("#modal_content").html(content);		
+			jQ("#modal_content").html(content);			
 			if(h.config.modal_styles) jQ("#modal_content").css(h.config.modal_styles);
-			if(h.config.resize) $.modal.resize_container()
-                        $.modal.for_ie(jQ("#modal_overlay"));	
+			if(h.config.resize) $.modal.resize_container();
+      $.modal.for_ie(jQ("#modal_overlay"));	
 			if(h.config.show) h.config.show();
 			$.modal.hide(ele); //add hiding
 		},

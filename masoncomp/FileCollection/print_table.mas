@@ -5,7 +5,7 @@
 
 % if ( $embed ) {
  <tr id="collection-<% $file_collection %>" class="child-of-<% $embed %>" >
-  <td colspan="2"><% $file_collection->getUserName %> Contents</td>
+  <td colspan="3"><% $file_collection->getUserName %> Contents</td>
   <td><% $file_collection->getCreatedAt->brief %></td>
  </tr>
 % } else {
@@ -14,25 +14,23 @@ $(document).ready(function()  {
   $("#collection-<% $file_collection %>").treeTable();
 });
 </sys:script>
-<div class="list">
 <table id="collection-<% $file_collection %>" width="100%">
  <thead>
-  <tr><th>Type</th><th>Format</th><th>Created At</th><th></th></tr>
+  <tr><th>Name</th><th>Type</th><th>Format</th><th>Created At</th></tr>
  </thead>
  <tbody>
 % }
 
 % foreach my $resource ( @{$file_collection->getContents()} ) {
 
-%   if ( $resource->isa('ISGA::FileCollection') ) {
+%   if ( $resource->isa('SysMicro::FileCollection') ) {
 <& /FileCollection/print_table.mas, file_collection => $resource, 
                                     embed => "collection-$file_collection" &>
 %   } else {
 
 <tr id="file-<% $resource %>" class="child-of-collection<% $file_collection %>">
-  <td colspan="3"><span class="highlight"><% $resource->getUserName %></span></td>
-</tr>
-<tr>
+ <td><a href="/File/View?file=<% $resource %>"><% $resource->getUserName %></a></td>
+
 %     my $type = $resource->getType;
 %     my $tname = $type->getName;
  <td><% $tname %>\
@@ -41,6 +39,7 @@ $(document).ready(function()  {
   <span class="sup">?</span>
  </a>
  </td> 
+
 %     my $format = $resource->getFormat;
 %     my $fname = $format->getName;
  <td><% $fname %>\
@@ -51,10 +50,6 @@ $(document).ready(function()  {
  </td>
 
  <td><% $resource->getCreatedAt->brief %></td>
- <td>
-   <a href="/File/View?file=<% $resource %>">View File</a> | 
-   <a button"href="/Download/<% $resource->getUserName %>?file_resource=<% $resource %>">Download File</a>
- </td>
 </tr>
 %   }
 % }
@@ -62,6 +57,5 @@ $(document).ready(function()  {
 % if ( ! $embed ) {
  </tbody>
 </table>
-</div>
 % }
 

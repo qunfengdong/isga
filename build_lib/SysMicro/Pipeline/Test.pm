@@ -1,10 +1,10 @@
-package ISGA::Pipeline::Test;
+package SysMicro::Pipeline::Test;
 #------------------------------------------------------------------------
 =pod
 
 =head1 NAME
 
-ISGA::Pipeline::Test - test methods for the pipeline class.
+SysMicro::Pipeline::Test - test methods for the pipeline class.
 
 =head1 METHODS
 
@@ -24,10 +24,8 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA;
-use ISGA::Objects;
-
-use ISGA::Test::Transactions;
+use SysMicro;
+use SysMicro::Objects;
 
 use base 'Test::Class';
 
@@ -48,9 +46,9 @@ Test object methods and attribute to column mappings.
  
 =cut
 #------------------------------------------------------------------------
-sub _0_base : Test( 43 ) {
+sub _0_base : Test( 47 ) {
 
-  my $class = 'ISGA::Pipeline';
+  my $class = 'SysMicro::Pipeline';
 
   use_ok( $class );  # a gimme
 
@@ -88,13 +86,17 @@ sub _0_base : Test( 43 ) {
   # methods defined in .accessor
   can_ok( $class, 'getWorkflowMask' );
   can_ok( $class, 'getRawWorkflowMask' );
+  can_ok( $class, 'getClusters' );
+  can_ok( $class, 'getComponents' );
+  can_ok( $class, 'getPipelineLayoutXML' );
+  can_ok( $class, 'getConfigFiles' );
   can_ok( $class, 'getInputs' );
   can_ok( $class, 'getOutputs' );
   can_ok( $class, 'getOutputsByCluster' );
 
   # methods defined in .method  
-  can_ok( $class, 'stage' );
-  can_ok( $class, 'writeLayoutXML' );
+  can_ok( $class, 'draw' );
+  can_ok( $class, 'writeConfigFiles' );
 
   # test attributes
   is( $class->_table(), 'pipeline' );
@@ -106,6 +108,10 @@ sub _0_base : Test( 43 ) {
   is( $class->_column('Description'), 'pipeline_description' );
 
 }
+
+
+
+
 
 1;
 

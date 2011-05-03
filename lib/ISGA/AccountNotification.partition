@@ -1,5 +1,0 @@
---- !perl/MasonX::Foundation::Class::Partition
-class: AccountNotification
-partition_of: Notification
-attributes:
-  - { name: Account, type: Account, options: [ REQUIRED ] }

@@ -1,40 +1,15 @@
-<sys:script type="text/javascript">
-$(document).ready(sectionHighlight);
-function sectionHighlight() {
-  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
-  var url = window.location.href;
-  for(var i = 0; i < menuLinks.length; i++){
-    if(url == menuLinks[i].href)
-    {
-      var link = menuLinks[i];
-      var li = link.parentNode;
-      li.style.backgroundColor = "#D8E47C";
-      if($.browser.msie)
-      {
-          var nextLi = li.nextSibling;
-          nextLi.style.backgroundColor = "#D8E47C";
-      }else{
-          var nextLi = li.nextSibling.nextSibling;
-          nextLi.style.backgroundColor = "#D8E47C";
-      }
-    }
-  }
-}
-</sys:script>
-
-
 <sys:rightmenu>
 <ul>
  <li class="title">Account Tools</li>
 
- <li class="rmbutton pointer"><a href="/Account/MyAccount">Overview</a></li>
- <li class="pointer" onclick="window.location='/Account/MyAccount'"><p>Return to the account overview page.</p></li>
+ <li class="rmbutton"><a href="/Account/MyAccount">Overview</a></li>
+ <li><p>Return to the account overview page.</p></li>
 
- <li class="rmbutton pointer"><a href="/Account/EditMyDetails">Edit Details</a></li>
- <li class="pointer" onclick="window.location='/Account/EditMyDetails'"><p>Change your name, email address and other account details.</p></li>
+ <li class="rmbutton"><a href="/Account/EditMyDetails">Edit Details</a></li>
+ <li><p>Change your name, email address and other account details.</p></li>
 
- <li class="rmbutton pointer"><a href="/Account/ChangeMyPassword">Change Password</a></li>
- <li class="pointer" onclick="window.location='/Account/ChangeMyPassword'"><p>Change your account password. You will need to enter your current password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a> to create a new one.</p></li>
+ <li class="rmbutton"><a href="/Account/ChangeMyPassword">Change Password</a></li>
+ <li><p>Change your account password. You will need to enter your current password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a> to create a new one.</p></li>
 
 </ul>
 

@@ -1,0 +1,10 @@
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'support_contact_us'
+  or $form =  SysMicro::FormEngine::Support->ContactUs(\%ARGS);
+
+return $m->comp('/Support/contact_us.mas', form => $form);
+
+</%perl>

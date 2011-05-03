@@ -4,17 +4,29 @@
 
 <%perl>
 
-if ( ! ISGA::Login->hasGroup( $admin ) ) {
-  ISGA::Login->getAccount->mayRead($run)
-      or X::User::Denied->throw;
+$run->getCreatedBy == SysMicro::Login->getAccount
+  or X::User::Denied->throw;
+   
+use Benchmark ':hireswallclock';
+
+timethis( 1, sub { $run->updateStatus()});
+
+my %results = ( Pipeline => {}, Intermediate => {} );
+
+foreach ( @{SysMicro::RunOutput->query( Run => $run)} ) {
+  
+  my $coutput = $_->getClusterOutput;
+  my $visibility = $coutput->getVisibility;
+  my $cluster = $coutput->getComponent->getCluster;
+
+  if ( exists $results{$visibility}{$cluster} ) {
+    push @{$results{$visibility}{$cluster}{Output}}, $_;
+  } else {
+    $results{$visibility}{$cluster} = { Cluster => $cluster, Output => [ $_ ] };
+  }
 }
 
 </%perl>
 
-<& /Run/view.mas, run => $run &>
+<& /Run/view.mas, run => $run, results => \%results &>
 
-<%once>
-
-  my $admin = ISGA::Group->new( Name => 'Run Administrators' );
-
-</%once>

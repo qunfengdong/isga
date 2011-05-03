@@ -4,8 +4,6 @@
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
 <sys:style type="text/css" media="screen">
   @import "/include/css/jtip.css";
 </sys:style>
@@ -33,7 +31,7 @@ output to see supporting data files and other auxiliary output.</p>
  </thead>
  <tbody>
 
-% foreach my $class ( 'Pipeline', 'Evidence' ) {
+% foreach my $class ( 'Pipeline', 'Intermediate' ) {
 %   my @classes = ();
 %   $class eq 'Pipeline' and push @classes, "expanded";
 
