@@ -1,0 +1,16 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string value(string name);
+
+Returns the name for the supplied value. Throws an exception if the
+name doesnt exist.
+
+=cut 
+#------------------------------------------------------------------------
+  sub value {
+
+    my ($class, $name) = @_;
+    return $class->new( Name => $name )->getValue;
+  }

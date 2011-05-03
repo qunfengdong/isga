@@ -42,9 +42,8 @@ use Clone qw(clone);
 
 =item public ISGA::ComponentBuilder new(Component $component);
 
-Initialize the Componentbuilder object corresponding to the supplied
-Component. If the Component does not have a builder .yaml file, undef
-is returned.
+Initialize the Componentbuilder object corresponding to the supplied 
+Component.
 
 =item public ISGA::ComponentBuilder new(Component $component, ParameterMask $mask);
 
@@ -62,7 +61,7 @@ Component and parameter mask.
     my $self = clone($components{$component});
 
     if ( $mask ) {
-      return $component->injectMaskValues( $mask, $self );
+      return $self->injectMaskValues( $mask, $component );
     }
     
     return $self;
@@ -85,7 +84,7 @@ the supplied component template.
     
     if ( exists $self->{Params} ) {
 
-      # initialize form parameters
+      # initialize PiplineBuilder form
       $self->{PipelineBuilder}{FormEngine} = {'templ' => 'fieldset',
 					      'OUTER' => '1', 
 					      'sub' => []};
@@ -136,31 +135,6 @@ the supplied component template.
       }
     }
 
-    # handle RBI parameters
-    if ( exists $self->{InputParams} ) {
-
-      my %inputs;
-
-      my @all_rbi;
-
-      for ( @{$self->{InputParams}} ) {
-
-	if (not(exists $_->{'templ'}) || $_->{'templ'} eq 'text'){
-	  exists $_->{MAXLEN} or $_->{'MAXLEN'} = 60;
-	  exists $_->{SIZE} or $_->{'SIZE'} = 60;
-	  if (exists $_->{'REQUIRED'}){
-	    push(@{$_->{'ERROR'}}, 'not_null', 'Text::checkHTML');
-	  }
-	}	
-	
-	my $name = $_->{input};
-	push @{$inputs{$name}}, $_;
-	push @all_rbi, $_;
-      }
-
-      $self->{RunBuilderInput} = \%inputs;
-      $self->{AllRunBuilderInput} = { sub => \@all_rbi };
-    }
     
     # handle RunBuilder parameters
     if ( exists $self->{RunBuilderParams} ) {
@@ -219,14 +193,9 @@ and component template.
     if ( exists $clone->{RunBuilderParams} ) {
 
       delete $clone->{RunBuilderParams};
+#      $clone->{RunBuilder}{FormEngine}{TITLE} = $component->getName;
+      
       push @fieldsets, $clone->{RunBuilder}{FormEngine};
-    }
-
-    if ( exists $clone->{InputParams} ) {
-
-      delete $clone->{InputParams};
-
-      push @fieldsets, $clone->{AllRunBuilderInput};
     }
 
     foreach my $fieldset ( @fieldsets ) {
@@ -251,20 +220,6 @@ and component template.
 
 =cut
 ##========================================================================
-
-#------------------------------------------------------------------------
-
-=item public boolean hasParameters();
-
-Returns true if the ComponentBuilder has defined pipeline builder parameters.
-
-=cut
-#------------------------------------------------------------------------
-sub hasParameters {
-  
-  my $self = shift;
-  return keys %{$self->{ParameterLookup}};
-}
 
 #------------------------------------------------------------------------
 
@@ -355,27 +310,6 @@ sub getSetOptionalParameters {
 
 #------------------------------------------------------------------------
 
-=item public [hashref] getRunBuilderInputParameters(PipelineInput $pi);
-
-Returns the run builder parameters input params for this component and the supplied input.
-
-=cut
-#------------------------------------------------------------------------
-sub getRunBuilderInputParameters { 
-
-  my ($self, $pi) = @_;
-  
-  my $name = $pi->getClusterInput->getName();
-
-  if ( exists $self->{RunBuilderInput}{$name} ) {
-    return $self->{RunBuilderInput}{$name};
-  }
-
-  return [];
-}
-
-#------------------------------------------------------------------------
-
 =item public [hashref] getRunBuilderParameters();
 
 Returns the run builder parameters for this component.
@@ -444,6 +378,30 @@ sub getRunBuilderForm { return shift->{RunBuilder}{FormEngine}; }
 
 #------------------------------------------------------------------------
 
+=item public ISGA::ComponentBuilder injectMaskValues(ParameterMask $mask, Component $component);
+
+Returns a cloned ComponentBuilder with ParameterMask values injected in
+
+=cut
+
+#------------------------------------------------------------------------
+  sub injectMaskValues{
+
+    my ($self, $parameter_mask, $component) = @_;
+    
+    my $mask_params = exists $parameter_mask->{Component}->{$component} ?
+      $parameter_mask->{Component}->{$component} : undef;
+    
+    foreach (keys %$mask_params){
+      $self->{ParameterLookup}{$_}{VALUE} = $mask_params->{$_}->{Value};
+      $self->{ParameterLookup}{$_}{ANNOTATION} = $mask_params->{$_}->{Description};
+    }
+
+    return $self;
+  }
+
+#------------------------------------------------------------------------
+
 =item Class Initialization
 
 YAML files are loaded and cached at server startup.
@@ -456,21 +414,21 @@ YAML files are loaded and cached at server startup.
 
   foreach my $template ( @{ISGA::ComponentTemplate->query()} ) {
     
-    if ( my $form_path =  $template->getFormPath ) {
+    my $file = '___package_include___/component_definition/' . $template->getFormPath;
+
+    if ( -f $file ) {
       
-      my $self = YAML::LoadFile($form_path);
+      my $self = YAML::LoadFile($file);
       validate( $schema, $self );
-      
-      # first we initialize the ComponentTemplate loaded from the YAML
+
       $self->_initialize();
       
-      # then we initialize all the components that use this template
       foreach ( @{ISGA::Component->query( Template => $template )} ){
-	$components{$_} = $self->_initializeComponent($_);
+        $components{$_} = $self->_initializeComponent($_);
       }    
     }
   }
-  
+
 }
 1;
 __END__

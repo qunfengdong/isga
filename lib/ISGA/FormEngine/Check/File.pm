@@ -28,25 +28,6 @@ use warnings;
 
 #------------------------------------------------------------------------
 
-=item public string isPath(string value);
-
-Enforces rules on path names
-
-=cut 
-#------------------------------------------------------------------------
-sub isPath {
-    
-  my $data = shift;
-  
-  $data =~ m{^/} or return 'Path must be absolute.';
-
-  # need to check for valid unix filesystem name
-
-  return '';
-}
-
-#------------------------------------------------------------------------
-
 =item public string isUniqueName(string value);
 
 Enforces rule that file names must be unique within an account.

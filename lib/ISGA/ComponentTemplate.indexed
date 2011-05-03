@@ -1,5 +1,5 @@
 --- !perl/MasonX::Foundation::Class::Indexed
 class: ComponentTemplate
 attributes:
-  - { name: Name, type: string, options: [ REQUIRED ] }
-  - { name: ErgatisInstall, type: ErgatisInstall, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: FormPath, type: string }

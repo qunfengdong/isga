@@ -4,4 +4,3 @@ attributes:
   - { name: RunBuilder, type: RunBuilder, options: [ REQUIRED ] }
   - { name: PipelineInput, type: PipelineInput, options: [ REQUIRED ] }
   - { name: FileResource, type: FileResource, options: [ REQUIRED ] }
-  - { name: ParameterMask, type: string, options: [ NOGET ] }

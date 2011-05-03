@@ -33,7 +33,7 @@ use vars qw($CONFIG $MAX_SEGMENT $DEFAULT_SEGMENT
 # Non-modperl users should change this variable if needed to point
 # to the directory in which the configuration files are stored.
 #
-$CONF_DIR  =  ISGA::SiteConfiguration->value('gbrowse_directory') . '/conf';
+$CONF_DIR  = ISGA::Site->getGBrowseDirectory . 'conf';
 #
 ###################################################################
 $VERSION   = " 1.70";

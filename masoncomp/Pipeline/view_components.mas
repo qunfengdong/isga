@@ -5,8 +5,8 @@
 
 %my $noParams;
 %foreach ( @{$components}){
-%  if ( ISGA::ComponentBuilder->new($_) && ISGA::ComponentBuilder->new($_)->{PipelineBuilder} ){
-%#    if ( ISGA::ComponentBuilder->new($_)->{PipelineBuilder} ){
+%  if ( ISGA::ComponentBuilder->new($_) ){
+%    if ( ISGA::ComponentBuilder->new($_)->{PipelineBuilder} ){
 %      my $builder = ISGA::ComponentBuilder->new($_);
 <p><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>"><% $_->getName %></a><br>
 <% $builder->getComponentDescription  %>
@@ -14,20 +14,16 @@
 %    } else {
 %      push(@{$noParams}, $_);
 %    }
-%#  }
+%  }
 %}
 
 %foreach ( @{$noParams}){
-% next unless($_->getName);
-% if( my $builder = ISGA::ComponentBuilder->new($_) ){
+%  my $builder = ISGA::ComponentBuilder->new($_);
 <p><% $_->getName %><br>
 <em class="red">Has no parameters to be set.</em><br>
 <% $builder->getComponentDescription  %>
 </p>
-% } else {
-<p><% $_->getName %><br>
-<em class="red">Has no parameters to be set.</em><br>
-% }
+
 %}
 
 <& right_menu.mas, pipeline => $pipeline &>

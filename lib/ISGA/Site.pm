@@ -32,15 +32,11 @@ use warnings;
 
 =item public string getBaseURI();
 
-Returns the base URI to be used during the build process.
+Returns the BaseUri for to be used during the build process.
 
 =item public [string] getErrorNotificationEmail();
 
 Returns the error 
-
-=item public string getIncludePath();
-
-Returns the path to the ISGA include directory.
 
 =item public string getMasonComponentRoot();
 
@@ -50,9 +46,9 @@ Returns the path to the mason component root.
 
 Returns the string to be used as the from header in email sent by the system.
 
-=item public string getServerName();
+=item public string getGBrowseDirectory();
 
-Returns the name of this ISGA server. Used in communication.
+Returns the directory for Gbrowse config and databases.
 
 =cut
 #------------------------------------------------------------------------
@@ -60,13 +56,12 @@ sub getBaseURI { return "___base_uri___"; }
 
 sub getErrorNotificationEmail { return ___ERRORNOTIFICATIONEMAIL___; }
 
-sub getIncludePath { return '___package_include___'; }
-
 sub getMasonComponentRoot { return '___package_masoncomp___'; }
 
 sub getMailSender { return '___mail_sender___'; }
 
-sub getServerName { return '___SERVERNAME___'; }
+sub getGBrowseDirectory { return '___gbrowse_directory___'; }
+
 
 #------------------------------------------------------------------------
 

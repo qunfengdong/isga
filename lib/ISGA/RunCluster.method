@@ -44,9 +44,9 @@ sub updateStatus {
   my $run = $self->getRun;
 
   # don't process complete clusters
-  my $status = $self->getStatus->getName;
+  my $status = $self->getStatus;
   return if $status eq 'Complete';
-  
+
   my @component_names = grep { exists $ergatis->{$_} } map { $_->getErgatisName } @$components;
 
   # go through each component in a cluster and take the lowest number
@@ -122,6 +122,9 @@ sub updateStatus {
 
   }
 
+
+
+
   # only edit if something has changed
   keys %edit and  $self->edit(%edit);
 }
@@ -164,47 +167,34 @@ sub downloadEvidence {
 
   $self->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
 
-  my $archive = Archive::Tar::Wrapper->new();
+  my $archive = Archive::Tar->new();  
 
   my $run = $self->getRun;
   my $run_dir = "Run-" . $run->getErgatisKey;
 
   my $cluster_dir = $run_dir . '/' . $self->getCluster->getName;
 
-  my $iterations = $self->getIterations;
-
   # work through our components
   foreach my $component ( grep { $_->getCluster == $cluster } @{$run->getType->getComponents} ) {
 
-    foreach my $co ( @{ISGA::ClusterOutput->query( Component => $component,
-						   Visibility => 'Evidence' )} ){
-      
+    foreach ( @{ISGA::ClusterOutput->query( Component => $component,
+					    Visibility => 'Evidence' )} ){
+
+      warn "found a component $_->getFileLocation\n";
+
       # add contents to file
-      if ( $iterations ) {
-	for ( 1 .. $iterations ) {
-	  $co->downloadEvidence( $run, $cluster_dir, $archive, $_);
-	}
-      } else {
-	$co->downloadEvidence( $run, $cluster_dir, $archive);
-      }
+      $_->downloadEvidence( $run, $cluster_dir, $archive);
     }
   }
 
+  $archive->add_data( $cluster_dir, '', { mode => '0700', type => 'DIR' } );
+  $archive->add_data( $run_dir, '', { mode => '0700', type => 'DIR' } );
+      
   my $tmp = File::Temp->new();
-  $archive->write($tmp->filename, 1);
-
+  $archive->write($tmp->filename, 'COMPRESS_GZIP');
   return $tmp;
 }
 
-
-#------------------------------------------------------------------------
-
-=item public string getPath();
-
-Calculate the name for the evidence download for this RunCluster.
-
-=cut
-#------------------------------------------------------------------------
 sub getPath { return shift->downloadEvidence; }
 
 #------------------------------------------------------------------------

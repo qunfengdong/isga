@@ -27,10 +27,6 @@ function jtUpdate() {
 <h1><% $pipeline->getName %></h1>
 
 % my $template = $pipeline->getTemplate;
-% if (!  $template->getStatus->isAvailable ) {
-<div class="downtime"><p>The template that this pipeline was built from is no longer available.  You 
-will no longer be able to customize or run this pipeline.</p></div>
-% }
 <p>
 <strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
 <strong>Created At:</strong> <% $pipeline->getCreatedAt->brief %>
@@ -46,3 +42,6 @@ will no longer be able to customize or run this pipeline.</p></div>
 <p>Here are the details for your customized pipeline.  To begin the run process, 
 choose <span class="highlight">Run Pipeline</span> from the toolbox.</p>
 </div></div>
+
+<div class="documentation runPipelineClickMe"><div id="WT_arrow_right_clickme"></div><div id="WT_close_right_clickme">Click Me To Continue</div></div>
+

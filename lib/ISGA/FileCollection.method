@@ -23,12 +23,10 @@ archive reference. This nests a file collection inside another one.
     foreach ( @$contents ) {
 
       if ( $_->isa('ISGA::File') ) {
-        my $logical_path = $prefix . "/" . $_->getUserName;
-        my ( $file ) = $archive->add( $logical_path, $_->getPath );
 
-#	my ( $file ) = $archive->add_files( $_->getPath );
-#	$file->rename( $_->getUserName );
-#	$file->prefix( $prefix );
+	my ( $file ) = $archive->add_files( $_->getPath );
+	$file->rename( $_->getUserName );
+	$file->prefix( $prefix );
 
       # process nested collections
       } else {
@@ -36,16 +34,14 @@ archive reference. This nests a file collection inside another one.
       }
     }
 
-#    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
-
+    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
   }
-
+  
 #------------------------------------------------------------------------
 
 =item public void delete();
 
-Removes a file collection from the database. Any files or collections
-that do not exist outisde of the collection will also be deleted.
+Removes a file collection and it's contents from the system.
 
 =cut 
 #------------------------------------------------------------------------
@@ -55,8 +51,7 @@ that do not exist outisde of the collection will also be deleted.
 
     # delete all the contents
     my $contents = ISGA::FileCollectionContent->query( FileCollection => $self,
-						       OrderBy => 'Index' );
-
+							   OrderBy => 'Index' );
     $_->delete for reverse @$contents;
   
     # delete the database entry
@@ -67,7 +62,7 @@ that do not exist outisde of the collection will also be deleted.
 
 =item public void deleteContents();
 
-Removes a file collections contents from the system and marks the collection as hidden
+Removes a file collection's contents from the system and marks the collection as hidden
 
 =cut 
 #------------------------------------------------------------------------
