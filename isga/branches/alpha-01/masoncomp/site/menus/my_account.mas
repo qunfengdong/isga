@@ -1,0 +1,28 @@
+% if ( SysMicro::Login->exists ) {
+
+<li class="title">My Data</li>
+<li><a href="/Run/ListMy">Runs</a></li>
+<li><a href="/Pipeline/ListMy">Pipelines</a></li>
+<li><a href="/File/BrowseMy">Files</a></li>
+<li><a href="/PipelineBuilder/ListMy">Pipeline Builders</a></li>
+<li><a href="/RunBuilder/ListMy">Run Builders</a></li>
+<li><br></li>
+
+<li class="title">My Account</li>
+<li><a href="/Account/MyAccount">Details</a></li>
+<li><a href="/Account/EditMyDetails">Edit Details</a></li>
+<li><a href="/Account/ChangeMyPassword">Change Password</a></li>
+<li><br></li>
+
+%#<li class="title">My Groups</li>
+%#<li><a href="/UserGroup/Overview">Overview</a></li>
+%#<li><a href="/UserGroup/ListMy">Membership</a></li>
+%#<li><a href="/UserGroup/Create">Create Group</a></li>
+
+% } else {
+
+<li class="title">Accounts</li>
+<li><a href="/Account/Overview">Overview</a></li>
+<li><a href="/Account/Request">Request Account</a></li>
+
+% }

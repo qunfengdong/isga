@@ -1,0 +1,10 @@
+--- !perl/SysMicro::ComponentBuilder
+Name: BER
+Description: 'A <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/2231712">BLAST</a> output is used as input for the <a class="normal" href="http://ber.sourceforge.net/">BER</a> algorithm.  A modified <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/7265238">Smith-Waterman alignment</a> is performed on the protein against the mini-database of BLAST hits. In order to identify potential frameshifts or point mutations in the sequence, the gene is extended 300 nucleotides upstream and downstream of the predicted coding region. The output is the BER raw results in btab format.'
+Params:
+  - { NAME: 'maxevalue', TITLE: 'Max e-value', REQUIRED: 1, VALUE: '1e-5', ERROR: ['Number::isScientificNotation'], DESCRIPTION: 'Set the e-value cutoff for reporting matches.', CONFIGLINE: '___MAX_E_VALUE___' }
+  - { NAME: 'maxpvalue', TITLE: 'Max p-value', REQUIRED: 1, VALUE: '1e-5', ERROR: ['Number::isScientificNotation'], DESCRIPTION: 'Set the p-value cutoff for reporting matches.', CONFIGLINE: '___MAX_P_VALUE___' }
+  - { NAME: 'maxnumhits', TITLE: 'Max Number of Hits', REQUIRED: 1, VALUE: '150', ERROR: ['digitonly'], DESCRIPTION: 'Set the maximum number of hits to report in the output.', CONFIGLINE: '___MAX_NUM_HITS___' }
+  - { NAME: 'maxperregion', TITLE: 'Max Number Hits per Region', REQUIRED: 1, VALUE: '0', ERROR: ['digitonly'], DESCRIPTION: 'If non-zero, overrides Max Number of Hits and displays region specific hits', CONFIGLINE: '___MAX_NUM_HITS_PER_REGION___' }
+  - { NAME: 'minnum', TITLE: 'Min Number (Experimental)', REQUIRED: 1, VALUE: '0', ERROR: ['digitonly'], DESCRIPTION: 'Set the minimum number of hits to report in the output.', CONFIGLINE: '___MIN_NUM_EXPERIMENTAL___' }
+

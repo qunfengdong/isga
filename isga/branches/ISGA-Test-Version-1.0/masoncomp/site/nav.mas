@@ -1,0 +1,119 @@
+<%args>
+ $doc
+</%args>
+
+% my $exists = SysMicro::Login->exists;
+% my $account = SysMicro::Login->getAccount;
+
+%#<div id="nav">
+%#<div id="droppydiv">
+
+ <ul id="nav"> 
+  <li><a href="/Home">Home</a>
+   <ul>
+    <li><a href="/Help/Introduction">Introduction</a></li>
+% if ( ! $exists ) {
+    <li><a href="/Account/Request">Request Account</a></li>
+% }
+   </ul>
+  </li>
+
+  <li><a href="/Pipeline/View?pipeline=<% $prok %>">Build Pipelines</a>
+   <ul>
+    <li><a href="/Help/Tutorial?tab=pipeline">Tutorial</a></li>
+%#    <li><a href="/Pipeline/List">Available Pipelines</a></li>
+    <li><a href="/Pipeline/View?pipeline=<% $prok %>">Prokaryotic Annotation</a></li>
+   </ul>  
+  </li>
+
+% if ( $exists ) {
+  <li><a href="/Run/Status">Monitor Pipelines</a>
+% } else {
+  <li><a href="/Help/Tutorial?tab=run">Monitor Pipelines</a>
+% } 
+   <ul>
+    <li><a href="/Help/Tutorial?tab=run">Tutorial</a></li>
+% if ( $exists ) {
+    <li><a href="/Run/Status">Pipeline Status</a></li>
+%   if ( $account->hasGroup( $run_admin ) ) {
+    <li><a href="/Run/AdminList">Administer Runs</a></li>
+%   }
+% }
+   </ul>
+  </li>
+
+
+% if ( $exists ) {
+  <li><a href="/WorkBench/Overview">Toolbox</a>
+% } else {
+  <li><a href="/Help/Tutorial?tab=workbench">Toolbox</a>
+% }
+   <ul>
+    <li><a href="/Help/Tutorial?tab=workbench">Tutorial</a></li>
+    <li><a href="/WorkBench/Overview">Toolbox Home</a></li>
+
+%# if ( $exists ) {
+%#    <li><a href="/WorkBench/Blast">Run Blast</a></li>
+%#    <li><a href="/WorkBench/MSA">MSA</a></li>
+%# }
+   </ul>
+  </li>
+
+% if ( $exists ) {
+  <li><a href="/Account/MyAccount">Account</a>
+   <ul>
+    <li><a href="/Account/MyAccount">Account Summary</a></li>
+    <li><a href="/Account/EditMyDetails">Edit Details</a></li>
+    <li><a href="/Account/ChangeMyPassword">Change Password</a></li>
+   </ul>
+  </li>
+% }
+
+  <li><a href="/News/Recent">News</a>
+   <ul>
+    <li><a href="/News/Recent">Recent News</a></li>
+    <li><a href="/News/AboutUs">About Us</a></li>
+    <li><a href="/News/Resources">Resources</a></li>
+    <li><a href="/News/Archive">News Archive</a></li>
+% if ( $exists and $account->hasGroup($news_admin)  ) {
+    <li><a href="/News/Create">Create News Item</a></li>
+% }
+   </ul>
+  </li>
+
+  <li><a href="/Help/Overview">Help</a>
+   <ul>
+    <li><a href="/Help/Introduction">Introduction</a></li>
+    <li><a href="/Help/Tutorial">Tutorials</a>
+      <ul>
+        <li><a href="/Help/Tutorial?tab=pipeline">Pipeline Tutorial</a></li>
+        <li><a href="/Help/Tutorial?tab=run">Run Tutorial</a></li>
+        <li><a href="/Help/Tutorial?tab=result">Results Tutorial</a></li>
+        <li><a href="/Help/Tutorial?tab=files">Files Tutorial</a></li>
+        <li><a href="/Help/Tutorial?tab=account">Account Tutorial</a></li>
+      </ul>
+    </li>
+    <li><a href="/Help/FAQ">FAQs</a></li>
+    <li><a href="/Help/ContactUs">Contact Us</a></li>
+    <li><a href="/Help/KnownIssues">Known Issues</a></li>
+   </ul>
+  </li>
+
+
+% if ( SysMicro::Login->exists && $doc ) {
+  <div id="toggle"><li class="disableWalkthrough"><a class="btn-slide" href="#"><span class="showOrHide"></span></a></li></div>
+% }
+ </ul>
+
+%#</div>
+%#</div>
+
+<%once>
+my $prok = 1;
+
+my $news_admin = SysMicro::Group->new( Name => 'News Administrators' );
+
+my $run_admin = SysMicro::Group->new( Name => 'Run Administrators' );
+
+#  my $prok = SysMicro::GlobalPipeline->new( Name => 'Prokaryotyic Annotation Pipeline' );
+</%once>

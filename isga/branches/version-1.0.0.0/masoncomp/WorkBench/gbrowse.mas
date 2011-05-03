@@ -1,0 +1,35 @@
+<%args>
+
+</%args>
+
+<h1>GBrowse Run Selection Home</h1>
+
+<%perl>
+my $account = ISGA::Login->getAccount;
+my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt' );
+
+if (@$runs) {
+</%perl>
+<div class=list>
+<table style="width: auto; min-width: 375px;">
+<tr class="list_label"><td>Run</td><td>GBrowse Action</td></tr>
+% foreach my $run (@$runs) {
+%  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
+%  if ( $run->hasGbrowseInstallation ) {
+<tr>
+<td><% $run->getName %></td>
+<td style="width: 190px;"><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></td>
+</tr>
+%   } else {
+<tr>
+<td><% $run->getName %></td>
+<td style="width: 190px;"><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></td>
+</tr>
+%   } 
+%  }
+</table>
+</div>
+% } else {
+	<p>This tool is currently unavailable because you do not have the appropriate data.  You must have a completed run to use GBrowse.</p>
+% }
+

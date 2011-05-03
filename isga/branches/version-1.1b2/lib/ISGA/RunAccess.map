@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: runaccess
+attributes:
+  - { name: Party, type: Party }
+  - { name: Run, type: Run }

@@ -1,0 +1,28 @@
+<%args> # -*- cperl -*-
+ $account_request
+</%args>
+
+<%perl> 
+
+# This is a bit fragile: Ideally we would send mail from within the transaction
+# but that is done outside of mason and we would lose the nice text formatting
+# We will try it this way, and revert if we see problems sending messages.
+#
+# If the mailing fails in a detectable manner, the user will get a visual error.
+
+# see if we can resend the request
+if ( $account_request->getStatus eq 'Open' ) {
+
+  my %mail = 
+    ( To      => $account_request->getEmail,
+      From    => 'SysMicro Accounts <biohelp@cgb.indiana.edu>',
+      Subject => 'Please confirm your account',
+      Message => $m->scomp('/mail/account_request.mas', account_request => $account_request),
+    );
+      
+  Mail::Sendmail::sendmail(%mail) or X::Mail::Send->throw( text => $Mail::Sendmail::error, message => \%mail );
+}
+
+</%perl>
+
+<& /Account/requested.mas &>

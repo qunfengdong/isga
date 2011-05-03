@@ -1,0 +1,40 @@
+<%args>
+ $pager
+ @files
+</%args>
+
+<h1>My Files</h1>
+
+% if ( @files ) {
+
+<div id="list">
+<& /site/pager/header.mas, pager => $pager &>
+<table>
+ <tr></tr>
+ <tr>
+  <th>Name</th>
+  <th>Contents</th>
+  <th>Format</th>
+  <th>Created At</th>
+ </tr>
+
+%   my $counter=0;
+%   foreach ( @files ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>" >
+% my $name = $_->getUserName;
+  <td><a href="/Download/<% $name %>?file=<% $_ %>"><% $name %></a></td>
+  <td><% $_->getContent->getName %></td>
+  <td><% $_->getFormat->getName %></td>
+  <td><% $_->getCreatedAt->brief %></td>
+ </tr>
+%   }
+</table>
+<& /site/pager/footer.mas, pager => $pager &>
+</div>
+
+% } else {
+
+<p>You do not have any files. Visit the <a href="/Pipeline/Overview">Pipeline</a> section for instructions on preparing and runing a pipeline to generate results.</p>
+
+% }

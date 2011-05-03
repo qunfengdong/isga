@@ -1,0 +1,4 @@
+<%args>
+ $file_type
+</%args>
+<% $file_type->getHelp %>

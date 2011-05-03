@@ -1,0 +1,12 @@
+<%perl%> # -*- cperl -*-
+
+# make sure we're not in a transaction
+SysMicro::DB->assertInTransaction and SysMicro::DB->failTransaction();
+
+$m->call_next();
+
+</%perl>
+
+<%flags>
+ inherit => undef
+</%flags>

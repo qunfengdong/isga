@@ -1,0 +1,82 @@
+# -*- cperl -*-
+
+use GD::Image;
+
+#------------------------------------------------------------------------
+
+=item public void draw();
+
+Draw a graphic of the users custom pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub draw {
+
+    my $self = shift;
+
+    my $pipeline = $self->getPipeline;
+    
+    my $image = GD::Image->new('/data/web/sysmicro.cgb/docs/masoncomp/www' . $pipeline->getImage );
+    
+    my $white = $image->colorClosest(255,255,255);
+    my $grey = $image->colorAllocate(227,227,227);
+    my $green = $image->colorAllocate(188,243,103);
+    
+    # retrieve information for clustesr
+    my $clusters = $self->getActiveClusters;
+    my $workflow = SysMicro::Workflow->query( Pipeline => $pipeline, Cluster => $clusters );
+
+    my $wf_mask = $self->getWorkflowMask;
+    my $disabled_components = $wf_mask->getDisabledComponents;
+    my $disabled = [];
+    while ( my ($key, $value) = each %{$disabled_components} ) {
+      my @components = SysMicro::Component->query( ErgatisName => $key);
+      push(@{$disabled}, $components[0][0]) if $value eq 'disabled';
+    }
+    my %partial_cluster = map { $_->getCluster->getName => $_->getCluster } @{$disabled};
+
+    foreach my $cluster ( @$clusters ) {
+      
+      my $wf = shift @$workflow;
+
+      my @coords = split ( /,/, $wf->getCoordinates );
+      # draw lines for partial clusters (some components are disabled) 
+      if ( defined $partial_cluster{$cluster->getName} ){
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i+=10 ) {
+          for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+            $image->setPixel($i,$j, $green) if $image->getPixel($i,$j) == $white;
+            $image->setPixel($i+1,$j, $green) if $image->getPixel($i+1,$j) == $white;
+            $image->setPixel($i+2,$j, $green) if $image->getPixel($i+2,$j) == $white;
+            $image->setPixel($i+3,$j, $green) if $image->getPixel($i+3,$j) == $white;
+          }
+        }
+        next;
+      }
+
+      # color enabled components
+      for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+	for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+	  $image->setPixel($i,$j, $green) if $image->getPixel($i,$j) == $white;
+	}
+      }
+    }
+ 
+    print $image->png;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void update(Cluster $cluster);
+
+Record a click on the workflow.
+
+=cut
+#------------------------------------------------------------------------
+  sub update {
+
+    my ($self, $cluster) = @_;
+
+    my $wf_mask = $self->getWorkflowMask;
+    $wf_mask->toggleCluster($cluster);
+    $self->edit( WorkflowMask => $wf_mask );
+  }

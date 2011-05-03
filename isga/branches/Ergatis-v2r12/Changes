@@ -1,0 +1,48 @@
+Revision history for ISGA
+
+1.1b2   May 27 2010
+
+        API CHANGES
+
+	* To support multiple pipelines, several API methods were broken down into smaller, easier-to-override methods to allow pipeline specialization.
+        * The FileContent class was removed as it's utililty beyond FileFormat was never realized.
+	* The ClusterBuilder class was replaced with subclasses for Clusters.
+	* Added support for input parameters.
+	* Added support for clusters iterating over a particular input.
+	* Added isBinary flag to file format
+        * single output files now adopt the run name to differentiate across runs.
+
+ 	SCRIPT CHANGES
+	
+	* Modified Ergatis failure notification to include the ISGA site name.
+
+        BUG FIXES
+
+	* Fixed error that users received when visiting the workbench without being logged in.
+	* Fixed details view for genes and proteins that are interrupted by the end of a contig.
+	* Improved special character check on run names to avoid failure in the Ergatis pipeline.
+	* Fixed incorrect creation time for accounts
+
+        ADDITIONAL FEATURES
+
+        * Toolbox jobs added for Newbler, Celera, and Mira assembler output conversion for Hawkeye.
+        * Toolbox job added for Newbler output conversion for Consed.
+        * Ability to browse all jobs.
+
+	ADMIN FEATURES
+
+	* Ability to view user input files.
+	* Ability to view account details.
+
+1.0.0.0   Jan 04 2010
+
+	CONFIG CHANGES
+
+	* Replaced ergatis_submit_uri with ergatis_base_uri in order to support linking to ergatis scripts other than running a job.
+        * Added formengine check for illegal characters in passwords during account creation.
+        * Escape formfield input in JavaScript for login
+        * Placed SGE Queue into Config file.
+
+0.8.0.2   Dec 17 2009
+
+        Initial release.

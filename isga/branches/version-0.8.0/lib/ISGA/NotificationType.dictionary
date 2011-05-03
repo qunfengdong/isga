@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: NotificationType
+attributes:
+  - { name: NotificationPartition, type: NotificationPartition }
+  - { name: Template, type: string }
+  - { name: Subject, type: string }

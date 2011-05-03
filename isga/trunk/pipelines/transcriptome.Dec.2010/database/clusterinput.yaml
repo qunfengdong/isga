@@ -1,0 +1,9 @@
+---
+ - Type: EST Sequencing Output
+   Dependency: Required
+   Format: FASTA
+   ErgatisFormat: 'File'
+   Name: 'EST_Input'
+   DefaultValue: ''
+   HasParameters: 0
+   IsIterator: 0

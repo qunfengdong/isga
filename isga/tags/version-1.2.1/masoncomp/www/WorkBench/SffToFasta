@@ -1,0 +1,15 @@
+<%args>
+</%args>
+
+<%perl> # -*- cperl -*-
+
+return $m->comp('/site/sge_outage.mas') unless( ISGA::SiteConfiguration->value('allow_sge_requests') );
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_sfftofasta'
+  or $form =  ISGA::FormEngine::WorkBench->SffToFasta(\%ARGS);
+
+return $m->comp('/WorkBench/sfftofasta.mas', form => $form );
+</%perl>
+

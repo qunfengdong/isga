@@ -1,0 +1,21 @@
+---
+ - Name: 'Celera Assembly Pipeline'
+   Description: '<p>An assembly pipeline using either the Celera or Mira assemblers.</p>'
+   Status: Published
+   SubClass: CeleraAssembly
+   Version: 1
+   Release: 'Jun 2010'
+   Image: '/include/img/assembly-pipeline.png'
+   Layout: |
+     <commandSetRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="commandSet.xsd" type="instance">
+      <commandSet type="serial">
+        <state>incomplete</state>
+        <name>start</name>
+        <commandSet type="parallel">
+            <state>incomplete</state>
+           ___SFF Preperation___ 
+        </commandSet>
+        ___Assembly Step___
+        ___Hawkeye Step___
+      </commandSet>
+     </commandSetRoot>

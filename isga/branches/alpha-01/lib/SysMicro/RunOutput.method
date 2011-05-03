@@ -1,0 +1,48 @@
+# -*- cperl -*-
+
+use File::Basename;
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutput();
+
+Copies Ergatis output into our system. This should not be called until
+the underlying cluster is complete to avoid getting partial results.
+
+=cut 
+#------------------------------------------------------------------------
+sub saveErgatisOutput {
+
+  my $self = shift;
+
+  my $run = $self->getRun;
+  my $id = $run->getErgatisKey;
+
+  my $cout = $self->getClusterOutput;
+
+  my $raw_output = '___ergatis_output_repository___' . $cout->getFileLoc;
+  $raw_output =~ s/___id___/$id/go;
+
+  -e $raw_output or X::File::NotFound->throw( $raw_output );
+
+  my $file = $raw_output;
+
+  # if we have a file list, we need to tar them
+  if ($cout->getErgatisFormat eq 'File List') {
+  
+    $file = dirname( $raw_output ) . '/' . $cout->getType->getName . '.tar.gz';
+    $file =~ s/\s+/_/go;
+
+    SysMicro::FileConverter->fileListToTarGZ( $raw_output, $file );
+  }
+
+  # copy the file
+  warn "output is - $file\n";
+
+  open my $fh, '<', $file or X::File::Open->throw( name => $file, error => $! );
+  my $new_file = SysMicro::File->upload( $fh, basename($file), $cout->getType->getContent,
+					 $cout->getFormat );
+  
+  $self->edit( File => $new_file );
+}
+

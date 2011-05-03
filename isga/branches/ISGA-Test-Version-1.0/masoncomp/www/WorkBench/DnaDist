@@ -1,0 +1,14 @@
+<%args>
+	$infile
+</%args>
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_dnadist'
+	or $form =  SysMicro::FormEngine::WorkBench->DnaDist(\%ARGS);
+
+return $m->comp('/WorkBench/dnadist.mas', form => $form, infile => $infile);
+</%perl>
+
+

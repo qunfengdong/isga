@@ -1,0 +1,16 @@
+<%args>
+ $notification
+</%args>
+
+<%perl>
+my $account = $run->getAccount();
+my $request = $notification->getVar1();
+</%perl>
+
+<% $account->getName %>,
+
+Your request to upload the file at 
+
+ <% $request->getURL %>
+
+to ISGA has completed and the file is available for use.

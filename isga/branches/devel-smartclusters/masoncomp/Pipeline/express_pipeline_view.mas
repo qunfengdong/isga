@@ -1,0 +1,46 @@
+<%args>
+ $pipeline
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+  if($.browser.msie)
+  {
+   $("area.cluster")
+   .hover(function(){JT_IE_area_show(this.href,this.id,this.title,this.coords,'workflow')},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }else{
+   $("area.cluster")
+   .hover(function(){JT_area_show(this.href,this.id,this.alt,this.coords)},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }
+}
+
+</sys:script>
+
+<h1><% $pipeline->getName %></h1>
+<p>The express pipeline is a simple annotation pipeline. It takes a
+contig sequence as input and attempts to find open reading
+frames. These ORFs are then searched against sequence and Hidden
+Markov-Model databases of known proteins to predict gene function.</p>
+
+<p>The Tools section to the right provides an interface to learn more about the pipeline, execute it, or customize it to meet your specific needs.</p>
+
+<h2>Pipeline Workflow</h2>
+
+<p>Hover your mouse over the clusters below for a description of what
+functionality they provide.</p>
+
+<& /Pipeline/draw_workflow.mas, pipeline => $pipeline &>
+
+<& right_menu.mas, pipeline => $pipeline &>

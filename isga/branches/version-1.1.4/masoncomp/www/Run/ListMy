@@ -1,0 +1,13 @@
+<%args> # -*- cperl -*-
+ $show_canceled => 0
+ $show_hidden => 0
+</%args>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+
+</%perl>
+
+<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => $show_canceled, show_hidden => $show_hidden &>

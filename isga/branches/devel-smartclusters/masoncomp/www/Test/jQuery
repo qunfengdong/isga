@@ -1,0 +1,16 @@
+
+
+
+<p>hi <a href="Ajax" class="jTip" id="one" name="Is this a title?">this</a> is a tooltip thingy.</p>
+
+
+
+
+<%method head>
+<script src="/include/js/jtip.js" type="text/javascript"></script>
+
+<style type="text/css" media="all">
+@import "/include/css/jtip.css";
+</style>
+
+</%method>

@@ -1,0 +1,19 @@
+<%args> # -*- cperl -*-
+ $pipeline
+</%args>
+
+<%perl>
+
+# only allow one run per pipeline at a time
+my $rb = SysMicro::RunBuilder->query( Pipeline => $pipeline, 
+				      CreatedBy => SysMicro::Login->getAccount );
+
+@$rb and $m->redirect( "/RunBuilder/View?run_builder=$rb->[0]" );
+
+# check that we have the correct form cached
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'run_builder_create'
+  or $form = SysMicro::FormEngine::RunBuilder->Create(\%ARGS);
+
+return $m->comp('/RunBuilder/create.mas', form => $form);
+</%perl>

@@ -1,0 +1,26 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+use Benchmark ':hireswallclock';
+
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+
+#sub test {
+#  eval { $_->updateStatus() } for @$runs;
+#}
+
+#timethese( 10,
+#	   { test => 'test()', } );
+
+#foreach ( @$runs ) {
+#  eval { $_->updateStatus() };
+#}
+</%perl>
+
+
+<% timethis( 1, sub { eval { $_->updateStatus()} for @$runs; })  %>
+
+<& /Run/list_my.mas, account => $account, runs => $runs &>

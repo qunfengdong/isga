@@ -1,0 +1,7 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Shore Map Flowcell
+Description: 'This component maps the input reads to the reference sequence using the Genome Mapper software.'
+RunBuilderParams:
+  - { NAME: 'maxmismatch', TITLE: 'Maximum Allowed Mismatches', VALUE: '2', REQUIRED: 1, DESCRIPTION: 'The maximum number of allowable mismatches.  Must be a Whole Number greater than or equal to zero.', CONFIGLINE: '___Max_Mismatch___' }
+  -  { NAME: 'maxgaps', TITLE: 'Maximum Allowed Gaps', VALUE: '0', REQUIRED: 1,  DESCRIPTION: 'The maximum number of allowable Gaps.  Must be a Whole Number greater than or equal to zero.  It must also be less than or equal to Maximum Allowed Mismatches.', CONFIGLINE: '___Max_Gap___' }
+  - { NAME: 'referencegenome', TITLE: 'Reference Genome', templ: 'hidden', REQUIRED: 1, DESCRIPTION: 'Reference genome used to find SNPs.', CONFIGLINE: '___reference___' }

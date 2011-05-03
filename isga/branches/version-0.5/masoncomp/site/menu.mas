@@ -1,0 +1,24 @@
+<%args> # -*- cperl -*-
+ $title
+</%args>
+
+<ul>
+<%perl>
+
+if ( exists $title_menus{$title} ) {
+  $m->comp($_) for @{$title_menus{$title}};
+}
+
+</%perl>
+</ul>
+
+<%once>
+my %title_menus = 
+   (
+    Pipeline => [ '/site/menus/pipeline.mas', '/site/menus/my_account.mas' ],
+    Run => ['/site/menus/run.mas', '/site/menus/my_account.mas' ],
+    File => [ '/site/menus/file.mas', '/site/menus/my_account.mas' ],
+    Support => [ '/site/menus/support.mas', '/site/menus/my_account.mas' ],
+    MyAccount => [ '/site/menus/my_account.mas' ],
+   );
+</%once>

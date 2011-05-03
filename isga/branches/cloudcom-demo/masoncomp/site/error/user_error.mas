@@ -1,0 +1,9 @@
+<%args>
+ $error
+</%args>
+
+% warn $error;
+
+<p class="alert"><% $error->user_message %></p>
+
+<p>You have requested an action that is not permitted. If you encountered this error through normal use, please contact us at <% ISGA::SiteConfiguration->value('support_email') %> and include the error message above to report the the problem to us so that we can fix it. If you copied or typed the url by hand, please check to make sure it is correct.</p>

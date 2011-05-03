@@ -1,0 +1,165 @@
+# -*- cperl -*-
+
+use Archive::Tar;
+use File::Basename;
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisPipelineXML();
+
+Returns the path to the Ergatis pipeline.xml file for this run.
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisPipelineXML {
+
+    my $self = shift;
+    return join( '/', $self->getType->getErgatisRuntimeDirectory(), $self->getErgatisKey, 'pipeline.xml');
+  }
+
+#------------------------------------------------------------------------
+
+=item public [RunCluster] getClusters();
+
+Retrieves the RunClusters for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getClusters { ISGA::RunCluster->query( Run => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [RunOutput] getOutput();
+
+Retrieves the RunOutputs for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getOutput { ISGA::RunOutput->query( Run => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public GlobalPipeline getGlobalPipeline
+
+Retrieves the GlobalPipeline for this run.
+
+=cut
+#------------------------------------------------------------------------
+sub getGlobalPipeline {
+
+  my $self = shift;
+  
+  my $pipeline = $self->getType;
+
+  $pipeline->isa( 'ISGA::GlobalPipeline' ) and return $pipeline;
+
+  return $pipeline->getGlobalTemplate();
+}
+
+#------------------------------------------------------------------------
+
+=item public string getWebPluginDirectory();
+
+Returns the directory for storing global-pipeline specific mason components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWebPluginDirectory {
+    return shift->getGlobalPipeline->getWebPluginDirectory;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [RunInput] getInput();
+
+Retrieves the RunInputs for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputs { ISGA::RunInput->query( Run => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [File] getInputFiles();
+
+Retrieves the Files associated as input to this run. This method will
+return the contents of collections rather than the collections
+themselves.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputFiles {
+
+  my $self = shift;
+
+  my @files;
+
+  foreach (@{$self->getInputs}){
+    push @files, @{$_->getFileResource->getContents};
+  }
+
+  return \@files;
+}
+
+#------------------------------------------------------------------------
+
+=item public [string] getInputFileNames();
+
+Retrieves the RunInput FileResource usernames for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputFileNames {
+
+  my $self = shift;
+
+  my @input_names = map { $_->getUserName } @{$self->getInputFiles};
+  return \@input_names;
+}
+
+#------------------------------------------------------------------------
+
+=item public bool isRunning();
+
+Returns true if the pipeline is still running and false if it is
+complete or canceled.
+
+=cut
+#------------------------------------------------------------------------
+sub isRunning {
+
+  my $self = shift;
+  
+  my $status = $self->getStatus;
+  $status eq 'Complete' and return 0;
+  $status eq 'Canceled' and return 0;
+  return 1;
+}
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisURI();
+
+Returns the URI for the Ergatis pipeline corresponding to this run as a string.
+
+=cut
+#------------------------------------------------------------------------
+sub getErgatisURI {
+
+  my $self = shift;
+
+  my $uri = "___ergatis_base_uri___view_pipeline.cgi?instance=";
+  $uri .= join( '/', $self->getType->getErgatisRuntimeDirectory(), $self->getErgatisKey, 'pipeline.xml');
+  
+  return $uri;
+}
+
+#------------------------------------------------------------------------
+
+=item public boolean hasGBrowseData();
+
+Returns true if the pipeline generates data for display in GBrowse
+
+=cut
+#------------------------------------------------------------------------
+  sub hasGBrowseData { return shift->getGlobalPipeline->hasGBrowseData; }

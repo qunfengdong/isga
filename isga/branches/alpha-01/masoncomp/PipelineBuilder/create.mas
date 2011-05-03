@@ -1,0 +1,21 @@
+<%args>
+ $form
+</%args>
+
+<h1>Pipeline Builder</h1>
+
+<p>This tool allows you to customize an existing pipeline to meet your
+specific needs. You can remove unwanted clusters and customize
+cutoffs and other options. You can save your pipeline to run on
+additional data sets, and share both the pipeline and results with
+other users.</p>
+
+<p>You can save your new pipeline at any point in the creation
+process, and return later to complete it. You can also revise the
+pipeline after it has been completed.</p>
+
+<p>Before you customize your pipeline, you must choose a name to
+distinguish your pipeline. You may also provide an optional
+description to explain the reasons behind the customization.</p>
+
+<% $form->get %>

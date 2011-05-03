@@ -1,0 +1,42 @@
+<%args>
+ $tab => undef
+</%args>
+
+<h1>Tutorials</h1>
+
+
+
+% if($tab eq "pipeline") {
+<& pipeline_tutorial.mas &>
+
+% } elsif($tab eq "run") {
+
+<& run_tutorial.mas &>
+
+% } elsif($tab eq "result") {
+
+<& results_tutorial.mas &>
+
+% } elsif($tab eq "account") {
+
+<& account_tutorial.mas &>
+
+% } elsif($tab eq "workbench") {
+
+<& workbench_tutorial.mas &>
+
+% } else {
+
+<p>Welcome to the tutorial homepage.  The following tutorials are currently available:</p>
+<ul>
+ <li class="rmbutton"><a href="/Help/Tutorial?tab=pipeline">Pipeline Tutorial</a></li>
+ <li class="rmbutton"><a href="/Help/Tutorial?tab=run">Run Tutorial</a></li>
+ <li class="rmbutton"><a href="/Help/Tutorial?tab=result">Results Tutorial</a></li>
+%# <li class="rmbutton"><a href="/Help/Tutorial?tab=workbench">ToolBox Tutorial  <span class="red">Not Completed</span></a></li>
+ <li class="rmbutton"><a href="/Help/Tutorial?tab=account">Account Tutorial</a></li>
+</ul>
+
+% }
+
+<& tutorial_right_menu.mas &>
+

@@ -1,0 +1,121 @@
+<%args>
+  $run
+  $embed => 0
+</%args>
+
+<%perl>
+
+my %results = ( Pipeline => {}, Intermediate => {} );
+
+foreach ( @{SysMicro::RunOutput->query( Run => $run)} ) {
+  
+  my $coutput = $_->getClusterOutput;
+  my $visibility = $coutput->getVisibility;
+  my $cluster = $coutput->getComponent->getCluster;
+
+  if ( exists $results{$visibility}{$cluster} ) {
+    push @{$results{$visibility}{$cluster}{Output}}, $_;
+  } else {
+    $results{$visibility}{$cluster} = { Cluster => $cluster, Output => [ $_ ] };
+  }
+}
+
+</%perl>
+
+% my $parent = '';
+
+% if ( $embed ) {
+%  $parent = "run-node-$run";
+ <tr id="<% $parent %>">
+  <td colspan="3">Results for Run <% $run->getName %></td>
+  <td><% $run->getCreatedAt->brief %></td>
+ </tr>
+% } else {
+<sys:script type="text/javascript">
+$(document).ready(function()  {
+  $("#run-results-<% $run %>").treeTable();
+});
+</sys:script>
+<table id="run-results-<% $run %>" width="100%">
+ <thead>
+  <tr><th>Name</th><th>Contents</th><th>Format</th><th>Created At</th></tr>
+ </thead>
+ <tbody>
+% }
+
+% foreach my $class ( 'Pipeline', 'Intermediate' ) {
+%   my @classes = ();
+%   $parent and push @classes, "child-of-$parent";
+%   $class eq 'Pipeline' and push @classes, "expanded";
+
+  <tr id="class-node-<% $class %>" \
+%   if ( @classes ) {
+    class="<% join ' ', @classes %>"\
+%   }
+  >
+   <td colspan="4"><% $class %> Results</td>
+  </tr>
+
+%   foreach my $cluster ( values %{$results{$class}} ) {
+%     my $cluster_node = 'c' . $cluster->{Cluster}->getId . "-node-$run-$class";
+%     my $cname = $cluster->{Cluster}->getName;
+  <tr id="<% $cluster_node %>" class="child-of-class-node-<% $class %> expanded" >
+   <td colspan="4"><% $cluster->{Cluster}->getName %>\
+   <a class="jTip" id="c<% $cluster->{Cluster} %>r<% $run %>" name="<% $cname %>" \
+      href="/Cluster/GetClusterDescription?cluster=<% $cluster->{Cluster} %>">
+   <span class="sup">?</span>
+   </a>
+   </td>
+  </tr>
+
+%     foreach my $run_output ( @{$cluster->{Output}} ) {
+<tr id="out-node-<% $run_output %>" class="child-of-<% $cluster_node %>">
+
+%       my $file = $run_output->getFileResource;
+%       if ( $file ) {
+<td>\
+%         if ( $file->isa('SysMicro::File') ) {
+<a href="/File/View?file=<% $file %>">\
+%         } else {
+<a href="/FileCollection/View?file_collection=<% $file %>">\
+%         }
+<% $file->getUserName %></a></td>
+%       } else {
+<td>Not Available Yet</td>
+%       }
+
+%       my $output = $run_output->getClusterOutput;
+%       my $type = $output->getType;
+
+%       my $tname = $type->getName;
+ <td><% $tname %>\
+  <a class="jTip" id="a<% $type %>r<% $run %>r<% $run_output %>" name="<% $tname %>" \
+   href="/FileType/ViewHelp?file_type=<% $type %>">
+  <span class="sup">?</span>
+ </a>
+ </td>
+
+%       my $format = $output->getFormat;
+%       my $fname = $format->getName;
+ <td><% $fname %>\
+  <a class="jTip" id="b<% $format %>r<% $run %>r<% $run_output %>" name="<% $fname %>" \
+   href="/FileFormat/ViewHelp?file_format=<% $format %>">
+  <span class="sup">?</span>
+ </a>
+ </td>
+ <td>\
+%       if ( $file ) {
+  <% $file->getCreatedAt->brief %>\
+%       }
+ </td>
+</tr>
+%     } 
+%   }
+% }
+
+% # print the table
+
+% if ( ! $embed ) {
+ </tbody>
+</table>
+% }

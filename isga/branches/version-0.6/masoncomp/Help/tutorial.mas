@@ -1,0 +1,31 @@
+<%args>
+ $tab => undef
+</%args>
+
+<h1>Tutorials</h1>
+
+
+
+% if($tab eq "pipeline") {
+<& pipeline_tutorial.mas &>
+
+% } elsif($tab eq "run") {
+
+<& run_tutorial.mas &>
+
+% } elsif($tab eq "result") {
+
+<& results_tutorial.mas &>
+
+% } elsif($tab eq "files") {
+
+<& files_tutorial.mas &>
+
+% } elsif($tab eq "account") {
+
+<& account_tutorial.mas &>
+
+% }
+
+<& tutorial_right_menu.mas &>
+

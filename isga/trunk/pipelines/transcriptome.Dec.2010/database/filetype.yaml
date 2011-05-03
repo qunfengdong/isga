@@ -1,0 +1,25 @@
+---
+- Help: 'The assembled output from an EST sequencing run.'
+  Name: EST Sequencing Output
+- Help: 'The raw data produced by RepeatMasker.  There are several types of output including a fasta file containing the masked sequence and a summary table file.'
+  Name: RepeatMasker Search Result
+- Help: 'This is the raw data produced by BLAST.  This data is both the full output and the btab format as well.  When supplying as an input, both the full and the btab formats are acceptable.'
+  Name: BLAST Search Result
+- Help: 'The raw data produced by MEGAN.'
+  Name: MEGAN Result
+- Help: 'The raw data produced by BLAST2GO.'
+  Name: BLAST2GO Result
+- Help: 'The extracted and translated ORFs in FASTA format.'
+  Name: OrfPredictor Result
+- Help: 'The results produced by Prosite Scan. The main result is the raw result file.  This is described in more detail at ftp://ftp.expasy.org/databases/prosite/tools/ps_scan/README'
+  Name: Prosite Scan Result
+- Help: 'The results produced by SignalP. There are several results from SignalP. The main result is the raw result file. This is accompanied by the visual results for both the Nueral Network and HMM prediction. These outputs are described in full detail at http://www.cbs.dtu.dk/services/SignalP/output.php.'
+  Name: SignalP Result
+- Help: 'This is the raw data produced by OligoPicker.  This is described in detail at http://pga.mgh.harvard.edu/oligopicker/.'
+  Name: OligoPicker Result
+- Help: 'The raw ortholog data produced by the OrthoMCL algorithm.'
+  Name: Classify Orthology Result
+- Help: 'The raw inparalog data produced by the OrthoMCL algorithm.'
+  Name: OrthoMCL Result
+- Help: 'The final summary output of the Transcriptome Analysis Pipeline'
+  Name: Transcriptome Analysis Output

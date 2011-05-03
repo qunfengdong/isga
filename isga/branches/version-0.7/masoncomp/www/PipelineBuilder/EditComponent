@@ -1,0 +1,18 @@
+<%args> #! -*- cperl -*-
+ $pipeline_builder
+ $component
+</%args>
+
+<%perl>
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+
+$form and $form->get_formname() eq 'component_configure'
+  or $form =  SysMicro::FormEngine::PipelineBuilder->EditComponent(\%ARGS);
+
+$pipeline_builder ||= $form->get_input('pipeline_builder');
+
+return $m->comp('/PipelineBuilder/edit_component.mas', pipeline_builder => $pipeline_builder, form => $form);
+</%perl>
+

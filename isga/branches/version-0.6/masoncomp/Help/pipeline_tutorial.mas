@@ -1,0 +1,36 @@
+<h1>Pipeline Tutorial</h1>
+<p class="justify">
+Pipelines are the core of our service.  When you first begin, there is currently only one pipeline 
+to choose from.  The Prokaryote Annotation Pipeline is a pipeline that allows you to provide a 
+FASTA sequence and have ORF predicition and protein annotation assigned to the predicted ORF.  It 
+also will predict rRNA and tRNA sequences as well.
+</p>
+
+<p class="justify">Clicking on "Pipelines" from the navigation menu you will be presented with the screen below.</p>
+
+<img class="tutorial" src="/include/img/tutorial/pipeline_list.png" alt="Pipeline List Page">
+
+<p class="justify">From here you can choose to view the details, run the pipeline, or customize the pipeline.  Choosing 
+<span class="tutorialHighlight">View Details</span> will take you to the overview page for the pipeline.  Here 
+you can see what is being performed, view the required inputs, view what outputs are produced, and see 
+set parameter values for individual components.  Choosing <span class="tutorialHighlight">Run Pipeline will</span> 
+will take you to the beginning of the Run Builder process.  The pipeline will be ran with all default options 
+for components and parameter values.  Choosing <span class="tutorialHighlight">Customize Pipeline</span> will take 
+you to the beginning of the Pipeline Builder process.  It is in this section where you customize your 
+pipeline, choosing which clusters and components to run, but also what values to use for program parameters 
+such as the e-value to use for BLASTP.  If you choose to beging the customization process you will be presented 
+with the following form.</p>
+
+<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_create_form.png" alt="Pipeline List Page">
+
+<p class="justify">In the form you will be required to enter a unique name for your pipeline.  It is also recommended 
+that you enter a description for your pipeline to later help you identify it.</p>
+
+<p class="justify">After entering a name and description you will be taken to the Pipeline Builder Overview page.  
+On the left of the page, you will see an infographic describing which clusters are active for the current 
+pipeline.  A cluster colored green means that the cluster is active and will be run.  A white colored cluster 
+signifies a cluster that has been deactivated and will not be run.  A green-striped cluster signifies a cluster 
+this is only partially active.  Meaning some portions of that cluster are being executed, but other optional portions 
+have been deactivated.  Finally, a cluster that is yellow signifies a cluster that is required and must be run.  These 
+clusters form the core of the pipeline and are necessary to produce meaningful results.  On the right of the page, you 
+will see the Pipeline Builder Toolbar.  The toolbar contains links to all the tools needed to customize a pipeline.</p>

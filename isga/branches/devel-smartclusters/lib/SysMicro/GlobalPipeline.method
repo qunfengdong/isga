@@ -1,0 +1,61 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public void draw();
+
+Assigns colors and draw pipline workflow.
+
+=cut
+#------------------------------------------------------------------------
+  sub draw {
+    
+    my ($self, $clusters, $wf_mask) = @_;
+
+    defined $clusters or $clusters = $self->getClusters;
+    my $workflow = SysMicro::Workflow->query( Pipeline => $self, Cluster => $clusters );
+
+    my $image = GD::Image->new('/data/web/sysmicro.cgb/docs/masoncomp/www' . 
+			       $self->getImage );
+    
+    my $white = $image->colorClosest(255,255,255);
+    my $grey = $image->colorAllocate(227,227,227);
+    my $green = $image->colorAllocate(188,243,103);
+
+    defined $wf_mask or $wf_mask = $self->getWorkflowMask;
+
+    my $disabled_components = $wf_mask->getDisabledComponents;
+    my $disabled = [];
+    while ( my ($key, $value) = each %{$disabled_components} ) {
+      my @components = SysMicro::Component->query( ErgatisName => $key);
+      push(@{$disabled}, $components[0][0]) if $value eq 'disabled';
+    }
+    my %partial_cluster = map { $_->getCluster->getName => $_->getCluster } @{$disabled};
+
+    
+    foreach my $cluster ( @$clusters ) {
+      
+      my $wf = shift @$workflow;
+      
+      my @coords = split ( /,/, $wf->getCoordinates );
+
+      if ( defined $partial_cluster{$cluster->getName} ){
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i+=10 ) {
+          for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+            $image->setPixel($i,$j, $green) if $image->getPixel($i,$j) == $white;
+            $image->setPixel($i+1,$j, $green) if $image->getPixel($i+1,$j) == $white;
+            $image->setPixel($i+2,$j, $green) if $image->getPixel($i+2,$j) == $white;
+            $image->setPixel($i+3,$j, $green) if $image->getPixel($i+3,$j) == $white;
+          }
+        }
+        next;
+      }
+      
+      for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+	for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+	  $image->setPixel($i,$j, $green) if $image->getPixel($i,$j) == $white;
+	}
+      }
+    }
+    
+    print $image->png;
+  }    

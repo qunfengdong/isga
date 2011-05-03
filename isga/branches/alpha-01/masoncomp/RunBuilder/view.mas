@@ -1,0 +1,71 @@
+<%args>
+ $run_builder
+</%args>
+
+<sys:style type="text/css" media="screen"> 
+  @import "/include/css/uni-form.css"; 
+</sys:style>
+
+% my $account = SysMicro::Login->getAccount;
+
+<h1>Run Setup</h1>
+
+<p>Please choose or upload the data files you will submit for this
+pipeline run.</p>
+
+% my @required = @{$run_builder->getRequiredInputs};
+% my @optional = @{$run_builder->getOptionalInputs};
+
+
+<table width="100%">
+<tr>
+ <th>Input</th><th>Format</th><th>File</th></tr>
+% if ( @required ) {
+<tr><th class="subhead" colspan="3">Required</th></tr>
+%   foreach ( @required ) {
+%     my $type = $_->getType;
+%     my $format = $_->getFormat;
+%     my ( $run_builder_input ) = 
+%       @{SysMicro::RunBuilderInput->query( PipelineInput => $_, RunBuilder => $run_builder)};
+%     my $current_file = $run_builder_input && $run_builder_input->getFile || 0;
+ 
+<tr>
+ <td><% $type->getName %></td>
+ <td><% $format->getName %></td>
+ <td>\
+%     my $files = SysMicro::File->query( CreatedBy => $account, Content => $type->getContent, Format => $format );
+%     if ( @$files ) {
+<form action="/submit/RunBuilder/SelectInput" method="post" name="input<% $_ %>">
+<select class="selectInput" name="file" onChange="document.forms['input<% $_ %>'].submit()" \
+    <% @$files ? '' : 'disabled="disabled"' %> >
+<option value="">Select a file or upload a new one</option>
+
+%       foreach ( @$files ) {
+<option value="<% $_ %>" <% $_ == $current_file and 'selected="selected"' %>>\
+<% $_->getUserName %></option>
+%       }
+</select>
+<input type="hidden" name="pipeline_input" value="<% $_ %>">
+<input type="hidden" name="run_builder" value="<% $run_builder %>">
+</form>
+%     } else {
+No compatible files.
+%     }
+ </td>
+</tr>
+%   }
+% }
+
+% if ( @optional ) {
+<tr><th class="subhead" colspan="3">Optional</th></tr>
+%   foreach ( @optional ) {
+<tr>
+ <td><% $_->getType->getName %></td>
+ <td><% $_->getFormat->getName %></td>
+ <td>No Matching Files Available.</td>
+</tr>
+%   }
+% }
+</table>
+
+<& rightmenu.mas, run_builder => $run_builder &>

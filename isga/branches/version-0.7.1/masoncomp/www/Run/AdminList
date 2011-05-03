@@ -1,0 +1,13 @@
+<%perl>
+
+my $runs = SysMicro::Run->query( Status => { '!=' => $canceled } );
+return $m->comp( '/Run/admin_list.mas', runs => $runs );
+
+</%perl>
+
+<%once>
+
+  my $admin = SysMicro::Group->new( Name => 'Run Administrators' );
+  my $canceled = SysMicro::RunStatus->new( Name => 'Canceled' );				   
+
+</%once>

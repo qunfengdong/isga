@@ -1,0 +1,41 @@
+---
+ - Name: 'Transcriptome Analysis'
+   Description: 'The Transcriptome Analysis Pipeline performs annotation analysis of EST sequences.  A BLAST search is performed on a number of databases including NCBIs NR database, NCBIs DBEST, OrthoMCL.  The pipeline performs several other analysis to discover things such as signal peptides, taxanomic information, report GO terms, discover and classify orthologs, etc.  This information is then used to create a final pipeline summary.'
+   Status: Published
+   SubClass: Transcriptome
+   Version: 1
+   Release: 'Jan 2011'
+   Image: '/include/img/transcriptome_analysis.png'
+   Layout: |
+     <commandSetRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="commandSet.xsd" type="instance">
+         <commandSet type="serial">
+             <state>incomplete</state>
+             <name>start</name>
+             <commandSet type="serial">
+                 <state>incomplete</state>
+                  ___Process Input Sequences___
+                  <commandSet type="parallel">
+                      <state>incomplete</state>
+                      ___Repeat Analysis___
+                      <commandSet type="serial">
+                          <state>incomplete</state>
+                          ___Primary Sequence Similarity Analysis___
+                          <commandSet type="parallel">
+                              <state>incomplete</state>
+                              ___Metagenomic Analysis___
+                              ___GO Analysis___
+                              <commandSet type="serial">
+                                  <state>incomplete</state>
+                                  ___ORF Detection___
+                                  ___ORF Analysis___
+                              </commandSet>
+                          </commandSet>
+                      </commandSet>
+                      ___DBEST Sequence Similarity Analysis___
+                      ___Orthology Analysis___
+                      ___Reference Genome Similarity Search___
+                  </commandSet>
+                  ___EST Summary Analysis___
+             </commandSet>
+         </commandSet>
+     </commandSetRoot>

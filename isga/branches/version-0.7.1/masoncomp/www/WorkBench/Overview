@@ -1,0 +1,12 @@
+<p>This comes first</p>
+
+<%perl>
+
+my $name = SysMicro::Login->getAccount->getName;
+
+$m->comp( '/WorkBench/overview.mas', name => $name );
+
+</%perl>
+
+
+<p>This comes last</p>

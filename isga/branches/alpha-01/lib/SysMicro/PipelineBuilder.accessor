@@ -1,0 +1,97 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getWorkflowMask();
+
+Returns the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflowMask {
+    return SysMicro::WorkflowMask->new($_[0]->{pipelinebuilder_workflowmask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getRawWorkflowMask();
+
+Returns the string for the workflow mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawWorkflowMask { return $_[0]->{pipelinebuilder_workflowmask}; }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask {
+    return SysMicro::ParameterMask->new($_[0]->{pipelinebuilder_parametermask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return $_[0]->{pipelinebuilder_parametermask}; }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterInput] getInputs();
+
+Returns the inputs for the pipeline after filtering out those produced
+by other components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getInputs {
+    
+    my $self = shift;
+
+    my %results;
+    my $clusters = SysMicro::WorkflowBuilder->new($self)->getActiveClusters;
+
+    my $inputs = SysMicro::ClusterInput->query( Cluster => $clusters );    
+    $results{ $_->getType } = $_ for @$inputs;
+
+    foreach ( @{SysMicro::ClusterOutput->query( Cluster => $clusters )} ) {
+      exists $results{ $_->getType } and delete $results{ $_->getType };
+    }
+
+    return [values %results];
+  }
+  
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getOutputs();
+
+Returns the output for the pipeline that would result from this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getOutputs {
+
+    my $self = shift;
+
+    my @results;
+
+    my $clusters = SysMicro::WorkflowBuilder->new($self)->getActiveClusters;
+
+    foreach ( @{SysMicro::ClusterOutput->query( Cluster => $clusters )} ) {
+      next unless $_->isPipelineOutput;
+      push @results, $_;
+    }
+
+    return \@results;
+  }
+      

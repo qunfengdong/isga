@@ -1,0 +1,26 @@
+# -*- cperl -*-
+
+use YAML;
+
+#------------------------------------------------------------------------
+
+=item public Form getForm();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getForm {
+    return YAML::Load($_[0]->{configurationvariable_form});
+  }
+
+#------------------------------------------------------------------------
+
+=item public Form getRawForm();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawForm { return $_[0]->{configurationvariable_form}; }

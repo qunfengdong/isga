@@ -1,0 +1,6 @@
+
+<%perl>
+my $user_class = ISGA::UserClass->query();
+</%perl>
+
+<& /UserClass/list.mas, user_class => $user_class &>

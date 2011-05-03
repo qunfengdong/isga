@@ -1,0 +1,61 @@
+---
+- Extension: fsa
+  Help: 'A text-based format for representing either nucleic acid sequences or peptide sequences, in which base pairs or amino acids are represented using single-letter codes. The format also allows for sequence names and comments to precede the sequences. http://www.ncbi.nlm.nih.gov/blast/fasta.shtml'
+  IsBinary: 0
+  Name: FASTA
+- Extension: xxx
+  Help: 'A table annotating the masked sequences as well as a table summarizing the repeat content of the query sequence will be returned to your screen.'
+  IsBinary: 0
+  Name: RepeatMasker Raw Results
+- Extension: xxx
+  Help: 'The report consists of three major sections: (1) the header, which contains information about the query sequence, the database searched. On the Web, there is also a graphical overview; (2) the one-line descriptions of each database sequence found to match the query sequence; these provide a quick overview for browsing; (3) the alignments for each database sequence matched (there may be more than one alignment for a database sequence it matches).  http://www.ncbi.nlm.nih.gov/books/bv.fcgi?rid=handbook.section.615'
+  IsBinary: 0
+  Name: BLAST Raw Results
+- Extension: png
+  Help: 'Portable Network Graphics (PNG) is a bitmapped image format that employs lossless data compression'
+  IsBinary: 1
+  Name: PNG
+- Extension: annot
+  Help: 'The default output format for BLAST2GO.  Annotations are provided in a three-column fashion. The first column contains the sequence name, the second the annotation code and the third the sequence description. When multiple annotations for the same sequence are available, these come in subsequent rows.'
+  IsBinary: 0
+  Name: BLAST2GO Raw Result
+- Extension: res
+  Help: 'The output of ORFPredictor.  The file is a fasta file containing the translated ORFs predicted.  The frame and coordinates are provided in the header as well.'
+  IsBinary: 0
+  Name: OrfPredictor Raw Result
+- Extension: xxx
+  Help: 'The default output for Prosite Scan.  The header contains the sequenced header for the protein scanned against prosite as well as the matching Prosite information (ID, etc.)  Below the header will be the start position, end position, and matching pattern from the scan.'
+  IsBinary: 0
+  Name: Prosite Scan Raw Result
+- Extension: gnu
+  Help: This is a script that can be run in gnuplot to reproduce the output image.  Modification of this script will allow you to reformat your image to your liking or perhaps output it to a different image type.
+  IsBinary: 0
+  Name: GNUPlot Commands Script
+- Extension: eps
+  Help: 'This is the Encapsulated PostScript format. A PostScript document with additional restrictions intended to make EPS files usable as a graphics file format. In other words, EPS files are more-or-less self-contained, reasonably predictable PostScript documents that describe an image or drawing, that can be placed within another PostScript document.'
+  IsBinary: 0
+  Name: EPS
+- Extension: gif
+  Help: The Graphics Interchange Format (GIF) is a bitmap image format that was introduced by CompuServe in 1987 and has since come into widespread usage on the World Wide Web due to its wide support and portability.
+  IsBinary: 0
+  Name: GIF
+- Extension: xxx
+  Help: "The graphical output from SignalP (neural network) comprises three different scores, C, S and Y. Two additional scores are reported in the SignalP3-NN output, namely the S-mean and the D-score, but these are only reported as numerical values. For each organism class in SignalP; Eukaryote, Gram-negative and Gram-positive, two different neural networks are used, one for predicting the actual signal peptide and one for predicting the position of the signal peptidase I (SPase I) cleavage site. The S-score for the signal peptide prediction is reported for every single amino acid position in the submitted sequence, with high scores indicating that the corresponding amino acid is part of a signal peptide, and low scores indicating that the amino acid is part of a mature protein. The C-score is the ``cleavage site' score. For each position in the submitted sequence, a C-score is reported, which should only be significantly high at the cleavage site. Confusion is often seen with the position numbering of the cleavage site. When a cleavage site position is referred to by a single number, the number indicates the first residue in the mature protein, meaning that a reported cleavage site between amino acid 26-27 corresponds to that the mature protein starts at (and include) position 27. Y-max is a derivative of the C-score combined with the S-score resulting in a better cleavage site prediction than the raw C-score alone. This is due to the fact that multiple high-peaking C-scores can be found in one sequence, where only one is the true cleavage site. The cleavage site is assigned from the Y-score where the slope of the S-score is steep and a significant C-score is found. The S-mean is the average of the S-score, ranging from the N-terminal amino acid to the amino acid assigned with the highest Y-max score, thus the S-mean score is calculated for the length of the predicted signal peptide. The S-mean score was in SignalP version 2.0 used as the criteria for discrimination of secretory and non-secretory proteins. The D-score is introduced in SignalP version 3.0 and is a simple average of the S-mean and Y-max score. The score shows superior discrimination performance of secretory and non-secretory proteins to that of the S-mean score which was used in SignalP version 1 and 2. For non-secretory proteins all the scores represented in the SignalP3-NN output should ideally be very low. The hidden Markov model calculates the probability of whether the submitted sequence contains a signal peptide or not. The eukaryotic HMM model also reports the probability of a signal anchor, previously named uncleaved signal peptides. Furthermore, the cleavage site is assigned by a probability score together with scores for the n-region, h-region, and c-region of the signal peptide, if such one is found."
+  IsBinary: 0
+  Name: SignalP Raw Result
+- Extension: xls
+  Help: 'The OligoPicker output file contains the following information:<br><br>   1. The sequence definitions from the input FASTA file.<br>   2. Total sequence lengths.<br>   3. The probe sequences.<br>   4. The probe Tm values in 1M NaCl.<br>   5. The probe positions in the DNA sequences.<br>   6. Probe Blast scores (no entry means the score is too low to be recorded).<br>   7. Cross-reactivity screening stringencies. For example, "16-32.5" means the threshold values are 16-mer for contiguous match filter and 32.5 for Blast filter.'
+  IsBinary: 0
+  Name: OligoPicker Raw Result
+- Extension: xxx
+  Help: 'A tab-delimited file summarizing the ortholg results from the OrthoMCL database.  There are columns for Seq_ID, OG_ID, Desc, Subject, Identity, Length, E-value, and Score.'
+  IsBinary: 0
+  Name: Classify Orthology Raw Results
+- Extension: xxx
+  Help: 'A tab-delimited file listing the potential inparalogs along with their scores'
+  IsBinary: 0
+  Name: OrthoMCL Raw Results
+- Extension: xxx
+  Help: 'The final output of the transcriptome pipeline.  It contains a summary of the analysis in tab-delimited format.  There are columns for ID, GOID, PID, P_desc, e-value, Paralog, Start-End:FrameFS, DomainID:desc, length, OG_ID, and E-value Score'
+  IsBinary: 0
+  Name: Transcriptome_Summary

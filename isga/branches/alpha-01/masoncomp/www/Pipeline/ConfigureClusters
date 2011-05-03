@@ -1,0 +1,14 @@
+<%args>
+ $pipeline
+</%args>
+
+<%perl>
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+
+$form and $form->get_formname() eq 'pipeline_configure_clusters'
+  or $form =  SysMicro::FormEngine::Pipeline->ConfigureClusters(\%ARGS);
+
+return $m->comp('/Pipeline/configure_clusters.mas', pipeline => $pipeline, form => $form);
+</%perl>

@@ -1,0 +1,7 @@
+<%args> # -*- cperl -*-
+ $run_builder
+</%args>
+
+<& /RunBuilder/view_inputs.mas, run_builder => $run_builder &>
+
+<& /RunBuilder/right_menu.mas, run_builder => $run_builder &>

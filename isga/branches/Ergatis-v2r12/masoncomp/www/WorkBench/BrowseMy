@@ -1,0 +1,15 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+
+my %args = ( CreatedBy => $account, OrderBy => 'CreatedAt' );
+
+
+
+my $jobs = ISGA::Job->query( %args );
+</%perl>
+
+<& /WorkBench/browse_my.mas, jobs => $jobs &>

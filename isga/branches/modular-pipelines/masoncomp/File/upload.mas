@@ -1,0 +1,9 @@
+<%args>
+ $form
+</%args>
+
+
+<h1>File Upload</h1>
+
+
+<% $form->get %>

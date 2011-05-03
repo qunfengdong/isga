@@ -1,0 +1,13 @@
+<%args>
+ $pipeline
+</%args>
+
+<h1><% $pipeline->getName %> Was Created</h1>
+
+<p>Your new pipeline was created and saved to our database. You can
+view it at any time by selecting 'View Pipelines' from the Pipelines
+menu in the navigation bar. From the pipeline view page, you may run
+the pipeline or choose to make further customizations.</p>
+
+<a class="button" href="/Pipeline/View?pipeline=<% $pipeline %>">View My Pipeline</a>
+

@@ -1,0 +1,3 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Shore Merge
+Description: 'This component merges the mapped information across lanes.'

@@ -1,0 +1,105 @@
+# -*- cperl -*-
+use List::Util qw(min);
+
+
+#------------------------------------------------------------------------
+
+=item public string getResidues();
+
+Retrieves the sequence for a gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getResidues {
+
+    my $self = shift;
+
+    my $start = $self->getStart;
+    my $end = $self->getEnd;
+
+    my $seq = substr $self->getContig->getSequence->getResidues, ($start -1), ($end - $start + 1);
+
+    if ( $self->getStrand() eq '-' ) {
+
+      my $obj = Bio::Seq->new( -seq => $seq );
+      return $obj->revcom->seq;
+    }
+
+    return $seq;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getUpstream(int length);
+
+Retrieves the specified length of upstream sequence for the gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getUpstream {
+
+    my ($self, $length) = @_;
+
+    $length =~ /^\d+$/ or X::API->throw( message => 'Length argument must be an integer' );
+
+    my $strand = $self->getStrand() eq '+';
+    my $contig = $self->getContig;
+    my $residues = $contig->getResidues;
+
+    # on positive strand
+    if ( $strand ) {
+
+      my $start = $self->getStart;
+      
+      # we can't start any earlier than position 1
+      $length >= $start and $length = $start - 1;
+
+      return substr($residues, ( $start - $length - 1 ), $length);
+    }
+ 
+    my $stop = $self->getEnd;
+
+    # otherwise we have a gene on the negative strand
+    $length = min( $length, ($contig->getEnd - $stop) );
+    
+    my $obj = Bio::Seq->new( -seq => substr($residues, $stop, $length) );
+    return $obj->revcom->seq;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getDownstream(int length);
+
+Retrieves the specified length of downstream sequence for the gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getDownstream {
+
+    my ($self, $length) = @_;
+
+    $length =~ /^\d+$/ or X::API->throw( message => 'Length argument must be an integer' );
+
+    my $strand = $self->getStrand() eq '+';
+    my $contig = $self->getContig;
+    my $residues = $contig->getResidues;
+
+    # on positive strand
+    if ( $strand ) {
+
+      my $stop = $self->getEnd;
+      
+      # otherwise we have a gene on the negative strand
+      $length = min( $length, ($contig->getEnd - $stop) );
+      
+      return substr($residues, $stop, $length);
+    }
+
+    my $start = $self->getStart;
+    
+    # we can't start any earlier than position 1
+    $length >= $start and $length = $start - 1;
+ 
+    my $obj = Bio::Seq->new( -seq => substr($residues, ( $start - $length - 1 ), $length) );
+    return $obj->revcom->seq;
+  }

@@ -1,0 +1,14 @@
+#! -*- cperl -*- 
+
+#------------------------------------------------------------------------
+
+=item public [Parties] getParties();
+
+Returns all of the parties this party is a member of. Default
+information returns only the current party.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParties {
+    return [shift];
+  }

@@ -1,0 +1,74 @@
+<%args>
+ $pipeline
+ $builder
+ $cluster
+ $hide_unset
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<h1><% $cluster->getName %> Parameters</h1>
+
+% if ( $hide_unset ) {
+
+<p>Displaying only parameters that are being used.</p>
+
+<p><a class="button" href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&cluster=<% $cluster %>&hide_unset=0">Show all parameters</a></p>
+% } else {
+
+<p>Displaying all parameters.</p>
+
+<p><a class="button" href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&cluster=<% $cluster %>&hide_unset=1">Hide unused parameters</a></p>
+% }
+
+<table width="100%">
+ <tr>
+  <th>Parameter</th>
+  <th>Value</th>
+  <th>Annotation</th>
+ </tr>
+
+% foreach my $component ( @{$builder->getComponents} ) {
+
+%   my $counter = 0;
+
+ <tr class="list_label">
+  <td colspan="3"><% $component->getName %></td>
+ </tr>
+
+%   foreach ( @{$component->getRequiredParameters} ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+<tr class="<% $tr_class %>">
+ <td><% $_->{TITLE} %>\
+  <a class="jTip" id="a<% $_ %><% $counter %>" name="<% $_->{TITLE} %>" \
+   href="<% $_->{TIP} %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </td>
+ <td><% $_->{VALUE} %></td>
+ <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : '' %></td>
+</tr>
+%   }
+
+%   my $optional = 
+%    $hide_unset ? $component->getSetOptionalParameters : $component->getOptionalParameters;
+%   foreach ( @{$optional} ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+<tr class="<% $tr_class %>">
+  <td><% $_->{TITLE} %>
+  <a class="jTip" id="a<% $_ %><% $counter %>" name="<% $_->{TITLE} %>" \
+   href="<% $_->{TIP} %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </td>
+  <td><% exists $_->{VALUE} ? $_->{VALUE} : '' %></td>
+  <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : '' %></td>
+</tr>
+
+%   }
+% }
+ 
+</table>
+
+<& rightmenu.mas, pipeline => $pipeline &>

@@ -1,0 +1,11 @@
+<%args>
+ $pipeline_builder
+ $form
+</%args>
+
+<h1>Pipeline Customization: Edit Details</h1>
+
+<% $form->get %>
+
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

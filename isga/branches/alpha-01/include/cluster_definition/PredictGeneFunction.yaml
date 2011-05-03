@@ -1,0 +1,9 @@
+--- !perl/SysMicro::ClusterBuilder
+Cluster: Predict Gene Function
+Description: 'The Predict Gene Function cluster assigns annotation information to a gene using data produced by the Gene Function Prediction algorithm.  Data from BLAST, HMMPFAM, tRNA-scan, SignalP and several other programs are used to assign annotation.  The output of this cluster is a summary file in NCBI tbl format.'
+NoParamsFlag: 1
+Components:
+  - name: predict_prokaryotic_gene_function.default
+  - name: pipeline_summary.default
+  - name: bsml2tbl.default
+

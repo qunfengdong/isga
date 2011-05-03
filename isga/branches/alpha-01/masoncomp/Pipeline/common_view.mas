@@ -1,0 +1,13 @@
+<%args>
+ $pipeline
+</%args>
+
+% if ( SysMicro::Login->exists ) {
+
+<a class="button" href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>">Run this Pipeline</a>
+
+<a class="button" href="/PipelineBuilder/Start?pipeline=<% $pipeline %>">Customize this Pipeline</a>
+
+% } else {
+<p><a class="button" href="">Login</a> or <a href="/Account/Create">create an account</a> to run pipelines.</p>
+% }

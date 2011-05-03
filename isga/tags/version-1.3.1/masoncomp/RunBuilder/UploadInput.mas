@@ -1,0 +1,18 @@
+<%args>
+ $run_builder
+ $form
+</%args>
+
+<h2>File Upload</h2>
+
+<script src="/CustomUploadProgress/progress.js"></script>
+<script src="/CustomUploadProgress/progress.jmpl.js"></script>
+
+<sys:style type="text/css" media="screen">
+ @import "/CustomUploadProgress/progress.css";
+</sys:style>
+
+<div id="progress"></div>
+
+<% $form->get %>
+

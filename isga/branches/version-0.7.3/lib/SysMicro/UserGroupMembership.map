@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: usergroupmembership
+attributes:
+  - { name: UserGroup, column: usergroup_id, type: UserGroup }
+  - { name: Account, column: account_id, type: Account }

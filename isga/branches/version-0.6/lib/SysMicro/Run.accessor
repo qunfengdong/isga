@@ -1,0 +1,45 @@
+# -*- cperl -*-
+
+use Archive::Tar;
+use File::Basename;
+
+#------------------------------------------------------------------------
+
+=item public [RunCluster] getClusters();
+
+Retrieves the RunClusters for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getClusters { SysMicro::RunCluster->query( Run => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [RunOutput] getOutput();
+
+Retrieves the RunOutputs for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getOutput { SysMicro::RunOutput->query( Run => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [RunInput] getInputFileNames();
+
+Retrieves the RunInput FileResource usernames for this Run.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputFileNames {
+  my ($self) = @_;
+  my @input_names;
+  my $inputs = SysMicro::RunInput->query( Run => $self );
+  foreach (@{$inputs}){
+    foreach (@{$_->getFileResource->getContents}){
+      push(@input_names, $_->getUserName);
+    }
+  }
+  return \@input_names;
+}
+

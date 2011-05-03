@@ -1,0 +1,246 @@
+---
+- ErgatisName: signalp.default
+  Name: SignalP
+  Cluster: 'Additional Gene Analysis'
+  Index: 10
+- ErgatisName: tmhmm.default
+  Name: TMhmm
+  Cluster: 'Additional Gene Analysis'
+  Index: 20
+- ErgatisName: parse_evidence.tmhmm
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: tmhmm.default
+  Index: 30
+- ErgatisName: ps_scan.default
+  Name: Prosite Scan
+  Cluster: 'Additional Gene Analysis'
+  Index: 40
+- ErgatisName: transterm.default
+  Name: TransTerm
+  Cluster: 'Additional Gene Analysis'
+  Index: 50
+- ErgatisName: lipop.default
+  Name: 'Lipoprotein Motif Discovery'
+  Cluster: 'Additional Gene Analysis'
+  Index: 60
+- ErgatisName: parse_evidence.lipoprotein
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: lipop.default
+  Index: 70
+- ErgatisName: rpsblast.priam
+  Name: 'Priam rpsblast'
+  Cluster: 'Additional Gene Analysis'
+  Index: 80
+- ErgatisName: priam_ec_assignment.default
+  Name: 'Priam EC Assignment'
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: rpsblast.priam
+  Index: 90
+- ErgatisName: parse_evidence.priam_ec
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: rpsblast.priam
+  Index: 100
+- ErgatisName: wu-blastp.COGS
+  Name: 'BLASTP vs COG'
+  Cluster: 'Additional Gene Analysis'
+  Index: 110
+- ErgatisName: oligopicker.default
+  Cluster: 'Additional Gene Analysis'
+  Index: 130
+- ErgatisName: bsml2fasta.oligopicker
+  Name: 'BSML2Fasta for OligoPicker'
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: oligopicker.default
+  Index: 120
+- ErgatisName: ncbi-blastx.blast_interevidence_regions
+  Name: 'NCBI BLASTX Interevidence Regions'
+  Cluster: 'Additional Gene Analysis'
+  Index: 140
+- ErgatisName: bsml2interevidence_fasta.default
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: ncbi-blastx.blast_interevidence_regions
+  Index: 150
+- ErgatisName: split_multifasta.split_interevidence_regions
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: ncbi-blastx.blast_interevidence_regions
+  Index: 160
+- ErgatisName: asgard_simple.default
+  Name: Asgard
+  Cluster: 'Additional Gene Analysis'
+  Index: 170
+- ErgatisName: join_multifasta.asgard
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: asgard_simple.default
+  Index: 180
+- ErgatisName: ncbi-blastp.asgard
+  Name: 'BLASTP for Asgard'
+  Cluster: 'Additional Gene Analysis'
+  DependsOn: asgard_simple.default
+  Index: 190
+- ErgatisName: geneprediction2bsml.default
+  Cluster: 'Alternate Gene Prediction'
+  Index: 10
+- ErgatisName: overlap_analysis.default
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 10
+- ErgatisName: start_site_curation.default
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 20
+- ErgatisName: parse_evidence.hypothetical
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 30
+- ErgatisName: translate_sequence.translate_new_models
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 40
+- ErgatisName: hmmpfam.post_overlap_analysis
+  Name: 'HMMPfam Alternate Start Site Analysis'
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: hmmpfam.pre_overlap_analysis
+  Index: 50
+- ErgatisName: parse_evidence.hmmpfam_post
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: hmmpfam.pre_overlap_analysis
+  Index: 60
+- ErgatisName: wu-blastp.post_overlap_analysis
+  Name: 'BLASTP Alternate Start Site Analysis'
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 70
+- ErgatisName: bsml2fasta.post_overlap_analysis
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: wu-blastp.pre_overlap_analysis
+  Index: 80
+- ErgatisName: xdformat.post_overlap_analysis
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: wu-blastp.pre_overlap_analysis
+  Index: 90
+- ErgatisName: bsml2featurerelationships.post_overlap_analysis
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: wu-blastp.pre_overlap_analysis
+  Index: 100
+- ErgatisName: ber.post_overlap_analysis
+  Name: 'BER Alternate Start Site Analysis'
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: wu-blastp.pre_overlap_analysis
+  Index: 110
+- ErgatisName: parse_evidence.ber_post
+  Cluster: 'Alternative Start Site Analysis'
+  DependsOn: wu-blastp.pre_overlap_analysis
+  Index: 120
+- ErgatisName: translate_sequence.final_polypeptides
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 130
+- ErgatisName: bsml2fasta.final_cds
+  Cluster: 'Alternative Start Site Analysis'
+  Index: 140
+- ErgatisName: glimmer3.iter1
+  Name: 'Glimmer3 First Pass'
+  Cluster: 'ORF Prediction'
+  Index: 10
+- ErgatisName: train_fo_glimmer3_iteration.train_for_glimmer
+  Cluster: 'ORF Prediction'
+  Index: 20
+- ErgatisName: glimmer3.iter2
+  Name: 'Glimmer3 Refinement Pass'
+  Cluster: 'ORF Prediction'
+  Index: 30
+- ErgatisName: parse_evidence.hmmpfam_pre
+  Cluster: Output
+  DependsOn: hmmpfam.pre_overlap_analysis
+  Index: 10
+- ErgatisName: parse_evidence.ber_pre 
+  Cluster: Output
+  DependsOn: wu-blastp.pre_overlap_analysis
+  Index: 20
+- ErgatisName: p_func.default
+  Cluster: Output
+  Index: 30
+- ErgatisName: pipeline_summary.default
+  Cluster: Output
+  Index: 40
+- ErgatisName: cgb_bsml2tbl.default
+  Cluster: Output
+  Index: 50
+- ErgatisName: tbl2asn.default
+  Cluster: Output
+  Index: 60
+- ErgatisName: bsml2gff3.default
+  Cluster: Output
+  Index: 70
+- ErgatisName: bsml2fasta.workbench
+  Cluster: Output
+  Index: 80
+- ErgatisName: formatdb.workbench_nuc
+  Cluster: Output
+  Index: 90
+- ErgatisName: translate_sequence.workbench
+  Cluster: Output
+  Index: 100
+- ErgatisName: join_multifasta.workbench
+  Cluster: Output
+  Index: 110
+- ErgatisName: formatdb.workbench_prot 
+  Cluster: Output
+  Index: 120
+- ErgatisName: cgb_format.workbench_nuc
+  Cluster: Output
+  Index: 130
+- ErgatisName: cgb_format.workbench_prot
+  Cluster: Output
+  Index: 140
+- ErgatisName: split_multifasta.default
+  Cluster: 'Process Annotation Input Files'
+  Index: 10
+- ErgatisName: translate_sequence.translate_prediction
+  Cluster: 'Process Gene Prediction'
+  Index: 10
+- ErgatisName: bsml2fasta.prediction_CDS
+  Cluster: 'Process Gene Prediction'
+  Index: 20
+- ErgatisName: promote_gene_prediction.promote_prediction
+  Cluster: 'Process Gene Prediction'
+  Index: 30
+- ErgatisName: translate_sequence.translate
+  Cluster: 'Process Gene Prediction'
+  Index: 40
+- ErgatisName: join_multifasta.gene_predict_translated
+  Cluster: 'Process Gene Prediction'
+  Index: 50
+- ErgatisName: hmmpfam.pre_overlap_analysis
+  Name: 'HMMPfam Analysis'
+  Cluster: 'Protein Domain Search'
+  Index: 10
+- ErgatisName: RNAmmer.default
+  Name: 'RNAmmer'
+  Cluster:  'RNA Prediction'
+  Index: 10
+- ErgatisName: tRNAscan-SE.find_tRNA
+  Name: 'tRNAscan-SE'
+  Cluster:  'RNA Prediction'
+  Index: 20
+- ErgatisName: bsml2featurerelationships.pre_overlap_analysi
+  Cluster: 'Sequence Similarity Search'
+  Index: 10
+- ErgatisName: wu-blastp.pre_overlap_analysis
+  Name: 'BLASTP Analysis'
+  Cluster: 'Sequence Similarity Search'
+  Index: 20
+- ErgatisName: bsml2fasta.pre_overlap_analysis
+  Cluster: 'Sequence Similarity Search'
+  Index: 30
+- ErgatisName: xdformat.pre_overlap_analysis
+  Cluster: 'Sequence Similarity Search'
+  Index: 40
+- ErgatisName: ber.pre_overlap_analysis
+  Name: 'BER Analysis'
+  Cluster: 'Sequence Similarity Search' 
+  Index: 50
+- ErgatisName: bsml2promoterregion.default
+  Name: 'Extract Promoters for TFBS Search'
+  Cluster: 'TFBS Search'
+  Index: 10
+- ErgatisName: mast.default
+  Cluster: 'TFBS Search'
+  Index: 20
+#SELECT a.component_name, a.component_ergatisname, b.cluster_name, d.component_ergatisname AS component_dependson, e.component_ergatisname AS component_copyparametermask
+#FROM component a NATURAL JOIN cluster b LEFT JOIN component d ON ( a.component_dependson = d.component_id )
+#     LEFT JOIN component e ON ( a.component_copyparametermask = e.component_id) ORDER BY b.cluster_name, a.component_index;

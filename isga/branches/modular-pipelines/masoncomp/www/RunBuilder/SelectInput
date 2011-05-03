@@ -1,0 +1,14 @@
+<%args> # -*- cperl -*-
+ $run_builder
+</%args>
+
+<%perl> 
+
+# check that we have the correct form cached
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'run_builder_select_input'
+  or $form = ISGA::FormEngine::RunBuilder->SelectInput(\%ARGS);
+
+return $m->comp('/RunBuilder/select_input.mas', 
+		run_builder => $run_builder, form => $form);
+</%perl>

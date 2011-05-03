@@ -1,0 +1,8 @@
+%# -*- cperl -*-
+<%args>
+ $pipeline
+</%args>
+<%perl>
+
+$m->print( $pipeline->draw() );
+</%perl>

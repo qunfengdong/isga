@@ -1,0 +1,117 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getDependency();
+
+Returns the input dependency for this input
+
+=cut
+#------------------------------------------------------------------------
+  sub getDependency { return shift->getClusterInput->getDependency(); }
+
+#------------------------------------------------------------------------
+
+=item public FileType getType();
+
+Returns the file type for this input.
+
+=cut
+#------------------------------------------------------------------------
+  sub getType { return shift->getClusterInput->getType(); }
+
+#------------------------------------------------------------------------
+
+=item public FileFormat getFormat();
+
+Returns the file type for this input.
+
+=cut
+#------------------------------------------------------------------------
+  sub getFormat { return shift->getClusterInput->getFormat(); }
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisFormat();
+
+Returns the Ergatis format for this input
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisFormat { return shift->getClusterInput->getErgatisFormat(); }
+
+#------------------------------------------------------------------------
+
+=item public boolean isIterator.
+
+Returns true if this is an iterator input.
+
+=cut
+#------------------------------------------------------------------------
+  sub isIterator { return shift->getClusterInput->isIterator(); }
+
+#------------------------------------------------------------------------
+
+=item public boolean hasParameters.
+
+Returns true if this is an iterator input.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasParameters { return shift->getClusterInput->hasParameters(); }
+
+
+#------------------------------------------------------------------------
+
+=item public HashRef getForm();
+
+Returns the form for the RunBuilderInput.
+
+=cut
+#------------------------------------------------------------------------
+  sub getForm {
+
+    my $self = shift;
+    
+    my $params = $self->getParameters();
+
+    return  { templ => 'fieldset',
+	      'sub' => $params,
+	    };
+      
+
+  }   
+
+#------------------------------------------------------------------------
+
+=item public [Component] getComponents();
+
+If the component has parameters, returns an array of components this
+pipeline input is used in. Otherwise returns an empty list.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponents {
+
+    my $self = shift;
+
+    exists $self->{cache}{components} or $self->_calculateParameters();
+
+    return $self->{cache}{components};
+  }
+
+#------------------------------------------------------------------------
+
+=item public [parameter] getParameters();
+
+Returns an array of paremeter hashes for this pipeline input.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameters {
+
+    my $self = shift;
+
+    exists $self->{cache}{parameters} or $self->_calculateParameters();
+    return $self->{cache}{parameters};
+  }

@@ -1,0 +1,29 @@
+<%args>
+ $components
+ $pipeline
+</%args>
+
+%my $noParams;
+%foreach ( @{$components}){
+%  if ( SysMicro::ComponentBuilder->new($_) ){
+%    if ( SysMicro::ComponentBuilder->new($_)->{PipelineBuilder} ){
+%      my $builder = SysMicro::ComponentBuilder->new($_);
+<p><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>"><% $_->getName %></a><br>
+<% $builder->getComponentDescription  %>
+</p>
+%    } else {
+%      push(@{$noParams}, $_);
+%    }
+%  }
+%}
+
+%foreach ( @{$noParams}){
+%  my $builder = SysMicro::ComponentBuilder->new($_);
+<p><% $_->getName %><br>
+<em class="red">Has no parameters to be set.</em><br>
+<% $builder->getComponentDescription  %>
+</p>
+
+%}
+
+<& right_menu.mas, pipeline => $pipeline &>

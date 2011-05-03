@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: pipelineaccess
+attributes:
+  - { name: Party, type: Party, plural: Parties }
+  - { name: Pipeline, type: Pipeline }

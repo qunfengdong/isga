@@ -1,0 +1,6 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Shore Consensus
+Description: 'This component is responsible for making SNP calls.'
+RunBuilderParams:
+  - { NAME: 'sample_id', TITLE: 'Sample ID', REQUIRED: 1, VALUE: 'Sample', DESCRIPTION: 'Name of any species, strain, accession, project or any other ID', CONFIGLINE: '___ID___' }
+  - { NAME: 'referencegenome', TITLE: 'Reference Genome', templ: 'select', REQUIRED: 1,  OPTION: ['Arabidopsis thaliana', 'Caenorhabditis elegans'], OPT_VAL: ['/research/projects/isga/sw/db/Shore_Pre/arab9/arab9.fa.shore', '/research/projects/isga/sw/db/celegans/cel190.fa.shore'], DESCRIPTION: 'Reference genome used to find SNPs.', CONFIGLINE: '___reference___' }

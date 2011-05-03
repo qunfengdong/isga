@@ -1,0 +1,9 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Transterm
+Description: '<a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/17313685">Transterm</a> finds rho-independent transcription terminators in bacterial genomes. Each terminator found by the program is assigned a confidence value that estimates its probability of being a true terminator.'
+Params:
+  - { NAME: 'min_stem', TITLE: 'Min. Stem Length', ERROR: ['digitonly'], DESCRIPTION: 'Stem must be n nucleotides long.', CONFIGLINE: '___OPTS___', FLAG: '--min-stem=' }
+  - { NAME: 'min_loop', TITLE: 'Min. Loop Length', ERROR: ['digitonly'], DESCRIPTION: 'Loop portion of the hairpin must be at least n nucleotides long.', CONFIGLINE: '___OPTS___', FLAG: '--min-loop=' }
+  - { NAME: 'max_len', TITLE: 'Max. Hairpin Length', ERROR: ['digitonly'], DESCRIPTION: 'Total length of the hairpin is less-than-or-equal-to n nucleotides long', CONFIGLINE: '___OPTS___', FLAG: '--max-len=' }
+  - { NAME: 'max_loop', TITLE: 'Max. Loop Length', ERROR: ['digitonly'], DESCRIPTION: 'The loop portion can be no longer than n nucleotides', CONFIGLINE: '___OPTS___', FLAG: '--max-loop=' }
+

@@ -1,0 +1,175 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public [PipelineInput] getRequiredInputs();
+
+Returns an reference to an array of pipeline inputs required by this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getRequiredInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{required};
+}
+
+#------------------------------------------------------------------------
+
+=item public [PipelineInput] getOptionalInputs();
+
+Returns an reference to an array of pipeline inputs required by this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getOptionalInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{optional};
+}
+
+#------------------------------------------------------------------------
+
+=item public FileResource getFileResource(PipelineInput $input);
+
+Returns the file associated with the specified PipelineInput, or undef
+if no file is associated.
+
+=cut 
+#------------------------------------------------------------------------
+sub getFileResource {
+
+  my ($self, $input) = @_;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{file_map}{$input};
+}
+
+#------------------------------------------------------------------------
+
+=item public FileResource int getMissingRequiredInputs();
+
+Returns the number of required inputs that have not been specified for
+this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getMissingRequiredInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{missing};
+}
+
+#------------------------------------------------------------------------
+
+=item public [RunBuilderInput] getInputs();
+
+Retrieves the inputs for the Run Builder.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputs { return ISGA::RunBuilderInput->query( RunBuilder => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask {
+    return ISGA::ParameterMask->new($_[0]->{runbuilder_parametermask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return $_[0]->{runbuilder_parametermask}; }
+
+#------------------------------------------------------------------------
+
+=item public bool hasUnconfiguredParameters();
+
+Returns true if the RunBuilder has any parameters that still need to
+be configured.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasUnconfiguredParameters {
+
+    my $self = shift;
+
+    my $pipeline = $self->getPipeline;
+    my $components = $pipeline->getComponents;
+    my $parameter_mask = $self->getParameterMask;   
+   
+    for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
+
+      my $run_builder_form = 
+	$pipeline->getComponentBuilder($_, $parameter_mask)->getRunBuilderForm;
+      
+      foreach ( @{$run_builder_form->{sub}} ) {
+
+	exists $_->{VALUE} or return 1;
+      }
+    }
+    
+    return 0;
+  }
+
+#------------------------------------------------------------------------
+
+=item public ArrayRef getParameterDetails();
+
+Returns [string $clustername, string $parametername, string $value]
+for each runbuilder parameter.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterDetails {
+
+    my $self = shift;
+
+    my $pipeline = $self->getPipeline;
+    my $components = $pipeline->getComponents;
+    my $parameter_mask = $self->getParameterMask;
+
+    my @params;
+
+    for my $component ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
+
+      my $cluster_name = $component->getCluster->getName;      
+
+      my $run_builder_form = 
+	$pipeline->getComponentBuilder($component, $parameter_mask)->getRunBuilderForm;
+      
+      foreach ( @{$run_builder_form->{sub}} ) {
+        next if ( defined $_->{templ} and $_->{templ} eq 'hidden' );
+	my @details = ( $cluster_name, $_->{TITLE} );
+
+	push @details, ( exists $_->{VALUE} ? $_->{VALUE} : '<span class="alert">None</span>' );
+	
+	push @params, \@details;
+      }
+    }
+
+    return \@params;
+  }
+
+	
+
+
+    

@@ -1,0 +1,184 @@
+# -*- cperl -*-
+
+use Graph::Directed;
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getWorkflowMask();
+
+Returns the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub getWorkflowMask {
+  return SysMicro::WorkflowMask->new($_[0]->{pipeline_workflowmask});
+}
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getRawWorkflowMask();
+
+Returns the string for the workflow mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+sub getRawWorkflowMask { return $_[0]->{pipeline_workflowmask}; }
+
+#------------------------------------------------------------------------
+
+=item public Graph::Directed getWorkflowGraph();
+
+Returns a graph of the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub getWorkflowGraph {
+  
+  my $self = shift;
+  exists $self->{_graph} or $self->_initializeGraph();
+  return $self->{_graph};
+}
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getClusters();
+
+Returns a graph of the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub getClusters {
+
+  my $self = shift;
+
+  my $graph = $self->getWorkflowGraph;
+
+  return [map { $_->getCluster } $graph->vertices];
+}
+
+#------------------------------------------------------------------------
+
+=item public string getPipelineLayoutXML();
+
+Returns the pipeline.layout string in XML format for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub getPipelineLayoutXML {
+
+  my $self = shift;
+  my $graph = $self->getWorkflowGraph;
+
+  my $pipeline_layout = $self->getLayout;
+
+  # get all the source vertices in the graph
+  my @parents = $graph->source_vertices;
+
+  my $i = 1;
+  my %schedule;
+
+  # go through each parent vertex
+  foreach my $node ( $graph->vertices ){
+
+    # get cluster and store in schedule
+    my $cluster = $node->getCluster;
+    my $name = $cluster->getName;
+    
+    $pipeline_layout =~ s{___${name}___}{$cluster->getLayoutXML}e;
+    
+  }
+
+  # remove unused place holders
+  $pipeline_layout =~ s{___[ A-za-z0-9]+___}{}g;
+
+  return $pipeline_layout;
+}
+
+#------------------------------------------------------------------------
+
+=item public getConfigFiles( [RunBuilderInput] $inputs, string $dir, ParameterMask $parameter_mask);
+
+Submits a run to ergatis.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getConfigFiles {
+
+    my ($self, $inputs, $dir, $parameter_mask) = @_;
+
+    # collect some inputs
+    my %inputs;
+
+    # save all the input files for this run
+    foreach ( @$inputs ) {
+      my $cluster_input = $_->getPipelineInput->getClusterInput;
+      my $file = $_->getFile;
+      $inputs{ $cluster_input->getCluster }->{$cluster_input} 
+	= "___ergatis_submit_directory___/$dir/" . $file->getName;
+    }
+    
+    my %components;
+
+    foreach my $cluster ( @{$self->getClusters} ) {
+    
+      my $mask = exists $parameter_mask->{Cluster}->{$cluster} ?
+	$parameter_mask->{Cluster}->{$cluster} : undef;
+
+      my $config = $cluster->getConfigFiles($mask, $inputs{$cluster});
+      while ( my ($key, $value) = each %$config ) {
+	$components{ $key } = $value;
+      }
+    }
+    return \%components;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterInput] getInputs();
+
+Returns the inputs for the pipeline after filtering out those produced
+by other components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getInputs {
+    
+    my $self = shift;
+
+    my %results;
+    my $clusters = $self->getClusters; 
+
+    my $inputs = SysMicro::ClusterInput->query( Cluster => $clusters );    
+    $results{ $_->getType } = $_ for @$inputs;
+
+    foreach ( @{SysMicro::ClusterOutput->query( Cluster => $clusters )} ) {
+      exists $results{ $_->getType } and delete $results{ $_->getType };
+    }
+
+    return [values %results];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getOutputs();
+
+Returns the output files for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getOutputs {
+
+    my $self = shift;
+
+    my @results;
+
+    my $clusters = $self->getClusters;
+    
+    foreach ( @{SysMicro::ClusterOutput->query( Cluster => $clusters )} ) {
+      next unless $_->isPipelineOutput;
+      push @results, $_;
+    }
+
+    return \@results;
+  }

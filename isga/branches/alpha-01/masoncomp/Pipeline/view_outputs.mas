@@ -1,0 +1,52 @@
+<%args>
+ $pipeline
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<h1>Pipeline Outputs</h1>
+
+<p>This pipeline takes the following files as output.</p>
+
+<table width="100%">
+<tr>
+ <th>Output</th><th>Format</th><th>Cluster</th></tr>
+% my $counter =0;
+% foreach my $output ( @{$pipeline->getOutputs} ) {
+%   my $tr_class = ++$counter % 2 ? "odd" : "even";
+<tr class="<% $tr_class %>">
+
+%   my $type = $output->getType;
+%   my $tname = $type->getName;
+ <td><% $tname %>\
+  <a class="jTip" id="a<% $type %><% $counter %>" name="<% $tname %>" \
+   href="/FileType/ViewHelp?file_type=<% $type %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
+
+%  my $format = $output->getFormat;
+%  my $fname = $format->getName;
+ <td><% $fname %>\
+  <a class="jTip" id="b<% $format %><% $counter %>" name="<% $fname %>" \
+   href="/FileFormat/ViewHelp?file_format=<% $format %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
+
+%   my $cluster = $output->getCluster;
+%   my $cname = $cluster->getName;
+ <td><% $cname %>\
+
+ <a class="jTip" id="c<% $cluster %><% $counter %>" name="<% $cname %>" href="/Cluster/GetClusterDescription?cluster=<% $cluster %>">
+<span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
+</tr>
+% }
+</table>
+
+<& rightmenu.mas, pipeline => $pipeline &>

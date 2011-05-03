@@ -1,0 +1,99 @@
+# -*- cperl -*-
+
+use File::Basename;
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutput();
+
+Copies Ergatis output into our system. This should not be called until
+the underlying cluster is complete to avoid getting partial results.
+
+=cut 
+#------------------------------------------------------------------------
+  sub saveErgatisOutput {
+
+    my $self = shift;
+
+    # learn about our run
+    my $run = $self->getRun;
+    my $run_name = $run->getName();
+    my $run_collection = $run->getFileCollection();
+    my $id = $run->getErgatisKey;
+
+    my $cout = $self->getClusterOutput();
+
+    # search for the who and now
+    my $account = SysMicro::Login->getAccount();
+    my $now = SysMicro::Timestamp->new();
+
+    my $raw_output = '___ergatis_output_repository___' . $cout->getFileLocation;
+    $raw_output =~ s/___id___/$id/go;
+    
+    -e $raw_output or X::File::NotFound->throw( $raw_output );  
+
+    # build args hash for create statements
+    my %args = ( Type => $cout->getType, Format => $cout->getFormat, IsHidden => 0,
+		 CreatedAt => $now, CreatedBy => $account, ExistsOutsideCollection => 0,
+		 Description => "Output from $run_name" );
+    
+    # if we have a file list, then we aren't getting the file directly
+    if ( $cout->getErgatisFormat eq 'File List' ) {
+      
+      # read in our list of files
+      open my $fh, '<', $raw_output or X->throw( error => "$raw_output - $!" ); 
+      my @list = <$fh>;
+      close $fh;
+
+      my @files;
+
+      foreach ( @list ) {
+	chomp;
+
+	open my $fh, '<', $_ or X::File->throw( error => "Cant open $_ - $!" );
+	
+	$args{UserName} = basename($_);
+
+	my $file = SysMicro::File->upload( $fh, %args );
+	push @files, $file;
+      }
+
+      # if there were multiple files, add a new collection to store them
+      if ( @list > 1 ) {
+
+        my $username = $run_name . " " . $cout->getType->getName;
+
+	my $collection = SysMicro::FileCollection->create
+	  ( Type => SysMicro::FileCollectionType->new('File List'),
+	    CreatedAt => $now,
+	    CreatedBy => $account,
+	    Description => "Output from $run_name",
+	    IsHidden => 0,
+	    ExistsOutsideCollection => 0,
+	    UserName => $username
+	  );
+
+	$run_collection->addContents($collection);
+	$collection->addContents(\@files);
+	
+	$self->edit( FileResource => $collection );
+
+      } elsif ( @list == 1 ) {
+
+	$run_collection->addContents(\@files);
+	$self->edit( FileResource => $files[0] );
+      }
+
+    # otherwise we are just processing a single file
+    } else {
+      my @files;
+      open my $fh, '<', $raw_output or X::File->throw( error => "Cant open $_ - $!" );
+      $args{UserName} = basename($raw_output);
+      my $file = SysMicro::File->upload( $fh, %args );
+      push @files, $file;
+
+        $run_collection->addContents(\@files);
+        $self->edit( FileResource => $files[0] );
+#      X::API->throw( error => 'non-File List output hasnt been implemented' );
+    }
+  }

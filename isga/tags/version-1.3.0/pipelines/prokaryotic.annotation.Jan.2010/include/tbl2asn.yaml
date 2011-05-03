@@ -1,0 +1,6 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Genbank Creation
+Description: 'Creates Genebank flat file.'
+RunBuilderParams:
+  - { templ: 'hidden', NAME: 'genus', TITLE: 'Genus', REQUIRED: 1, DESCRIPTION: 'Organism Genus', CONFIGLINE: '___genus___' }
+  - { templ: 'hidden', NAME: 'species', TITLE: 'Species', REQUIRED: 1, DESCRIPTION: 'Organism Species', CONFIGLINE: '___species___' }

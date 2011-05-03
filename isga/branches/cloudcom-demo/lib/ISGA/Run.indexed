@@ -1,0 +1,15 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Run
+options: [ SUBCLASS ]
+attributes:
+  - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
+  - { name: Status, type: RunStatus, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: FinishedAt, type: Timestamp }
+  - { name: ErgatisKey, type: number, options: [ REQUIRED, UNIQUE ] }
+  - { name: Type, type: Pipeline, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Description, type: string, options: [ REQUIRED ] }
+  - { name: FileCollection, type: FileCollection, options: [ REQUIRED ] }
+  - { name: RawDataStatus, type: string, options: [ REQUIRED ] }
+  - { name: IsHidden, type: boolean, options: [ REQUIRED ] }

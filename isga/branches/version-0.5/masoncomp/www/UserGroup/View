@@ -1,0 +1,5 @@
+<%args> # -*- cperl -*-
+ $user_group
+</%args>
+
+<& /UserGroup/view.mas, user_group => $user_group &>

@@ -1,0 +1,8 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: GlobalPipeline
+partition_of: Pipeline
+attributes:
+  - { name: Image, type: string, options: [ REQUIRED ] }
+  - { name: Coordinates, type: string, options: [ REQUIRED ] }
+  - { name: Layout, type: string, options: [ REQUIRED ] }
+  - { name: SubClass, type: string }

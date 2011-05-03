@@ -1,0 +1,211 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getWorkflowMask();
+
+Returns the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflowMask {
+    return SysMicro::WorkflowMask->new($_[0]->{pipelinebuilder_workflowmask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getRawWorkflowMask();
+
+Returns the string for the workflow mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawWorkflowMask { return $_[0]->{pipelinebuilder_workflowmask}; }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask {
+    return SysMicro::ParameterMask->new($_[0]->{pipelinebuilder_parametermask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return $_[0]->{pipelinebuilder_parametermask}; }
+
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder with this objects parameter mask applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my ($self, $component) = @_;
+
+    return SysMicro::ComponentBuilder->new( $component, $self->getParameterMask );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getActiveClusters();
+
+Returns the clusters that are active in this pipeline builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getActiveClusters {
+
+    my $self = shift;
+
+    my $dis_clusters = $self->getWorkflowMask->getDisabledClusters;
+    my $clusters = $self->getPipeline->getClusters();
+
+    return [grep { ! exists $dis_clusters->{ $_->getName } } @$clusters];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getActiveComponents();
+
+Return a list of activated components in this pipeline.
+
+=item public [Component] getActiveComponents(Cluster $cluster);
+
+Return a list of activated components in cluster of the pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getActiveComponents {
+
+    my ($self, $cluster) = @_;
+
+    my $components = [];
+
+    my $template = $self->getPipeline;
+    my $wf_mask = $self->getWorkflowMask;
+
+    # if we are given a cluster and it is part of our pipeline check for components
+    if ( $cluster and SysMicro::Workflow->exists(Cluster => $cluster, Pipeline => $template) ) {
+
+      # if the cluster isn't disabled, grab all the components
+      my $dis_clusters = $wf_mask->getDisabledClusters;
+      exists $dis_clusters->{ $cluster->getName } 
+	or $components = SysMicro::Component->query( Cluster => $cluster );
+	
+    } else {
+      $components = SysMicro::Component->query( Cluster => $self->getActiveClusters );
+    }
+
+    
+    my %off_components = %{$wf_mask->getDisabledComponents};
+    my %orp_components = %{$wf_mask->getOrphanedComponents};
+    @off_components{ keys %orp_components} = 'orphaned';
+    
+    return [grep { ! exists $off_components{ $_->getName } } @$components];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterInput] getInputs();
+
+Returns the inputs for the pipeline after filtering out those produced
+by other components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getInputs {
+    my $self = shift;
+
+    my %results;
+
+    # grab components
+    my $components = $self->getActiveComponents();
+    my $inputs = SysMicro::ClusterInput->query( Component => $components );    
+    for (@$inputs){
+      $results{ $_->getType } = $_;
+    }
+
+    foreach ( @{SysMicro::ClusterOutput->query( Component => $components )} ) {
+      exists $results{ $_->getType } and delete $results{ $_->getType };
+    }
+
+    return [ map { $results{$_} } keys %results];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getPipelineOutputs();
+
+Returns the output for the pipeline that would result from this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getPipelineOutputs {
+    
+    my $self = shift;
+
+    my $clusters = $self->getActiveClusters;   
+
+    return SysMicro::ClusterOutput->query( Cluster => $clusters, Visibility => 'Pipeline');
+  }
+  
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getIntermediateOutputs();
+
+Returns the intermediate output for the pipeline that would result from this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getIntermediateOutputs {
+    
+    my $self = shift;
+
+    my $clusters = $self->getActiveClusters;   
+
+    return SysMicro::ClusterOutput->query( Cluster => $clusters, Visibility => 'Intermediate');
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getOutputs();
+
+Returns the output for the pipeline that would result from this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getOutputs {
+
+    my $self = shift;
+
+    my @results;
+
+    my $clusters = $self->getActiveClusters;
+
+    foreach ( @{SysMicro::ClusterOutput->query( Cluster => $clusters )} ) {
+
+      next if $_->getVisibility eq 'Internal';
+      push @results, $_;
+    }
+
+    return \@results;
+  }
+      
+

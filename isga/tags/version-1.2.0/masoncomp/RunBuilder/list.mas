@@ -1,0 +1,37 @@
+<%args>
+ @run_builders
+ $show_account => 0
+ $show_pager => 1
+ $table_class => 'tablesorter'
+ $pager_id => 'tablesorterpager'
+</%args>
+
+<table width="100%" class="<% $table_class %> list">
+
+<thead>
+ <tr>
+% if ( $show_account ) {
+  <th>Account</th>
+% }
+  <th>Pipeline</th>
+  <th>Started At</th>
+  <th></th>
+ </tr>
+</thead>
+
+<tbody>
+%   foreach ( @run_builders ) {
+ <tr>
+% if ( $show_account ) {
+%   my $account = $_->getCreatedBy();
+  <td><a href="/Account/View?account=<% $account %>"><% $account->getName %></a></td>
+% }
+  <td><a href="/RunBuilder/View?run_builder=<% $_ %>"><% $_->getPipeline->getName %></a></td>
+  <td><% $_->getStartedAt->brief %></td>
+  <td><a class="button" href="/submit/RunBuilder/Cancel?run_builder=<% $_ %>&redirect=<% $r->uri %>">Delete</a></td>
+ </tr>
+%   }
+</tbody>
+</table>
+
+<& /site/table_sorter.mas, table_class => $table_class, pager_id => $pager_id, show_pager => $show_pager &>

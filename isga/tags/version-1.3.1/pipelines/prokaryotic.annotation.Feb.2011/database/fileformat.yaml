@@ -1,0 +1,97 @@
+---
+- Extension: gbf
+  Help: 'The flat file format used by Genbank to described an annototated genome.  A sampel file can be viewed here: http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html.'
+  IsBinary: 0
+  Name: Genbank
+- Extension: gnu
+  Help: This is a script that can be run in gnuplot to reproduce the output image.  Modification of this script will allow you to reformat your image to your liking or perhaps output it to a different image type.
+  IsBinary: 0
+  Name: GNUPlot Commands Script
+- Extension: xxx
+  Help: 'For the raw output, tmhmm gives some statistics and a list of the location of the predicted transmembrane helices and the predicted location of the intervening loop regions.  If the whole sequence is labeled as inside or outside, the prediction  is that it contains no membrane helices.  It is probably not wise to interpret it as a prediction of location. The prediction gives the most probable location and orientation of transmembrane helices in the sequence. It is found by an algorithm called N-best (or 1-best in this case) that sums over all paths through the model with the same location and direction of the helices.<br>The first few lines gives some statistics:<br><br>  * Length: the length of the protein sequence.<br>  * Number of predicted TMHs: The number of predicted transmembrane helices.<br>  * Exp number of AAs in TMHs: The expected number of amino acids intransmembrane helices. If this number is larger than 18 it is very likely to be a transmembrane protein (OR have a signal peptide).<br>  * Exp number, first 60 AAs: The expected number of amino acids in transmembrane helices in the first 60 amino acids of the protein. If this number more than a few, you should be warned that a predicted transmembrane helix in the N-term could be a signal peptide.<br>  * Total prob of N-in: The total probability that the N-term is on the cytoplasmic side of the membrane.<br>  * POSSIBLE N-term signal sequence: a warning that is produced when "Exp number, first 60 AAs" is larger than 10.'
+  IsBinary: 0
+  Name: TMhmm Raw Result
+- Extension: xxx
+  Help: 'This program first does a BLAST search (Altschul, et al., 1990) (http://blast.wustl.edu) of each protein against niaa and stores all significant matches in a mini-database. Then a modified Smith-Waterman alignment (Smith and Waterman, 1981) is performed on the protein against the mini-database of BLAST hits. In order to identify potential frameshifts or point mutations in the sequence, the gene is extended 300 nucleotides upstream and downstream of the predicted coding region. If significant homology to a match protein exists and extends into a different frame from that predicted, or extends through a stop codon, the program will continue the alignment past the boundaries of the predicted coding region. The results can be viewed both as pairwise and as multiple alignments of the top scoring matches.  The raw results are presented in btab (BLAST tabulated format).'
+  IsBinary: 0
+  Name: BER Raw Results
+- Extension: xxx
+  Help: 'The organisms genes are listed sorted by their end coordinate and terminators are output between them. A terminator entry looks like this:<br><br>    TERM 19  15310 - 15327  -      F     99      -12.7 -4.0 |bidir<br>    (name)   (start - end)  (sense)(loc) (conf) (hp) (tail) (notes)<br><br>where "conf" is the overall confidence score, "hp" is the hairpin score, and "tail" is the tail score. "Conf" (which ranges from 0 to 100) is what you probably want to use to assess the quality of a terminator. Higher is better. The confidence, hp score, and tail scores are described in the paper cited above.  "Loc" gives type of region the terminator is in:<br><br>    "G" = in the interior of a gene (at least 50bp from an end),<br>    "F" = between two +strand genes,<br>    "R" = between two -strand genes,<br>    "T" = between the ends of a +strand gene and a -strand gene,<br>    "H" = between the starts of a +strand gene and a -strand gene,<br>    "N" = none of the above (for the start and end of the DNA)<br><br>Because of how overlapping genes are handled, these designations are not exclusive. "G", "F", or "R" can also be given in lowercase, indicating that the terminator is on the opposite strand as the region.  Unless the all-context option is given, only candidate terminators that appear to be in an appropriate genome context (e.g. T, F, R) are output.  Following the TERM line is the sequence of the hairpin and the 5` and 3` tails, always written 5` to 3`.'
+  IsBinary: 0
+  Name: TransTerm Raw Result
+- Extension: hmmreport
+  Help: 'The raw results produced by RNAmmer.  This report consists of three sections: a ranked list of the best scoring HMMs, a list of the best scoring domains in order of their occurrence in the sequence, and alignments for all the best scoring domains. A sequence score may be higher than a domain score for the same sequence if there is more than one domain in the sequence; the sequence score takes into account all the domains. All sequences scoring above the -E and -T cutoffs are shown in the first list, then every domain found in this list is shown in the second list of domain hits.'
+  IsBinary: 0
+  Name: RNAmmer HMM report
+- Extension: xxx
+  Help: 'The default output for tRNAscan-SE includes overall statistics for the various component programs (trnascan(14), eufindtrna(15) and cove(16)) as well as summary data for the entire search. The summary data includes counts of the total number of tRNAs found, the number of tRNA pseudogenes found, number of tRNAs with introns and which anticodons were detected. Finally, the output shows the predicted secondary structure for each identified sequence.  The output also displays the overall length of the sequence, the location of the anticodon and the overall tRNAscan-SE score. tRNAscan-SE scores for known tRNA sequences for various species are included on the website to facilitate evaluation of the significance of the score.'
+  IsBinary: 0
+  Name: tRNAscan Raw Result
+- Extension: gff
+  Help: 'GFF is a format for describing genes and other features associated with DNA, RNA and Protein sequences. The current specification can be found at http://www.sanger.ac.uk/Software/formats/GFF/GFF_Spec.shtml.'
+  IsBinary: 0
+  Name: GFF
+- Extension: eps
+  Help: 'This is the Encapsulated PostScript format. A PostScript document with additional restrictions intended to make EPS files usable as a graphics file format. In other words, EPS files are more-or-less self-contained, reasonably predictable PostScript documents that describe an image or drawing, that can be placed within another PostScript document.'
+  IsBinary: 0
+  Name: EPS
+- Extension: btab
+  Help: BLAST tabulated file
+  IsBinary: 0
+  Name: BTAB
+- Extension: xxx
+  Help: 'MAST outputs a file containing: the version of MAST and the date it was built, the reference to cite if you use MAST in your research, a description of the database and motifs used in the search, an explanation of the result, high-scoring sequences--sequences matching the group of motifs above a stated level of statistical significance,  motif diagrams showing the order and spacing of occurrences of the motifs in the high-scoring sequences and,  annotated sequences showing the positions and p-values of all motif occurrences in each of the high-scoring sequences.'
+  IsBinary: 0
+  Name: Mast Raw Result
+- Extension: xxx
+  Help: 'The report consists of three major sections: (1) the header, which contains information about the query sequence, the database searched. On the Web, there is also a graphical overview; (2) the one-line descriptions of each database sequence found to match the query sequence; these provide a quick overview for browsing; (3) the alignments for each database sequence matched (there may be more than one alignment for a database sequence it matches).  http://www.ncbi.nlm.nih.gov/books/bv.fcgi?rid=handbook.section.615'
+  IsBinary: 0
+  Name: BLAST Raw Results
+- Extension: xxx
+  Help: 'The default output for Prosite Scan.  The header contains the sequenced header for the protein scanned against prosite as well as the matching Prosite information (ID, etc.)  Below the header will be the start position, end position, and matching pattern from the scan.'
+  IsBinary: 0
+  Name: Prosite Scan Raw Result
+- Extension: path_rec
+  Help: This is the data produced by Asgard.  It includes the database match identifies as well as associated EC and GO terms.
+  IsBinary: 0
+  Name: Asgard Raw Result
+- Extension: png
+  Help: 'Portable Network Graphics (PNG) is a bitmapped image format that employs lossless data compression'
+  IsBinary: 1
+  Name: PNG
+- Extension: xxx
+  Help: "The graphical output from SignalP (neural network) comprises three different scores, C, S and Y. Two additional scores are reported in the SignalP3-NN output, namely the S-mean and the D-score, but these are only reported as numerical values. For each organism class in SignalP; Eukaryote, Gram-negative and Gram-positive, two different neural networks are used, one for predicting the actual signal peptide and one for predicting the position of the signal peptidase I (SPase I) cleavage site. The S-score for the signal peptide prediction is reported for every single amino acid position in the submitted sequence, with high scores indicating that the corresponding amino acid is part of a signal peptide, and low scores indicating that the amino acid is part of a mature protein. The C-score is the ``cleavage site' score. For each position in the submitted sequence, a C-score is reported, which should only be significantly high at the cleavage site. Confusion is often seen with the position numbering of the cleavage site. When a cleavage site position is referred to by a single number, the number indicates the first residue in the mature protein, meaning that a reported cleavage site between amino acid 26-27 corresponds to that the mature protein starts at (and include) position 27. Y-max is a derivative of the C-score combined with the S-score resulting in a better cleavage site prediction than the raw C-score alone. This is due to the fact that multiple high-peaking C-scores can be found in one sequence, where only one is the true cleavage site. The cleavage site is assigned from the Y-score where the slope of the S-score is steep and a significant C-score is found. The S-mean is the average of the S-score, ranging from the N-terminal amino acid to the amino acid assigned with the highest Y-max score, thus the S-mean score is calculated for the length of the predicted signal peptide. The S-mean score was in SignalP version 2.0 used as the criteria for discrimination of secretory and non-secretory proteins. The D-score is introduced in SignalP version 3.0 and is a simple average of the S-mean and Y-max score. The score shows superior discrimination performance of secretory and non-secretory proteins to that of the S-mean score which was used in SignalP version 1 and 2. For non-secretory proteins all the scores represented in the SignalP3-NN output should ideally be very low. The hidden Markov model calculates the probability of whether the submitted sequence contains a signal peptide or not. The eukaryotic HMM model also reports the probability of a signal anchor, previously named uncleaved signal peptides. Furthermore, the cleavage site is assigned by a probability score together with scores for the n-region, h-region, and c-region of the signal peptide, if such one is found."
+  IsBinary: 0
+  Name: SignalP Raw Result
+- Extension: xxx
+  Help: 'This file has the final gene predictions from glimmer3. Its format is the fasta-header line of the sequence followed by one line per gene.  The columns are:<br>Column 1 The identifier of the predicted gene. The numeric portion matches the number in the ID column of the .detail file.<br>Column 2 The start position of the gene.<br>Column 3 The end position of the gene. This is the last base of the stop codon, i.e., it includes the stop codon.<br>Column 4 The reading frame.<br>Column 5 The per-base raw score of the gene. This is slightly different from the value in the .detail file, because it includes adjustments for the PWM and start-codon frequency.<br>For detailed information, please see this pdf document (pages 13 - 14): http://www.cbcb.umd.edu/software/glimmer/glim302notes.pdf'
+  IsBinary: 0
+  Name: Glimmer3 Prediction Results
+- Extension: tbl
+  Help: 'NCBI tbl format.  The feature table format allows different kinds of features (e.g., gene, mRNA, coding region, tRNA) and qualifiers (e.g., /product, /note) to be annotated. The valid features and qualifiers are restricted to those approved by the International Nucleotide Sequence Database Collaboration.  http://www.ncbi.nlm.nih.gov/Sequin/table.html#Table%20Layout'
+  IsBinary: 0
+  Name: Table
+- Extension: fsa
+  Help: 'A text-based format for representing either nucleic acid sequences or peptide sequences, in which base pairs or amino acids are represented using single-letter codes. The format also allows for sequence names and comments to precede the sequences. http://www.ncbi.nlm.nih.gov/blast/fasta.shtml'
+  IsBinary: 0
+  Name: FASTA
+- Extension: gif
+  Help: The Graphics Interchange Format (GIF) is a bitmap image format that was introduced by CompuServe in 1987 and has since come into widespread usage on the World Wide Web due to its wide support and portability.
+  IsBinary: 0
+  Name: GIF
+- Extension: xxx
+  Help: 'The raw results produced by HMMPFAM.  This report consists of three sections: a ranked list of the best scoring HMMs, a list of the best scoring domains in order of their occurrence in the sequence, and alignments for all the best scoring domains. A sequence score may be higher than a domain score for the same sequence if there is more than one domain in the sequence; the sequence score takes into account all the domains. All sequences scoring above the -E and -T cutoffs are shown in the first list, then every domain found in this list is shown in the second list of domain hits.  For detailed information, please see this pdf document (pages 26 - 27): ftp://selab.janelia.org/pub/software/hmmer/CURRENT/Userguide.pdf'
+  IsBinary: 0
+  Name: HMMPFAM Raw Results
+- Extension: bsml
+  Help: "Bioinformatic Sequence Markup Language (BSML)is a public domain XML application for bioinformatic data.  BSML provides a management tool, visualization interface and container for sequences and other bioinformatic data. BSML may be used in combination with LabBook's Genomic XML Viewer (free to the scientific community) or Genomic Browser to provide a single document interface to all project data.  http://bsml.sourceforge.net/"
+  IsBinary: 0
+  Name: BSML
+- Extension: xxx
+  Help: 'This reposrt is similar to the standard BLAST output.  The report consists of three major sections: (1) the header, which contains information about the query sequence, the database searched. On the Web, there is also a graphical overview; (2) the one-line descriptions of each database sequence found to match the query sequence; these provide a quick overview for browsing; (3) the alignments for each database sequence matched (there may be more than one alignment for a database sequence it matches).'
+  IsBinary: 0
+  Name: RPSBLAST Raw Result
+- Extension: xxx
+  Help: 'The LipoP Raw Results.  LipoP 1.0 produces predictions of lipoproteins and discriminates between lipoprotein signal peptides, other signal peptides and n-terminal membrane helices.  These results are the short results which would be produced at the <a href="http://www.cbs.dtu.dk/services/LipoP/">LipoP Server</a>.  Please visit <a href="http://www.cbs.dtu.dk/services/LipoP/LipoP1.0server.html#Output">http://www.cbs.dtu.dk/services/LipoP/LipoP1.0server.html#Output</a> for a more thorough explanation of the results.'
+  IsBinary: 0
+  Name: LipoP Raw Result

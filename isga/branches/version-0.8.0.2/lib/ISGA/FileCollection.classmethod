@@ -1,0 +1,81 @@
+# -*- cperl -*-
+
+use Archive::Tar;
+
+use HTML::Scrubber;
+
+use File::Temp;
+
+#------------------------------------------------------------------------
+
+=item public FileCollection upload(filehandle fh, Hash args);
+
+Upload a file or file collection through the web interface. 
+
+The args hash contains the following required parameters:
+
+ UserName => string
+ Type => FileType
+ Format => FileFormat
+ Description => string
+ CreatedBy => Account
+ CreatedAt => Timestamp
+ IsHidden => int
+
+=cut 
+#------------------------------------------------------------------------
+  sub upload {
+
+    my ($class, $fh, %args) = @_;
+
+    $args{UserName} =~ s/\.tar$//;
+
+    my $collection = $class->create( Type => ISGA::FileCollectionType->new('File List'),
+				     CreatedAt => $args{CreatedAt},
+				     CreatedBy => $args{CreatedBy},
+				     Description => $args{Description},
+				     IsHidden => 0,
+				     ExistsOutsideCollection => $args{ExistsOutsideCollection},
+				     UserName => $args{UserName},
+				   );
+
+    # anything under this doesn't exist outside a collection
+    $args{ExistsOutsideCollection} = 0;
+
+    # read the files in the tar file
+    my @files = Archive::Tar->new->read($fh);
+
+    # create HTML scrubber for testing file names for html injection
+    my $scrubber = HTML::Scrubber->new();
+
+    # create counter for position in file list.
+    my $index = 0;
+    
+    # make sure everything is just a file before processing anything
+    foreach ( @files ) {
+
+      $_->is_file 
+	or X::File::IllegalContent->throw( name => $args{UserName}, content => $_->name );
+      
+      # extract the files name
+      $args{UserName} = $_->name;
+      
+      # make sure the file name doesn't contain html code
+      $scrubber->scrub($args{UserName}) eq $args{UserName}
+	or X::User->throw( error => "File $args{UserName} contains HTML characters" );
+      
+      # create temp file, dump contents to it and seek to the beginning
+      my $tmp = File::Temp->new();
+      print $tmp $_->get_content;
+      seek($tmp,0,0);
+      
+      my $resource = ISGA::FileResource->upload( $tmp, %args );
+
+      ISGA::FileCollectionContent->create( FileCollection => $collection,
+					   FileResource => $resource,
+					   Index => $index++ );
+    }
+
+    return $collection;
+  }
+      

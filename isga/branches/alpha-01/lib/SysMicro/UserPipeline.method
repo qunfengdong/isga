@@ -1,0 +1,22 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public boolean mayAccess(Account $account);
+
+Returns true if the account is able to access this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub mayAccess {
+
+    my ($self, $account) = @_;
+
+    # need to be logged in
+    return 0 unless $account;
+
+    # can access if the owner
+    return 1 if $self->getCreatedBy == $account;
+
+    # deny by default
+    return 0;
+}

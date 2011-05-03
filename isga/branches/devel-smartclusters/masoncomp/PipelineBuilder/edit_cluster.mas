@@ -1,0 +1,18 @@
+<%args>
+ $components
+ $pipeline_builder
+</%args>
+
+<h1>Pipeline Builder: Cluster Components</h1>
+<h4>The following components have parameters available to be changed.  
+Please choose a component and proceed.</h4>
+%foreach ( @{$components}){
+%  if ( SysMicro::ComponentBuilder->new($_)){
+% my $builder = SysMicro::ComponentBuilder->new($_);
+<p><a href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>"><% $_->getName %></a><br>
+<% $builder->getComponentDescription  %>
+</p>
+%}
+%}
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

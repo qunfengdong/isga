@@ -1,0 +1,41 @@
+<%args>
+  $run
+</%args>
+
+<li class="title">Analysis Tools</li>
+
+% if ( $run->hasGbrowseInstallation ) {
+
+<li class="rmbutton"><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></li>
+<li><p>Visualize the results of this run in the Generic Genome Browser.</p></li>
+
+<li class="rmbutton">Query Genome Features</li>
+<li>
+
+<span>
+ <form action="/WorkBench/GenomeFeatureQueryResult" method="post">
+ <input type="hidden" name="scope" value="<% $run %>">
+ <input type="text" name="term" size="20" class="textInput highlighter" />
+ <button type="submit" class="submitButton button" tabindex="1" name="Search" value="Search">Search</button>
+ </form>
+</span>
+
+</li>
+
+% } else {
+%  if($run->getStatus->getName eq 'Complete'){
+<li class="rmbutton"><a class="clickmeupdate" href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></li>\
+<li><p id="ajax_loader">Load the results of this run into the Generic Genome Browser and a searchable feature database.</p></li>
+%  } else {
+<li class="rmbutton onclickLink">Cannot load results into GBrowse</li>
+<li><p>We can not load runs which are <% $run->getStatus->getName %> into GBrowse</p></li>
+%  }
+% }
+
+<li class="rmbutton"><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Perform BLAST</a></li>
+<li><p>Perform a BLAST query.</p></li>
+
+% if ($run->isHidden){
+  <li class="rmbutton" id="show_run"><a href="#">Unhide Run</a></li>
+  <li id="show_run"><p>Unhide this run.</p></li>
+% }

@@ -1,0 +1,211 @@
+---
+type:    map
+mapping:
+  "mason_data_directory":
+    type:    text
+    required:    yes
+    pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+  "apache_session_directory":
+    type:    text
+    required:    yes
+    pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+  "apache_session_lock_directory":
+    type:    text
+    required:    yes
+    pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+  "database":
+   type:   map 
+   mapping:
+
+     "name":
+       type:    text
+       required:    yes
+
+     "user":
+       type:    text
+       required:    yes
+
+     "type":
+       type:    text
+       required:    yes
+
+  "test_database":
+   type:   map 
+   mapping:
+
+     "name":
+       type:    text
+       required:    yes
+
+     "user":
+       type:    text
+       required:    yes
+
+     "type":
+       type:    text
+       required:    yes
+
+  "mail_config":
+   type:    text
+   required:    yes
+
+  "log_file":
+   type:    text
+   required:    yes
+   pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+  "minimum_log_level":
+   type:    str
+   required:    yes
+   enum:    [debug, info, notice, warning, error, critical, alert, emergency]
+
+  "error_notification_email":
+   type:    seq
+   sequence:
+     - type:    text
+       required:    yes
+       pattern:    /[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/
+
+  "server_name":
+   type:    text
+   required:    yes
+
+  "custom_parameters":
+   type:   map 
+   mapping:
+
+    "mail_sender":
+     type:    text
+     required:    yes
+
+    "file_repository":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+    "tmp_file_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+    "ergatis_submit_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+    "ergatis_base_uri":
+     type:    text
+     required:    yes
+     pattern:    /^(http|https)\:\/\/\S+/
+
+    "password_reset_cutoff":
+     type:    text
+     required:    yes
+     pattern:    /^\d+(m|h)$/
+
+    "ergatis_output_repository":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "ergatis_runtime_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "base_uri":
+     type:    text
+     required:    yes
+     pattern:    /^(http|https)\:\/\/\S+/
+
+    "cgview_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "gbrowse_directory":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "database_path":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "ergatis_project":
+     type:    text
+     required:    yes
+
+    "scripts_bin":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/$/
+
+    "sh_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/(bash|csh|jsh|ksh|rc|rsh|sh|tcsh|zsh)$/
+
+    "sge_executables":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+    "blast_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/blastall$/
+
+    "cdbfasta_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/cdbfasta$/
+
+    "formatdb_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/formatdb$/
+
+    "SGE_CELL":
+     type:    text
+     required:    yes
+
+    "SGE_EXECD_PORT":
+     type:    int
+     required:    yes
+
+    "SGE_QMASTER_PORT":
+     type:    int
+     required:    yes
+
+    "SGE_ROOT":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*[^\/]$/
+
+    "SGE_QUEUE":
+     type:    text
+     required:    yes
+
+    "toAmos_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/toAmos$/
+
+    "bank_transact_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/bank-transact$/
+    "sffToCA_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/sffToCA$/
+    "amos2sq_executable":
+     type:    text
+     required:    yes
+     pattern:    /^\/\S+(\/\S+)*\/amos2sq$/
+

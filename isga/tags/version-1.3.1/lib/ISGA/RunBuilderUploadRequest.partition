@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: RunBuilderUploadRequest
+partition_of: UploadRequest
+attributes:
+  - { name: Pipeline, type: Pipeline, options: [ REQUIRED ] }
+  - { name: PipelineInput, type: PipelineInput, options: [ REQUIRED ] }

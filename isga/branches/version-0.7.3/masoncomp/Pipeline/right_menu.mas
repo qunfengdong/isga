@@ -1,0 +1,72 @@
+<%args>
+ $pipeline
+</%args>
+% use SysMicro::Site;
+
+<sys:script type="text/javascript">
+$(document).ready(sectionHighlight);
+function sectionHighlight() {
+  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
+  var url = window.location.href;
+  if (url.match(/Pipeline\/ViewParameters/) || url.match(/Pipeline\/ViewComponents/)){
+      url = "<% SysMicro::Site->getBaseURI  %>Pipeline/ViewClusters?pipeline=<% $pipeline %>";
+  }
+  
+  for(var i = 0; i < menuLinks.length; i++){
+    if(url == menuLinks[i].href){
+      var link = menuLinks[i];
+      var li = link.parentNode;
+      li.style.backgroundColor = "#D8E47C";
+    }
+  }
+}
+</sys:script>
+
+% my $exists = SysMicro::Login->exists;
+
+<sys:rightmenu>
+<ul>
+<li class="title">Pipeline Tools</li>
+
+% if ( $exists) {
+<li class="rmbutton pointer"><a href="/RunBuilder/Create?pipeline=<% $pipeline %>">Run Pipeline</a></li>
+<li class="pointer" onclick="window.location='/RunBuilder/Create?pipeline=<% $pipeline %>'">
+% } else {
+<li class="rmbutton disabled">Run Pipeline</li>
+<li class="disabled">
+% }
+<p>Run this pipeline with \
+% if ( $pipeline->isa( 'SysMicro::GlobalPipeline' ) ) {
+default parameters. \
+% } else {
+your customized settings.\
+% }
+</p>
+
+% if ( ! $exists ) {
+<p> You must <a href="#" rel='modal_hidden' class="modal">Login</a> to run this pipeline.</p>
+% }
+</li>
+
+% if ( $exists ) {
+<li class="rmbutton pointer"><a href="/PipelineBuilder/Create?pipeline=<% $pipeline %>">Customize Pipeline</a> </li>
+<li  class="pointer" onclick="window.location='/PipelineBuilder/Create?pipeline=<% $pipeline %>'">
+% } else {
+<li class="rmbutton disabled">Customize Pipeline</li>
+<li class="disabled">
+% }
+<p>Customize the programs and parameters used in this pipeline.</p>
+
+% if ( ! $exists ) {
+<p> You must <a href="#" rel='modal_hidden' class="modal">Login</a> to customize this pipeline.</p>
+% }
+
+</li>
+
+<li class="title">Pipeline Documentation</li>
+<li class="rmbutton"><a href="View?pipeline=<% $pipeline %>">View Pipeline</a></li>
+<li class="rmbutton"><a href="ViewInputsOutputs?pipeline=<% $pipeline %>">View Pipeline Inputs and Outputs</a></li>
+<li class="rmbutton"><a href="ViewClusters?pipeline=<% $pipeline %>">View Parameters</a></li>
+
+</ul>
+</sys:rightmenu> 

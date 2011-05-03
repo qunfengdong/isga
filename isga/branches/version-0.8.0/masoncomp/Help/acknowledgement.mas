@@ -1,0 +1,8 @@
+<%init>
+   return if $m->cache_self;
+</%init>
+
+<h1>Acknowledgement</h1>
+<p>This research is supported in part by the Indiana METACyt Initiative of
+Indiana University, funded in part through a major grant from the Lilly
+Endowment, Inc.</p>

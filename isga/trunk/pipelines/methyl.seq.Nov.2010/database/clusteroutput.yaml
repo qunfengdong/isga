@@ -1,0 +1,19 @@
+---
+ - Component: bsseeker.default
+   Type: 'Methyl Seq Analysis Output'
+   Format: BS_Seeker_Raw
+   ErgatisFormat: 'File List'
+   Visibility: Evidence
+   FileLocation: 'bsseeker/___id____default___/bsseeker.BSseekerOUTPUT.list'
+ - Component: bsseeker2msam.default
+   Type: 'Methyl Seq Analysis Output'
+   Format: SAM
+   ErgatisFormat: 'File List'
+   Visibility: Pipeline
+   FileLocation: 'bsseeker2msam/___id____default___/bsseeker2msam.msam.list'
+ - Component: msam2gff.default
+   Type: 'Methyl Seq Analysis Output'
+   Format: GFF
+   ErgatisFormat: 'File List'
+   Visibility: Pipeline
+   FileLocation: 'msam2gff/___id____default___/msam2gff.gff.list'

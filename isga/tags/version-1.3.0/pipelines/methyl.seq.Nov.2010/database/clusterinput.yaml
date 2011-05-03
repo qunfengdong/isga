@@ -1,0 +1,9 @@
+---
+ - Type: Bisulfite Treated Sequencing Output
+   Dependency: Required
+   Format: FASTQ
+   ErgatisFormat: 'File'
+   Name: 'BS_Input'
+   DefaultValue: ''
+   HasParameters: 0
+   IsIterator: 0

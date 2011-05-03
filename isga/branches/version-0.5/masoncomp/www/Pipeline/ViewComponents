@@ -1,0 +1,10 @@
+<%args> #! -*- cperl -*-
+ $pipeline
+ $cluster
+</%args>
+
+<%perl>
+my @components = SysMicro::Component->query( Cluster => $cluster, OrderBy => 'Index' );
+return $m->comp('/Pipeline/view_components.mas', pipeline => $pipeline, components => @components);
+</%perl>
+

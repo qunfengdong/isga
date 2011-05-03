@@ -1,0 +1,81 @@
+<%args>
+ %siteTags
+ $style
+</%args>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+% if ( exists $siteTags{title} ) {
+<% $siteTags{title} %>
+% } else {
+<title><% SysMicro::Login->getUseCase->getTitle %></title>
+% }
+
+
+<script type="text/javascript" src="/include/js/jquery-1.2.6.min.js"></script>
+
+% if ( ! SysMicro::Login->exists ) {
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$(".btn-slide").click(function(){
+		$("#panel").slideToggle("slow");
+		$(this).toggleClass("active"); return false;
+	});
+});
+</script>
+% }
+
+<script type="text/javascript" src="/include/js/jquery.droppy.js"></script>
+
+<style type="text/css" media="all">
+  @import "/include/css/yaml/core/base.css";
+  @import "/include/css/yaml/navigation/nav_plain.css";
+  @import "/include/css/<% $style %>_basemod.css";
+  @import "/include/css/droppy.css";
+</style>
+
+<script type="text/javascript">
+  $(function() {
+    $('#nav').droppy();
+  });
+</script>
+
+
+<!--[if lte IE 7]>
+<link href="/include/css/patches/patch_<% $style %>.css" rel="stylesheet" type="text/css" >
+<![endif]-->
+
+<link rel="Shortcut Icon" href="/favicon.ico" type="image/x-icon">
+
+% foreach my $tag ( qw(script style link meta) ) {
+%   if ( exists $siteTags{$tag} ) {
+<% join( "\n", @{$siteTags{$tag}} ) %>
+%   }
+%  }
+
+</head>
+
+<body>
+
+<div id="page_margins">
+% if ( ! SysMicro::Login->exists ) {
+ <div id="panel">
+ <& /site/login.mas &>
+ </div>
+% } 
+ <div id="header">
+  <div id="topnav">
+% if ( ! SysMicro::Login->exists ) {
+  <a href="#" class="btn-slide">Login</a> |\
+% } else {
+  <a href="/submit/Logout">Logout</a> |\
+% }
+  <a href="/Support/ContactUs">Contact Us</a>
+  </div>
+<img src="/include/img/cgb-logo.png" alt="The Center for Genomics and Bioinforma
+tics">
+
+  </div>
+

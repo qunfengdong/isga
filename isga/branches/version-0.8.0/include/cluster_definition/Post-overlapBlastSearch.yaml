@@ -1,0 +1,4 @@
+--- !perl/ISGA::ClusterBuilder
+Cluster: BLAST Search
+Description: 'Blast homology search against a non-redundant database comprised of several sources including NCBI, SwissProt, PDB, etc.  Also includes the use of the BER/Praze algorithim.'
+

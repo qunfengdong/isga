@@ -1,0 +1,23 @@
+<div style='clear:both;'>
+<form id="form" action="" method="post" class='uniForm inlineLabels'>
+  <fieldset class='inlineLabels'>
+  <legend>Login</legend>
+    <div class='ctrlHolder'>
+      <label>Email Address</label>
+      <input id="username" name="username" type="text">
+    </div>
+    <div class='ctrlHolder'>
+      <label>Password</label>
+       <input id="password" name="password" type="password">
+      </div>
+  </fieldset>
+
+%#<a href="" class="login" >Login</a>
+  <div class='buttonHolder'>
+    <button class='submitButton button login' value='Login' name='Login' type='submit'>Login</button>
+  </div>
+</form>
+<p>
+<a href="/Account/Request">Request New Account</a> | <a href="/Account/LostPassword">Lost Password</a>
+</p>
+</div>

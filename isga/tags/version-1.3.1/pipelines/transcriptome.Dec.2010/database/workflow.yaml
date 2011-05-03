@@ -1,0 +1,45 @@
+---
+- Cluster: Process Input Sequences
+  Coordinates: '267, 0, 397, 47'
+  IsRequired: 1
+  Customization: IO
+- Cluster: Repeat Analysis
+  Coordinates: '415, 145, 534, 189'
+  IsRequired: 0
+  Customization: Standard
+- Cluster: Primary Sequence Similarity Analysis
+  Coordinates: '136, 140, 268, 196'
+  IsRequired: 1
+  Customization: Standard
+- Cluster: Metagenomic Analysis
+  Coordinates: '15, 255, 133, 297'
+  IsRequired: 0
+  Customization: Standard
+- Cluster: GO Analysis
+  Coordinates: '262, 254, 369, 297'
+  IsRequired: 0
+  Customization: Standard
+- Cluster: ORF Detection 
+  Coordinates: '143, 256, 254, 296'
+  IsRequired: 0
+  Customization: Standard
+- Cluster: ORF Analysis
+  Coordinates: '143, 342, 254, 383'
+  IsRequired: 0
+  Customization: Modular
+- Cluster: DBEST Sequence Similarity Analysis
+  Coordinates: '276, 140, 408, 198'
+  IsRequired: 0
+  Customization: Standard
+- Cluster: Orthology Analysis
+  Coordinates: '0, 144, 127, 188'
+  IsRequired: 1
+  Customization: Standard
+- Cluster: Reference Genome Similarity Search
+  Coordinates: '543, 140, 670, 198'
+  IsRequired: 0
+  Customization: Standard
+- Cluster: EST Summary Analysis
+  Coordinates: '267, 447, 397, 493'
+  IsRequired: 1
+  Customization: IO

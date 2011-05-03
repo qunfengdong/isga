@@ -1,0 +1,29 @@
+<%init>
+  return if $m->cache_self;
+</%init>
+
+<div class="hidden documentation runView">
+ <div id="WT_arrow_right"></div>
+ <div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div>
+ <div id="WT_copy">
+<p>This is the central page for preparing a pipeline for submission.  From here
+you can quickly view any organism specific information that need to be set
+as well as your required inputs.  Using the toolbox, you can edit
+the necessary organism information, provide an input file, or cancel your run.</p>
+
+<p>The ability to Submit Run will be disabled until all necessary
+actions are taken.  This typically means setting the organism
+information and providing the required inputs.  Information about
+any action needed is displayed in the Submit Run section of the
+toolbox.</p>
+
+<p>To continue with this walkthrough.  Please
+select <span class="highlight">Provide Input Data</span>.  A prompt
+box will pop up and from there choose Native 454 format.  On the
+screen that follows, choose an appropriate SFF FASTA file to use as
+input and provide the metadata for the SFF file.  After all these
+steps, Submit Run should become active.  Click
+on <span class="highlight">Submit Run</span>.  Your pipeline will be
+built and run.</p>
+ </div>
+</div>

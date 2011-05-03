@@ -1,0 +1,11 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: AccountRequest
+attributes:
+  - { name: Hash, type: string, options: [ REQUIRED ] }
+  - { name: Email, type: string, options: [ REQUIRED ] }
+  - { name: Password, type: string, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: Status, column: accountrequeststatus_name, type: string, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: Institution, type: string }
+  - { name: IsPrivate, type: boolean, options: [ REQUIRED ] }

@@ -1,0 +1,23 @@
+<%args>
+ $pipeline
+</%args>
+
+<div id="workflow">
+
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/Pipeline/DrawWorkflow?pipeline=<% $pipeline %>">
+
+<map name="clusters" >
+
+% foreach ( @{$pipeline->getWorkflow} ) {
+<area \
+  shape="rect"  \
+  id="<% $_ %>" \
+  name="<% $_->getCluster->getName %>" \
+  class="noborder nofade cluster jTip" \
+  coords="<% $_->getCoordinates %>" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+ >
+% }
+</map>
+
+</div>

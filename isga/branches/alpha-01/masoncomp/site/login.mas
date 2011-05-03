@@ -1,0 +1,16 @@
+<form id="form" action="<& /site/url.mas,
+                           path => '/submit/Login',
+			   query => { caller_url => $r->uri,
+			              caller_args => {$m->request_args}
+				      } &>" method="post">
+<p>
+ <label>Email Address</label>
+ <input id="username" name="username" type="text">
+ <label>Password</label>
+ <input id="password" name="password" type="password">
+
+ <input type="submit" name="Login" value="Login">
+</p>
+</form>
+
+<a href="/Account/Request">Request New Account</a> | <a href="/Account/LostPassword">Lost Password</a>

@@ -1,0 +1,19 @@
+<%args> # -*- cperl -*-
+ $file
+</%args>
+
+<%perl>
+  
+$file->getCreatedBy == SysMicro::Login->getAccount or X::User::Denied->throw();
+my $name = $file->getName;
+
+$m->clear_buffer();
+$m->print( $m->file( "/data/web/sysmicro.cgb/repository/$name" ));
+$m->flush_buffer();
+$m->abort();
+
+</%perl>
+
+<%flags>
+ inherit => undef
+</%flags>

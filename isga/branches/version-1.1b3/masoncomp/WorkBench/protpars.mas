@@ -1,0 +1,8 @@
+<%args>
+	$form
+	$infile
+</%args>
+
+<h1>Phylogenetics Analysis</h1>
+
+<% $form->get %>

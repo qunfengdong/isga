@@ -1,0 +1,14 @@
+<%args> # -*- cperl -*-
+ $current_page => 1
+</%args>
+
+<%perl>
+my $pager = SysMicro::Pager->new(Current => $current_page,
+				 PerPage => 20);
+
+my $account = SysMicro::Login->getAccount;
+my $pipelines = SysMicro::UserPipeline->query( CreatedBy => $account, OrderBy => 'CreatedAt',
+					   Pager => $pager );
+</%perl>
+
+<& /Pipeline/list_my.mas, account => $account, pager => $pager, pipelines => $pipelines &>

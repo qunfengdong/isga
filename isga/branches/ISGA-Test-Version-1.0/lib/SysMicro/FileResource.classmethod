@@ -1,0 +1,57 @@
+# -*- cperl -*-
+
+use File::Temp;
+
+#------------------------------------------------------------------------
+
+=item public FileResource upload(filehandle fh, Hash args);
+
+Upload a file or file collection through the web interface. 
+
+The args hash contains the following required parameters:
+
+ UserName => string
+ Type => FileType
+ Format => FileFormat
+ Description => string
+ CreatedBy => Account
+ CreatedAt => Timestamp
+ IsHidden => int
+
+=cut 
+#------------------------------------------------------------------------
+  sub upload {
+
+    my ($class, $fh, %args) = @_;
+
+    # if we don't hear otherwise, assume this is a stand alone file.
+    exists $args{ExistsOutsideCollection} or
+      $args{ExistsOutsideCollection} = 1;
+
+    my $username = $args{UserName};
+
+    # if the file is gzipped, we uncompress it.
+    if ( $username =~ /\.(gz|gzip|tgz)$/) {
+
+      binmode $fh, ':gzip';
+
+      local ($/);
+      my $data = <$fh>;
+      
+      $fh = File::Temp->new();
+      print $fh $data;
+      seek($fh,0,0);
+
+      $username =~ s/\.(gz|gzip)$// or $username =~ s/\.tgz$/\.tar/;
+      $args{UserName} = $username;
+    } 
+
+    # if it is a tar file, we are processing a collection
+    if ( $username =~ /\.tar$/ ) {
+
+      return SysMicro::FileCollection->upload($fh, %args);
+    }
+    
+    # otherwise process this one file
+    return SysMicro::File->upload($fh, %args);
+  }

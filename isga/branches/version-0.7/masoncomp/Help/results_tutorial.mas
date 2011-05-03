@@ -1,0 +1,14 @@
+<h4>Results Tutorial</h4>
+
+<p class="justify">After you submit your run, you will be redirected to the page below where you can track 
+the runs  progress.  In the Status section each cluster from the pipeline will have a row in the table where 
+the columns will provide you with the current status of the cluster, the number of steps remaing, the start 
+time, and the end time.  The page will update periodically as clusters statuses change.  The Results section 
+will also update as clusters finish.</p>
+
+<img class="tutorial" src="/include/img/tutorial/view_run_results.png" alt="Run Results">
+
+<img class="tutorial" src="/include/img/tutorial/view_run_results_complete.png" alt="Run Results Complete">
+
+<img class="tutorial" src="/include/img/tutorial/expanded_results.png" alt="Expanded Results">
+

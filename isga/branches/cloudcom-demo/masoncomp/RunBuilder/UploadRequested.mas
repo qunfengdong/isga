@@ -1,0 +1,14 @@
+<%args>
+ $rbur
+</%args>
+
+% my $rb = $rbur->getRunBuilder;
+
+
+<h1>Upload Requested</h1>
+
+<p>ISGA will attempt to load the file from the location you supplied.
+You will receive an email message when the file is available for use
+or if there is a problem retrieving the file.</p>
+
+<& right_menu.mas, run_builder => $rb &>

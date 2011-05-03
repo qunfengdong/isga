@@ -1,0 +1,37 @@
+---
+- Description: 'The Prokaryotic Annotation Pipeline predicts ORFs using Glimmer3, performs sequence similarity searches using WU-BLAST, and performs protein domain searches using HMMPFAM. The pipeline also uses tRNA-scan and RNAMMER to predict RNA sequences and performs several other analysis to discover things such as signal peptides, transmembrane regions, report GO and EC numbers, etc. This information is then used to create a final pipeline summary.'
+  Image: /include/img/prokaryote-annotation-pipeline.png
+  Layout: |-
+    <commandSetRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="commandSet.xsd" type="instance">
+     <commandSet type="serial">
+      <state>incomplete</state>
+      ___Process Annotation Input Files___
+      <commandSet type="parallel">
+       <state>incomplete</state> 
+       ___RNA Prediction___
+       <commandSet type="serial">
+        <state>incomplete</state>
+        <name>start pipeline:</name>
+        ___ORF Prediction___
+        ___Process Gene Prediction___
+        <commandSet type="parallel">
+         <state>incomplete</state>
+         ___Protein Domain Search___
+         <commandSet type="serial">
+          <state>incomplete</state>
+          ___Sequence Similarity Search___
+          ___Alternate Start Site Analysis___
+         </commandSet>
+          ___TFBS Search___
+        </commandSet>
+        ___Additional Gene Analysis___
+        ___Output___ 
+       </commandSet>
+      </commandSet>
+     </commandSet>
+    </commandSetRoot>
+  Name: Prokaryotic Annotation Pipeline
+  Release: Jan 2010
+  Status: Published
+  SubClass: ProkaryoticAnnotation
+  Version: 1

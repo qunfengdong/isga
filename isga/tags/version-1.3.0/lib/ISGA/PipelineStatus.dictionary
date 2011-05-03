@@ -1,0 +1,4 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: PipelineStatus
+attributes:
+  - { name: IsAvailable, type: boolean }

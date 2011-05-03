@@ -1,0 +1,27 @@
+<%args>
+  $run
+</%args>
+
+% bless $run, 'SysMicro::Run::ProkaryoticAnnotation';
+
+<li class="title">Analysis Tools</li>
+
+% if ( $run->hasGbrowseInstallation ) {
+
+%#<span onclick="window.location='/Browser/gbrowse/<% $run %>/'">
+<li class="rmbutton"><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></li>
+<li><p>Visualize the results of this run in the Generic Genome Browser.</p></li>
+%#</span>
+
+% } else {
+
+%#<span onclick="window.location='/submit/Run/InstallGbrowseData?run=<% $run %>'">
+<li class="rmbutton"><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></li>
+<li><p>Load the results of this run into the Generic Genome Browser.</p></li>
+%#</span>
+
+% }
+
+<li class="rmbutton"><a href="/WorkBench/Blast">Perform BLAST</a></li>
+<li><p>Perform a BLAST query.</p></li>
+

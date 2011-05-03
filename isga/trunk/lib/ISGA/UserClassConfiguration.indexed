@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: UserClassConfiguration
+attributes:
+  - { name: Variable, type: ConfigurationVariable, options: [ REQUIRED, UNIQUE ] }
+  - { name: UserClass, type: UserClass, options: [ REQUIRED ] }
+  - { name: Value, type: string, options: [ REQUIRED ] }

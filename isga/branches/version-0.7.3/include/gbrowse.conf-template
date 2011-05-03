@@ -1,0 +1,122 @@
+[GENERAL]
+db_adaptor = Bio::DB::SeqFeature::Store
+db_args = -adaptor memory
+	  -dir '___DATABASE_DIR___'
+
+
+plugins = BatchDumper FastaDumper RestrictionAnnotator FilterTest Submitter
+
+# Web site configuration info
+gbrowse root = include/gbrowse
+stylesheet   = gbrowse.css
+buttons      = images/buttons
+js           = js
+tmpimages    = tmp
+
+
+link = AUTO
+initial landmark=___LANDMARK___
+description = ___DESCRIPTION___
+show sources = 0
+plugins = GFFDumper
+hilite fill = yellow
+hilite outline = orange
+overview bgcolor = white
+detailed bgcolor  = white
+request timeout = 60
+disable wildcards = 0
+image widths = 640 800 1024
+default width = 800
+
+default features = CDS gene tRNA rRNA
+
+# Default glyph settings
+[TRACK DEFAULTS]
+glyph       = generic
+height      = 8
+bgcolor     = cyan
+fgcolor     = cyan
+label density = 25
+bump density  = 100
+
+overview label density = 160
+
+### TRACK CONFIGURATION ####
+[CDS]
+feature  = CDS
+glyph = segments
+stranded     = 1
+translation  = 1frame
+bgcolor = palegoldenrod
+fgcolor = goldenrod
+label = 1
+key  = CDS
+citation     = Protein coding sequence 
+#category = Genomic
+link = sub {
+            my ($feature, $panel, $track) = @_;
+	    my ($id) = $feature->get_tag_values('db_id');
+	    return "/GenomeFeature/View?genome_feature=$id";
+            }
+
+
+[gene]
+feature       = gene
+glyph         = transcript2
+bgcolor       = lightblue
+fgcolor       = blue
+secondary     = mRNA
+secondary_bgcolor = mediumblue
+secondary_fgcolor = mediumblue
+highlight_color = red
+higlighted = 1
+label = 1
+link = sub {
+            my ($feature, $panel, $track) = @_;
+	    my ($id) = $feature->get_tag_values('db_id');
+	    return "/GenomeFeature/View?genome_feature=$id";
+            }
+label density = 50
+key      = Gene Model
+#category = Genomic
+citation     = Gene and mRNA (transcript) features  
+
+[tRNA]
+feature  = tRNA
+glyph = transcript2
+label = 1
+stranded     = 1
+bgcolor      = white
+fgcolor      = black
+curatedexon  = slateblue
+fontcolor    = slateblue
+key          = tRNA
+#category = Genomic
+link = sub {
+            my ($feature, $panel, $track) = @_;
+	    my ($id) = $feature->get_tag_values('db_id');
+	    return "/GenomeFeature/View?genome_feature=$id";
+            }
+
+[rRNA]
+feature  = rRNA
+glyph    = segments
+bgcolor  = lightslategray
+fgcolor  = black
+key      = rRNA
+citation = rRNA
+#category = Analysis
+link = sub {
+            my ($feature, $panel, $track) = @_;
+	    my ($id) = $feature->get_tag_values('db_id');
+	    return "/GenomeFeature/View?genome_feature=$id";
+            }
+
+#[transcript]
+#feature  = transcript
+#glyph    = segments
+#bgcolor  = lightslategray
+#fgcolor  = black
+#key      = transcript
+#citation = transcript
+#category = Analysis

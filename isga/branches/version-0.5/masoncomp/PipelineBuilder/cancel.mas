@@ -1,0 +1,10 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<h1>Cancel your Pipeline Builder?</h1>
+<p>This will delete your Pipeline Builder and you will lose any saved configuration information.</p>
+<p>
+<a href="/PipelineBuilder/Overview?pipeline_builder=<% $pipeline_builder %>" class="button">No</a>
+<a href="/submit/PipelineBuilder/Remove?pipeline_builder=<% $pipeline_builder %>" class="button">Yes</a>
+</p>

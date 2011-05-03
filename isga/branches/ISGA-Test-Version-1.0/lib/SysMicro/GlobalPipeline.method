@@ -1,0 +1,78 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public void draw();
+
+Assigns colors and draw pipline workflow.
+
+=cut
+#------------------------------------------------------------------------
+  sub draw {
+    
+    my ($self, $clusters, $wf_mask) = @_;
+
+    defined $clusters or $clusters = $self->getClusters;
+    my $workflow = SysMicro::Workflow->query( Pipeline => $self, Cluster => $clusters );
+
+    my $image = GD::Image->new( '___MASONCOMPROOT___/www/' . $self->getImage );
+    
+#    my $white = $image->colorClosest(255,255,255);
+#    my $grey = $image->colorAllocate(227,227,227);
+#    my $green = $image->colorAllocate(188,243,103);
+#    my $yellow = $image->colorAllocate(240,235,97);
+    my $green = $image->colorClosest(162,210,99);
+    my $yellow = $image->colorClosest(223,210,91);
+    my $red = $image->colorClosest(177,118,110);
+
+    defined $wf_mask or $wf_mask = $self->getWorkflowMask;
+
+    my $disabled_components = $wf_mask->getDisabledComponents;
+    my $disabled = [];
+    while ( my ($key, $value) = each %{$disabled_components} ) {
+      my @components = SysMicro::Component->query( ErgatisName => $key);
+      push(@{$disabled}, $components[0][0]) if $value eq 'disabled';
+    }
+    my %partial_cluster = map { $_->getCluster->getName => $_->getCluster } @{$disabled};
+
+    
+    foreach my $cluster ( @$clusters ) {
+      
+      my $wf = shift @$workflow;
+      next if($wf->isHidden);
+      next if($wf->getCoordinates eq '');
+      my @coords = split ( /,/, $wf->getCoordinates );
+
+      if ( defined $partial_cluster{$cluster->getName} ){
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+          for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+            $image->setPixel($i,$j, $yellow) if ($image->getPixel($i,$j) == $red || $image->getPixel($i,$j) == $green);
+          }
+        }
+        next;
+      } else {
+
+        my $color = ( $wf->isRequired ? $yellow : $green );
+
+      
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+            $image->setPixel($i,$j, $green) if ($image->getPixel($i,$j) == $red || $image->getPixel($i,$j) == $yellow);
+	  }
+        }
+      }
+    }
+
+    foreach (keys %{$self->getWorkflowMask->getDisabledClusters}){
+      my $disabled_workflow = SysMicro::Workflow->new( Pipeline => $self, Cluster => SysMicro::Cluster->new(Name => $_ ));
+      my @coords = split ( /,/, $disabled_workflow->getCoordinates );
+      next if($disabled_workflow->isHidden);
+      next if($disabled_workflow->getCoordinates eq '');
+      for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+        for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+         $image->setPixel($i,$j, $red) if ($image->getPixel($i,$j) == $green || $image->getPixel($i,$j) == $yellow);
+        }
+      }
+    }
+    
+    print $image->png;
+  }    

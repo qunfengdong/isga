@@ -1,0 +1,5 @@
+<%args> # -*- cperl -*-
+ $pipeline_builder
+</%args>
+
+<& /PipelineBuilder/view_outputs.mas, pipeline_builder => $pipeline_builder &>

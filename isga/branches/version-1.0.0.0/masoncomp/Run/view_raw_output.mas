@@ -1,0 +1,65 @@
+<%args>
+ $run
+</%args>
+
+<h2>Raw Output</h2>
+
+% my $raw_status = $run->getRawDataStatus;
+
+% if ( $raw_status eq 'Deleted' ) {
+
+<p>The raw data for this run has been deleted. Please review our <a href="#">data retention policy</a> for an explanation of why we delete raw output.</p>
+
+% } else {
+
+%   if ( $raw_status eq 'Tagged for Deletion' ) {
+
+<p class="alert">As per our <a href="#">data retention policy</a>, your raw output may now be deleted at any time. If this data is important to you and you have not done so yet, please download the files immediately.</p>
+
+%   } else { # we are in the safe period
+
+% my $raw_data_persist = ISGA::Variable->value('raw_data_retention');
+% my $deadline = ISGA::Date->new() + "${raw_data_persist}D";
+
+<p>As per our <a href="/Help/Policies#DataRetention">data retention policy</a>, your raw output may be deleted on or after <% $deadline->letter() %>. If this data is important to you, download these files before that date.</p>
+
+%   }
+
+<div class="list">
+
+%   my $row_counter = 0;
+
+<table width="100%">
+ <thead>
+  <tr><th>Cluster</th><th>Download</th></tr>
+ </thead>
+ <tbody>
+%   foreach my $run_cluster ( @{$run->getClusters} ) {
+
+%     next unless $run_cluster->hasEvidence();
+
+%     my $tr_class = ++$row_counter % 2 ? "even" : "odd";
+%     my $cluster = $run_cluster->getCluster;
+%     my $cluster_node = "c-$cluster-node-$run-evidence";
+%     my $cname = $cluster->getName;
+  <tr class="<% $tr_class %>">
+   <td><% $cname %></td>
+   <td>\
+%     if ( $run_cluster->getStatus == $complete ) {
+%       my $download = $run_cluster->getEvidenceDownloadName();
+<a href="/Download/<% $download %>?run_cluster=<% $run_cluster %>"> <% $download %></a>\
+%     } else {
+Not Available Yet\
+%     }
+   </td>
+  </tr>
+%   }
+% }
+
+</table>
+
+</div>
+
+<%once>
+my $complete = ISGA::RunStatus->new( Name => 'Complete' );
+</%once>

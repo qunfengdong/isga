@@ -1,0 +1,39 @@
+<%args> # -*- cperl -*-
+ $pipeline
+</%args>
+
+<%perl>
+
+# allow non-logged in users to view inputs for public pipeline
+if ( $pipeline->isa( 'SysMicro::UserPipeline' ) ) {
+
+  my $account = SysMicro::Login->getAccount;
+  $account or X::User::Denied->throw( "You do not have permission to view these outputs" );
+  $pipeline->getCreatedBy == $account
+    or X::User::Denied->throw( "You do not have permission to view these outputs" );
+
+}
+
+my %results = ( Pipeline => {}, Evidence => {} );
+
+foreach my $cluster ( @{$pipeline->getClusters} ) {
+
+  my $components = $pipeline->getComponents($cluster);
+  
+  foreach my $output ( @{SysMicro::ClusterOutput->query( Component => $components )} ) { 
+    
+    my $visibility = $output->getVisibility();
+
+    if ( exists $results{$visibility}{$cluster} ) {
+      push @{$results{$visibility}{$cluster}{Output}}, $output;
+    } else {
+      $results{$visibility}{$cluster} = { Cluster => $cluster, Output => [ $output ] };
+    }
+  }
+}
+
+
+</%perl>
+
+<& /Pipeline/view_outputs.mas, pipeline => $pipeline, results => \%results &>
+

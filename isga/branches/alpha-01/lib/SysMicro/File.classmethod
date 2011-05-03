@@ -1,0 +1,132 @@
+# -*- cperl -*-
+
+use Digest::SHA;
+#------------------------------------------------------------------------
+
+=item public File upload( Filehandle fh, string $username, FileContent $content, FileFormat $format );
+
+Uploads a file.
+
+=cut 
+#------------------------------------------------------------------------
+sub upload {
+    
+  my ($class, $fh, $username, $content, $format) = @_;
+
+  # hash the file and reset postition
+  binmode $fh;
+
+  # grab digest and clean it up
+  my $name = Digest::SHA->new(256)->addfile($fh)->b64digest;
+  $name =~ s/\+/-/go;
+  $name =~ s/\//_/go;
+
+  seek($fh,0,0);
+
+  my $size = (stat($fh))[7];
+
+  # check to see if the file is already in the system
+  my ($file) = @{$class->query(Name => $name)};
+ 
+  if ( !$file ) {
+
+    # write the file
+    open my $upload, ">", "___file_repository___/$name"
+      or X->throw( error => "$!:___file_repository___/$name" );
+    binmode $upload;
+    while (<$fh>) { print $upload $_; }
+    
+    close $upload;
+
+  } elsif ( $file->getSize != $size ) {
+
+    # otherwise blow up
+    X::User->throw(error => 'File Hash Conflict');
+
+  }
+  
+  $file = $class->create( Name => $name, UserName => $username, Size => $size, Content => $content, 
+			  CreatedAt => SysMicro::Timestamp->new(), 
+			  CreatedBy => SysMicro::Login->getAccount, Format => $format );
+
+  # add the file to the database
+  return $file;
+
+}
+
+
+
+
+
+
+#------------------------------------------------------------------------
+
+=item public File verifyFileHandle(Filehandle fh, FileContent content, FileFormat format);
+
+Confirms that a file handle contents are valid.
+
+=cut 
+#------------------------------------------------------------------------
+sub verifyFileHandle {
+
+  my ($class, $fh, $content, $format) = @_;
+
+
+}
+
+
+
+#------------------------------------------------------------------------
+
+=item public File ergatis_output_move( Filehandle fh, string $username );
+
+Uploads a file.
+
+=cut
+#------------------------------------------------------------------------
+sub ergatis_output_move {
+  my ($class, $output, $username, $content, $format) = @_;
+
+  open my $fh, $output
+      or X->throw( error => "$!:$output" );
+  # hash the file and reset postition
+  binmode $fh;
+
+  # grab digest and clean it up
+  my $name = Digest::SHA->new(256)->addfile($fh)->b64digest;
+  $name =~ s/\+/-/go;
+  $name =~ s/\//_/go;
+
+  seek($fh,0,0);
+
+  my $size = (stat($fh))[7];
+  my $createdat = (stat($fh))[10];
+
+  # check to see if the file is already in the system
+  my ($file) = @{$class->query(Name => $name)};
+
+  if ( !$file ) {
+
+    # write the file
+    open my $upload, ">", "___file_repository___/$name"
+      or X->throw( error => "$!:___file_repository___/$name" );
+    binmode $upload;
+    while (<$fh>) { print $upload $_; }
+
+    close $upload;
+
+  } elsif ( $file->getSize != $size ) {
+
+    # otherwise blow up
+    X::User->throw(error => 'File Hash Conflict');
+
+  }
+
+  $file = $class->create( Name => $name, UserName => $username, Size => $size, Content => $content,
+                          CreatedAt => SysMicro::Timestamp->fromEpoch($createdat),
+                          CreatedBy => SysMicro::Login->getAccount, Format => $format );
+
+  # add the file to the database
+  return $file;
+
+}

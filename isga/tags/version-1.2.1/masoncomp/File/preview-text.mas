@@ -1,0 +1,13 @@
+<%args>
+ $file
+</%args>
+
+% open my $fh, '<', $file->getPath;
+<div class="preview">
+<pre>
+% while ( <$fh> ) {
+<% $_ %>
+% }
+</pre>
+</div>
+

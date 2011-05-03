@@ -1,0 +1,11 @@
+<%args>  # -*- cperl -*-
+ $run_builder_upload_request
+ $run_builder
+</%args>
+
+<%perl>
+  $run_builder_upload_request->getAccount == ISGA::Login->getAccount
+      or X::User::Denied->throw;
+</%perl>
+
+<& /RunBuilder/UploadRequested.mas, rbur => $run_builder_upload_request, run_builder => $run_builder &>

@@ -1,0 +1,220 @@
+<%args>
+	$job
+</%args>
+
+<h1>WorkBench: MSA Output</h1>
+
+<%perl>
+	use Data::Dumper;
+	my $collection = $job->getCollection;
+	my $contents = $collection->getContents;
+	my $list;
+	foreach (@$contents){
+		if ($_->getType->getName eq 'Toolbox Job Configuration'){
+			use YAML;
+			$list = YAML::LoadFile($_->getPath);
+		}
+	}
+
+	my $sequence_type = $list->{params}[2]->{sequence_type};
+	my $output_tree = $list->{params}[3]->{output_tree};
+	my $output_format = $list->{params}[5]->{output_format};
+	my $input = $list->{input_file};
+
+	my $path = '___tmp_file_directory___'.'workbench/msa/';
+	my $infile = $path.$input.'_msa_input';
+  my $outfile = $path.$input.'_msa_output';
+	my $infile_ext;
+	my $title;
+	my $button;
+	my $content;
+	my $outtree;
+	my $tree;
+	my $boolean_phylip = 0;
+
+	if ($output_tree eq 'none'){
+		$boolean_phylip = 1 if ($output_format eq "PHYLIP");
+
+		$title = '<h2>Alignment</h2>'.$output_format;
+		if (($output_format eq "def") and ($sequence_type eq "protein")){
+			$content = get_color_output($outfile);
+		} else {
+			$content = file_contents($outfile);
+		}
+		$outtree = $infile.'.dnd';
+		##
+	} else {
+		## Determine the output file
+		if ($output_tree eq 'nj'){
+			$title = '<h2>Neighbor Joining Tree</h2>';
+			$infile_ext = "$infile.nj";
+		} elsif ($output_tree eq 'dst') {
+			$title = '<h2>Distance matrix</h2>';
+			$infile_ext = "$infile.dst";
+		} 
+
+		## Determine the tree file
+		if ($output_tree eq 'ph') {
+			$title = '<h2>Phylip tree</h2>';
+			$outtree = $infile.'.ph';
+		} else {
+			$content = file_contents($infile_ext);
+			$outtree = $infile.'.ph';
+		}
+	}
+
+	$tree = file_contents($outtree);
+
+	##################################################################
+	## subroutine get_buttons, to display the buttons to
+	## view the alignement file.
+	##################################################################
+	sub get_buttons {
+		my ($file, $sequence_type) = @_;
+		my $align = '<a href="/tmp/blast/'.$file.'" target="_blank">
+			<input type="button" name="color" value="View Alignment file" />
+			</a>';
+		return $align;
+	}
+
+	##################################################################
+	## subroutine phylip_buttons, to display buttons for
+	## phylogenetic analysis.
+	##################################################################
+	sub phylip_buttons{
+		my ($file, $sequence_type) = @_;
+		my $align;
+
+		if ($sequence_type eq 'dna'){
+			$align .= '
+				<!--
+				<a href="/WorkBench/DnaPars?infile='.$file.'">
+				<input type="button" name="color" value="dnapars" />
+				</a>
+				<a href="/WorkBench/DnaML?infile='.$file.'">
+				<input type="button" name="color" value="dnaml" />
+				</a>
+				-->
+				<a href="/WorkBench/DnaDist?infile='.$file.'">
+				<input type="button" name="color" value="dnadist" />
+				</a>
+				';
+		} else {
+			$align .= '
+				<!--
+				<a href="/WorkBench/ProtPars?infile='.$file.'">
+				<input type="button" name="color" value="ProtPars" />
+				</a>
+				<a href="/WorkBench/ProtML?infile='.$file.'">
+				<input type="button" name="color" value="ProtML" />
+				</a>
+				-->
+				<a href="/WorkBench/ProtDist?infile='.$file.'">
+				<input type="button" name="color" value="ProtDist" />
+				</a>
+				';
+		}
+		return $align;
+	}
+
+	##################################################################
+	## subroutine get_color_output
+	##
+	##################################################################
+	sub get_color_output {
+		my $file = shift;
+		my $align;
+
+		open FILE, $file;
+		$align .= '<br /><br /><pre>'.<FILE>;
+		my @lines=<FILE>;
+		close FILE;
+
+		my $i;
+		my $test;
+		my @aln;
+		my @total;
+		my $n = 0;
+
+		foreach my $line(@lines){
+			if ($line =~ /^$/ ){ $align .= "\n\n"; $i =0; next;}
+			@aln = split (//,$line);
+			if ($n == 0){$n = scalar(@aln)-51;}
+
+			$align .= substr($line, 0, $n)."\t";
+			my $x = substr($line, $n,100);
+			chomp ($x);
+			$align .= get_color($x)."  ";
+
+			$test = (substr($line, $n,100) =~ tr/a-zA-Z//);
+			if ($test){
+				$total[$i] += $test;
+				$align .= $total[$i]."\n";
+			} else {
+				$align .= "\n";
+			}
+			$i++;
+		}
+		return $align.'</pre><hr />';
+	}
+
+	##################################################################
+	## get_color to give color ot the amino acid
+	##################################################################
+	sub get_color {
+		my $set = shift;
+		$set =~ s/A/\<b\ style\=\"color\:red\"\>A\<\/b\>/g;
+		$set =~ s/V/\<b\ style\=\"color\:red\"\>V\<\/b\>/g;
+		$set =~ s/F/\<b\ style\=\"color\:red\"\>F\<\/b\>/g;
+		$set =~ s/P/\<b\ style\=\"color\:red\"\>P\<\/b\>/g;
+		$set =~ s/M/\<b\ style\=\"color\:red\"\>M\<\/b\>/g;
+		$set =~ s/I/\<b\ style\=\"color\:red\"\>I\<\/b\>/g;
+		$set =~ s/L/\<b\ style\=\"color\:red\"\>L\<\/b\>/g;
+		$set =~ s/W/\<b\ style\=\"color\:red\"\>W\<\/b\>/g;
+		$set =~ s/D/\<b\ style\=\"color\:blue\"\>D\<\/b\>/g;
+		$set =~ s/E/\<b\ style\=\"color\:blue\"\>E\<\/b\>/g;
+		$set =~ s/R/\<b\ style\=\"color\:magenta\"\>R\<\/b\>/g;
+		$set =~ s/H/\<b\ style\=\"color\:magenta\"\>H\<\/b\>/g;
+		$set =~ s/K/\<b\ style\=\"color\:magenta\"\>K\<\/b\>/g;
+		$set =~ s/S/\<b\ style\=\"color\:green\"\>S\<\/b\>/g;
+		$set =~ s/T/\<b\ style\=\"color\:green\"\>T\<\/b\>/g;
+		$set =~ s/Y/\<b\ style\=\"color\:green\"\>Y\<\/b\>/g;
+		$set =~ s/H/\<b\ style\=\"color\:green\"\>H\<\/b\>/g;
+		$set =~ s/C/\<b\ style\=\"color\:green\"\>C\<\/b\>/g;
+		$set =~ s/N/\<b\ style\=\"color\:green\"\>N\<\/b\>/g;
+		$set =~ s/G/\<b\ style\=\"color\:green\"\>G\<\/b\>/g;
+		$set =~ s/Q/\<b\ style\=\"color\:green\"\>Q\<\/b\>/g;
+		return $set;
+	}
+
+	##################################################################
+	## Subroutine to get the contents of the files generated
+	##################################################################
+	sub file_contents {
+		my $file = shift;
+
+		open FILE, $file;
+		my @lines = <FILE>;
+		close FILE;
+
+		return '<br /><pre>'.join('', @lines).'</pre><br /><hr />';
+
+	}
+</%perl>
+
+<div class="data">
+<%perl> 
+if($infile_ext) {
+$button = get_buttons($infile_ext, $sequence_type);
+} else {
+$button = get_buttons($outfile, $sequence_type);
+}
+print $button;
+print phylip_buttons($input, $sequence_type) if ($boolean_phylip);
+</%perl>
+</div>
+% print $content;
+% print $tree;
+<br /><br />
+
+

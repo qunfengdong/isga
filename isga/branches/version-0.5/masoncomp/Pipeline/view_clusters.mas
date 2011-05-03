@@ -1,0 +1,66 @@
+<%args>
+ $pipeline
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+  if($.browser.msie)
+  {
+   $("area.cluster")
+   .hover(function(){JT_IE_area_show(this.href,this.id,this.title,this.coords,'workflow')},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }else{
+   $("area.cluster")
+   .hover(function(){JT_area_show(this.href,this.id,this.alt,this.coords)},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }
+}
+
+</sys:script>
+
+<h1>Pipeline: View Parameters</h1>
+
+<p>Click on a Component to select to view it's parameters.</p>
+
+<div id="workflow">
+
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/Pipeline/DrawWorkflow?pipeline=<% $pipeline %>" >
+
+<map name="clusters" >
+
+% foreach ( @{$pipeline->getWorkflow} ) {
+%   my $cluster = $_->getCluster;
+<area \
+  shape="rect" 
+  id="<% $_ %>" \
+%#  name="<% $cluster->getName %>" \
+  alt="<% $cluster->getName %>" \
+  class="noborder nofade cluster jTip" \
+  coords="<% $_->getCoordinates %>" \
+%#   if (exists $cluster_builder->{NoParamsFlag}){
+%#  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>" \
+%#    }else{
+  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>&link=<% "/Pipeline/ViewComponents?pipeline=$pipeline&cluster=$cluster" | u %>" \
+%#    } 
+> 
+% }
+</map>
+
+</div>
+
+<br>
+
+<div class="buttonHolder">
+<a class="resetButton button" href="/Pipeline/View?pipeline=<% $pipeline %>">Cancel</a>
+</div>
+
+<& right_menu.mas, pipeline => $pipeline &>

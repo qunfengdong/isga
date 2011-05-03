@@ -1,0 +1,5 @@
+<%args>
+ $file
+</%args>
+Success
+file=<% $file %>

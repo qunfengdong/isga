@@ -1,0 +1,3 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: PipelinePartition
+options: [ PARTITION ]

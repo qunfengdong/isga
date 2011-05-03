@@ -1,0 +1,27 @@
+% my $style = "1column";
+
+<%perl>
+
+# retrieve the run
+my $path = $r->path_info();
+my ($run) = $path =~ /^\/(\d+)/;
+$run = SysMicro::Run->new(Id => $run);
+
+use Data::Dumper;
+warn Dumper(\%ARGS);
+
+my $html = $m->scomp( '/Browser/contig_select.mas', run => $run );
+
+$html .= $m->scomp( $m->fetch_next, %ARGS );
+my $siteTags = SysMicro::Utility->extractSiteTags( \$html );
+
+</%perl>
+
+<& /site/header.mas, siteTags => $siteTags, style => $style &>
+<& /site/nav.mas, doc => 0 &>
+<& "/site/$style.mas", siteTags => $siteTags, html => $html &>
+<& /site/footer.mas &>
+
+<%flags>
+ inherit => undef
+</%flags>

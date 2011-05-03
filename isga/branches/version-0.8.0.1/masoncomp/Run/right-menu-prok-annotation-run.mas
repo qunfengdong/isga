@@ -1,0 +1,34 @@
+<%args>
+  $run
+</%args>
+
+% bless $run, 'ISGA::Run::ProkaryoticAnnotation';
+
+<li class="title">Analysis Tools</li>
+
+% if ( $run->hasGbrowseInstallation ) {
+
+%#<span onclick="window.location='/Browser/gbrowse/<% $run %>/'">
+<li class="rmbutton"><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></li>
+<li><p>Visualize the results of this run in the Generic Genome Browser.</p></li>
+%#</span>
+
+% } else {
+%  if($run->getStatus->getName eq 'Complete'){
+%#<span onclick="window.location='/submit/Run/InstallGbrowseData?run=<% $run %>'">
+<li class="rmbutton"><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></li>
+<li><p>Load the results of this run into the Generic Genome Browser.</p></li>
+%#</span>
+%  } else {
+<li class="rmbutton onclickLink">Cannot results into GBrowse</li>
+<li><p>We cannont load runs which are <% $run->getStatus->getName %> into GBrowse</p></li>
+%  }
+% }
+
+<li class="rmbutton"><a href="/WorkBench/Blast">Perform BLAST</a></li>
+<li><p>Perform a BLAST query.</p></li>
+
+% if ($run->isHidden){
+  <li class="rmbutton" id="show_run"><a href="#">Unhide Run</a></li>
+  <li id="show_run"><p>Unhide this run.</p></li>
+% }

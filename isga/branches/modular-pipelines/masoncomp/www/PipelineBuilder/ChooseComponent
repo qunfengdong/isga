@@ -1,0 +1,74 @@
+<%args> #! -*- cperl -*-
+$pipeline_builder
+$class => undef
+$cluster
+</%args>
+% if( ! defined $class || $class eq 'clusterOption' ){
+<%perl>
+my $check_class = $cluster->getName;
+$check_class =~ s/ /_/g;
+$check_class .= "_choose_component";
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+
+$form and $form->get_formname() eq $check_class
+  or $form =  ISGA::FormEngine::PipelineBuilder->ChooseComponent(\%ARGS);
+
+$pipeline_builder ||= $form->get_input('pipeline_builder');
+</%perl>
+
+<h1 class="component"><%  $cluster->getName %></h1>
+<p class="component"><%  $cluster->getName %> has the following components available.</p>
+<p class="component">Please check the components you wish to run or use the Edit Parameters link 
+to edit that components parameters.</p>
+
+
+<% $form->get %>
+
+% } elsif ( $class eq 'requiredCluster' ) {
+<h1 class="component"><%  $cluster->getName %></h1>
+<p class="component"><%  $cluster->getName %> is a required module and must be run.  Use the Edit Parameters button below to edit its parameters.</p>
+<p class="component"><a class="button" href="/PipelineBuilder/EditCluster?pipeline_builder=<% $pipeline_builder %>&cluster=<% $cluster %>">Edit Parameters</a></p>
+
+%} elsif ( $class eq 'cluster' ) {
+
+<h1 class="component"><%  $cluster->getName %></h1>
+% my $disabled_cluster = $pipeline_builder->getWorkflowMask->getDisabledClusters;
+% my $toggle_word = defined $$disabled_cluster{$cluster->getName} ? "On" : "Off";
+
+<p class="component"><%  $cluster->getName %> is currently turned <% $toggle_word eq "Off" ? "on" : "off" %>.  Click the 
+<span class="highlight">Toggle <% $toggle_word %></span> button below to turn the module <% lc($toggle_word) %>.</p>
+<p class="component">To Edit this modules parameters, click the Edit Parameters button.</p>
+
+%#<p class="component"><a id="<% $cluster %>" class="button toggleModule" href="/PipelineBuilder/Overview?pipeline_builder=<% $pipeline_builder %>&cluster=<% $cluster %>">Toggle <% $toggle_word %></a> | 
+<p class="component"><a id="<% $cluster %>" class="button toggleModule">Toggle <% $toggle_word %></a> |
+<a class="button" href="/PipelineBuilder/EditCluster?pipeline_builder=<% $pipeline_builder %>&cluster=<% $cluster %>">Edit Parameters</a></p>
+
+%# my $noParams;
+%# my $disabled_components = $pipeline_builder->getWorkflowMask->getDisabledComponents;
+%#foreach ( @{$cluster->getComponents}){
+%#  if (my $builder =  ISGA::ComponentBuilder->new($_) ){
+%#    if ( $builder->{PipelineBuilder} ){
+%#
+%#<p class="component"><% $_->getName %> | <a class="button" href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>">Edit Parameters</a><br>
+%#if(defined ${$disabled_components}{$_->getErgatisName} || defined ${$pipeline_builder->getWorkflowMask->getDisabledClusters}{$cluster->getName}){
+%#<em class="red">You have disabled this analysis.</em><br>
+%#}
+%#<% $builder->getComponentDescription  %>
+%#</p>
+%#    } else {
+%#      push(@{$noParams}, $_);
+%#    }
+%#  }
+%#}
+
+%#foreach ( @{$noParams}){
+%#  my $builder = ISGA::ComponentBuilder->new($_);
+%#<p class="component"><% $_->getName %><br>
+%#<em class="red">Has no parameters to be set.</em><br>
+%#<% $builder->getComponentDescription  %>
+%#</p>
+
+%#}
+%}
+

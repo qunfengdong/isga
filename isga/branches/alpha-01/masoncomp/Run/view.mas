@@ -1,0 +1,106 @@
+<%args>
+ $run
+</%args>
+
+<h1>Results: <% $run->getType->getName %> </h1>
+
+% my $now = SysMicro::Timestamp->new;
+% my $new = $now + '5m';
+
+<p>This page was refreshed at <% $now->brief %>. It will refresh next at <% $new->brief %>.
+
+<sys:meta http-equiv="refresh" content="300">
+
+<h2>Status</h2>
+
+% my $counter = 1;
+
+<table width="100%" >
+<tr><th>Job</th><th>State</th><th>Progress</th><th>Start</th><th>End</th></tr>
+
+<tr class="list_label">
+ <td>Pipeline</td>
+ <td><% $status_map{ $run->getStatus->getName } %></td>
+ <td></td>
+ <td><% $run->getCreatedAt->brief %></td>
+ <td>\
+% if ( $run->getStatus eq 'Complete' ) {</td>
+% }
+ </td>
+</tr>
+<tr class="spacer"></tr>
+
+% foreach my $run_cluster ( sort { $a <=> $b } @{$run->getClusters} ){
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+
+<tr class="<% $tr_class %>" >
+ <td><% $run_cluster->getCluster->getName %></td>
+%   my $status = $run_cluster->getStatus;
+ <td><% $status_map{ $status->getName } %></td>
+%   my $fa = $run_cluster->getFinishedActions;
+%   my $ta = $run_cluster->getTotalActions;
+
+ <td>\
+%   if ( $fa ) {
+<% $fa %>/<% $ta %>\
+%     if ( $status ne 'Complete' ) {
++
+%     }
+%   }
+ </td>
+
+ <td>\
+%   my $start = $run_cluster->getStartedAt;
+%   if ( $start ) {
+<% $start->brief %>
+%   } 
+ </td>
+
+ <td>
+%   my $fin   = $run_cluster->getFinishedAt; 
+%   if ( $fin ) {
+<% $fin->brief %>
+%   }
+ </td>
+
+</tr>
+% }
+<table>
+
+% $counter = 1;
+
+<h2>Results</h2>
+
+<table>
+<tr><th>Cluster</th><th>Result</th><th>Format</th></tr>
+
+% foreach my $result ( @{$run->getOutput} ){
+%   my $cluster_output = $result->getClusterOutput;
+%   my $tr_class = ++$counter % 2 ? "odd" : "even";
+<tr class="<% $tr_class %>" >
+ <td><% $cluster_output->getCluster->getName %></td>
+ <td><% $cluster_output->getType->getName %></td>
+%   if ( my $file = $result->getFile ) {
+ <td><a href="/Download/<% $file->getUserName %>?file=<% $file %>"><% $cluster_output->getFormat->getName %></a></td>
+%   } else {
+ <td>Not Available Yet</td>
+%   }
+</tr>
+% }  
+
+</table>
+
+<%once>
+
+ my %status_map = 
+ ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',
+   Canceled => '<span style="font-weight:bold; color:red" >Canceled</span>',
+   Error => '<span style="font-weight:bold; color:red" >Error</span>',
+   Running  => '<span style="font-weight:bold; color:blue" >Running</span>',
+   Incomplete => '<span style="font-weight:bold" >Incomplete</span>',
+   Submitting => '<span style="font-weight:bold; color:blue" >Submitting</span>',
+   Held => '<span style="font-weight:bold; color:purple">Held</span>',
+   Complete => '<span style="font-weight:bold; color:green">Complete</span>',
+ );
+
+</%once>

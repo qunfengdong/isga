@@ -1,0 +1,31 @@
+---
+ - Component: sff_to_CA.default
+   Type: 'Celera Assembler native format'
+   Format: FRG
+   ErgatisFormat: 'File List'
+   Visibility: Evidence
+   FileLocation: 'sff_to_CA/___id____default___iteration___/sff_to_CA.frg.list'
+ - Component: celera-assembler.default
+   Type: 'Celera Assembler Output'
+   Format: ASM
+   ErgatisFormat: 'File List'
+   Visibility: Pipeline
+   FileLocation: 'celera-assembler/___id____default/celera-assembler.asm.list'
+ - Component: celera-assembler.default
+   Type: 'Celera Assembler Output'
+   Format: QC
+   ErgatisFormat: 'File List'
+   Visibility: Evidence
+   FileLocation: 'celera-assembler/___id____default/celera-assembler.qc.list'
+ - Component: celera-assembler.default
+   Type: 'Genome Sequence'
+   Format: FASTA
+   ErgatisFormat: File
+   Visibility: Pipeline
+   FileLocation: 'celera-assembler/___id____default/i1/g1/celera/9-terminator/celera.scf.fasta'
+ - Component: celera2hawkeye.default
+   Type: 'Hawkeye Input'
+   Format: 'Amos Bank'
+   ErgatisFormat: Directory
+   Visibility: Evidence
+   FileLocation: 'celera2hawkeye/___id____default/celera.bnk'

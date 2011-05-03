@@ -1,0 +1,31 @@
+<%args> # -*- cperl -*-
+ $pipeline
+</%args>
+
+<%perl>
+
+# handle global pipelines
+if ( $pipeline->isa('SysMicro::GlobalPipeline') ) {
+  $m->comp( $component_lookup{ $pipeline->getName }, pipeline => $pipeline );
+
+# handle user pipelines
+} else {
+
+  # retrieve the account to test credentials
+  my $account = SysMicro::Login->getAccount or X::User::Denied::RequiresLogin->throw();
+
+  # don't allow just any one to access user pipelines
+  $pipeline->mayAccess($account) or X::User::Denied->throw();
+ 
+  $m->comp( '/UserPipeline/view.mas', pipeline => $pipeline );
+}
+</%perl>
+
+<%once>
+
+my %component_lookup =
+  ( 'Prokaryote Annotation Pipeline' 
+    => '/Pipeline/prokaryote_annotation_pipeline_view.mas',
+  );
+
+</%once>

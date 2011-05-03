@@ -1,0 +1,40 @@
+<%args>
+ $file
+</%args>
+
+<h1>File Details</h1>
+
+<div class="data">
+<table>
+ <tr>
+  <th>Name</th><td colspan="3"><% $file->getUserName %></td>
+ </tr>
+
+ <tr>
+  <th>Description</th><td colspan="3"><% $file->getDescription %></td>
+ </tr>
+
+ <tr>
+  <th>Owner</th><td><% $file->getCreatedBy->getName %></td>
+  <th>Created At</th><td><% $file->getCreatedAt->brief %></td>
+ </tr>
+
+ <tr>
+  <th>Type</th><td><% $file->getType->getName %></td>
+  <th>Format</th><td><% $file->getFormat->getName %></td>
+ </tr>
+
+ <tr>
+  <th>Size</th><td><% ISGA::Utility->printSize( $file->getSize ) %></td>
+  <th>Hidden?</th><td><% $file->isHidden ? 'Yes' : 'No' %></td>
+ </tr>
+  
+</table>
+</div>   
+
+<h3>File Preview</h3>
+
+<& preview-text.mas, file => $file &>
+
+
+<& right_menu.mas, file => $file &>

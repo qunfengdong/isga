@@ -1,0 +1,78 @@
+<%args>
+	$select_sequence
+	$job
+</%args>
+
+<h1>WorkBench: Sequences</h1>
+<div class="data overflow">
+<form name="select_sequence_form"
+	action="/WorkBench/MSA"
+	enctype="multipart/form-data"
+	method="GET">
+
+<input type="hidden" name="job" value="<% $job %>">
+<table class="tablesorter list" width="100%">
+<thead>
+<tr>
+	<td>Select</td>
+	<td>Sequences</td>
+</tr>
+</thead>
+<tbody>
+
+<%perl>
+
+my $sequence;
+my $command;
+my $content;
+
+use Data::Dumper;
+my $collection = $job->getCollection;
+my $contents = $collection->getContents;
+my $list;
+foreach (@$contents){
+	if ($_->getType->getName eq 'Toolbox Job Configuration'){
+		use YAML;
+		$list = YAML::LoadFile($_->getPath);
+		warn Dumper($list);
+	}
+}
+
+my $input = $list->{'input_file_path'};
+
+my $database = $list->{'databases'};
+ref($database) eq 'ARRAY' or $database = [ $database ];
+push(@$database, $input);
+
+ref($select_sequence) eq 'ARRAY' or $select_sequence = [ $select_sequence ];
+
+foreach my $id (@$select_sequence) {
+	#warn ">>sequence_ref>> $id";
+	foreach my $db (@$database) {
+
+		$command = "/bioportal/sw/bin/cdbyank \"$db.cidx\" -a \"$id\" ";
+                $command = "/bioportal/sw/bin/fastacmd -d $db -s \'$id\'" if ($db =~ /\/nr$/);
+		warn "-- command -- $command\n";
+		$sequence = `$command`;
+
+		next if ($sequence eq '');
+
+		$content .= '
+			<tr>
+				<td><input type="checkbox" name="select_sequence" value="'.$id.'"></td>
+				<td>'.$sequence.'</td>
+			</tr>
+			';
+		last if ($sequence);
+	}
+	undef $sequence;
+}
+
+print $content;
+</%perl>
+
+</tbody>
+</table>
+</div>
+
+<& right_menu_confirmmsa.mas &>

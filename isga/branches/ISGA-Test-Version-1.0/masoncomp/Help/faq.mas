@@ -1,0 +1,12 @@
+<h1>Frequently Asked Questions</h1>
+<p><a name="ProkPipeline">Q. What does the Prokaryotic Annotation Pipeline do?</a></p>
+
+<p>A. The Prokaryotic Annotation Pipeline predicts ORFs using <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/10556321">
+Glimmer3</a>, performs sequence similarity searches using <a class="normal" href="http://www.advbiocomp.com/blast.html">WU-BLAST</a>,
+and performs protein domain searches using <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/9918945">HMMPFAM</a>.  The
+pipeline  also uses <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/9023104">tRNA-scan</a> and
+<a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/17452365">RNAMMER</a> to predict RNA sequences and performs several other
+analysis to discover things such as signal peptides, transmembrane regions, report <a class="normal" href="http://www.geneontology.org/">
+GO</a> and <a class="normal" href="http://en.wikipedia.org/wiki/EC_number">EC</a> numbers, etc.  This information is then used to create
+a final pipeline summary.</p>
+

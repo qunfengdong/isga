@@ -1,0 +1,7 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Pipeline Summary
+Description: 'Summarizes the important results of the pipeline.'
+RunBuilderParams:
+  - { NAME: 'genus', TITLE: 'Genus', REQUIRED: 1, DESCRIPTION: 'Input the genus, e.g., Escherichia', CONFIGLINE: '___genus___' }
+  - { NAME: 'species', TITLE: 'Species', REQUIRED: 1, DESCRIPTION: 'Input species, e.g., coli', CONFIGLINE: '___species___' }
+  - { NAME: 'locus', VALUE: 'ISGA', TITLE: 'Locus Prefix', REQUIRED: 1, ERROR: ['Text::alphaNumeric'], DESCRIPTION: 'Input a locus_tag prefix.  The locus_tag prefix can contain only alpha-numeric characters and it must be at least 3 characters long.  e.g., ECO for E. coli.', CONFIGLINE: '___locus___' }

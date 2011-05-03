@@ -1,0 +1,149 @@
+<%args>
+ @runs
+ $show_canceled
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.metadata.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.pager.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/tablesorter.css";
+  @import "/include/css/jquery.tablesorter.pager.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(function() { 
+    // call the tablesorter plugin, the magic happens in the markup
+    $("table")
+    .tablesorter({widgets: ['zebra']})
+    .tablesorterPager({container: $("#tablesorterpager")});
+});
+</sys:script>
+
+<sys:script type="text/javascript">
+$(document).ready(function() {
+    $('#hide_runs').click(function() {
+      var inputs = $('input:checkbox:checked:value').serializeArray();
+      var run = new Array();
+      for (i=0; i<inputs.length; i++)
+      {
+        run.push(inputs[i]['value']);
+      }
+      var dataString = 'run='+ run;
+      $.ajax({
+        dataType: "html",
+        type: "POST",
+        url: "/submit/Run/Hide",
+        data: dataString,
+        success: function(data) {
+          if(data.match(/Success/)){
+            window.location.reload();
+          }
+        }
+      });
+      return false;
+   });
+});
+</sys:script>
+
+
+
+<h1>Submitted Pipelines</h1>
+
+% if (@runs) {
+<table width="100%" class="tablesorter list">
+<thead>
+ <tr class="psuedo-head">
+ <td colspan="5">Pipeline Runs</td>
+ </tr>
+ <tr class="list_label">
+  <th>Name</th>
+  <th>Pipeline</th>
+  <th>Started At</th>
+  <th>Status</th>
+  <th>Hide</th>
+ </tr>
+</thead>
+<tbody>
+<form id="hiderunsform">
+%   my $counter=0;
+%   foreach ( @runs ) {
+%     $_->getCreatedBy == SysMicro::Login->getAccount
+%       or X::User::Denied->throw;
+%     $counter++;
+% next if( $_->isHidden );
+ <tr>
+
+%     my $rname = $_->getName;
+  <td>
+  <a href="/Run/View?run=<% $_ %>"><% $rname %></a>
+  <a class="jTip" id="r<% $_ %>c<% $counter %>" name="<% $rname %>" \
+   href="/Run/GetDescription?run=<% $_ %>">
+  <span class="sup">?</span>
+  </a>
+  </td>
+
+%     my $pipeline = $_->getType;
+%     my $pname = $pipeline->getName;
+  <td><% $pname %>\
+   <a class="jTip" id="p<% $pipeline %>c<% $counter %>" name="<% $pname %>" \
+   href="/Pipeline/GetDescription?pipeline=<% $pipeline %>">
+  <span class="sup">?</span>
+  </a>
+  </td>
+
+       <td><% $_->getCreatedAt %></td>
+       <td><% $status_map{ $_->getStatus->getName} %></td>
+       <td><input type="checkbox" name="runs" value="<% $_ %>"></td>
+     </tr>
+%   }
+
+</tbody>
+</table>
+
+<div id="tablesorterpager" class="tablesorterPager">
+  <form action="#">
+    <img src="/include/img/tablesorter.pager/first.png" alt="First" class="first">
+    <img src="/include/img/tablesorter.pager/prev.png" alt="Previous" class="prev">
+    <input type="text" class="pagedisplay">
+    <img src="/include/img/tablesorter.pager/next.png" alt="Next" class="next">
+    <img src="/include/img/tablesorter.pager/last.png" alt="Last" class="last">
+    <select class="pagesize">
+      <option selected="selected"  value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option  value="40">40</option>
+    </select>
+  </form>
+</div>
+<button type="submit" id="hide_runs" class="button" name="hideruns" value="Hide Runs">Hide Runs</button>
+</form>
+% } else {
+<p>You do not have any pipelines that have run.</p>
+% }
+
+<& list_right_menu.mas, show_canceled => $show_canceled &>
+
+<%once>
+
+ my %status_map = 
+ ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',
+   Canceled => '<span style="font-weight:bold; color:red" >Canceled</span>',
+   Error => '<span style="font-weight:bold; color:red" >Error</span>',
+   Interrupted => '<span style="font-weight:bold; color:purple">Interrupted</span>',
+   Running  => '<span style="font-weight:bold; color:blue" >Running</span>',
+   Incomplete => '<span style="font-weight:bold" >Incomplete</span>',
+   Submitting => '<span style="font-weight:bold; color:blue" >Submitting</span>',
+   Held => '<span style="font-weight:bold; color:purple">Held</span>',
+   Complete => '<span style="font-weight:bold; color:green">Complete</span>',
+ );
+
+</%once>

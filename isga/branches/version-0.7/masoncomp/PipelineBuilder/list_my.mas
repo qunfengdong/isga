@@ -1,0 +1,72 @@
+<%args>
+ @pbuilders
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.metadata.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.pager.js"></sys:script>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/tablesorter.css";
+  @import "/include/css/jquery.tablesorter.pager.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(function() { 
+    // call the tablesorter plugin, the magic happens in the markup
+    $("table")
+    .tablesorter({widgets: ['zebra']})
+    .tablesorterPager({container: $("#tablesorterpager")});
+});
+</sys:script>
+
+
+<h1>My Customized Pipeline</h1>
+
+
+% if ( @pbuilders ) {
+
+<p>The following is a list of pipelines you have begun building, but
+not completed. You may select one to continue working on it.</p>
+
+<table width="100%" class="tablesorter list">
+<thead>
+ <tr>
+  <th>Name</th>
+  <th>Pipeline Template</th>
+  <th>Started On</th>
+ </tr>
+</thead>
+<tbody>
+%   foreach ( @pbuilders ) {
+%     my $template = $_->getPipeline;
+ <tr>
+  <td><a href="/PipelineBuilder/Overview?pipeline_builder=<% $_ %>"><% $_->getName %></a></td>
+  <td><a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a></td>
+  <td><% $_->getStartedOn %></td>
+ </tr>      
+%   }
+</tbody>
+</table>
+
+<div id="tablesorterpager" class="tablesorterPager">
+  <form>
+    <img src="/include/img/tablesorter.pager/first.png" class="first"/>
+    <img src="/include/img/tablesorter.pager/prev.png" class="prev"/>
+    <input type="text" class="pagedisplay"/>
+    <img src="/include/img/tablesorter.pager/next.png" class="next"/>
+    <img src="/include/img/tablesorter.pager/last.png" class="last"/>
+    <select class="pagesize">
+      <option selected="selected"  value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option  value="40">40</option>
+    </select>
+  </form>
+</div>
+
+% } else {
+<p>You currently do not have any pipelines in development.</p>
+
+<a class="button" href="/Pipeline/List">Select a Pipeline to Customize</a>
+% }

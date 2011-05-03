@@ -1,0 +1,33 @@
+<%args>
+
+</%args>
+
+<h1>Toolbox Home</h1>
+
+<%perl>
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+
+if (@$runs) {
+</%perl>
+<ul>
+<li><a href="/WorkBench/Blast">BLAST</a></li>
+<li><a href="/WorkBench/GBrowse">GBrowse</a></li>
+<li><a href="/WorkBench/GenomeFeatureQuery">Keyword Search</a></li>
+<li><a href="/File/BrowseMy">Browse All Files</a></li>
+</ul>
+% } else {
+	<p> You do not have enough data to proceed further.</p>
+	<p>BLAST</p>
+	<p>GBrowse</p>
+        <p>Keyword Search</p>
+        <p>Browse All Files</p>
+% }
+<h2>Other Useful Tools at Center for Genomics and Bioinformatics</h2>
+<ul>
+<li><a href="http://cgcv.cgb.indiana.edu/cgi-bin/index.cgi">Comparative Gene Cluster Visualization Tool</a></li>
+<li><a href="http://bioportal.cgb.indiana.edu/bov">BLAST Output Visualization Tool</a></li>
+<li><a href="http://richest.cgb.indiana.edu">RICHEST</a></li>
+<li><a href="http://webgbrowse.cgb.indiana.edu">WebGBrowse</a></li>
+</ul>
+

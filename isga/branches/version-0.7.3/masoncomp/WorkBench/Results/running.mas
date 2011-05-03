@@ -1,0 +1,11 @@
+<%args>
+</%args>
+
+<h1>Job Running ..</h1>
+<p> The page will be refreshed every 30 seconds. </p>
+<p> The results will be displayed here. Please do not close this tab or window.</p>
+<div class="data">
+	<img src="/include/img/loader.gif" />
+	<sys:meta http-equiv="refresh" content="30">
+</div>
+

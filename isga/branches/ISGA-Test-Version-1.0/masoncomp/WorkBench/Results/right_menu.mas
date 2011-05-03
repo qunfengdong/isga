@@ -1,0 +1,21 @@
+<%args>
+ $output_file
+</%args>
+
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<li class="rmbutton pointer" onClick="document.forms['select_sequence_form'].submit()">Sequences</li>
+<li class="pointer" onClick="document.forms['select_sequence_form'].submit()"><p>Obtain sequences.</p></li>
+
+<li class="rmbutton pointer" onclick="window.location='<% $output_file %>'">BLAST Output</li>
+<li class="pointer" onclick="window.location='/WorkBench/Blast'"><p>View the BLAST output.</p></li>
+
+
+<li class="rmbutton pointer"><a href="/File/BrowseMy">Browse Files</a></li>
+<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>Go back to the list of your files.</p></li>
+
+</ul>
+</sys:rightmenu>

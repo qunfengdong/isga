@@ -1,0 +1,21 @@
+<%args>
+	$job
+</%args>
+<%perl>
+        my $collection = $job->getCollection;
+        my $contents = $collection->getContents;
+        my @output_file = grep($_->getType->getName eq 'Hawkeye Input', @$contents);
+        return $m->comp('/WorkBench/error.mas', job => $job) unless scalar(@output_file == 1);
+        my $out_file = $output_file[0];
+        my $download = $out_file->getUserName;
+</%perl>
+
+<h1>WorkBench: Newbler To Hawkeye Output</h1>
+<div class="preview">
+  <p>Your Amos Bank directory for use in Hawkeye is provided to you in tar.gz archive.  Please download and unarchive 
+your file for use in Hawkeye.</p>
+  <p>Download your file.</p>
+  <p><a href="/Download/<% $download %>?file_resource=<% $out_file %>"> <% $download %></a></p>
+</div>
+
+%# <& right_menu_blast.mas, output_file => $output_file &>

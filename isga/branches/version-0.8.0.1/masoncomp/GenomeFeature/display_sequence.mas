@@ -1,0 +1,58 @@
+<%args>
+ $genome_feature
+ $upstream
+ $downstream
+</%args>
+<sys:style type="text/css" media="screen">
+   @import "/include/css/uni-form.css";
+</sys:style>
+% my $isvalid = 1;
+% $upstream = 0 unless (defined $upstream);
+% $downstream = 0 unless (defined $downstream);
+% my ($upstreamVal, $downstreamVal) = ($upstream, $downstream);
+% unless ($upstream =~ /^\d+$/) {
+%	  $isvalid = 0;
+%	  $upstream = 0;
+% }
+% unless ($downstream =~ /^\d+$/) {
+% 	$isvalid = 0;
+% 	$downstream = 0;
+% }
+% my ($hint, $hintUp, $hintDown, $conj) = ('', '', '', '');
+% $upstream && ($hintUp = "$upstream bases upstream");
+% $downstream && ($hintDown = "$downstream bases downstream");
+% $upstream && $downstream && ($conj = ' and ');
+% $hint = $hintUp . $conj . $hintDown;
+% $hint && ($hint = " (including $hint)");
+% my ($errClass, $errMsg) = ('', '');
+% unless ($isvalid) {
+% 	$errClass = ' error';
+% 	$errMsg = '<p id="error1" class="errorField"><strong>Numbers only!</strong></p>';
+% }
+
+
+<br>&nbsp;<br>
+<form class="uniForm inlineLabels" method="post">
+<fieldset class="inlineLabels">
+<div class="ctrlHolder<% $errClass %>">
+<% $errMsg %>
+Includes <span class="upstream"><input type="text" size="3" name="upstream" value="<% $upstreamVal %>"> bases upstream</span> and <span class="downstream"><input type="text" size="3" name="downstream" value="<% $downstreamVal %>"> bases downstream</span> <button type="submit" class="button" name="Update" value="Update">Update</button>
+</div>
+</fieldset>
+</form>
+<br>&nbsp;<br>
+<a class="button" href="/WorkBench/Blast?feature_id=<% $genome_feature %>&upstream=<% $upstream %>&downstream=<% $downstream %>">BLAST the Sequence<% $hint %></a> 
+<br>&nbsp;<br>
+<a class="button" href="/Download/<% $genome_feature->getLocus %>.fasta?genome_feature=<% $genome_feature %>&upstream=<% $upstream %>&downstream=<% $downstream %>">Download the Sequence<% $hint %></a>
+<br>&nbsp;<br>
+
+<pre>
+&gt;<% $genome_feature->getLocus %>
+<span class="upstream"><% getPrintableSequence($genome_feature->getUpstream($upstream), 1) %></span><% getPrintableSequence($genome_feature->getResidues, 1, $upstream) %><span class="downstream"><% getPrintableSequence($genome_feature->getDownstream($downstream), 1, ($upstream + length($genome_feature->getResidues))) %></span>
+</pre>
+<br>
+
+
+
+
+

@@ -1,0 +1,46 @@
+<%args>
+ $genome_feature
+ $upstream => 0
+ $downstream => 0
+</%args>
+
+
+<%perl>
+
+# dirty if-else tree to get to the correct component.
+
+if( $genome_feature->isa( 'SysMicro::Gene' ) ) {
+
+  my $mrna = SysMicro::mRNA->new( Parent => $genome_feature );
+  my $cds = SysMicro::CDS->new( Parent => $mrna );
+
+  $m->comp('/GenomeFeature/view_gene.mas', cds => $cds, mrna => $mrna, gene => $genome_feature,
+                                           upstream => $upstream, downstream => $downstream );
+    
+} elsif ( $genome_feature->isa( 'SysMicro::CDS' ) ) {
+
+  my $mrna = $genome_feature->getParent;
+  my $gene = $mrna->getParent;
+
+  $m->comp('/GenomeFeature/view_gene.mas', cds => $genome_feature, mrna => $mrna, gene => $gene, 
+                                           upstream => $upstream, downstream => $downstream );
+
+} elsif ( $genome_feature->isa( 'SysMicro::tRNA' ) ) {
+
+  $m->comp('/GenomeFeature/view_trna.mas', trna => $genome_feature,
+                                           upstream => $upstream, downstream => $downstream );
+
+} elsif ( $genome_feature->isa( 'SysMicro::rRNA' ) ) {
+
+  $m->comp('/GenomeFeature/view_rrna.mas', rrna => $genome_feature, 
+                                           upstream => $upstream, downstream => $downstream );
+
+} else {
+
+  my $type = ref( $genome_feature );
+
+  X::API->throw( message => "We do not know how to handle a genome feature of type $type" );
+
+}
+
+</%perl>

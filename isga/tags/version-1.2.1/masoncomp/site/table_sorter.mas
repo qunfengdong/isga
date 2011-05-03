@@ -1,0 +1,47 @@
+<%args>
+ $table_class => 'tablesorter'
+ $pager_id => 'tablesorterpager'
+ $show_pager => 1
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.metadata.js"></sys:script>
+% if ( $show_pager ) {
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.pager.js"></sys:script>
+% }
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/tablesorter.css";
+% if ( $show_pager ) {
+  @import "/include/css/jquery.tablesorter.pager.css";
+% }
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(function() {
+    // call the tablesorter plugin, the magic happens in the markup
+    $("table")
+    .<% $table_class %>({widgets: ['zebra']});
+% if ( $show_pager ) {
+    .tablesorterPager({container: $("#<% $pager_id %>")});
+% }
+});
+</sys:script>
+
+% if ( $show_pager ) {
+<div id="<% $pager_id %>" class="tablesorterPager">
+  <form>
+    <img src="/include/img/tablesorter.pager/first.png" class="first"/>
+    <img src="/include/img/tablesorter.pager/prev.png" class="prev"/>
+    <input type="text" class="pagedisplay"/>
+    <img src="/include/img/tablesorter.pager/next.png" class="next"/>
+    <img src="/include/img/tablesorter.pager/last.png" class="last"/>
+    <select class="pagesize">
+      <option selected="selected"  value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option value="40">40</option>
+    </select>
+  </form>
+</div>
+% }

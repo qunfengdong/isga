@@ -1,0 +1,35 @@
+<%args>
+ $pipeline
+ $user_class
+</%args>
+
+<%perl>
+my @sorted =
+  sort { $a->[0]->getName cmp $b->[0]->getName }
+    map { [ $_->getVariable, $_ ] } 
+      @{ISGA::PipelineConfiguration->query( Pipeline => $pipeline,
+					    UserClass => $user_class )};
+</%perl>
+
+<h1>Pipeline Configuration</h1>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr>
+   <th>Pipeline</th><td><% $pipeline->getName %></td>
+   <th>User Class</th><td>\
+% if ( $user_class ) {
+<% $user_class->getName %>\
+% } else {
+None (Global Settings)\
+% }
+   </td>
+  </tr>
+ </tbody>
+</table>
+
+</div>
+
+<& /Configuration/list.mas, sorted => \@sorted &>

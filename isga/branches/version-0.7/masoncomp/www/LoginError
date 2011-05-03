@@ -1,0 +1,4 @@
+<h2>Login Error</h2>
+% foreach ( $SysMicro::WebApp->errors() ) {
+<p><% $_ %></p>
+% }

@@ -1,0 +1,10 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+my $account = SysMicro::Login->getAccount;
+my $rbs = SysMicro::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );   
+</%perl>
+
+<& /RunBuilder/list_my.mas, account => $account, rbs => $rbs &>

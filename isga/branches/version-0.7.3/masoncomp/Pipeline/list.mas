@@ -1,0 +1,79 @@
+<h1>Pipelines</h1>
+
+<p>The following pipelines are available for you to run or customize.</p>
+
+% foreach ( @{SysMicro::GlobalPipeline->query( OrderBy => 'Name' )} ) {
+
+<div class="pipelineContainer">
+<h4><% $_->getName %></h4>
+
+<% $_->getDescription %>
+<p>
+<a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Pipeline</a> | 
+<a class="button" href="/RunBuilder/Create?pipeline=<% $_ %>">Run Pipeline</a> |  
+<a class="button" href="/PipelineBuilder/Create?pipeline=<% $_ %>">Customize Pipeline</a>
+</p>
+</div>
+
+%   if ( SysMicro::Login->exists ) {
+%   my @pipelines = @{SysMicro::UserPipeline->query( CreatedBy => SysMicro::Login->getAccount, Template => $_ )};
+%     if ( @pipelines ) {
+%       foreach ( @pipelines ) {
+
+<div class="pipelineContainer userPipeline">
+<h4><% $_->getName %></h4>
+
+<p>Template: <% $_->getTemplate->getName %><br>Created At: <% $_->getCreatedAt->getDate %><br>Description: <% $_->getDescription %></p>
+<p>
+<a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Pipeline</a> |
+<a class="button" href="/RunBuilder/Create?pipeline=<% $_ %>">Run Pipeline</a> |
+<a class="button" href="/PipelineBuilder/Create?pipeline=<% $_ %>">Customize Pipeline</a>
+</p>
+</div>
+
+%       }
+%     } 
+%   }
+% }
+
+
+% if ( SysMicro::Login->exists ) {
+%   my @pipelinebuilders = @{SysMicro::PipelineBuilder->query( CreatedBy => SysMicro::Login->getAccount)};
+%   if ( @pipelinebuilders ) {
+<h1>Continue Customizing</h1>
+%     foreach ( @pipelinebuilders ) {
+<div class="pipelineContainer">
+<h4><% $_->getName %></h4>
+
+<p>Started On: <% $_->getStartedOn %><br>Description: <% $_->getDescription %></p>
+<p>
+<a class="button" href="/PipelineBuilder/Overview?pipeline_builder=<% $_ %>">Continue Customizing</a>
+</p>
+</div>
+
+%     }
+%   }
+% }
+
+
+<div id="WT" class="hidden documentation pipelineList"><div id="WT_arrow_left"></div><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Here is a list of available pipelines available to you. 
+The Prokaryotic Annotation Pipeline is currently the only 
+pipeline provided by the CGB.  Please click on the 
+<span class="highlight">View Pipeline</span> Button to view 
+the pipeline in greater detail.</p>
+<p>Alternatively, you can choose <span class="highlight">
+Run Pipeline</span> to begin the run process or choose 
+<span class="highlight">Customize Pipeline</span> to begin 
+the pipeline customization process.</p>
+</div></div>
+
+
+<%once>
+
+my %component_lookup =
+  ( 'Complete Prokaryote Annotation Pipeline' 
+    => '/Pipeline/complete_pipeline_overview.mas',
+  );
+
+</%once>

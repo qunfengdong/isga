@@ -1,0 +1,24 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public [Workflow] getWorkflow();
+
+Returns the Workflow objects associated with this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+   sub getWorkflow { SysMicro::Workflow->query( Pipeline => shift ); }
+    
+#------------------------------------------------------------------------
+
+=item public getConfigFiles([RunBuilderInput] $inputs);
+
+Submits a run to ergatis.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getConfigFiles {
+
+    my $self = shift;
+    return $self->NEXT::getConfigFiles( @_, {} );
+  }

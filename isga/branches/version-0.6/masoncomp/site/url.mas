@@ -1,0 +1,19 @@
+<%args>
+ $path
+ %query => ()
+
+</%args>
+
+<%init>
+
+my $uri = URI->new;
+
+$uri->path($path);
+
+while ( my ( $key, $value ) = each %query ) {
+  $query{$key} = ref $value eq 'HASH' ? [ %$value ] : $value;
+}
+
+$uri->query_form(%query) if %query;
+</%init>
+<% $uri->canonical | n %>\

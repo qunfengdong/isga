@@ -1,0 +1,55 @@
+% foreach ( @{ISGA::GlobalPipeline->published()} ) {
+%   my @pipelines = @{ISGA::UserPipeline->query( CreatedBy => ISGA::Login->getAccount, Template => $_ )};
+%   my @runs = @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $_ )};
+%   my @rbs = @{ISGA::RunBuilder->query( CreatedBy => ISGA::Login->getAccount,  Pipeline => $_ )};
+%   my @versions = @{ISGA::GlobalPipeline->query( Status => ISGA::PipelineStatus->new( Name => 'Available' ), Name => $_->getName )};
+
+<div class="list-container">
+<h1><% $_->getName %></h1>
+<img class="thumbnail" src="<%  $_->getImage %>"/>
+  <ul id="menu_<% $_ %>" class="menu collapsible listmenu">
+    <li><a href="/Pipeline/View?pipeline=<% $_ %>">View <% $_->getName %></a></li>
+%  if(scalar @versions > 0){
+    <li>
+      <a href="#">> View Old Versions</a>
+    <ul>
+%    foreach my $ver (@versions){
+    <li><a href="/Pipeline/View?pipeline=<% $ver %>"><% $ver->getLabel %></a></li>
+%    }
+    </ul>
+    </li>
+%  }
+%  if(scalar @rbs > 0){
+%    foreach my $rb (@rbs){
+    <li><a href="/RunBuilder/View?run_builder=<% $rb %>">Incomplete Pipeline Submission</a></li>
+%    }
+%  }
+    <li>
+%    if (scalar @pipelines < 1) {
+        <a href="#">No Customized Pipelines Exist</a>
+%    }else{
+      <a href="#">> You Have <% scalar @pipelines %> Customized Pipeline(s)</a>
+      <ul>
+%      foreach my $userpipeline (@pipelines){
+        <li><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %></a></li>
+%        push(@runs, @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $userpipeline )});
+%      }
+      </ul>
+%    }
+    </li>
+    <li>
+%    if (scalar @runs < 1) {
+        <a href="#">No Pipeline Runs Exist</a>
+%    }else{
+      <a href="#">> You Have <% scalar @runs %> Pipeline Run(s)</a>
+      <ul>
+%      foreach my $userrun (@runs){
+        <li><a href="/Run/View?run=<% $userrun %>"><% $userrun->getName %></a></li>
+%      }
+      </ul>
+%    }
+    </li>
+  </ul>
+<p class="description"><% $_->getDescription %></p>
+</div>
+% }

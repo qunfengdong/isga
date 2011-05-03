@@ -1,0 +1,53 @@
+<%args>
+ $show_canceled
+ $show_complete
+</%args>
+
+% my $complete = SysMicro::Run->exists( Status => $complete );
+% my $canceled = SysMicro::Run->exists( Status => $canceled );
+
+
+<sys:rightmenu>
+
+<ul>
+<li class="title">Viewing Options</li>
+
+
+
+<span>
+<form action="/Run/AdminList" name="options">
+
+<li>
+<p>
+<input type="checkbox" name="show_canceled" value="1" \
+% if ( $show_canceled ) {
+checked="yes" \
+% }
+onChange="document.forms['options'].submit()"> Show canceled runs (<% $canceled %>)<br>
+</p>
+</li>
+
+<li>
+<p>
+<input type="checkbox" name="show_complete" value="1" \
+% if ( $show_complete ) {
+checked="yes" \
+% }
+onChange="document.forms['options'].submit()"> Show complete runs (<% $complete %>)<br>
+</p>
+</li>
+
+</form>
+</span>
+
+</ul>
+
+
+</sys:rightmenu>
+
+<%once>
+
+my $complete = SysMicro::RunStatus->new( Name => 'Complete' );
+my $canceled = SysMicro::RunStatus->new( Name => 'Canceled' );
+
+</%once>

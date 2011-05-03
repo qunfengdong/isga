@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: FileCollection
+partition_of: FileResource
+attributes:
+  - { name: Type, type: FileCollectionType, options: [ REQUIRED ] }

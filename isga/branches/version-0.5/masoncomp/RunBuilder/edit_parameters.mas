@@ -1,0 +1,17 @@
+<%args>
+ $run_builder
+ $form
+</%args>
+
+<h1>Run Builder: Edit Parameters</h1>
+
+<div class="hidden documentation editRunParameters"><div id="WT_close_right">Walkthrough</div><div id="WT_copy">
+In this section, you can edit any required parameters for your 
+pipeline run.  Genus and Species information will always be 
+required.  Additional parameters will be required depending on 
+which components are being ran as well.
+</div></div>
+
+<% $form->get %>
+
+<& right_menu.mas, run_builder => $run_builder &>

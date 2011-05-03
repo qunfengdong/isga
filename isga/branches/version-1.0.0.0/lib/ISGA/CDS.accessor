@@ -1,0 +1,42 @@
+# -*- cperl -*-
+
+
+use Bio::Seq;
+use Bio::SeqIO;
+
+
+#------------------------------------------------------------------------
+
+=item public string getResidues();
+
+Retrieves the sequence for a gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getResidues {
+
+    my $self = shift;
+
+    my $sequence = $self->getmRNA->getGene->getResidues;
+
+    return Bio::Seq->new( -seq => $sequence )->translate->seq;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getUpstream(int length); 
+This method is not valid for a CDS.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getUpstream { X::API::UnrealizedMethod->throw(class => 'CDS', method => 'getUpstream'); }
+
+#------------------------------------------------------------------------
+
+=item public string getDownstream(int length);
+
+This method is not valid for a CDS.
+
+=cut 
+#------------------------------------------------------------------------  
+  sub getDownstream { X::API::UnrealizedMethod->throw(class => 'CDS', method => 'getDownstream'); }

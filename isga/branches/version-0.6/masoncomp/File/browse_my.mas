@@ -1,0 +1,105 @@
+<%args>
+ @files
+ $show_hidden
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.metadata.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.pager.js"></sys:script>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/tablesorter.css";
+  @import "/include/css/jquery.tablesorter.pager.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(function() { 
+    // call the tablesorter plugin, the magic happens in the markup 
+    $("table")
+    .tablesorter({widgets: ['zebra']})
+    .tablesorterPager({container: $("#tablesorterpager")});
+});
+</sys:script>
+
+<h1>My Files</h1>
+
+% if ( @files ) {
+
+<table class="tablesorter list" width="100%">
+<thead>
+ <tr>
+  <th>Name</th>
+  <th>Type</th>
+  <th>Format</th>
+  <th>Created At</th>
+ </tr>
+</thead>
+<tbody>
+%   foreach ( @files ) {
+ <tr>
+% if ( $_->isa('SysMicro::File') ) {
+  <td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td>
+  <td><% $_->getType->getName %></td>
+  <td><% $_->getFormat->getName %></td>
+% } else {
+  <td><a href="/FileCollection/View?file_collection=<% $_ %>"><% $_->getUserName %></a></td>
+  <td></td>
+  <td></td>
+% }
+  <td><% $_->getCreatedAt->brief %></td>
+ </tr>
+%   }
+</tbody>
+</table>
+
+<div id="tablesorterpager" class="tablesorterPager">
+  <form>
+    <img src="/include/img/tablesorter.pager/first.png" class="first"/>
+    <img src="/include/img/tablesorter.pager/prev.png" class="prev"/>
+    <input type="text" class="pagedisplay"/>
+    <img src="/include/img/tablesorter.pager/next.png" class="next"/>
+    <img src="/include/img/tablesorter.pager/last.png" class="last"/>
+    <select class="pagesize">
+      <option selected="selected"  value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option  value="40">40</option>
+    </select>
+  </form>
+</div>
+
+
+% } else {
+
+<p>You do not have any files. Visit the <a href="/Pipeline/List">Pipeline</a> section for instructions on preparing and running a pipeline to generate results.</p>
+
+% }
+
+<sys:rightmenu>
+
+<ul>
+<li class="title">Tools</li>
+
+<li class="rmbutton"><a href="/File/Upload">Upload File</a></li>
+
+<li><p>Upload a new file. You can load this file into a pipeline and share it with other users.
+</p></li>
+
+% if ( $show_hidden ) {
+
+<li class="rmbutton"><a href="/File/BrowseMy">Hide Hidden Files</a></li>
+
+<li><p>You are currently viewing all files, including hidden ones. This tool will hide your hidden files again.</p></li>
+
+
+% } else { 
+
+<li class="rmbutton"><a href="/File/BrowseMy?show_hidden=1">Show Hidden Files</a></li>
+
+<li><p>Show files that you have hidden. If you wish to permenantly unhide a file, select it and use the unhide tool.</p></li>
+
+
+% }
+
+
+</sys:rightmenu>

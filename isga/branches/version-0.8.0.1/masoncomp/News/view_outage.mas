@@ -1,0 +1,11 @@
+<%args>
+ $news
+</%args>
+
+<div class="outage newsheader">Service Outage<span class="newstime"><% $news->getCreatedAt %></span></div>
+<div class="newsitem">
+
+<strong><% $news->getTitle %></strong>
+<% $news->getBody %>
+</div>
+<div class="outage newsfooter"></div>

@@ -1,0 +1,28 @@
+<%args>
+ $run_builder
+</%args>
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+<li class="rmbutton"><a href="View?run_builder=<% $run_builder %>">Overview</a></li>
+
+<li><p>Return to the run overview page, where you can view details and current input selections.</p></li>
+
+<li class="rmbutton"><a href="EditDetails?run_builder=<% $run_builder %>">Edit Details</a></li>
+<li><p>Edit the name or description for the run.</p></li>
+<li class="rmbutton"><a href="/RunBuilder/UploadFile?run_builder=<% $run_builder %>">Upload File</a></li>
+<li><p>Upload a file for this run.</p></li>
+<li class="rmbutton"><a href="/submit/RunBuilder/Cancel?run_builder=<% $run_builder %>">Cancel Run</a></li>
+<li><p>By canceling this run, you will lose your file selections, but any uploaded files will remain in the system.</p></li>
+% if ( my $missing = $run_builder->getMissingRequiredInputs ) {
+<li class="rmbutton disabled">Submit Run</li>
+<li class="disabled">\
+ <p>You are missing <% $missing %> required input file<% $missing > 1 ? 's' : '' %>.</p>
+</li>
+% } else {
+<li class="rmbutton"><a href="/submit/Run/Submit?run_builder=<% $run_builder %>">Submit Run</a></li>
+<li><p>Submit the run for execution.</p></li>
+% }
+</ul>
+</sys:rightmenu>

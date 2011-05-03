@@ -1,0 +1,9 @@
+<%args>
+ $form
+</%args>
+
+<h1>Pipeline Service Feedback</h1>
+
+<p>Use the form below to send questions or feedback regarding the pipeline service. You may also contact us directly through email at <a href="mailto:biohelp@cgb.indiana.edu">biohelp@cgb.indiana.edu</a>.</p>
+
+<% $form->get %>

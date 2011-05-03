@@ -1,0 +1,60 @@
+<%args>
+</%args>
+
+<sys:script type="text/javascript">
+$(document).ready(sectionHighlight);
+function sectionHighlight() {
+  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
+  var url = window.location.href;
+  for(var i = 0; i < menuLinks.length; i++){
+    if(url == menuLinks[i].href)
+    {
+      var link = menuLinks[i];
+      var li = link.parentNode;
+      li.style.backgroundColor = "#D8E47C";
+      if($.browser.msie)
+      {
+          var nextLi = li.nextSibling;
+          nextLi.style.backgroundColor = "#D8E47C";
+      }else{
+          var nextLi = li.nextSibling.nextSibling;
+          nextLi.style.backgroundColor = "#D8E47C";
+      }
+    }
+  }
+}
+</sys:script>
+
+<sys:rightmenu>
+
+<ul>
+ <li class="title">Tutorials</li>
+
+% if ( ! SysMicro::Login->exists ) {
+
+ <li class="rmbutton"><a href="/Account/Request">Request an Account</a></li>
+ <li><p> You first need to request an account before you can run or
+ customize our pipelines. If you have already created an account, log
+ in using the link at the top right of the window.</p></li>
+
+% } 
+
+ <li class="rmbutton pointer"><a href="/Help/Tutorial?tab=pipeline">Pipeline Tutorial</a></li>
+ <li class="pointer" onclick="window.location='/Help/Tutorial?tab=pipeline'"><p>Learn more about our pipelines.  View tutorials and descriptions of the pipeline building process.</p></li>
+
+ <li class="rmbutton pointer"><a href="/Help/Tutorial?tab=run">Run Tutorial</a></li>
+ <li class="pointer" onclick="window.location='/Help/Tutorial?tab=run'"><p>Learn more about running pipelines.  View tutorials and descriptions of the pipeline run building process.</p></li>
+
+ <li class="rmbutton pointer"><a href="/Help/Tutorial?tab=result">Results Tutorial</a></li>
+ <li class="pointer" onclick="window.location='/Help/Tutorial?tab=result'"><p>Learn more about pipeline results.  View tutorials about accessing and using your results.</p></li>
+
+%# <li class="rmbutton pointer"><a href="/Help/Tutorial?tab=workbench">ToolBox Tutorial</a></li>
+%# <li class="pointer" onclick="window.location='/Help/Tutorial?tab=workbench'"><p>Learn more about tools in our ToolBox.  View tutorials about the tools provided.</p></li>
+
+ <li class="rmbutton pointer"><a href="/Help/Tutorial?tab=account">Account Tutorial</a></li>
+ <li class="pointer" onclick="window.location='/Help/Tutorial?tab=account'"><p>Learn more about accounts.  View tutorials about accessing and editing your account details.</p></li>
+
+</ul>
+
+</sys:rightmenu>
+

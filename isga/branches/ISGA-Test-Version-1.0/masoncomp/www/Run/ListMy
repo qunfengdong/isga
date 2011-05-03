@@ -1,0 +1,13 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+use Benchmark ':hireswallclock';
+
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+
+</%perl>
+
+<& /Run/list_my.mas, account => $account, runs => $runs &>

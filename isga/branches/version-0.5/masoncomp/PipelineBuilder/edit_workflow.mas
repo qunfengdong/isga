@@ -1,0 +1,82 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<h1>Pipeline Builder: Select Programs</h1>
+
+<p>Clusters highlighted in yellow are required, and will always be executed.
+
+Clusters highlighted in green will be executed. Hold your mouse
+over a cluster to get a desciption of the programs run, and click on a
+cluster to toggle it and its children off and on.</p>
+
+<div id="workflow">
+
+% my $pipeline = $pipeline_builder->getPipeline;
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
+
+<map name="clusters" >
+
+% foreach ( @{SysMicro::Workflow->query( Pipeline => $pipeline )} ) {
+% my $cluster = $_->getCluster;
+<area \
+  shape="rect" 
+  id="<% $_ ->getCluster %>" \
+  alt="<% $_->getCluster->getName %>" \
+  title="<% $_->getCluster->getName %>" \
+  coords="<% $_->getCoordinates %>" \
+% if ($_->getCluster->getName eq 'Additional Gene Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+  rel="component_selection" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+% } elsif ($_->getCluster->getName eq 'Additional Genome Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+  rel="component_selection" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+% } elsif ( $_->isRequired ) {
+  class="noborder nofade cluster jTip" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+% } else {
+  class="noborder nofade cluster jTip" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>&link=<% "/PipelineBuilder/EditWorkflow?pipeline_builder=$pipeline_builder&cluster=$cluster" | u %>" \
+% }
+ >
+% }
+</map>
+</div>
+
+
+<div id="component_selection" class="hidden">
+</div>
+
+<div id="WT" class="hidden documentation editWorkflow"><div id="WT_close_right">Walkthrough</div><div id="WT_copy">
+<p>In this section we can choose which clusters we 
+wish to run.  The image is similar to the image 
+on the Overview page, but with more actions.  To 
+demonstarte how this tool works, lets decided to 
+not run the Alternate Start Site Analysis cluster.  
+Click on the box for <span class="highlight">
+Alternate Start Site Analysis cluster</span>.  
+It should turn white.  If it does not, 
+please try clicking it again.</p>
+<p>Not lets demonstrate 
+a different interaction.  Some clusters have parts 
+that are optional.  Additional Gene Analysis and 
+Additional Genome Analysis are two such clusters.  
+Click on <span class="highlight">Addition Gene Analysis</span>.  
+A pop up should appear with a list of optional programs to run.  
+Lets choose not to run TargetP and OligoPicker.  
+Uncheck the boxes for those two programs and 
+click save.  The box for Additional Gene Analysis 
+should now be striped indicating only a portion 
+of it is being executed.</p>
+<p>To continue with the
+walkthrough choose <span class="highlight">Edit Program 
+Parameters</span> from the toolbox.</p>
+</div></div>
+<div class="documentation editWorkflowClickMe"><div id="WT_arrow_left"></div><div id="WT_close_left">Click Me</div></div>
+<div class="documentation editWorkflowClickMe2"><div id="WT_arrow_left"></div><div id="WT_close_left">Click Me</div></div>
+
+<br>
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

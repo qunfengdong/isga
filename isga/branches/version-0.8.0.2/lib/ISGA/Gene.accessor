@@ -1,0 +1,27 @@
+# -*- cperl -*-
+
+
+use Bio::Seq;
+use Bio::SeqIO;
+
+#------------------------------------------------------------------------
+
+=item public string getCGViewColorAndDecoration();
+
+Returns the color and Decoration string for a gene.
+
+=cut
+#------------------------------------------------------------------------
+sub getCGViewColorAndDecoration {
+
+  my $self = shift;
+
+  my $type = $self->getType;
+  
+  $type eq 'tRNA' and return 'color="orange" decoration="arc"';
+  $type eq 'rRNA' and return 'color="green" decoration="arc"';
+  
+  $self->getStrand eq '+' and return 'color="red" decoration="clockwise-arrow"';
+  return 'color="blue" decoration="counterclockwise-arrow"';
+}
+    

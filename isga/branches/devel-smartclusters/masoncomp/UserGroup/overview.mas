@@ -1,0 +1,15 @@
+<h1>Group Overview</h1>
+
+% if ( ! SysMicro::Login->exists ) {
+<p>To create or join a group you need to either <a href="#" class="btn-slide">login</a> or 
+<a href="/Account/Request">request an account</a>.</p>
+% }
+
+
+<p>Groups provide a convenient method for sharing resources with a
+large number of people at once. For example, assume you are in a lab
+with eight other people that you wish to share the results of a
+pipeline run with. Instead of giving each person access individually,
+you could create a group and invite each person to join it. You can
+then share your run and any future data with the group as a single
+action.</p>

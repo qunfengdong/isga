@@ -1,0 +1,9 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ClusterOutput
+attributes:
+  - { name: Cluster, type: Cluster, options: [ REQUIRED ] }
+  - { name: Type, type: FileType, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }
+  - { name: ErgatisFormat, type: string, options: [ REQUIRED ] }
+  - { name: IsPipelineOutput, type: boolean, options: [ REQUIRED ] }
+  - { name: FileLoc, type: string, options: [ REQUIRED ] }

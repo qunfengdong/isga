@@ -1,0 +1,20 @@
+<%args>
+  @pipelines
+</%args>
+
+<h1>Public Pipelines</h1>
+
+<p>The following pipelines are available to all users.</p>
+
+
+% foreach ( @pipelines ) {
+<h3><% $_->getName %></h3>
+
+<% $_->getDescription %>
+% if($_->getName eq 'Complete Prokaryote Annotation Pipeline'){ 
+        <p class='unavailable'><a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Details</a> <strong> Note: </strong> This is not available in the current release</p>
+% } else{
+        <p><a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Details</a></p>
+% }
+% }
+

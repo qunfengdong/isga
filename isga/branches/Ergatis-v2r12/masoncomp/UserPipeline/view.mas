@@ -1,0 +1,51 @@
+<%args>
+ $pipeline
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+   $("area.cluster")
+   .click(function(){return false});
+}
+
+</sys:script>
+
+</sys:script>
+
+<h1><% $pipeline->getName %></h1>
+
+% my $template = $pipeline->getTemplate;
+% if (!  $pipeline->isInstalled ) {
+<div class="downtime"><p>The template that this pipeline was built from is no longer installed.  You 
+will no longer be able to customize or run this pipeline.  We apologize for the inconvenience.</p></div>
+% }
+<p>
+<strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
+<strong>Created At:</strong> <% $pipeline->getCreatedAt->brief %>
+% if(defined $pipeline->getDescription && $pipeline->getDescription ne ''){
+<br><strong>Description:</strong> <% $pipeline->getDescription %></p>
+% }
+</p>
+<& /Pipeline/draw_workflow.mas, pipeline => $pipeline &>
+
+<& /Pipeline/right_menu.mas, pipeline => $pipeline &>
+
+<div id="WT" class="hidden documentation pipelineView"><div id="WT_arrow_right"></div><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Here are the details for your customized pipeline.  To begin the run process, 
+choose <span class="highlight">Run Pipeline</span> from the toolbox.</p>
+</div></div>
+
+<div class="documentation runPipelineClickMe"><div id="WT_arrow_right_clickme"></div><div id="WT_close_right_clickme">Click Me To Continue</div></div>
+

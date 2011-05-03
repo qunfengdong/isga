@@ -1,0 +1,11 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: File
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: Size, type: number, options: [ REQUIRED ] }
+  - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: UserName, type: string }
+  - { name: Description, type: string }
+  - { name: Content, type: FileContent, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }

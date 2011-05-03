@@ -1,0 +1,19 @@
+<%args>
+ $run_builder
+ $form
+</%args>
+
+<h1>Submission Builder: Provide Input Data</h1>
+
+<div class="hidden documentation editRunParameters"><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>In this section, you choose what input(s) you would like to use for this specific File Type 
+and File Format.  You can upload a file or select a file.  To select a file, highlight it by 
+clicking on the file in the selection box.  It is possible to use multiple files as input for 
+this File Type.  To do so, hold down the "ctrl" key and click on your files to select them.  It 
+is also possible to both upload a file and select and existing file.  All files will be used for 
+the submission.</p>
+</div></div>
+
+<% $form->get %>
+%# <a id="toggleInput" href="#">Select Previously Uploaded File</a>
+<& right_menu.mas, run_builder => $run_builder &>

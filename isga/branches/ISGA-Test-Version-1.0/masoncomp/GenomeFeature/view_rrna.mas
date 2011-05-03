@@ -1,0 +1,63 @@
+<%args>
+ $rrna
+</%args>
+
+% sub getPrintableSequence {
+% 	my ($sequence, $isDNA) = @_;
+% 	my $printableSequence = '';
+%       my $i = 0;
+%	my $c = 0;
+%	my $clusterSize = 10;
+%	$clusterSize = 1 unless ($isDNA);
+%	my $clusterCountPerLine = 7;
+%	$clusterCountPerLine = 38 unless ($isDNA);
+%	while ($i < length($sequence)) {
+%		$printableSequence .= substr $sequence, $i, $clusterSize; 
+%		$printableSequence .= " "; 
+%		$i += $clusterSize; 
+%		$c++; 
+%		if ($c == $clusterCountPerLine) { 
+%			$c = 0; 
+%			$printableSequence .= "\n"; 
+%		} 
+%	} 
+%	$printableSequence;
+%}
+
+
+<h1><% $rrna->getUniqueName %></h1>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th width="30%">rRNA Name</th><td width="70%"><% $rrna->getUniqueName %></td>
+  </tr>
+  <tr>
+   <th>Position</th><td><% $rrna->getStart %> - <% $rrna->getEnd %> on <% $rrna->getStrand eq '+' ? 'plus' : 'minus' %> strand</td>
+  </tr>
+  <tr>
+   <th>Length</th><td><% $rrna->getEnd - $rrna->getStart + 1 %></td>
+  </tr>
+  <tr>
+   <th>Score</th><td><% $rrna->getScore %></td>
+  </tr>
+  <tr>
+   <th>Description</th><td><% $rrna->getNote %></td>
+  </tr>
+ </tbody>
+</table>
+
+<b>rRNA Sequence</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="blast.cgi?rrna=<% $rrna %>">BLAST</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="download.cgi?rrna=<% $rrna %>">Download</a>
+<br>
+<pre>
+&gt;<% $rrna->getUniqueName . "\n" . getPrintableSequence($rrna->getSequence, 1) %>
+</pre>
+<br>
+
+</div> 
+
+
+
+

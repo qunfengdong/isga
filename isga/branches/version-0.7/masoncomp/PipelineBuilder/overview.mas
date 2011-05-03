@@ -1,0 +1,52 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+function jtUpdate() {
+   $("area.cluster").click(function(){return false});
+}
+</sys:script>
+
+
+<h1>Pipeline Customization Overview</h1>
+
+<p><strong>Pipeline:</strong> <% $pipeline_builder->getName %></p>
+<p><strong>Description:</strong> <% $pipeline_builder->getDescription %></p>
+
+<p>Clusters highlighted in green will be executed.</p>
+
+<& draw_workflow.mas, pipeline_builder => $pipeline_builder &>
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>
+
+<div id="WT" class="hidden documentation pipelineView"><div id="WT_arrow_right"></div><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>This is the pipelinebuilder overview page.  Using the toolbox 
+you can edit you pipelines details, view inputs or outputs, select 
+which programs to run, edit program paramenters, finalize your 
+pipeline, or cancel your customization.</p>
+
+<p>Hovering over the image of the pipeline will bring up a tip.  
+This tip contains a description of what is executed in that 
+cluster.  Green clusters are active clusters which will be run, 
+white clusters are inactive cluster which will not be run, 
+yellow clusters are required clusters which must be run, and 
+green striped clusters indicate only a portion of that cluster 
+is being executed.</p>
+
+<p>To continue with this tutorial choose <span class="highlight">
+Select Programs to Run</span> from the toolbox.</p>
+
+<p>Once you are done customizing your pipeline use the 
+toolbox and choose <span class="highlight">Finalize Pipeline<span class="highlight">.</p>
+</div></div>

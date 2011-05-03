@@ -1,0 +1,45 @@
+<%args>
+ $trna
+ $gene
+ $upstream
+ $downstream
+</%args>
+
+<& format_sequence_display.mas &>
+
+<h1><% $trna->getUniqueName %></h1>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th width="30%">tRNA Name</th><td width="70%"><% $trna->getUniqueName %></td>
+  </tr>
+  <tr>
+   <th>Position</th><td><% $trna->getStart %> - <% $trna->getEnd %> on <% $trna->getStrand eq '+' ? 'plus' : 'minus' %> strand</td>
+  </tr>
+  <tr>
+   <th>Length</th><td><% $trna->getEnd - $trna->getStart + 1 %></td>
+  </tr>
+  <tr>
+   <th>Score</th><td><% $trna->getScore %></td>
+  </tr>
+  <tr>
+   <th>Description</th><td><% $gene->getNote %></td>
+  </tr>
+  <tr>
+   <th>Anti-codon</th><td><% $trna->getAnticodon %></td>
+  </tr>
+ </tbody>
+</table>
+
+<b>tRNA Sequence</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="blast.cgi?trna=<% $trna %>">BLAST</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="download.cgi?trna=<% $trna %>">Download</a>
+<br>
+<& display_sequence.mas, genome_feature => $gene, upstream => $upstream, downstream => $downstream &>
+
+</div> 
+
+
+
+

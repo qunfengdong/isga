@@ -1,0 +1,16 @@
+<%args>
+ $form
+ $pipeline_builder
+ $component
+</%args>
+
+
+<h1>Optional: Annotate Parameters</h1>
+
+<p>Your changes have been saved. You now have the option of annotating
+your changes for future reference.</p>
+
+<% $form->get %>
+
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

@@ -1,0 +1,125 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public Job new()
+
+We override the base constructor to promote our class to what is
+defined by the JobType for this object.
+
+=cut
+#------------------------------------------------------------------------
+sub new {
+
+  my $class = shift;
+
+  # build the object as normal
+  my $self = $class->NEXT::new(@_);
+
+  bless($self, $self->getType->getClass);
+
+  return $self;
+}
+
+#------------------------------------------------------------------------
+
+=item public Job query()
+
+We override the base constructor to promote our class to what is
+defined by the JobType for this object.
+
+=cut
+#------------------------------------------------------------------------
+sub query {
+
+  my $class = shift;
+
+  # build the object as normal
+  my $selves = $class->NEXT::query(@_);
+
+  # do the new trick on all the found jobs
+  return [map { bless($_, $_->getType->getClass) } @$selves];
+}
+
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus();
+
+Updates the job status by running qstat on sge. This will
+update the job status.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my $self = shift;
+
+  my $old_status = $self->getStatus;
+  return if $old_status eq 'Finished';
+  return if $old_status eq 'Error';
+  return if $old_status eq 'Failed';
+
+  my $pid = $self->getPid;
+
+  eval {
+
+    ISGA::DB->begin_work();
+
+    my $sge=ISGA::SGEScheduler->new(
+       -executable  => {qsub=>'/cluster/sge/bin/sol-amd64/qsub', qstat=>'/cluster/sge/bin/sol-amd64/qstat'},
+    );
+
+    my $new_status = $sge->checkStatus( $pid );
+
+    $new_status eq $old_status or
+      $self->edit( Status => $new_status );
+
+    if ( $new_status eq 'Finished' ){
+        my $collection = $self->getCollection;
+        my $contents = $collection->getContents;
+        my $list;
+        foreach (@$contents){
+                if ($_->getType->getName eq 'Toolbox Job Configuration'){
+                        use YAML;
+                        $list = YAML::LoadFile($_->getPath);
+                }
+        }
+
+        my $output_file = $list->{'output_file'};
+        if (-e $output_file) {
+          my $type = $list->{'output_type'};
+          my $format = $list->{'output_format'};
+          if (defined $type){
+            $self->addOutputToCollection($output_file, $type, $format);
+          }else{
+            $self->addOutputToCollection($output_file);
+          }
+        } else {
+          $new_status = 'Error';
+        }
+
+        if (-e "$output_file.xls") {
+          my $html = "$output_file.xls";
+          $self->addHTMLOutputToCollection($html);
+        }
+        if (-e "$output_file.txt") {
+          my $html = "$output_file.txt";
+          $self->addHTMLOutputToCollection($html);
+        }
+    }
+
+    if ( $new_status eq 'Finished' || $new_status eq 'Error' ||  $new_status eq 'Failed' ) {
+      $self->edit( FinishedAt => ISGA::Timestamp->new() );
+    }
+    ISGA::DB->commit();
+  };
+
+  if ( $@ ) {
+    ISGA::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+    $e->rethrow();
+  }  
+ 
+}

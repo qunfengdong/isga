@@ -1,0 +1,40 @@
+<%perl> # -*- cperl -*-
+
+my $use = SysMicro::Login->getUseCase;
+my $style = $use->getStyle;
+my $doc = $use->hasDocumentation;
+
+# retrieve the data as a string so we can post-process
+my $html;
+eval { $html = $m->scomp( $m->fetch_next, %ARGS ) };
+
+if ( $@ ) {
+  
+  # don't catch aborts
+  $m->aborted and die $@;
+
+  # otherwise catch the exception object
+  my $e = X->caught() || X::Dropped->new( error => $@ );
+  SysMicro::Log->logWebException($r, $e);
+
+  # print error message
+  if ( $e->isa('X::User::Denied') ) {
+    $html = $m->scomp('/site/error/denied.mas');
+  } elsif ( $e->isa('X::User') ) {
+    $html = $m->scomp('/site/error/user.mas');
+  } else { 
+    $html = $m->scomp('/site/error/unrecoverable.mas', e => $e);
+  }
+}
+
+my $siteTags = SysMicro::Utility->extractSiteTags( \$html );
+
+</%perl>
+% if ( $style eq 'none' ) {
+<% $html %>
+% } else {
+<& /site/header.mas, siteTags => $siteTags, style => $style &>
+<& /site/nav.mas, doc => $doc &>
+<& "/site/$style.mas", siteTags => $siteTags, html => $html &>
+<& /site/footer.mas &>
+% }

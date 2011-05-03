@@ -1,0 +1,18 @@
+<%args> # -*- cperl -*-
+ $file_content => undef
+ $file_format => undef
+ $current_page => 1
+</%args>
+
+<%perl>
+
+my $account = SysMicro::Login->getAccount;
+
+my $pager = SysMicro::Pager->new(Current => $current_page,
+				 PerPage => 20);
+
+my $files = SysMicro::File->query( CreatedBy => $account, OrderBy => 'CreatedAt',
+				   Pager => $pager );
+</%perl>
+
+<& /File/browse_my.mas, pager => $pager, files => $files &>

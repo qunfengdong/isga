@@ -1,0 +1,81 @@
+Revision history for ISGA
+
+1.2.1     Jun 30 2010
+
+	WEB CHANGES
+
+	* Now display a distinct error page for "user errors", those
+          we believe are caused by a user passing bad input, rather
+          than a bug
+	* WebApp actions that require a login will redirect to a specific login error if the 
+          user is not logged in
+        * Added plugin directory for pipeline-specific mason components
+        * Added Administrator view for current RunBuilders
+        * Standardized and improved message when run/job requests are disabled.
+	* Added Remove link for all pipeline inputs for easy removal
+          of selected files
+	* Removed obsolete use cases
+
+	API CHANGES
+
+	* Added format validation for known problems with fasta files.
+
+	BUG FIXES
+	
+	* Removed many hardcoded instances of biohelp@cgb.indiana.edu support email
+	* Use form check to catch error where user doesn't specify a file for a runbuilder input 
+	* Fixed issue where customized Celera pipeline would assign
+	  the wrong type of input to .sff file
+	* Removed Celera pipelines from Gbrowse and Blast tool lists
+	* Added logged in requirement to toggling Walkthrough
+
+	ADMIN FEATURES
+
+	* Added new site configuration parameters
+
+1.1.2   May 27 2010
+
+        API CHANGES
+
+	* To support multiple pipelines, several API methods were broken down into smaller, easier-to-override methods to allow pipeline specialization.
+        * The FileContent class was removed as it's utililty beyond FileFormat was never realized.
+	* The ClusterBuilder class was replaced with subclasses for Clusters.
+	* Added support for input parameters.
+	* Added support for clusters iterating over a particular input.
+	* Added isBinary flag to file format
+        * single output files now adopt the run name to differentiate across runs.
+
+ 	SCRIPT CHANGES
+	
+	* Modified Ergatis failure notification to include the ISGA site name.
+
+        BUG FIXES
+
+	* Fixed error that users received when visiting the workbench without being logged in.
+	* Fixed details view for genes and proteins that are interrupted by the end of a contig.
+	* Improved special character check on run names to avoid failure in the Ergatis pipeline.
+	* Fixed incorrect creation time for accounts
+
+        ADDITIONAL FEATURES
+
+        * Toolbox jobs added for Newbler, Celera, and Mira assembler output conversion for Hawkeye.
+        * Toolbox job added for Newbler output conversion for Consed.
+        * Ability to browse all jobs.
+
+	ADMIN FEATURES
+
+	* Ability to view user input files.
+	* Ability to view account details.
+
+1.0.0.0   Jan 04 2010
+
+	CONFIG CHANGES
+
+	* Replaced ergatis_submit_uri with ergatis_base_uri in order to support linking to ergatis scripts other than running a job.
+        * Added formengine check for illegal characters in passwords during account creation.
+        * Escape formfield input in JavaScript for login
+        * Placed SGE Queue into Config file.
+
+0.8.0.2   Dec 17 2009
+
+        Initial release.

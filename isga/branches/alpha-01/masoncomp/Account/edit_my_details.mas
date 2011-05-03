@@ -1,0 +1,7 @@
+<%args>
+ $form
+</%args>
+
+<h1>Account Edit Form</h1>
+
+<% $form->get %>

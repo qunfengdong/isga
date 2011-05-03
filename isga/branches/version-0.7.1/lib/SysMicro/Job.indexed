@@ -1,0 +1,10 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Job
+attributes:
+  - { name: Pid, type: string, options: [ REQUIRED ] }
+  - { name: Status, type: string, options: [ REQUIRED ] }
+  - { name: Type, type: JobType, options: [ REQUIRED ] }
+  - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: FinishedAt, type: Timestamp }
+  - { name: NotifyUser, type: boolean, options: [ REQUIRED ] }

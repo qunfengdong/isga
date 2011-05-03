@@ -1,0 +1,72 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public hashref getConfigFiles(hashref $mask);
+
+Uses the supplied parameter mask to build config files for the cluster.
+
+=cut 
+#------------------------------------------------------------------------
+sub getConfigFiles {
+
+  my ($self, $mask, $pipeline_inputs) = @_;
+  
+  my $cluster_builder = SysMicro::ClusterBuilder->new($self);
+  
+  my %components;
+
+  my %inputMask;
+
+  # retrieve all inputs for this cluster and overlay inputs to pipeline
+  foreach ( @{SysMicro::ClusterInput->query( Cluster => $self )} ) {
+    $inputMask{ $_->getName } =
+      exists $pipeline_inputs->{$_} ? $pipeline_inputs->{$_} : $_->getDefaultValue;
+  }
+  
+  # loop through component parameter defaults.
+  foreach (@{$cluster_builder->{Components}}){
+    
+    # read in the template
+    open my $fh, '<', "___include_root___/config_template/$_->{name}.config"
+      or X->throw( error => "___include_root___/config_template/$_->{name}.config" );
+    my $file = do { local $/; <$fh> };
+    close $fh;
+    
+    my %config;
+    
+    if ( exists $_->{params} ) {
+
+      # loop through each input parameter for this component
+      foreach ( @{$_->{params}} ) {
+	
+	my $command = '';
+
+        # if the yaml does not have FLAG write the VALUE as the command for the appropriate var
+	if ( ! exists $_->{FLAG} ) {
+	  
+	  my $value = defined $mask->{$_->{NAME}} ? $mask->{$_->{NAME}} : $_->{VALUE};
+	  $command = defined $value ? "$value " : '' ;
+	
+	# otherwise write FLAG and VALUE as the command
+	} else {	  
+	  my $value = defined $mask->{$_->{NAME}} ? $mask->{$_->{NAME}}->{Value} : $_->{VALUE};
+	  $command = defined $value ? "$_->{FLAG} $value " : '' ;
+	}
+
+	if ( defined $config{$_->{CONFIGLINE}} ) {
+	  $config{$_->{CONFIGLINE}} .= $command;
+	} else {
+	  $config{$_->{CONFIGLINE}} = $command;
+	}
+      }
+
+      while ( my ($key, $value) = each %config ) { $file =~ s/$key/$value/g; }
+    }
+
+    while ( my ($key, $value) = each %inputMask ) { $file =~ s/___${key}___/$value/g; }
+
+    $components{ "$_->{name}.config" } = $file;
+  }
+  
+  return \%components;
+}

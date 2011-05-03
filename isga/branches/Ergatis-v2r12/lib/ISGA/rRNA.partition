@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: rRNA
+partition_of: GenomeFeature
+attributes:
+  - { name: Score, type: number, options: [ REQUIRED ] }
+  - { name: Gene, column: rrna_gene, type: Gene, options: [ REQUIRED ] }

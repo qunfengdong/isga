@@ -1,0 +1,70 @@
+
+DEPENDENCIES
+
+
+Applications:
+
+Ergatis
+Apache 
+PostgreSQL
+
+Perl Modules:
+
+MasonX::Foundation = 0.7.4.1
+Pod::Simple::HTMLBatch
+Test::More
+Graph
+version
+HTML::Scrubber
+Digest::SHA
+GD::Image
+Email::Find
+Schedule::SGE
+File::Pid
+Bio::Graphics
+Date::Manip < 6.0
+
+
+ISGA & Ergatis
+
+* ISGA needs read access to ergatis results
+
+* ISGA needs write access to pipelines_building directory
+
+* add run_prepared_pipeline.cgi
+
+* Prokaryotic Annotation Pipeline must run
+
+
+INSTALLATION
+
+1. Set Configuration
+
+The first step is to define several configuration values for
+ISGA. These variables allow ISGA to utilize your Ergatis installation
+and set information to your specific installation ( such as email
+address and machine name ).
+
+vi CONFIG.yaml
+
+
+2. Build and Install ISGA
+
+perl Build.PL --install_base=/data/web/isga.cgb --use_foundation=/data/web/perl
+./Build
+
+OPTIONAL: Run Tests
+./Build test
+
+./Build install
+
+3. Create Necessary Directories
+
+
+X. Create repository hash directories
+
+X. Create and Load ISGA database
+
+X. Create Administrative accounts
+
+X. Add maintanence scripts to cron

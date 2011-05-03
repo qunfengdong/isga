@@ -1,0 +1,6 @@
+--- !perl/SysMicro::ComponentBuilder
+Name: Promote Gene Prediction
+Description: 'Associates CDS and polypeptide results of the pipeline.'
+RunBuilderParams:
+  - { templ: 'hidden', NAME: 'project_id_root', TITLE: 'Project Id Root', REQUIRED: 1, DESCRIPTION: 'The Id root used in bsml id generation', CONFIGLINE: '___project_id_root___' }
+

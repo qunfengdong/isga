@@ -1,0 +1,10 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public string getEmail();
+
+Returns the email that the mail message should be sent to
+
+=cut
+#------------------------------------------------------------------------
+  sub getEmail { return $_[0]->getAccount->getEmail; }

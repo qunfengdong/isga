@@ -1,0 +1,97 @@
+<%args>
+ $doc
+</%args>
+
+% my $exists = SysMicro::Login->exists;
+
+%#<div id="nav">
+%#<div id="droppydiv">
+
+ <ul id="nav"> 
+% if ( $exists ) {
+  <li><a href="/Account/MyAccount">My Account</a>
+   <ul>
+    <li><a href="/Account/MyAccount">Account Summary</a></li>
+    <li><a href="/Account/EditMyDetails">Edit Details</a></li>
+    <li><a href="/Account/ChangeMyPassword">Change Password</a></li>
+   </ul>
+  </li>
+% } else {
+  <li><a href="/Home">Home</a>
+   <ul>
+    <li><a href="/Help/Introduction">Introduction</a></li>
+    <li><a href="/Account/Request">Request Account</a></li>
+   </ul>
+  </li>
+% }
+
+  <li><a href="/Pipeline/List">Pipelines</a>
+   <ul>
+    <li><a href="/Help/Tutorial?tab=pipeline">Tutorial</a></li>
+    <li><a href="/Pipeline/List">Available Pipelines</a>
+     <ul>
+      <li><a href="/Pipeline/View?pipeline=<% $prok %>">Prokaryotic Annotation</a></li>
+     </ul> 
+    </li>
+% if ( $exists ) {
+    <li><a href="/PipelineBuilder/Status">Customize Pipeline</a></li>
+% }
+   </ul>  
+  </li>
+
+% if ( $exists ) {
+  <li><a href="/Run/ListMy">Runs</a>
+% } else {
+  <li><a href="/Help/Tutorial?tab=run">Runs</a>
+% } 
+   <ul>
+    <li><a href="/Help/Tutorial?tab=run">Tutorial</a></li>
+% if ( $exists ) {
+    <li><a href="/Run/Status">Run Statuses</a></li>
+    <li><a href="/RunBuilder/ListMy">Create Run</a></li>
+% }
+   </ul>
+  </li>
+
+% if ( $exists ) {
+  <li><a href="/File/BrowseMy">Files</a>
+   <ul>
+    <li><a href="/Run/MyResults">Results</a></li>
+    <li><a href="/File/BrowseMy">Browse All Files</a></li>
+    <li><a href="/File/Upload">Upload File</a></li>
+   </ul>
+  </li>
+% }
+
+  <li><a href="/News/Recent">News</a>
+   <ul>
+    <li><a href="/News/Recent">Recent News</a></li>
+    <li><a href="/News/AboutUs">About Us</a></li>
+    <li><a href="/News/Resources">Resources</a></li>
+    <li><a href="/News/Archive">News Archive</a></li>
+   </ul>
+  </li>
+
+  <li><a href="/Help/Overview">Help</a>
+   <ul>
+    <li><a href="/Help/Introduction">Introduction</a></li>
+    <li><a href="/Help/Tutorial">Tutorials</a></li>
+    <li><a href="/Help/FAQ">FAQs</a></li>
+    <li><a href="/Help/ContactUs">Contact Us</a></li>
+    <li><a href="/Help/KnownIssues">Known Issues</a></li>
+   </ul>
+  </li>
+
+
+% if ( SysMicro::Login->exists && $doc ) {
+  <div id="toggle"><li class="disableWalkthrough"><a class="btn-slide" href="#"><span class="showOrHide"></span></a></li></div>
+% }
+ </ul>
+
+%#</div>
+%#</div>
+
+<%once>
+my $prok = 1;
+#  my $prok = SysMicro::GlobalPipeline->new( Name => 'Prokaryotyic Annotation Pipeline' );
+</%once>

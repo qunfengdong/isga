@@ -1,0 +1,12 @@
+% foreach ( $SysMicro::WebApp->errors() ) {
+<p><% $_ %></p>
+% }
+
+<p>The details of this error have been sent to the administrators.\
+
+% if ( my $account = SysMicro::Login->getAccount ) {
+They will investigate the problem and contact you at <% $account->getEmail %> to either notify you of a resolution or request further information regarding the error.
+% } else {
+We will attempt to resolve this error promptly. If you wish to be notified when it is resolved, email us at biohelp@cgb.indiana.edu.
+% }
+</p>

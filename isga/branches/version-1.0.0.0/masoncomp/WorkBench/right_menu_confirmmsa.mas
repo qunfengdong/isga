@@ -1,0 +1,9 @@
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<li class="rmbutton pointer onclickLink" onClick="document.forms['select_sequence_form'].submit()">Alignment</li>
+<li class="pointer" onClick="document.forms['select_sequence_form'].submit()"><p>Proceed towards Multiple sequence Alignment</p></li>
+
+</ul>
+</sys:rightmenu>

@@ -1,0 +1,20 @@
+<%args> # -*- cperl -*-
+ $run 
+</%args>
+
+<%perl>
+
+if ( ! SysMicro::Login->hasGroup( $admin ) ) {
+  $run->getCreatedBy == SysMicro::Login->getAccount
+    or X::User::Denied->throw;
+}
+
+</%perl>
+
+<& /Run/view.mas, run => $run &>
+
+<%once>
+
+  my $admin = SysMicro::Group->new( Name => 'Run Administrators' );
+
+</%once>

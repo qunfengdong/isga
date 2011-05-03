@@ -1,0 +1,35 @@
+<%args> # -*- cperl -*-
+ $run_builder
+ $pipeline_input => undef
+ $run_builder_input => undef
+</%args>
+
+% $pipeline_input ||= $run_builder_input->getPipelineInput;
+
+<sys:script type="text/javascript">
+  $(document).ready(confirm_upload);
+  function confirm_upload() {
+  $(".upload")
+   .click(
+     function(){
+      $.ajax({
+        url: "/RunBuilder/UploadInput?run_builder=<% $run_builder %>&pipeline_input=<% $pipeline_input %>",
+        success: function(html){
+          $('#modal_content').append(html);
+        }
+      });
+      return false;
+     });
+  }
+</sys:script>
+
+<%perl> 
+
+# check that we have the correct form cached
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'run_builder_select_input_list'
+  or $form = ISGA::FormEngine::RunBuilder->SelectInputList(\%ARGS);
+
+return $m->comp('/RunBuilder/select_input_list.mas', 
+		run_builder => $run_builder, form => $form);
+</%perl>

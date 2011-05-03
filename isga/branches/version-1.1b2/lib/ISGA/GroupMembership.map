@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: groupmembership
+attributes:
+  - { name: Group, type: Group }
+  - { name: Account, type: Account }

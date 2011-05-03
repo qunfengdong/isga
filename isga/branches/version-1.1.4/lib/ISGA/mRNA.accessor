@@ -1,0 +1,46 @@
+# -*- cperl -*-
+
+
+use Bio::Seq;
+use Bio::SeqIO;
+
+
+#------------------------------------------------------------------------
+
+=item public string getResidues();
+
+Retrieves the sequence for a gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getResidues { X::API::UnrealizedMethod->throw(class => 'mRNA', method => 'getResidues'); }
+
+#------------------------------------------------------------------------
+
+=item public string getUpstream(int length);
+
+Retrieves the specified length of upstream sequence for the gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getUpstream {
+
+    my ($self, $length) = @_;
+
+    return $self->getGene->getUpstream($length);
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getDownstream(int length);
+
+Retrieves the specified length of downstream sequence for the gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getDownstream {
+
+    my ($self, $length) = @_;
+
+    return $self->getGene->getDownstream($length);
+  }

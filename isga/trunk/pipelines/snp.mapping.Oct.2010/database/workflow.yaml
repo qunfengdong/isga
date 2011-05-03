@@ -1,0 +1,17 @@
+---
+ - Cluster: 'Prepare Read Library'
+   Coordinates: '286,8,475,105'
+   IsRequired: 1 
+   Customization: Standard
+ - Cluster: 'Map Reads'
+   Coordinates: '286,161,475,258'
+   IsRequired: 1 
+   Customization: Standard
+ - Cluster: 'Identify SNPs'
+   Coordinates: '286,314,475,410'
+   IsRequired: 1
+   Customization: Standard
+ - Cluster: 'Generate Output'
+   Coordinates: '286,467,475,563'
+   IsRequired: 1
+   Customization: Standard

@@ -1,0 +1,13 @@
+--- !perl/MasonX::Foundation::Class::Base
+class: UploadRequest
+partition: UploadRequestPartition
+attributes:
+  - { name: UploadRequestPartition, options: [ REQUIRED ] }
+  - { name: Account, type: Account, options: [ REQUIRED ] }
+  - { name: URL, type: string, options: [ REQUIRED ] }
+  - { name: Description, type: string }
+  - { name: Status, type: string, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: FinishedAt, type: Timestamp }
+  - { name: Exception, type: string }
+  - { name: UserName, type: string}

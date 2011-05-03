@@ -1,0 +1,10 @@
+<%args> # -*- cperl -*-
+ $component
+ $name
+</%args>
+<%perl>
+
+my $builder = SysMicro::ComponentBuilder->new( $component );
+
+</%perl>
+<% $builder->getComponentDescription() %>

@@ -1,0 +1,19 @@
+---
+ - Name: 'Shore SNP Mapping Pipeline'
+   Description: '<p>A SNP mapping pipeline using the Shore software package.</p>'
+   Status: Published
+   SubClass: SNPMapping
+   Version: 1
+   Release: 'Apr 2011'
+   Image: '/include/img/snp_mapping.png'
+   Layout: |
+     <commandSetRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="commandSet.xsd" type="instance">
+         <commandSet type="serial">
+             <state>incomplete</state>
+             <name>start</name>
+             <commandSet type="serial">
+                 <state>incomplete</state>
+                ___Run shore___
+             </commandSet>
+         </commandSet>
+     </commandSetRoot>

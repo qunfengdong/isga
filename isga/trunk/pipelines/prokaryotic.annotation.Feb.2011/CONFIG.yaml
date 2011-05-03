@@ -1,0 +1,3 @@
+--- !perl/ISGA::ModuleInstaller
+ergatis_install: ergatis-v2r13-cgbr1
+pipeline_class: ProkaryoticAnnotation::Feb2011

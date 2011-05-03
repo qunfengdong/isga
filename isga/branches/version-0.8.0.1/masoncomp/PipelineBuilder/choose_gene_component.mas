@@ -1,0 +1,25 @@
+<%args>
+$pipeline_builder
+$cluster
+</%args>
+
+
+%my $check_class = $cluster->getName;
+%$check_class =~ s/ /_/g;
+%$check_class .= '_choose_component';
+%# check that we have a form cached and it is the correct type
+%my $form = $ISGA::WebApp->saved_args->{'form'};
+
+%$form and $form->get_formname() eq $check_class
+%  or $form =  ISGA::FormEngine::PipelineBuilder->ChooseComponent(\%ARGS);
+
+%$pipeline_builder ||= $form->get_input('pipeline_builder');
+
+
+<h1>Choose Analysis</h1>
+<h4>The following software is available to be executed under this module.</h4>
+<h4>Please check the software you wish to run.</h4>
+
+
+<% $form->get %>
+

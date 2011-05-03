@@ -1,0 +1,10 @@
+^MANIFEST\.SKIP$
+^_build
+^Build$
+^blib
+~$
+\.bak$
+^MANIFEST\.SKIP$
+\.svn
+^BUILD.yaml
+sql/cgb.sql

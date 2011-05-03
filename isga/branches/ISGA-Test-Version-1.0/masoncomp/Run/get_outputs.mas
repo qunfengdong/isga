@@ -1,0 +1,7 @@
+<%args>
+ $run
+ @results
+</%args>
+
+<h3><% $run->getName %> - <% $run->getCreatedAt->brief %></h3>
+<& /RunOutput/view_table.mas, run => $run, results => \@results &>

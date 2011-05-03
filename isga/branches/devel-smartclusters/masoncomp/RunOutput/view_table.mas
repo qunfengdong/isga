@@ -1,0 +1,66 @@
+<%args>
+ $run
+ @results
+</%args>
+
+<table width="100%">
+
+ <tr>
+  <th width="45%">Name</th>
+  <th width="20%">Contents</th>
+  <th width="20%">Format</th>
+  <th width="15%">Created At</th>
+ </tr>
+
+% foreach ( @results ) {
+
+%   my $cname = $_->{Cluster}->getName;
+<tr><th class="subhead" colspan="4"><% $_->{Cluster}->getName %>\
+ <a class="jTip" id="c<% $_->{Cluster} %>r<% $run %>" name="<% $cname %>" href="/Cluster/GetClusterDescription?cluster=<% $_->{Cluster} %>">
+<span class="sup">?</span>
+ </a>
+ </th>
+</tr>
+
+%   my $counter = 0;
+%   foreach my $run_output ( @{$_->{Output}} ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+<tr class="<% $tr_class %>">
+
+%     my $file = $run_output->getFile;
+%     if ( $file ) {
+%       my $name = $file->getUserName;
+<td><a href="/Download/<% $name %>?file_resource=<% $_ %>"><% $name %></a></td>
+%     } else {
+<td>Not Available Yet</td>
+%     }
+
+%     my $output = $run_output->getClusterOutput;
+%     my $type = $output->getType;
+
+%     my $tname = $type->getName;
+ <td><% $tname %>\
+  <a class="jTip" id="a<% $type %>r<% $run %>c<% $counter %>" name="<% $tname %>" \
+   href="/FileType/ViewHelp?file_type=<% $type %>">
+  <span class="sup">?</span>
+ </a>
+ </td>
+
+%     my $format = $output->getFormat;
+%     my $fname = $format->getName;
+ <td><% $fname %>\
+  <a class="jTip" id="b<% $format %>r<% $run %>c<% $counter %>" name="<% $fname %>" \
+   href="/FileFormat/ViewHelp?file_format=<% $format %>">
+  <span class="sup">?</span>
+ </a>
+ </td>
+
+%     if ( $file ) {
+  <td><% $file->getCreatedAt->brief %></td>
+%     }
+
+</tr>
+%   }
+% }
+
+</table>

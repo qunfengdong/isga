@@ -1,0 +1,20 @@
+<%args> # -*- cperl -*-
+ $file_resource
+</%args>
+
+<%perl>
+
+$file_resource->getCreatedBy == SysMicro::Login->getAccount or X::User::Denied->throw();
+
+$m->clear_buffer();
+
+$m->print( $m->file($file_resource->getPath()) );
+
+$m->flush_buffer();
+$m->abort();
+
+</%perl>
+
+<%flags>
+ inherit => undef
+</%flags>

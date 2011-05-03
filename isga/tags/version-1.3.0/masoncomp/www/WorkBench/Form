@@ -1,0 +1,23 @@
+<%args>
+ $job_type
+ $feature_id => undef
+ $upstream => undef
+ $downstream => undef
+</%args>
+
+<%perl> # -*- cperl -*-
+
+return $m->comp('/site/sge_outage.mas') unless( ISGA::SiteConfiguration->value('allow_sge_requests') );
+
+# check that we have a form cached and it is a workbench form and for the correct job type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+unless ( $form and $form->get_formname() eq 'workbench' and $form->get_input('job_type') == $job_type ) {
+  $form = ISGA::FormEngine::WorkBench->Build(\%ARGS);
+}
+
+my $plugin = $job_type->getWebPluginDirectory();
+return $m->comp("/plugin/$plugin/build.mas", form => $form, feature_id => $feature_id, upstream => $upstream, downstream => $downstream );
+
+</%perl>
+
+

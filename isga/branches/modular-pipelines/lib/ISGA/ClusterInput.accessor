@@ -1,0 +1,38 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getValue(Pipeline $pipeline);
+
+Calculates the file name(s) for a component input value.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getValue { return shift->getDefaultValue; }
+
+#------------------------------------------------------------------------
+
+=item public string getComponent();
+
+Retrieves the component for a component input value.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponent {
+    my $self = shift;
+    return ISGA::Component->query( ClusterInput => $self );
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getCluster();
+
+Retrieves the cluster for a component input value.
+
+=cut
+#------------------------------------------------------------------------
+  sub getCluster {
+    my $self = shift;
+    my $component = $self->getComponent;
+    return @{$component}[0]->getCluster;
+  }

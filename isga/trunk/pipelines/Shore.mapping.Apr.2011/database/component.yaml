@@ -1,0 +1,8 @@
+---
+ - ErgatisName: shore.default
+   Name: 'Shore'
+   Index: 1
+   Cluster: 'Run shore'
+   Template: shore
+   ClusterInput: [ Shore_Input, Shore_Input_Pair ]
+   SubClass: PairedInput

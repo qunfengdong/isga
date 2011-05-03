@@ -1,0 +1,8 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ConfigurationVariable
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Type, type: string, options: [ REQUIRED ] }
+  - { name: Form, type: string, options: [ REQUIRED, NOGET ] }
+  - { name: Description, type: string, options: [ REQUIRED ] }
+  - { name: DataType, type: string, options: [ REQUIRED ] }

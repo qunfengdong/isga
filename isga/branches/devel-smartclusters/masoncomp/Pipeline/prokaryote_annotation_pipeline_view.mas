@@ -1,0 +1,10 @@
+<%args>
+ $pipeline
+</%args>
+
+<h1><% $pipeline->getName %></h1>
+
+<p>Lots of pipeline details. It does all this stuff:</p>
+<img src="<% $pipeline->getImage %>">
+
+<& right_menu.mas, pipeline => $pipeline &>

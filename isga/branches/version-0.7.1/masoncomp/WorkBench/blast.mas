@@ -1,0 +1,9 @@
+<%args>
+ $form
+</%args>
+
+
+<h1>BLASTserver</h1>
+
+
+<% $form->get %>

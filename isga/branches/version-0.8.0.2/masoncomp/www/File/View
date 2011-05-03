@@ -1,0 +1,13 @@
+<%args> # -*- cperl -*-
+ $file
+</%args>
+
+<%perl>
+
+# make sure this is my file.
+$file->getCreatedBy == ISGA::Login->getAccount 
+  or X::User::Denied->throw();
+
+</%perl>
+
+<& /File/view.mas, file => $file &>

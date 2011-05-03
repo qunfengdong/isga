@@ -1,0 +1,8 @@
+<%args>
+ $form
+</%args>
+
+<h1>BLAST</h1>
+
+
+<% $form->get %>

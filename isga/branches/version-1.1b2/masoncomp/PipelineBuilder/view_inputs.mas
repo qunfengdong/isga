@@ -1,0 +1,59 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<h1>Pipeline - Review Inputs</h1>
+
+<p>Based on the modules you have selected, the following input files
+will be required to run this pipeline.</p>
+
+<div class="list">
+
+<table width="100%">
+<tr>
+ <th>Input</th><th>Format</th><th>Module</th></tr>
+% my $counter =0;
+% foreach my $input ( @{$pipeline_builder->getInputs} ) {
+%   next if($input->getDependency eq 'Internal Only');
+%   my $tr_class = ++$counter % 2 ? "odd" : "even";
+<tr class="<% $tr_class %>">
+%   my $type = $input->getType;
+%   my $tname = $type->getName;
+ <td><% $tname %>\
+  <a class="jTip" id="a<% $type %><% $counter %>" name="<% $tname %>" \
+   href="/FileType/ViewHelp?file_type=<% $type %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
+
+%  my $format = $input->getFormat;
+%  my $fname = $format->getName;
+ <td><% $fname %>\
+  <a class="jTip" id="b<% $format %><% $counter %>" name="<% $fname %>" \
+   href="/FileFormat/ViewHelp?file_format=<% $format %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
+
+%   my $cluster = $input->getCluster;
+%   my $cname = $cluster->getName;
+ <td><% $cname %>\
+
+ <a class="jTip" id="c<% $cluster %><% $counter %>" name="<% $cname %>" href="/Cluster/GetClusterDescription?cluster=<% $cluster %>">
+<span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
+</tr>
+% }
+</table>
+
+</div>
+
+<& right_menu.mas, pipeline_builder => $pipeline_builder &>

@@ -1,0 +1,34 @@
+<%args> #! -*- cperl -*-
+ $pipeline_builder
+</%args>
+
+<%perl>
+my $builder = SysMicro::WorkflowBuilder->new( $pipeline_builder );
+$SysMicro::Session->{ "PipelineBuilderWorkflow$pipeline_builder" } = $builder;
+</%perl>
+
+<& /PipelineBuilder/view_clusters.mas, builder => $builder, 
+   pipeline_builder => $pipeline_builder &>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+
+  $("area.cluster")
+   .hover( 
+         function(){
+         JT_area_show(this.href,this.id,this.name,this.coords)},
+         function(){$('#JT').remove();
+      })
+   .click(function(){return false});
+}
+
+</sys:script>

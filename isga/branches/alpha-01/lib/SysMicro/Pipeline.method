@@ -1,0 +1,79 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public void _initializeGraph();
+
+Create the graph for this workflow that only contains clusters that
+are active in this pipline.
+
+=cut
+#------------------------------------------------------------------------
+sub _initializeGraph {
+
+  my $self = shift;
+
+  my @workflow = @{$self->getWorkflow};
+
+  my $mask = $self->getWorkflowMask;
+
+  my %index = map { $_ => $_ } @workflow;
+
+  my $g = Graph::Directed->new();  
+
+  # extract the stop clusters into a nice lookup hash
+  my %stop = map { $_ => 1 } @{$mask->getStop};
+  
+  # create an array for clusters we will consider
+  my @candidates = @{$mask->getStart};
+  
+  # add start positions to the graph
+  $g->add_vertex( $index{$_} ) for @candidates;
+
+
+  # loop through the start indexes
+  foreach my $key ( @candidates ) {
+    
+    my $workflow = $index{$key};
+    
+    my @children = grep { ! exists $stop{$_} } @{$workflow->getChildren};
+    $g->add_edge( $workflow, $_ ) for @children;
+    push @candidates, @children;
+  }
+  
+  $self->{_graph} = $g;
+}
+
+#------------------------------------------------------------------------
+
+=item public string draw();
+
+Draw a graphic of the pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub draw {
+
+  my $self = shift;
+
+  my $image = GD::Image->new('/data/web/sysmicro.cgb/docs/masoncomp/www' . 
+			     $self->getImage );
+
+  my $g = $self->getWorkflowGraph;
+
+  my $white = $image->colorClosest(255,255,255);
+  my $grey = $image->colorAllocate(227,227,227);
+  my $green = $image->colorAllocate(188,243,103);
+  
+  foreach my $cluster ( $g->vertices ) {
+
+    my @coords = split ( /,/, $cluster->getCoordinates );
+      
+    for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+      for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+	$image->setPixel($i,$j, $green) if $image->getPixel($i,$j) == $white;
+      }
+    }
+  }
+
+  print $image->png;
+}

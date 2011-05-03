@@ -1,0 +1,5 @@
+---
+ - Name: 'Bisulfite Treated Sequencing Output'
+   Help: 'Output from a bisulfite treated sequencing run.'
+ - Name: 'Methyl Seq Analysis Output'
+   Help: 'Output containing Methyl Seq analysis information.'

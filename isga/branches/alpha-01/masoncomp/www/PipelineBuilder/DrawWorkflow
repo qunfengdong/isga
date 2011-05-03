@@ -1,0 +1,10 @@
+%# -*- cperl -*-
+<%args>
+ $pipeline_builder
+</%args>
+<%perl>
+
+my $builder = SysMicro::WorkflowBuilder->restore( $pipeline_builder );
+
+$m->print( $builder->draw() );
+</%perl>

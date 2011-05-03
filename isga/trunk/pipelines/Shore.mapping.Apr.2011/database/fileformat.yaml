@@ -1,0 +1,9 @@
+---
+ - Name: FASTQ
+   Extension: fq
+   Help: 'FASTQ format is a text-based format for storing both a biological sequence (usually nucleotide sequence) and its corresponding quality scores.'
+   IsBinary: 0
+ - Name: SHORE_RESULT
+   Extension: gz 
+   Help: 'The  output from Shore.'
+   IsBinary: 1

@@ -1,0 +1,29 @@
+#------------------------------------------------------------------------
+
+=item public [Component] getComponents();
+
+Returns a reference to an array of components that are part of this cluster.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponents { return ISGA::Component->query( Cluster => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getParams();
+
+Returns a 1 if Cluster had editable parameters or 0 if it doesn't
+
+=cut
+#------------------------------------------------------------------------
+  sub hasParams {
+    my $self = shift;
+    my $components = $self->getComponents;
+    foreach my $component ( @{$components}){
+      if ( ISGA::ComponentBuilder->new($component)){
+         return 1;
+      }
+    }
+    return 0;
+  }
+

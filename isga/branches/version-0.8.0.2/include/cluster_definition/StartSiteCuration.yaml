@@ -1,0 +1,4 @@
+--- !perl/ISGA::ClusterBuilder
+Cluster: Alternate Start Site Analysis
+Description: 'This cluster discovers and analyzes genes originating form an alternative start site.  Discovery is performed by a scoring method which incorporates the BER results of a previous analysis and also a characterized database of verified genes.  The analysis of the discovered genes will, by default, reflect the choices you have made in the prior portions of the pipeline.  For example, if you chose to run both BLAST and HMMPFAM, then these will both be run on the new genes.  However, if you chose to only run BLAST, then by default, only BLAST will be run on the new genes.'
+

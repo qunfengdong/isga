@@ -1,0 +1,5 @@
+<%perl>
+my $pipelines = SysMicro::GlobalPipeline->query( OrderBy => 'Name' );
+</%perl>
+
+<& /GlobalPipeline/list.mas, pipelines => $pipelines &>

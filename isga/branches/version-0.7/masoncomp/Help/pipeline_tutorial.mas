@@ -1,0 +1,87 @@
+<h4>Pipeline Tutorial</h4>
+<p class="justify">
+Pipelines are the core of our service.  When you first begin, there is currently only one pipeline 
+to choose from.  The Prokaryote Annotation Pipeline is a pipeline that allows you to provide a 
+FASTA sequence and have ORF predicition and protein annotation assigned to the predicted ORF.  It 
+also will predict rRNA and tRNA sequences as well.
+</p>
+
+<p class="justify">Clicking on "Pipelines" from the navigation menu you will be presented with the screen below.</p>
+
+<img class="tutorial" src="/include/img/tutorial/pipeline_list.png" alt="Pipeline List Page">
+
+<p class="justify">From here you can choose to view the details, run the pipeline, or customize the pipeline.  Choosing 
+<span class="tutorialHighlight">View Details</span> will take you to the overview page for the pipeline.  Here 
+you can see what is being performed, view the required inputs, view what outputs are produced, and see 
+set parameter values for individual components.  Choosing <span class="tutorialHighlight">Run Pipeline will</span> 
+will take you to the beginning of the Run Builder process.  The pipeline will be ran with all default options 
+for components and parameter values.  Choosing <span class="tutorialHighlight">Customize Pipeline</span> will take 
+you to the beginning of the Pipeline customization process.  It is in this section where you customize your 
+pipeline, choosing which clusters and components to run, but also what values to use for program parameters 
+such as the e-value to use for BLASTP.</p>
+
+<p class="justify">Choosing to view the details for a pipeline will bring you to the Overview page for that 
+pipeline.  On the left of the page, you will see an infographic describing which clusters for the current pipeline.  
+The toolbox on the right provides links to view the details of your pipeline.  You can view the inputs required to run 
+the pipeline.  You can view the outputs produced by the pipeline.  You can view the parameter values for the pipeline 
+as well.  There are also links to customize or run the pipeline.</p>
+
+<h4>Pipeline Customization</h4>
+
+<p class="justify">If you choose to beging the customization process you will be presented 
+with the following form.</p>
+
+<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_create_form.png" alt="Pipeline Create Form">
+
+<p class="justify">In the form you will be required to enter a unique name for your pipeline.  It is also recommended 
+that you enter a description for your pipeline to later help you identify it.</p>
+
+<p class="justify">After entering a name and description you will be taken to the Pipeline Customizatin Overview page.  
+On the left of the page, you will see an infographic describing which clusters are active for the current 
+pipeline.  A cluster colored green means that the cluster is active and will be run.  A white colored cluster 
+signifies a cluster that has been deactivated and will not be run.  A green-striped cluster signifies a cluster 
+this is only partially active.  Meaning some portions of that cluster are being executed, but other optional portions 
+have been deactivated.  Finally, a cluster that is yellow signifies a cluster that is required and must be run.  These 
+clusters form the core of the pipeline and are necessary to produce meaningful results.  On the right of the page, you 
+will see the Pipeline Customization Toolbox.  You will also notice that hovering over a cluster with your mouse will cause a 
+pop-up tip to appear.  These tips provide useful information about what is being performed within each cluster.</p>
+
+<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_overview.png" alt="Pipeline Overview">
+
+<p class="justify">The toolbox on the right contains links to all the tools needed to customize a pipeline.  To begin 
+customizing your pipeline, you should click either the <span class="tutorialHighlight">Select Programs To Run</span> 
+link or the <span class="tutorialHighlight">Edit Program Parameters</span> link.  Clicking <span class="tutorialHighlight">
+Select Programs To Run</span> we bring you to a page similar to the Overview page.  The infographic on this page has 
+added functionality.  Clicking on a cluster will allow you to activate or deactivate it.  It should be noted that some 
+clusters can be partially deactivated while keeping other parts of it active.  This means that there are two differnt 
+actions on the page.  A cluster that can only be actived or deactivated will turn either white or green upon being 
+clicked.  However, clicking a cluster that can be partially deactivated will bring up a pop-up with software options that 
+can be selected or deselected.</p>
+
+<p class="justify">Clicking <span class="tutorialHighlight">Edit Program Parameters</span> will again bring 
+you to a page similar to the Overview page.  On this page all clusters in the infographic are clickable.  Clicking on any 
+cluster will bring you to a page with list of software which is being executed in that cluster.  Each item listed has 
+parameters that you are able to change.  Software may have Required Parameters, Optional Parameters, or both.  Clicking the 
+link for a particular piece of software will bring you to that softwares form.</p>
+
+<p class="justify">The form has two sections, Required Parameters and Optional Parameters. The Optional Parameters section is 
+hidden by default. To show this section of the form, click on the <span class="tutorialHighlight">"+"</span> symbol next to 
+Optional Parameters. To collapse or hide this section, click on the <span class="tutorialHighlight">"-"</span> symbol.  Next to 
+each parameter is a question mark. Hovering over this question mark with your mouse will display a tip for this parameter. 
+Parameters will always be assigned a default value if necessary. The default values are what the original pipeline designers 
+chose for these values and can provide a good first guess for a value.  Clicking the Reset Form button will return the form values 
+to what they were when you browsed to this form. It will NOT return them to their original default value. However, the default 
+value is often listed within the tip for each parameter.  After changing your values, simply click <span class="tutorialHighlight">
+Save Parameter</span>.  You will be taken to a page to make notes about your changes.</p>
+
+<p class="justify">Creating notes is not required but can be helpful.  These notes can be used as helpful reminders as to why a 
+parameter was changed or a certain value chosen.  To create a note, type it into the provided text box beneath its associated 
+parameter.  When finished click <span class="tutorialHighlight">Annotate Parameters</span> to save the notes. You will be taken to 
+the Analysis Selection screen for the current cluster you are in. To move to a different cluster, use the toolbox on the right and 
+choose Edit Program Parameters.</p>
+
+<p class="justify">These steps can be performed in any order you wish.  Be aware, however, that editing parameters for software in clusters you have 
+deacitved will not cause that software or cluster to be executed.  When you are satisfied with your pipeline, click on <span class="tutorialHighlight">
+Finalize Pipeline</span>.  A confirmation box will pop up.  To proceed click <span class="tutorialHighlight">Yes</span>.  This will 
+save your pipeline, and you will be brought to a confirmation page where links are provided to view the details of your newly created 
+pipeline or to run you new pipeline.</p>

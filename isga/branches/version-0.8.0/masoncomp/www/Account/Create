@@ -1,0 +1,10 @@
+<%perl>
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'account_create'
+  or $form =  ISGA::FormEngine::Account->Create(\%ARGS);
+
+return $m->comp('/Account/create.mas', form => $form);
+
+</%perl>

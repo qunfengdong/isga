@@ -1,0 +1,48 @@
+# -*- cperl -*-
+
+use File::Basename;
+
+#------------------------------------------------------------------------
+
+=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar $archive);
+
+Add the results for this cluster output to a cluster evidence archive.
+
+=cut
+#------------------------------------------------------------------------
+  sub downloadEvidence {
+
+    my ($self, $run, $cluster_dir, $archive) = @_;
+
+    my $id = $run->getErgatisKey;
+
+
+    my $raw_output = '___ergatis_output_repository___' . $self->getFileLocation;
+    $raw_output =~ s/___id___/$id/go;
+
+    my @files;
+    
+    # for a file list we need to read in all target files
+    if ( $self->getErgatisFormat eq 'File List' ) {
+      
+      open my $fh, '<', $raw_output or X->throw( error => "$raw_output - $!" ); 
+      @files = <$fh>;
+      chomp for @files;
+      close $fh;
+
+      my @name_units = split(/\//, $self->getFileLocation );
+
+      $cluster_dir .= "/$name_units[-1]";
+
+      
+    # otherwise, just use the output file
+    } else {
+      push @files, $raw_output;
+    }
+
+    foreach ( @files ) {
+      my ( $file ) = $archive->add_files( $_ );
+      $file->prefix( $cluster_dir );
+    }
+  }
+    

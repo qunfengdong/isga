@@ -1,0 +1,345 @@
+---
+- Component: glimmer3.iter2
+  Type: 'ORF Prediction Raw Evidence'
+  Format: 'Glimmer3 Prediction Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: glimmer3/___id____iter2/glimmer3.raw.list
+- Component: promote_gene_prediction.promote_prediction
+  Type: 'Promote Gene Prediction Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: promote_gene_prediction/___id____promote_prediction/promote_gene_prediction.bsml.list
+- Component: promote_gene_prediction.promote_prediction
+  Type: 'ORF Sequence'
+  Format: 'FASTA'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: bsml2fasta/___id____prediction_CDS/bsml2fasta.fsa.list
+- Component: translate_sequence.translate
+  Type: 'Translated ORF Sequence'
+  Format: 'FASTA'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: join_multifasta/___id____gene_predict_translated/join_multifasta.fsa.list
+- Component: hmmpfam.pre_overlap_analysis
+  Type: 'HMM Search Result'
+  Format: 'HMMPFAM Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: hmmpfam/___id____pre_overlap_analysis/hmmpfam.raw.list
+- Component: hmmpfam.pre_overlap_analysis
+  Type: 'HMM Search Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: hmmpfam/___id____pre_overlap_analysis/hmmpfam.bsml.list
+- Component: wu-blastp.pre_overlap_analysis
+  Type: 'BLAST Search Result'
+  Format: 'BLAST Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: wu-blastp/___id____pre_overlap_analysis/wu-blastp.raw.list
+- Component: wu-blastp.pre_overlap_analysis
+  Type: 'BLAST Search Result'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: wu-blastp/___id____pre_overlap_analysis/wu-blastp.btab.list
+- Component: ber.pre_overlap_analysis
+  Type: 'BER Search Result Pre'
+  Format: 'BER Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: ber/___id____pre_overlap_analysis/ber.raw.list
+- Component: ber.pre_overlap_analysis
+  Type: 'BER Search Result Pre'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: ber/___id____pre_overlap_analysis/ber.btab.list
+- Component: ber.pre_overlap_analysis
+  Type: 'BER Search Result Pre'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: ber/___id____pre_overlap_analysis/ber.bsml.list
+- Component: start_site_curation.default
+  Type: 'Start Site Curation Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: start_site_curation/___id____default/start_site_curation.bsml.list 
+- Component: hmmpfam.post_overlap_analysis
+  Type: 'HMM Search Result'
+  Format: 'HMMPFAM Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: hmmpfam/___id____post_overlap_analysis/hmmpfam.raw.list
+- Component: hmmpfam.post_overlap_analysis
+  Type: 'HMM Search Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: hmmpfam/___id____post_overlap_analysis/hmmpfam.bsml.list
+- Component: wu-blastp.post_overlap_analysis
+  Type: 'BLAST Search Result'
+  Format: 'BLAST Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: wu-blastp/___id____post_overlap_analysis/wu-blastp.raw.list
+- Component: wu-blastp.post_overlap_analysis
+  Type: 'BLAST Search Result'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: wu-blastp/___id____post_overlap_analysis/wu-blastp.btab.list
+- Component: ber.post_overlap_analysis
+  Type: 'BER Search Result Post'
+  Format: 'BER Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: ber/___id____post_overlap_analysis/ber.raw.list
+- Component: ber.post_overlap_analysis
+  Type: 'BER Search Result Post'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: ber/___id____post_overlap_analysis/ber.btab.list
+- Component: ber.post_overlap_analysis
+  Type: 'BER Search Result Post'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: ber/___id____post_overlap_analysis/ber.bsml.list
+- Component: translate_sequence.final_polypeptides
+  Type: 'Translated ORF Sequence'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: translate_sequence//___id____final_polypeptides/translate_sequence.fsa.list
+- Component: RNAmmer.default
+  Type: 'RNAmmer Result'
+  Format: 'RNAmmer HMM report'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: RNAmmer/___id____default/RNAmmer.hmmreport.list
+- Component: RNAmmer.default
+  Type: 'RNAmmer Result'
+  Format: 'GFF'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: RNAmmer/___id____default/RNAmmer.gff.list
+- Component: RNAmmer.default
+  Type: 'RNAmmer Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: RNAmmer/___id____default/RNAmmer.bsml.list
+- Component: tRNAscan-SE.find_tRNA
+  Type: 'tRNAscan Result'
+  Format: 'tRNAscan Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: tRNAscan-SE/___id____find_tRNA/tRNAscan-SE.raw.list
+- Component: tRNAscan-SE.find_tRNA
+  Type: 'tRNAscan Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: tRNAscan-SE/___id____find_tRNA/tRNAscan-SE.bsml.list
+- Component: ncbi-blastx.blast_interevidence_regions
+  Type: 'BLAST Search Result'
+  Format: 'BLAST Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Pipeline
+  FileLocation: ncbi-blastx/___id____blast_interevidence_regions/ncbi-blastx.raw.list
+- Component: ncbi-blastx.blast_interevidence_regions
+  Type: 'BLAST Search Result'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: ncbi-blastx/___id____blast_interevidence_regions/ncbi-blastx.btab.list
+- Component: ncbi-blastx.blast_interevidence_regions
+  Type: 'BLAST Search Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: ncbi-blastx/___id____blast_interevidence_regions/ncbi-blastx.bsml.list
+- Component: signalp.default
+  Type: 'SignalP Result'
+  Format: 'SignalP Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: signalp/___id____default/signalp.raw.list
+- Component: signalp.default
+  Type: 'SignalP Result'
+  Format: 'GIF'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: signalp/___id____default/signalp.gif.list
+- Component: signalp.default
+  Type: 'SignalP Result'
+  Format: 'EPS'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: signalp/___id____default/signalp.eps.list
+- Component: signalp.default
+  Type: 'SignalP Result'
+  Format: 'GNUPlot Commands Script'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: signalp/___id____default/signalp.gnu.list
+- Component: signalp.default
+  Type: 'SignalP Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: signalp/___id____default/signalp.bsml.list
+- Component: tmhmm.default
+  Type: 'TMhmm Result'
+  Format: 'TMhmm Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: tmhmm/___id____default/tmhmm.raw.list
+- Component: tmhmm.default
+  Type: 'TMhmm Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: tmhmm/___id____default/tmhmm.bsml.list
+- Component: ps_scan.default
+  Type: 'Prosite Scan Result'
+  Format: 'Prosite Scan Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: ps_scan/___id____default/ps_scan.raw.list
+- Component: ps_scan.default
+  Type: 'Prosite Scan Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: ps_scan/___id____default/ps_scan.bsml.list
+- Component: transterm.default 
+  Type: 'TransTerm Result'
+  Format: 'TransTerm Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: transterm/___id____default/transterm.raw.list
+- Component: transterm.default
+  Type: 'TransTerm Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: transterm/___id____default/transterm.bsml.list
+- Component: lipop.default
+  Type: 'Lipoprotein Motif Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: lipop/___id____default/lipop.bsml.list
+- Component: rpsblast.priam
+  Type: 'RPSBLAST Result'
+  Format: 'RPSBLAST Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: rpsblast/___id____priam/rpsblast.raw.list
+- Component: rpsblast.priam
+  Type: 'RPSBLAST Result'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: rpsblast/___id____priam/rpsblast.btab.list
+- Component: rpsblast.priam
+  Type: 'RPSBLAST Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: rpsblast/___id____priam/rpsblast.bsml.list
+- Component: priam_ec_assignment.default
+  Type: 'Priam EC Assignment Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: priam_ec_assignment/___id____default/priam_ec_assignment.bsml.list
+- Component: wu-blastp.COGS
+  Type: 'BLAST Search Result'
+  Format: 'BLAST Raw Results'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: wu-blastp/___id____COGS/wu-blastp.raw.list
+- Component: wu-blastp.COGS
+  Type: 'BLAST Search Result'
+  Format: 'BTAB'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: wu-blastp/___id____COGS/wu-blastp.btab.list
+- Component: wu-blastp.COGS
+  Type: 'BLAST Search Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: wu-blastp/___id____COGS/wu-blastp.bsml.list
+- Component: oligopicker.default
+  Type: 'OligoPicker Result'
+  Format: 'OligoPicker Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Pipeline
+  FileLocation: oligopicker/___id____default/oligopicker.raw.list
+- Component: asgard_simple.default
+  Type: 'Asgard Result'
+  Format: 'Asgard Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Pipeline
+  FileLocation: asgard_simple/___id____default/asgard_simple.raw.list
+- Component: asgard_simple.default
+  Type: 'Asgard Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: asgard_simple/___id____default/asgard_simple.bsml.list
+- Component: p_func.default
+  Type: 'Predict Gene Function Result'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: p_func/___id____default/p_func.bsml.list
+- Component: pipeline_summary.default
+  Type: 'Pipeline Summary'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: pipeline_summary/___id____default/pipeline_summary.bsml.list
+- Component: cgb_bsml2tbl.default
+  Type: 'Pipeline Summary'
+  Format: 'Table'
+  ErgatisFormat: 'File List'
+  Visibility: Pipeline
+  FileLocation: cgb_bsml2tbl/___id____default/cgb_bsml2tbl.tbl.list
+- Component: tbl2asn.default
+  Type: 'Pipeline Summary'
+  Format: 'Genbank'
+  ErgatisFormat: 'File List'
+  Visibility: Pipeline
+  FileLocation: tbl2asn/___id____default/tbl2asn.gbf.list
+- Component: bsml2gff3.default
+  Type: 'Pipeline Summary'
+  Format: 'GFF'
+  ErgatisFormat: 'File List'
+  Visibility: Pipeline
+  FileLocation: bsml2gff3/___id____default/bsml2gff3.gff3.list
+- Component: glimmer3.iter2
+  Type: 'ORF Prediction Raw Evidence'
+  Format: 'BSML'
+  ErgatisFormat: 'File List'
+  Visibility: Internal
+  FileLocation: glimmer3/___id____iter2/glimmer3.bsml.list 
+- Component: mast.default
+  Type: 'TFBS Evidence'
+  Format: 'Mast Raw Result'
+  ErgatisFormat: 'File List'
+  Visibility: Evidence
+  FileLocation: mast/___id____default/mast.raw.list
+#SELECT b.component_ergatisname, c.filetype_name, d.fileformat_name, a.outputvisibility_name AS visibility, a.clusteroutput_fileloc
+#FROM clusteroutput a NATURAL JOIN component b NATURAL JOIN filetype c NATURAL JOIN fileformat d;

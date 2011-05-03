@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: FileCollectionType
+attributes:
+  - { name: Description, type: string }
+  - { name: IsUniform, type: boolean }

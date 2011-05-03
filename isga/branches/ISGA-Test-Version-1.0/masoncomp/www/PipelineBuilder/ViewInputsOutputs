@@ -1,0 +1,33 @@
+<%args> # -*- cperl -*-
+ $pipeline_builder
+</%args>
+
+<& /PipelineBuilder/view_inputs.mas, pipeline_builder => $pipeline_builder &>
+
+<%perl>
+
+my %results = ( Pipeline => {}, Evidence => {} );
+
+foreach my $cluster ( @{$pipeline_builder->getActiveClusters} ) {
+
+  my $components = $pipeline_builder->getActiveComponents($cluster);
+  
+  foreach my $output ( @{SysMicro::ClusterOutput->query( Component => $components )} ) { 
+    
+    my $visibility = $output->getVisibility();
+
+    if ( exists $results{$visibility}{$cluster} ) {
+      push @{$results{$visibility}{$cluster}{Output}}, $output;
+    } else {
+      $results{$visibility}{$cluster} = { Cluster => $cluster, Output => [ $output ] };
+    }
+  }
+}
+
+
+</%perl>
+
+<& /PipelineBuilder/view_outputs.mas, 
+  pipeline_builder => $pipeline_builder, results => \%results &>
+
+

@@ -1,0 +1,14 @@
+<%args>
+ $form
+ $pipeline_builder
+</%args>
+
+<h1>Pipeline Builder: Edit Parameters</h1>
+
+% #<h1><% $pipeline->getName %></h1>
+
+<% $form->get %>
+
+
+
+<& rightmenu.mas, pipeline_builder => $pipeline_builder &>

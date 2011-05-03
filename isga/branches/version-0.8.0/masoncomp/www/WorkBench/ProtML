@@ -1,0 +1,14 @@
+<%args>
+	$infile
+</%args>
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_protml'
+	or $form =  ISGA::FormEngine::WorkBench->ProtML(\%ARGS);
+
+return $m->comp('/WorkBench/protml.mas', form => $form, infile => $infile);
+</%perl>
+
+

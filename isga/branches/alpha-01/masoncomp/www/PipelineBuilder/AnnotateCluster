@@ -1,0 +1,18 @@
+<%args> #! -*- cperl -*-
+ $pipeline_builder
+ $cluster
+</%args>
+
+<%perl>
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+
+$form and $form->get_formname() eq 'annotate_cluster'
+  or $form =  SysMicro::FormEngine::PipelineBuilder->AnnotateCluster(\%ARGS);
+
+$pipeline_builder ||= $form->get_input('pipeline_builder');
+
+return $m->comp('/PipelineBuilder/annotate_cluster.mas', pipeline_builder => $pipeline_builder, form => $form, cluster => $cluster);
+</%perl>
+

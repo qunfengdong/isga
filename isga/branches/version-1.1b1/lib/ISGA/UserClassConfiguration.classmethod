@@ -1,0 +1,19 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string value(string name, UserClass => $userclass);
+
+Returns the value for the supplied name, pipeline and user_class
+combination. Throws an exception if the name doesnt exist.
+
+=cut 
+#------------------------------------------------------------------------
+  sub value {
+
+    my ($class, $name, %args) = @_;
+    
+    $args{Variable} = ISGA::ConfigurationVariable->new( Name => $name );
+
+    return $class->new( %args )->getValue;
+  }

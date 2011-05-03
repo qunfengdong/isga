@@ -1,0 +1,41 @@
+<sys:title>SysMicro Pipeline Service</sys:title>
+
+<h1>SysMicro Pipeline Service</h1>
+
+<p>Welcome to the SysMicro Pipeline Service <strong>Test</strong>. We appreciate your help in developing this utility. Please report all bugs and suggestions to <a href="mailto:biohelp@cgb.indiana.edu">biohelp@cgb.indiana.edu</a></p>
+
+<p>The current release only contains our express pipeline, which runs
+glimmer3 for orf prediction, then runs HMMPFAM and BLAST against to
+predict gene function.</p>
+
+<h2>Release Schedule:</h2>
+
+<p>We will be releasing a new test version each Tuesday morning. We
+will try to preserve accounts and data across versions, but some fixes
+may have incompatibilities that require a database wipe. If you
+generate important results, please be sure to save them before Monday
+evening.  Also, jobs running on Tuesday mornings may be killed by the
+release process.</p>
+
+<sys:rightmenu>
+
+<ul>
+ <li class="title">Getting Started</li>
+
+% if ( ! SysMicro::Login->exists ) {
+
+ <li class="rmbutton"><a href="/Account/Request">Request an Account</a></li>
+
+ <li><p> You first need to request an account before you can run or
+ customize our pipelines. If you have already created an account, log
+ in using the link at the top right of the window.</p><li>
+
+% }
+
+ <li class="rmbutton"><a href="/Pipeline/Overview">Select a Pipeline</a></li>
+
+ <li><p>Next you need to select the pipeline that you wish to use. Visit the details page of each pipeline to learn more about it and eventually run or customize it.</p></li>
+
+</ul>
+
+</sys:rightmenu>

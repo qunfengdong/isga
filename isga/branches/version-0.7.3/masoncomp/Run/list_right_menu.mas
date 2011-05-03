@@ -1,0 +1,30 @@
+<%args>
+ $show_canceled
+</%args>
+
+<sys:rightmenu>
+
+<ul>
+<li class="title">Viewing Options</li>
+
+
+
+<span>
+<form action="/Run/Status" name="options">
+
+<li>
+<p>
+<input type="checkbox" name="show_canceled" value="1" \
+% if ( $show_canceled ) {
+checked="yes" \
+% }
+onChange="document.forms['options'].submit()"> Show canceled runs<br>
+</p>
+</li>
+</form>
+</span>
+
+</ul>
+
+
+</sys:rightmenu>

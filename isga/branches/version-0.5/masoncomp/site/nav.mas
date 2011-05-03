@@ -1,0 +1,46 @@
+% my $exists = SysMicro::Login->exists;
+
+%#<div id="nav">
+%#<div id="droppydiv">
+
+ <ul id="nav"> 
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/Pipeline/Overview">Pipelines</a>
+   <ul>
+    <li><a href="/Pipeline/Overview">Overview</a></li>
+    <li><a href="/Pipeline/List">Public Pipelines</a></li>
+% if ( $exists ) {
+    <li><a href="/Pipeline/ListMy">My Pipelines</a></li>
+    <li><a href="/PipelineBuilder/ListMy">My Pipeline Builders</a></li>
+% }
+   </ul>  
+  </li>
+  <li><a href="/Run/Overview">Results</a>
+% if ( $exists ) {
+   <ul>
+    <li><a href="/RunBuilder/ListMy">My Run Builders</a></li>
+    <li><a href="/Run/ListMy">My Runs</a></li>
+    <li><a href="/Run/MyResults">My Results</a></li>
+   </ul>
+% }
+   </li>
+
+  <li><a href="/Support/Overview">Support</a>
+   <ul>
+    <li><a href="/Support/Overview">Overview</a></li>
+    <li><a href="/Support/ContactUs">Contact Us</a></li>
+   </ul>
+  </li>
+
+% if ( SysMicro::Login->exists ) {
+  <li><a href="/Account/MyAccount">My Account</a>
+   <ul>
+    <li><a href="/Account/MyAccount">My Account</a></li>
+    <li><a href="/File/BrowseMy">My Files</a></li>
+   </ul>
+  </li>
+% }
+ </ul>
+
+%#</div>
+%#</div>

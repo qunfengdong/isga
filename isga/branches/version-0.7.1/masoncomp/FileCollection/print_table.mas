@@ -1,0 +1,63 @@
+<%args>
+ $file_collection
+ $embed => 0
+</%args>
+
+% if ( $embed ) {
+ <tr id="collection-<% $file_collection %>" class="child-of-<% $embed %>" >
+  <td colspan="2"><% $file_collection->getUserName %> Contents</td>
+  <td><% $file_collection->getCreatedAt->brief %></td>
+ </tr>
+% } else {
+<sys:script type="text/javascript">
+$(document).ready(function()  {
+  $("#collection-<% $file_collection %>").treeTable();
+});
+</sys:script>
+<div class="list">
+<table id="collection-<% $file_collection %>" width="100%">
+ <thead>
+  <tr><th>Type</th><th>Format</th><th>Created At</th></tr>
+ </thead>
+ <tbody>
+% }
+
+% foreach my $resource ( @{$file_collection->getContents()} ) {
+
+%   if ( $resource->isa('SysMicro::FileCollection') ) {
+<& /FileCollection/print_table.mas, file_collection => $resource, 
+                                    embed => "collection-$file_collection" &>
+%   } else {
+
+<tr id="file-<% $resource %>" class="child-of-collection<% $file_collection %>">
+ <td colspan="3"><a href="/File/View?file=<% $resource %>"><% $resource->getUserName %></a></td>
+</tr>
+<tr>
+%     my $type = $resource->getType;
+%     my $tname = $type->getName;
+ <td><% $tname %>\
+  <a class="jTip" id="t-<% $type %>-f-<% $resource %>" name="<% $tname %>" \
+   href="/FileType/ViewHelp?file_type=<% $type %>">
+  <span class="sup">?</span>
+ </a>
+ </td> 
+%     my $format = $resource->getFormat;
+%     my $fname = $format->getName;
+ <td><% $fname %>\
+  <a class="jTip" id="f-<% $format %>-f-<% $resource %>" name="<% $fname %>" \
+   href="/FileFormat/ViewHelp?file_format=<% $format %>">
+  <span class="sup">?</span>
+ </a>
+ </td>
+
+ <td><% $resource->getCreatedAt->brief %></td>
+</tr>
+%   }
+% }
+
+% if ( ! $embed ) {
+ </tbody>
+</table>
+</div>
+% }
+

@@ -1,0 +1,76 @@
+<%args>
+ $user_group
+</%args>
+
+% my $owner = SysMicro::Login->getAccount == $user_group->getCreatedBy;
+
+<h1>Group: <% $user_group->getName %></h1>
+
+% if ( $owner ) {
+<a class="button" href="/UserGroup/Edit?user_group=<% $user_group %>">Manage Group</a>
+% } else {
+<a class="button" href="/submit/UserGroup/Leave?user_group=<% $user_group %>">Leave Group</a>
+% }
+
+<h2>Members</h2>
+
+% my $members = $user_group->getAccounts;
+
+% if ( @$members ) {
+<div id="list">
+<table width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Institution</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @$members ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>">
+  <td><% $_->getName %></td>
+  <td><% $_->getInstitution %></td>
+ </tr>      
+%   }
+</table>
+</div>
+% } elsif ( $owner ) {
+<p>This group has no members. Would you like to <a href="/UserGroup/Edit?user_gruop=<% $user_group %>">invite</a> some?</p>
+% }
+
+% if ( $owner ) {
+
+<h2>Open Invitations</h2>
+
+% my $invites  = SysMicro::UserGroupInvitation->query( UserGroup => $user_group );
+% my $einvites = SysMicro::UserGroupEmailInvitation->query( UserGroup => $user_group );
+
+%   if ( @$invites || @$einvites ) {
+
+<div id="list">
+<table width="100%">
+ <tr>
+  <th>Name/Email</th>
+  <th>Institution</th>
+ </tr>
+%     my $counter=0;
+%     foreach ( @$invites ) {
+%       my $tr_class = ++$counter % 2 ? "odd" : "even";
+%       my $account = $_->getAccount;
+ <tr class="<% $tr_class %>">
+  <td><% $account->getName %></td>
+  <td><% $account->getInstitution %></td>
+ </tr>      
+%     }
+%     foreach ( @$einvites ) {
+%       my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>">
+  <td><% $_->getEmail %></td>
+  <td></td>
+ </tr>      
+%     }
+</table>
+</div> 
+%   } else {
+<p>This group has no invitations. Would you like to <a href="/UserGroup/Edit?user_group=<% $user_group %>">invite</a> someone?</p>
+%   }
+% }

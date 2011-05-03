@@ -1,0 +1,94 @@
+---
+ - Name: 'Process Input Sequences'
+   Description: 'Perform any necessary processing on user input files to prepare them for the pipeline run.'
+   LayoutXML: |
+     ___remove_short_sequence.default___
+     ___split_multifasta.transcriptome___
+ - Name: 'Repeat Analysis'
+   Description: 'Using the RepeatMasker software, this component searches for repeats.'
+   LayoutXML: |
+     ___repeatmasker.default___
+ - Name: 'Primary Sequence Similarity Analysis'
+   Description: 'The primary BLAST analysis for this pipeline.  The BLAST is ran against NCBIs NR database.'
+   LayoutXML: |
+     ___ncbi-blastx.NR___
+     ___concatenate_files.default___
+ - Name: 'Metagenomic Analysis'
+   Description: 'This module runs the Megan software to perform metagenomic analysis. In a preprocessing step, the set of DNA is compared against databases of known sequences using BLAST. MEGAN can then be used to compute the taxonomical content of the dataset, employing the NCBI taxonomy to summarize and order the results.'
+   LayoutXML: |
+     ___megan.default___
+ - Name: 'GO Analysis'
+   Description: 'This module annotates sequence using the BLAST2GO software.'
+   LayoutXML: |
+     ___blast2xml.blast2go___
+     ___blast2go.default___
+ - Name: 'ORF Detection'
+   Description: 'This module discovers ORFs using the BLAST vs NR results.'
+   LayoutXML: | 
+     ___OrfPredictor.default___
+     ___split_multifasta.ORFS___
+     ___remove_empty_sequence.default___
+ - Name: 'ORF Analysis'
+   Description: 'This module runs some additional analysis on the found ORFs.  Ps_scan, Signalp, and Oligopicker may all be run on the ORFs.'
+   LayoutXML: |
+     <commandSet type="parallel">
+        <state>incomplete</state>
+            ___ps_scan.transcriptome___
+            ___signalp.transcriptome___
+            ___oligopicker.transcriptome___
+     </commandSet>
+ - Name: 'DBEST Sequence Similarity Analysis'
+   Description: 'A supplementary BLAST analysis for this pipeline ran against NCBIs DBEST.'
+   LayoutXML: |
+     ___ncbi-blastn.EST___
+ - Name: 'Orthology Analysis'
+   Description: 'This module performs ortholog and paralog analysis.  A BLAST search is run against the OrthoMCL database.  The input EST sequences are also queried against themselves in a separate BLAST search.  The OrthoMCL algorithm is then run using the two BLAST results.'
+   LayoutXML: |
+     <commandSet type="serial">
+        <state>incomplete</state>
+        <commandSet type="parallel">
+            <state>incomplete</state>
+            <commandSet type="serial">
+                <state>incomplete</state>
+                <commandSet type="serial">
+                    <state>incomplete</state>
+                    ___ncbi-blastx.OrthoMcl___
+                </commandSet>
+                <commandSet type="serial">
+                    <state>incomplete</state>
+                    ___concatenate_files.classifyOrthology___
+                </commandSet>
+                <commandSet type="serial">
+                    <state>incomplete</state>
+                    ___classifyOrthology.classifyOrthology___
+                </commandSet>
+            </commandSet>
+            <commandSet type="serial">
+                <state>incomplete</state>
+                <commandSet type="serial">
+                    <state>incomplete</state>
+                    ___formatdb.default___
+                </commandSet>
+                <commandSet type="serial">
+                    <state>incomplete</state>
+                    ___ncbi-blastn.est_vs_est___
+                </commandSet>
+                <commandSet type="serial">
+                    <state>incomplete</state>
+                    ___concatenate_files.est_vs_est___
+                </commandSet>
+            </commandSet>
+        </commandSet>
+        <commandSet type="serial">
+            <state>incomplete</state>
+            ___orthomcl.default___
+        </commandSet>
+     </commandSet>
+ - Name: 'Reference Genome Similarity Search'
+   Description: 'This module performs a BLAST search against your chosen reference genome.'
+   LayoutXML: |
+     ___ncbi-tblastx.reference_genome___
+ - Name: 'EST Summary Analysis'
+   Description: 'The results from the previous modules are combined into a summary file.  Each EST will be annotated with significant finding.'
+   LayoutXML: |
+     ___transsummery.default___

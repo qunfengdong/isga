@@ -1,0 +1,32 @@
+<%args>
+ $form
+</%args>
+
+<h1>Run Builder</h1>
+
+<p>This tool allows you to describe and assign input files to a
+pipeline in order to execute a run.</p>
+
+<p>Your progress will be saved, and you can return to building your
+run at any time by clicking on 'My Run Builders' under the 'Results'
+entry in the navigation bar.</p>
+
+<p>Before you select your input files, you must choose a name to
+distinguish this run.. You may also provide an optional
+description.</p>
+
+<% $form->get %>
+
+<a class="btn-slide disableWalkthrough" href="#">Toggle Tutorial</a>
+
+<div id="WT" class="hidden documentation createRun"><div id="WT_arrow_left"></div><div id="WT_close_left">Walkthrough</div><div id="WT_copy">
+This page allows you to name your run and also create any notes 
+about your run that may help you distinguish it in the future.  
+A Run name is differnt than a pipeline name.  Your run will be 
+associated with the pipeline you chose to run and the pipeline 
+will be listed accordingly when browsing your runs.  A descriptive 
+name will be helpful in the future when reviewing results.  Please 
+create a name and any notes and click Continue to proceed.  The 
+name and notes can be updated anytime throughout the Run Building 
+process.
+</div></div>

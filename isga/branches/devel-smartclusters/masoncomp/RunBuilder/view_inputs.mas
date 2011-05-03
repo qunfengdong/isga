@@ -1,0 +1,95 @@
+<%args>
+ $run_builder
+</%args>
+
+<%perl>
+use List::Util qw(min);
+</%perl>
+
+<sys:style type="text/css" media="screen"> 
+  @import "/include/css/uni-form.css"; 
+</sys:style>
+
+% my $account = SysMicro::Login->getAccount;
+
+<h1>Run Inputs</h1>
+
+<p>The following files will be used as input for this run. You can
+select new input files using the buttons below, or upload a new file
+using the tool to the left.</p>
+
+% my @required = @{$run_builder->getRequiredInputs};
+% my @optional = @{$run_builder->getOptionalInputs};
+
+<div class="list">
+
+<table width="100%">
+<thead>
+<tr><th width="30%">Input</th><th width="20%">Format</th><th colspan="2">File</th></tr>
+</thead>
+
+<tbody>
+% if ( @required ) {
+
+<tr><th class="subhead" colspan="4">Required</th></tr>
+%   foreach ( @required ) {
+%     my $type = $_->getType;
+%     my $format = $_->getFormat;
+%     my ( $run_builder_input ) = 
+%       @{SysMicro::RunBuilderInput->query( PipelineInput => $_, RunBuilder => $run_builder)};
+%     my $current_file = $run_builder_input && $run_builder_input->getFileResource || 0;
+
+%     my $action = ( $_->getErgatisFormat eq 'File List' ? 'SelectInputList' : 'SelectInput' );
+ 
+<tr>
+ <td><% $type->getName %></td>
+ <td><% $format->getName %></td>
+ <td>\
+%     if ( $current_file ) {
+<% $current_file->getUserName %>\
+%     } else {
+<span class="alert">None</span>\
+%     }
+ </td>
+ <td width="20%">
+<a class="button" href="/RunBuilder/<% $action %>?run_builder=<% $run_builder %>&pipeline_input=<% $_ %>"><% $current_file ? 'Edit Selection' : 'Select File' %></a>
+ </td>
+</tr>
+%   }
+% }
+
+% if ( @optional ) {
+<tr><th class="subhead" colspan="4">Optional</th></tr>
+%   foreach ( @optional ) {
+%     my ( $run_builder_input ) = 
+%       @{SysMicro::RunBuilderInput->query( PipelineInput => $_, RunBuilder => $run_builder)};
+%     my $current_file = $run_builder_input && $run_builder_input->getFileResource || 0;
+
+%     my $action = ( $_->getErgatisFormat eq 'File List' ? 'SelectInputList' : 'SelectInput' );
+
+<tr>
+ <td><% $_->getType->getName %></td>
+ <td><% $_->getFormat->getName %></td>
+ <td>\
+%     if ( $current_file ) {
+%       if ( $_->getErgatisFormat eq 'File List' ) {
+<% join "<br>", map { $_->getUserName } @{$current_file->getFlattenedContents} %>
+%       } else {
+<% $current_file->getUserName %>\
+%       }
+%     } else {
+<span class="alert">None</span>\
+%     }
+ </td>
+ <td>
+<a class="button" href="/RunBuilder/<% $action %>?run_builder=<% $run_builder %>&pipeline_input=<% $_ %>"><% $current_file ? 'Edit' : 'Select File' %></a>
+ </td>
+</tr>
+%   }
+% }
+</tbody>
+</table>
+
+</div>
+
+<& right_menu.mas, run_builder => $run_builder &>

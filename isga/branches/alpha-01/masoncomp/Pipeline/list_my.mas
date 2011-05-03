@@ -1,0 +1,55 @@
+<%args>
+ $account
+ @pipelines
+ $pager
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<h1>My Pipelines</h1>
+
+<p>The following is a list of pipelines you have built. Select one to view more details.</p>
+
+% if ( @pipelines ) {
+<div id="list">
+<& /site/pager/header.mas, pager => $pager &>
+<table width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Pipeline Template</th>
+  <th>Created On</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @pipelines ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+%     my $template = $_->getTemplate;
+ <tr class="<% $tr_class %>">
+
+% my $pname = $_->getName;
+  <td><a href="/Pipeline/View?pipeline=<% $_ %>"><% $pname %></a>
+  <a class="jTip" id="a<% $_ %><% $counter %>" name="<% $pname %>" \
+   href="/Pipeline/GetDescription?pipeline=<% $_ %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </a>
+  </td>
+
+% my $tname = $template->getName;
+  <td><a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a>
+  <a class="jTip" id="a<% $template %><% $counter %>" name="<% $tname %>" \
+   href="/Pipeline/GetDescription?pipeline=<% $template %>">
+  <span color="#8bbb40" class="sup">?</span>
+ </a>  
+ </td>
+
+  <td><% $_->getCreatedAt->getDate %></td>
+ </tr>      
+%   }
+</table>
+<& /site/pager/footer.mas, pager => $pager &>
+</div>
+% } else {
+<p>You do not have any pipelines.</p>
+% }

@@ -1,0 +1,31 @@
+--- !perl/MasonX::Foundation::Config
+mason_data_directory: /data/web/isga.cgb/mason 
+mason_component_root: /data/web/isga.cgb/docs/masoncomp
+apache_session_directory: /data/web/isga.cgb/session
+apache_session_lock_directory: /data/web/isga.cgb/session
+database: { name: sysmicro_dev, user: cgb, type: Pg }
+test_database: { name: sysmicro_test, user: cgb, type: Pg }
+mail_config: unshift @{$Mail::Sendmail::mailcfg{'smtp'}}, 'mail.cgb.indiana.edu';
+memcached_servers: [ "islay.cgb.indiana.edu:11211" ]
+log_file: /data/web/isga.cgb/log
+minimum_log_level: warning
+error_notification_email: [ 'mnrusimh@cgb.indiana.edu', 'chemmeri@indiana.edu', 'krevanna@indiana.edu', 'abuechle@cgb.indiana.edu' ]
+server_name: ISGA Dev
+custom_parameters:
+  mail_sender: 'ISGA Dev System <biohelp@cgb.indiana.edu>'
+  file_repository: /data/web/isga.cgb/repository
+  tmp_file_directory: /research/projects/isga/dev/tmp/
+  include_root: /data/web/isga.cgb/docs/include
+  ergatis_submit_directory: /research/projects/isga/dev/tmp/pipelines_building
+  ergatis_submit_uri: http://ergatis-dev.cgb.indiana.edu/cgi/run_prepared_pipeline.cgi
+  password_reset_cutoff: 24h
+  ergatis_output_repository: /research/projects/isga/dev/project/output_repository/
+  ergatis_runtime_directory: /research/projects/isga/dev/project/workflow/runtime/pipeline/
+  support_email: biohelp@cgb.indiana.edu
+  base_uri: http://isga-dev.cgb.indiana.edu/
+  gbrowse_config: /research/projects/isga/dev/gbrowse/conf/
+  gbrowse_databases: /research/projects/isga/dev/gbrowse/databases/
+  bin_path: /data/web/isga.cgb/docs/bin/
+  database_path: /research/projects/isga/sw/db/
+  ergatis_project: isga-dev
+  scripts_bin: /research/projects/isga/sw/bin/

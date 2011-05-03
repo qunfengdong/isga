@@ -1,0 +1,14 @@
+<%args> # -*- cperl -*-
+ $run_builder
+</%args>
+
+<%perl> 
+
+# check that we have the correct form cached
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'run_builder_edit_parameters'
+  or $form = SysMicro::FormEngine::RunBuilder->EditParameters(\%ARGS);
+
+return $m->comp('/RunBuilder/edit_parameters.mas', 
+		run_builder => $run_builder, form => $form);
+</%perl>

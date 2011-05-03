@@ -1,0 +1,10 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<h1>Finalize your Pipeline?</h1>
+<p>This will permanently save your customized Pipeline where it can be run or used as a template for future pipelines.</p>
+<p>
+<a href="/PipelineBuilder/Overview?pipeline_builder=<% $pipeline_builder %>" class="button">No</a>
+<a href="/submit/PipelineBuilder/Finalize?pipeline_builder=<% $pipeline_builder %>" class="button">Yes</a>
+</p>

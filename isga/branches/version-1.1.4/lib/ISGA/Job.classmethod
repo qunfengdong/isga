@@ -1,0 +1,49 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public Job create();
+
+Create a new job entry. This will also create and name the collection
+to contain files associated with the job.
+
+=cut 
+#------------------------------------------------------------------------
+  sub create {
+
+    my ($class, %args) = @_;
+
+    exists $args{Pid} or X::API::Parameter::Missing->throw(parameter => 'Pid');
+    exists $args{Status} or X::API::Parameter::Missing->throw(parameter => 'Status');
+    exists $args{Type} or X::API::Parameter::Missing->throw(parameter => 'Type');
+    exists $args{CreatedBy} or X::API::Parameter::Missing->throw(parameter => 'CreatedBy');
+    exists $args{NotifyUser} or X::API::Parameter::Missing->throw(parameter => 'NotifyUser');
+    exists $args{CreatedAt} or X::API::Parameter::Missing->throw(parameter => 'CreatedAt');
+    exists $args{NotifyUser} and $args{NotifyUser} = ( $args{NotifyUser} ? 'TRUE' : 'FALSE');
+    
+    
+    # create a file collection and add it to the system
+    my $collection = ISGA::FileCollection->create
+      ( CreatedBy => ISGA::Login->getAccount,
+	ExistsOutsideCollection => 1,
+	Type => ISGA::FileCollectionType->new( Name => 'Job Files' ),
+	CreatedAt => ISGA::Timestamp->new,
+	UserName => '',
+	Description =>  '',
+	IsHidden => 0 
+      );
+
+    # we will add collection to the object
+    $args{Collection} = $collection;
+    
+    # create the object
+    my $self =$class->NEXT::create(%args);
+
+    # now that we have the id, set the collection name
+    my $type = $args{Type}->getName;
+    my $name = "$type Job $self";
+    $collection->edit( UserName => $name, Description => "Files associated with $name" );
+
+
+    return $self;
+  } 

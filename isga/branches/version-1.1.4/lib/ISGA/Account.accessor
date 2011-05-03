@@ -1,0 +1,19 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getEmailUsername();
+
+Returns the username portion of the email address for this account.
+
+=cut
+#------------------------------------------------------------------------
+  sub getEmailUsername {
+
+    my $self = shift;
+    
+    my $email = $self->getEmail;
+    $email =~ m/^(.*)\@/;
+    
+    return $1;
+  }

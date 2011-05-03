@@ -1,0 +1,64 @@
+# -*- cperl -*-
+
+use File::Temp;
+
+#------------------------------------------------------------------------
+
+=item public FileResource upload(filehandle fh, Hash args);
+
+Upload a file or file collection through the web interface. 
+
+The args hash contains the following required parameters:
+
+ UserName => string
+ Type => FileType
+ Format => FileFormat
+ Description => string
+
+The args hash may contain the following optional parameters:
+
+ CreatedBy => Account (defaults to current acount)
+ CreatedAt => Timestamp (defaults to current time)
+ IsHidden => boolean ( defaults to FALSE)
+
+=cut 
+#------------------------------------------------------------------------
+  sub upload {
+
+    my ($class, $fh, %args) = @_;
+
+    # if we don't hear otherwise, assume this is a stand alone file.
+    exists $args{ExistsOutsideCollection} or
+      $args{ExistsOutsideCollection} = 1;
+
+    exists $args{IsHidden} or $args{IsHidden} = 0;
+    exists $args{CreatedBy} or $args{CreatedBy} = ISGA::Login->getAccount;
+    exists $args{CreatedAt} or $args{CreatedAt} = ISGA::Timestamp->new;
+
+    my $username = $args{UserName};
+
+    # if the file is gzipped, we uncompress it.
+    if ( $username =~ /\.(gz|gzip|tgz)$/) {
+
+      binmode $fh, ':gzip';
+
+      local ($/);
+      my $data = <$fh>;
+      
+      $fh = File::Temp->new();
+      print $fh $data;
+      seek($fh,0,0);
+
+      $username =~ s/\.(gz|gzip)$// or $username =~ s/\.tgz$/\.tar/;
+      $args{UserName} = $username;
+    } 
+
+    # if it is a tar file, we are processing a collection
+    if ( $username =~ /\.tar$/ ) {
+
+      return ISGA::FileCollection->upload($fh, %args);
+    }
+    
+    # otherwise process this one file
+    return ISGA::File->upload($fh, %args);
+  }

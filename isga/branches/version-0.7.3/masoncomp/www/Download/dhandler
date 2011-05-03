@@ -1,0 +1,34 @@
+<%args> # -*- cperl -*-
+ $file_resource => undef
+ $run_cluster => undef
+</%args>
+
+<%perl>
+
+my $file_source;
+
+if ( $file_source = $file_resource ) {
+
+  $file_resource->getCreatedBy == SysMicro::Login->getAccount or X::User::Denied->throw();
+
+} elsif ( $file_source = $run_cluster ) {
+
+  my $run = $run_cluster->getRun;
+  $run->getCreatedBy => SysMicro::Login->getAccount or X::User::Denied->throw();
+
+  $file_resource = $run_cluster;
+
+}
+
+$m->clear_buffer();
+
+$m->print( $m->file($file_source->getPath()) );
+
+$m->flush_buffer();
+$m->abort();
+
+</%perl>
+
+<%flags>
+ inherit => undef
+</%flags>

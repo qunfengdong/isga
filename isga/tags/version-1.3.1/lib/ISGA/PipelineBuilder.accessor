@@ -1,0 +1,231 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getWorkflowMask();
+
+Returns the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflowMask {
+    return ISGA::WorkflowMask->new($_[0]->{pipelinebuilder_workflowmask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getRawWorkflowMask();
+
+Returns the string for the workflow mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawWorkflowMask { return $_[0]->{pipelinebuilder_workflowmask}; }
+
+#------------------------------------------------------------------------
+
+=item public string getWebPluginDirectory();
+
+Returns the directory for storing global-pipeline specific mason components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWebPluginDirectory {
+    return shift->getPipeline->getWebPluginDirectory();
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask {
+    return ISGA::ParameterMask->new($_[0]->{pipelinebuilder_parametermask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return $_[0]->{pipelinebuilder_parametermask}; }
+
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder with this objects parameter mask applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my ($self, $component) = @_;
+
+    return ISGA::ComponentBuilder->new( $component, $self->getParameterMask );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getActiveClusters();
+
+Returns the clusters that are active in this pipeline builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getActiveClusters {
+
+    my $self = shift;
+
+    # create a lookup hash of disabled clusters
+    my %dis_clusters = map { $_ => undef } @{$self->getWorkflowMask->getDisabledClusters};
+    my $clusters = $self->getPipeline->getClusters();
+
+    return [grep { ! exists $dis_clusters{$_} } @$clusters];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getActiveAlternateClusters();
+
+Returns the alternate clusters that are active in this pipeline builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getActiveAlternateClusters {
+
+    my $self = shift;
+
+    my $active_alt = [];
+
+    foreach my $cluster ( @{$self->getWorkflowMask->getDisabledClusters} ) {
+      if ( my $alt_cluster = ISGA::Workflow->new(Cluster => $cluster)->getAltCluster ) {
+	push @$active_alt, $alt_cluster;
+      }
+    }
+    
+    return $active_alt;
+  }
+
+#------------------------------------------------------------------------
+
+
+=item public [Component] getActiveComponents();
+
+Return a list of activated components in this pipeline.
+
+=item public [Component] getActiveComponents(Cluster $cluster);
+
+Return a list of activated components in cluster of the pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getActiveComponents {
+
+    my ($self, $cluster) = @_;
+
+    my $components  = [];
+    
+    my $template = $self->getPipeline;
+    my $wf_mask = $self->getWorkflowMask();
+
+    # if we are given a cluster and it is part of our pipeline check for components
+    if ( $cluster and ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $template) ) {
+
+      # if the cluster is active get the components
+      if ( $wf_mask->isActive($cluster) ) {
+	$components = ISGA::Component->query( Cluster => $cluster );
+	
+      # otherwise if it has an alternate use that
+      } elsif ( my $alt = ISGA::Workflow->new(Cluster => $cluster, Pipeline => $template)->getAltCluster ) {
+        $components = ISGA::Component->query( Cluster => $alt );
+      }
+
+    # if they didn't supply a cluster, grab components from all active clusters
+    } else {
+      $components = ISGA::Component->query( Cluster => $self->getActiveClusters );
+    }
+
+    # filter out components that aren't active
+    return [grep { $wf_mask->isActive($_) } @$components];
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public [ClusterInput] getInputs();
+
+Returns the inputs for the pipeline after filtering out those produced
+by other components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getInputs {
+    my $self = shift;
+
+    my %results;
+
+    # grab components
+
+    my $components = $self->getActiveComponents();
+    my $inputs = ISGA::ClusterInput->query( Component => $components );    
+    for (@$inputs){
+      $results{ $_->getType } = $_;
+    }
+    foreach ( @{ISGA::ClusterOutput->query( Component => $components )} ) {
+      exists $results{ $_->getType } and delete $results{ $_->getType };
+    }
+    return [ map { $results{$_} } keys %results];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getPipelineOutputs();
+
+Returns the output for the pipeline that would result from this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getPipelineOutputs {
+    
+    my $self = shift;
+
+    my $clusters = $self->getActiveClusters;   
+
+    return ISGA::ClusterOutput->query( Cluster => $clusters, Visibility => 'Pipeline');
+  }
+  
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getOutputs();
+
+Returns the output for the pipeline that would result from this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getOutputs {
+
+    my $self = shift;
+
+    my @results;
+
+    my $clusters = $self->getActiveClusters;
+
+    foreach ( @{ISGA::ClusterOutput->query( Cluster => $clusters )} ) {
+
+      next if $_->getVisibility eq 'Internal';
+      push @results, $_;
+    }
+
+    return \@results;
+  }
+      
+

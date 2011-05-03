@@ -1,0 +1,11 @@
+<%args>
+ $form
+ $feature_id
+ $upstream
+ $downstream
+</%args>
+
+<h1>BLAST</h1>
+
+
+<% $form->get %>

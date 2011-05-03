@@ -1,0 +1,44 @@
+<%args>
+ $form
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<script src="/CustomUploadProgress/progress.js"></script>
+<script src="/CustomUploadProgress/progress.jmpl.js"></script>
+<sys:script type="text/javascript" src="/include/js/jquery.twosidedmultiselect.js"></sys:script>
+
+<sys:script type="text/javascript">
+$(document).ready(function() { 
+  $(".selectInput").twosidedmultiselect();
+});
+</sys:script>
+
+<sys:style type="text/css" media="screen">
+ @import "/CustomUploadProgress/progress.css";
+</sys:style>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:style type="text/css" media="screen">
+.tsmsselect {
+  width: 100%;
+  float: left;
+}
+.tsmsselect select#organismstsms,
+.tsmsselect select#organisms {
+  width: 100%;
+}
+.tsmsoptions {
+  width: 100%;
+  float: left;
+  padding: 8px;
+}
+</sys:style>
+
+<div id="progress"></div>
+
+<% $form->get %>

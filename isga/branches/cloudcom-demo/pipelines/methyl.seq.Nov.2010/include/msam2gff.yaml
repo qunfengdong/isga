@@ -1,0 +1,7 @@
+--- !perl/ISGA::ComponentBuilder
+Name: 'MSAM To GFF'
+Description: 'This component converts the SAM file to GFF output.'
+RunBuilderParams:
+  - { templ: 'check', NAME: 'iupac', TITLE: 'Methylation Type', REQUIRED: 1, OPTION: ['CpG', 'CpH', 'CpHpG', 'CpHpH'], OPT_VAL: ['G', 'H', 'HG', 'HH'], ERROR: ['Cluster::methylationExclusiveDependency'], DESCRIPTION: 'Methylation type of interest', CONFIGLINE: '___iupac_filter___' }
+  - { NAME: 'referencegenome', TITLE: 'Reference Genome', templ: 'select', OPTION: ['Human', 'Arabadopsis'], OPT_VAL: ['/some/path/to/human', '/some/path/to/arabadopsis'], REQUIRED: 1, DESCRIPTION: 'Reference genome used to find SNPs.', CONFIGLINE: '___reference___' }
+

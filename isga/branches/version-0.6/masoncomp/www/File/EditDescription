@@ -1,0 +1,18 @@
+<%args> # -*- cperl -*-
+ $file
+</%args>
+
+<%perl> 
+
+# make sure this is my file.
+$file->getCreatedBy == SysMicro::Login->getAccount 
+  or X::User::Denied->throw();
+
+# check that we have the correct form cached
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'file_edit_description'
+  or $form = SysMicro::FormEngine::File->EditDescription(\%ARGS);
+
+return $m->comp('/File/edit_description.mas', 
+		file => $file, form => $form);
+</%perl>

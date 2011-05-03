@@ -1,0 +1,229 @@
+#WT_arrow_left{
+	background-image: url(../img/walkthrough_arrow_left.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+	position: absolute;
+	z-index:1;
+	left:-14px;
+	height:23px;
+	width:10px;
+        top:-5px;
+}
+
+#WT_arrow_right{
+	background-image: url(../img/walkthrough_arrow_right.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+	position: absolute;
+	z-index:1;
+	height:23px;
+	width:11px;
+        top:-5px;
+}
+
+#WT_arrow_right_clickme{
+        background-image: url(../img/arrow_right_clickme.gif);
+        background-repeat: no-repeat;
+        background-position: left top;
+        position: absolute;
+        z-index:1;
+        height:23px;
+        width:11px;
+        top:-2px;
+}
+
+#WT {
+	position: absolute;
+	z-index:1;
+	border: 4px solid #D8E47E;
+	background-color: #fff;
+}
+
+#WT_confirmed {
+        position: relative;
+        z-index:2000;
+        border: 4px solid #D8E47E;
+        background-color: #fff;
+}
+
+#WT_copy{
+	padding:10px 10px 10px 10px;
+	color:#333333;
+        font-size: 15px;
+}
+
+.WT_loader{
+	background-image: url(../img/loader.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+	width:100%;
+	height:12px;
+}
+
+#WT_close_left{
+	background-color: #D8E47E;
+	text-align: left;
+	padding-left: 8px;
+	padding-bottom: 2px;
+	padding-top: 2px;
+	font-weight:bold;
+        font-size: 15px;
+        height: 18px;
+}
+
+#WT_close_right{
+	background-color: #D8E47E;
+	text-align: left;
+	padding-left: 8px;
+	padding-bottom: 2px;
+	padding-top: 2px;
+	font-weight:bold;
+        font-size: 15px;
+        height: 18px;
+}
+
+#WT_close_left span,
+#WT_close_right span{
+        float: left;
+}
+
+#WT_close_left .btn-hide,
+#WT_close_right .btn-hide{
+        float: right;
+}
+
+#WT_close_right_clickme{
+        background-color: #bc0000;
+        text-align: left;
+        padding-left: 8px;
+        padding-bottom: 3px;
+        padding-top: 2px;
+        font-weight:bold;
+}
+
+#WT_copy p{
+        margin: 10px 0;
+	text-align: justify;
+}
+
+#WT_copy img{
+	padding: 1px;
+	border: 4px solid #D8E47E;
+}
+
+span.highlight{
+        color: #2EA7C2;
+        font-size: 17px;
+}
+
+/* Individual Pages */
+div.index{
+   top: -37px;
+   left: 180px;
+}
+div.pipelineList{
+   top: 190px;
+   left: 410px;
+   width: 500px;
+}
+div.pipelineView{
+   top: 5px;
+   right: 13px;
+   width: 350px;
+}
+.pipelineView div#WT_arrow_right{
+   right: -15px;
+}
+
+div.pipelineViewClickMe{
+  position: absolute;
+  border: 2px solid #bc0000;
+  top: 385px;
+  right: 13px;
+}
+.pipelineViewClickMe div#WT_arrow_right_clickme{
+   right: -13px;
+}
+
+div.runPipelineClickMe{
+  position: absolute;
+  border: 2px solid #bc0000;
+  top: 470px;
+  right: 13px;
+}
+.runPipelineClickMe div#WT_arrow_right_clickme{
+   right: -13px;
+}
+
+
+div.createPipeline{
+   top: 225px;
+   left: 650px;
+   width: 340px;
+}
+
+div.createRun{
+   top: 225px;
+   left: 650px;
+   width: 350px;
+}
+
+
+div.editWorkflow{
+   top: 525px;
+   width: 93%;
+}
+
+div.editWorkflowClickMe{
+  position: absolute;
+  border: 4px solid #D8E47E; 
+  top: 280px;
+  left: 428px;
+  border-bottom-width: 0;
+}
+
+div.editWorkflowClickMe2{
+  position: absolute;
+  border: 4px solid #D8E47E;  
+  top: 355px;
+  left: 320px;
+  border-bottom-width: 0;
+}
+div.viewClusters{
+   top: 115px;
+   left: 270px;
+/*   width: 350px;*/
+}
+div.editCluster{
+   width: 95%;
+}
+div.editComponent{
+   width: 97%;
+   position: relative;
+   z-index:1601;
+   border: 4px solid #D8E47E;
+   background-color: #fff;
+}
+div.success{
+   top: 115px;
+   left: 155px;
+   width: 690px;
+}
+div.runView{
+   width: 94%;
+   position: relative;
+   z-index:1601;
+   border: 4px solid #D8E47E;
+   background-color: #fff;
+}
+.runView div#WT_arrow_right{
+   right: -15px;
+}
+div.editRunParameters{
+   width: 94%;
+   position: relative;
+   z-index:1601;
+   border: 4px solid #D8E47E;
+   background-color: #fff;
+}
+

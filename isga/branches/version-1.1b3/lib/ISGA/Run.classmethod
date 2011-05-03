@@ -1,0 +1,135 @@
+# -*- cperl -*-
+
+use LWP::UserAgent;
+use File::Copy;
+
+#------------------------------------------------------------------------
+
+=item public Run submit(RunBuilder $builder);
+
+Submits a run to ergatis. This method will create a directory in
+ergatis for the new run, copy input files to there, write a
+pipelinelayout.xml file and config files for each component. The
+method then submits the run to ergatis over http.
+
+=cut 
+#------------------------------------------------------------------------
+sub submit {
+
+  my ($class, $builder) = @_;
+
+  # write config files and layout.xml to ergatis submit directory
+  $builder->stage();
+
+  # submit job
+  my $id = $class->_submitToErgatis($builder->getErgatisDirectory);
+
+  # make sure we got a run id
+  if ( $id !~ m{\A\d+\z} ) {
+   
+    # set recipients
+    my $recipient = ___ERRORNOTIFICATIONEMAIL___;
+
+    if ( ref $recipient ) {
+      $recipient = join ( ',', @$recipient );
+    }
+      
+
+    # send special email
+    my %mail =
+      ( To => $recipient,
+	FROM => '___mail_sender___',
+        Subject => 'Ergatis Submission Error',
+        Message => "Run Builder $builder Failed:\n$id"
+      );
+    
+    Mail::Sendmail::sendmail(%mail) 
+	or X::Mail::Send->throw( text => $Mail::Sendmail::error, message => \%mail );    
+    
+    # log error
+    X::Ergatis::Submit->throw( message => "Illegal Ergatis id: $id" );
+    
+  }
+
+  # create a file collection
+  my $collection = ISGA::FileCollection->create
+    ( CreatedBy => ISGA::Login->getAccount,
+      ExistsOutsideCollection => 1,
+      Type => ISGA::FileCollectionType->new( Name => 'Run Results' ),
+      CreatedAt => ISGA::Timestamp->new,
+      UserName => $builder->getName . ' Results',
+      Description => 'Result files for the Run ' . $builder->getName,
+      IsHidden => 0 );
+
+  # create run
+  my $run =  ISGA::Run->create
+    ( CreatedBy => ISGA::Login->getAccount, Type => $builder->getPipeline, 
+      FileCollection => $collection,
+      RawDataStatus => 'Available',
+      Status => ISGA::RunStatus->new( Name => 'Running' ),
+      Name => $builder->getName,
+      Description => $builder->getDescription,
+      CreatedAt => ISGA::Timestamp->new,
+      IsHidden => 0, 
+      ErgatisKey => $id );
+
+  # log the inputs
+  my $inputs = ISGA::RunBuilderInput->query( RunBuilder => $builder);
+  
+  ISGA::RunInput->create( Run => $run, FileResource => $_->getFileResource,
+			   PipelineInput => $_->getPipelineInput,
+			   ParameterMask => $_->getParameterMask ) for @$inputs;
+  #  $run->addFileResource( $_->getFileResource ) for @$inputs;
+
+  # prepare the outputs
+  $run->_initializeOutputs($builder);
+
+  # prepare the clusters
+  $run->_initializeClusters($builder);
+
+  return $run;
+}
+
+#------------------------------------------------------------------------
+
+=item PRIVATE int _submitToErgatis(string $dir);
+
+Submits a pipeline template directory to ergatis and returns the new pipeline id.
+
+=cut 
+#------------------------------------------------------------------------
+sub _submitToErgatis {
+
+  my ($class, $dir) = @_;
+
+  my $ua = LWP::UserAgent->new;
+
+  # set credentials for 
+#  $ua->credentials("", "", "", "");
+
+  my $response = 
+    $ua->get("___ergatis_base_uri___run_prepared_pipeline.cgi?build_directory=$dir&project=___ergatis_project___");
+
+  $response->is_success and return $response->decoded_content;
+
+  X::Ergatis::Submit->throw( $response );
+}
+
+#------------------------------------------------------------------------
+
+=item int getCurrentRunCount(Account $account);
+
+Returns the number of runs the user has that count againt their quota.
+
+=cut 
+#------------------------------------------------------------------------
+my @statuses = 
+  map { ISGA::RunStatus->new( Name => $_ ) } 
+  qw( Running Submitting Error Incomplete Failed Interrupted );
+
+sub getCurrentRunCount {
+
+  my ($class, $account) = @_;
+
+  return ISGA::Run->exists( CreatedBy => $account, Status => \@statuses);
+}

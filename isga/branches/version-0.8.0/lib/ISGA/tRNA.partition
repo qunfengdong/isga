@@ -1,0 +1,7 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: tRNA
+partition_of: GenomeFeature
+attributes:
+  - { name: Score, type: number, options: [ REQUIRED ] }
+  - { name: Anticodon, type: string, options: [ REQUIRED ] }
+  - { name: Gene, column: trna_gene, type: Gene, options: [ REQUIRED ] }

@@ -1,0 +1,47 @@
+<%args>
+ $file_collection
+</%args>
+
+% my $type = $file_collection->getType;
+
+<h1><% $type->getName %> Details</h1>
+
+
+
+<div class="data">
+<table width="100%">
+
+ <tr>
+  <th>Name</th><td colspan="3"><% $file_collection->getUserName %></td>
+ </tr>
+
+ <tr>
+  <th>Description</th><td colspan="3"><% $file_collection->getDescription %></td>
+ </tr>
+
+ <tr>
+  <th>Owner</th><td><% $file_collection->getCreatedBy->getName %></td>
+  <th>Created At</th><td><% $file_collection->getCreatedAt->brief %></td>
+ </tr> 
+
+</table>
+</div>
+
+<h2>Contents</h2>
+
+
+<& /FileCollection/print_table.mas, file_collection => $file_collection, embed => 0 &>
+
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:style type="text/css" media="all">
+ @import "/include/css/jquery.treeTable.css";
+</sys:style>
+<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
+
+
+<& right_menu.mas, file_collection => $file_collection &>

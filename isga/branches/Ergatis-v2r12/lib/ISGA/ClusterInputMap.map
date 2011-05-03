@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: componentinputmap
+attributes:
+  - { name: Component, type: Component }
+  - { name: ClusterInput, type: ClusterInput }

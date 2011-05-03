@@ -1,0 +1,32 @@
+---
+- Cluster: 'Process Annotation Input Files'
+  Coordinates: '260,0,455,53'
+  IsRequired: TRUE
+- Cluster: 'Alternate Start Site Analysis'
+  IsRequired: FALSE
+- Cluster: 'Process Gene Prediction'
+  IsRequired: TRUE
+- Cluster: 'RNA Prediction'
+  Coordinates: '476, 100, 616, 181'
+  IsRequired: FALSE
+- Cluster: 'TFBS Search'
+  Coordinates: '0, 213, 111, 267'
+  IsRequired: FALSE
+- Cluster: 'Additional Gene Analysis'
+  Coordinates: '314, 231, 608, 365'
+  IsRequired: FALSE
+- Cluster: 'Output'
+  Coordinates: '150,448,575,560'
+  IsRequired: TRUE
+- Cluster: 'Sequence Similarity Search'
+  Coordinates: '244, 162, 410, 215'
+  IsRequired: TRUE
+- Cluster: 'Protein Domain Search'
+  Coordinates: '125, 235, 275, 288'
+  IsRequired: TRUE
+- Cluster: 'ORF Prediction'
+  Coordinates: '156, 100, 295, 153'
+  IsRequired: FALSE
+  Alternate: 'Alternate Gene Prediction'
+#SELECT b.cluster_name, a.workflow_coordinates, a.workflow_isrequired, c.cluster_name
+#FROM workflow a NATURAL JOIN cluster b LEFT JOIN cluster c ON (a.workflow_altcluster_id = c.cluster_id);

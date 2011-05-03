@@ -1,0 +1,32 @@
+# -*- cperl -*-
+
+
+use Bio::Seq;
+use Bio::SeqIO;
+
+
+#------------------------------------------------------------------------
+
+=item public string getSequence();
+
+Retrieves the sequence for a gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getSequence {
+
+    my $self = shift;
+
+    my $start = $self->getStart;
+    my $end = $self->getEnd;
+
+    my $seq = substr $self->getContig->getSequence->getResidues, ($start -1), ($end - $start + 1);
+
+    if ( $self->getStrand() eq '-' ) {
+
+      my $obj = Bio::Seq->new( -seq => $seq );
+      return $obj->revcom->seq;
+    }
+
+    return $seq;
+  }

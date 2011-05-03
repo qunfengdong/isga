@@ -1,0 +1,143 @@
+<%args>
+  $run
+</%args>
+
+% my $inputs = $run->getInputFiles;
+% my $running = $run->isRunning;
+% my $canceled = ( $running ? 0 : $run->getStatus eq 'Canceled' );
+% $canceled &&= SysMicro::RunCancelation->new( Run => $run );
+
+<sys:script type="text/javascript">
+
+$(document).ready(function(){
+  $('#detailed_status').hide();
+  $('a').click(function(){ $('#detailed_status').show('slow'); });
+
+  $('a#close').click(function(){
+    $('#detailed_status').hide('slow');
+  })
+
+});
+</sys:script>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th width="15%">Name</th><td colspan="3"><% $run->getName %></td>
+  </tr>
+  <tr>
+   <th>ID</th><td width="35%"><% $run->getErgatisKey %></td>
+   <th width="15%">Status</th><td><% $status_map{ $run->getStatus->getName } %> (<a href="#" id="click">Show Detailed Status</a>)</td>
+  </tr>
+  <tr>
+   <th>Started At</th><td <% $running ? "colspan=\"3\"" : '' %>> <% $run->getCreatedAt->brief %> EDT</td>
+% if ( ! $running and my $finished = $run->getFinishedAt ) {
+   <th>Finished At</th><td><% $finished->brief() %> EDT</td>
+% } elsif ( $canceled ) {
+   <th>Canceled At</th><td><% $canceled->getCanceledAt->brief() %> EDT</td>
+% }
+
+  <tr>
+    <th>Description</th><td colspan="3"><% $run->getDescription %></td>
+  </tr>
+  <tr>
+    <th rowspan="<% scalar @{$inputs}  %>">Input Files</th>
+%   my $file = shift @{$inputs};
+    <td><a href="/File/View?file=<% $file %>"><% $file->getUserName %></a></td>
+  </tr>
+% foreach (@{$inputs}){
+<tr><td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td></tr>
+% }
+
+ </tbody>
+</table>
+
+</div> 
+
+
+<div id="detailed_status">
+
+<h2>DetailedStatus</h2>
+
+<p><a href="#" id="close">Close</a></p>
+
+% my $counter = 1;
+
+<div class="list">
+<table width="100%" >
+<tr><th>Job</th><th>State</th><th>Progress</th><th>Start (EDT)</th><th>End (EDT)</th></tr>
+
+<tr class="list_label">
+ <td>Pipeline</td>
+ <td><% $status_map{ $run->getStatus->getName } %></td>
+ <td></td>
+ <td><% $run->getCreatedAt->brief %></td>
+ <td>\
+% # if ( $run->getStatus eq 'Complete' ) {</td>
+% if ( $run->getStatus eq 'Complete' ) {
+%# my %finished_components;
+%# my $ergatis_status = SysMicro::ErgatisRunStatus->new( $run->getErgatisKey, \%finished_components );
+%# my $pipeline_end = $ergatis_status->{'start pipeline:'}->{'endTime'};
+%# my $end_object = bless \$pipeline_end, 'SysMicro::Timestamp';
+<% $run->getFinishedAt->brief  %>
+% }
+ </td>
+</tr>
+
+% foreach my $run_cluster ( sort { $a <=> $b } @{$run->getClusters} ){
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+
+<tr class="<% $tr_class %>" >
+ <td><% $run_cluster->getCluster->getName %></td>
+%   my $status = $run_cluster->getStatus;
+ <td><% $status_map{ $status->getName } %></td>
+%   my $fa = $run_cluster->getFinishedActions;
+%   my $ta = $run_cluster->getTotalActions;
+
+ <td>\
+%   if ( $fa ) {
+<% $fa %>/<% $ta %>\
+%     if ( $status ne 'Complete' ) {
++
+%     }
+%   }
+ </td>
+
+ <td>\
+%   my $start = $run_cluster->getStartedAt;
+%   if ( $start ) {
+<% $start->brief %>
+%   } 
+ </td>
+
+ <td>
+%   my $fin   = $run_cluster->getFinishedAt; 
+%   if ( $fin ) {
+<% $fin->brief %>
+%   }
+ </td>
+
+</tr>
+% }
+</table>
+
+  </div>
+</div>
+
+<%once>
+
+ my %status_map = 
+ ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',
+   Canceled => '<span style="font-weight:bold; color:red" >Canceled</span>',
+   Error => '<span style="font-weight:bold; color:red" >Error</span>',
+   Interrupted => '<span style="font-weight:bold; color:purple">Interrupted</span>',
+   Running  => '<span style="font-weight:bold; color:blue" >Running</span>',
+   Incomplete => '<span style="font-weight:bold" >Incomplete</span>',
+   Submitting => '<span style="font-weight:bold; color:blue" >Submitting</span>',
+   Held => '<span style="font-weight:bold; color:purple">Held</span>',
+   Complete => '<span style="font-weight:bold; color:green">Complete</span>',
+ );
+
+</%once>

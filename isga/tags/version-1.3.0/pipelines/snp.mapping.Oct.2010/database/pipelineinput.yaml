@@ -1,0 +1,5 @@
+---
+ - ClusterInput: 'Shore_Input'
+   Pipeline: 'Shore SNP Mapping Pipeline'
+ - ClusterInput: 'Shore_Input_Pair'
+   Pipeline: 'Shore SNP Mapping Pipeline'

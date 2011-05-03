@@ -1,0 +1,18 @@
+<%args>
+	$jobid
+	$infile
+</%args>
+
+<%perl>
+my $job = SysMicro::Job->new(Id => $jobid);
+$job->getCreatedBy == SysMicro::Login->getAccount or X::User::Denied->throw;
+my $status = $job->getStatus;
+
+if($status eq "Finished"){
+	return $m->comp('/WorkBench/Results/protml.mas', infile => $infile);
+} elsif ($status eq "Running" || $status eq "Pending"){
+	return $m->comp('/WorkBench/Results/running.mas');
+}
+</%perl>
+
+

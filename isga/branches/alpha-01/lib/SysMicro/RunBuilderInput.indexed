@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: RunBuilderInput
+attributes:
+  - { name: RunBuilder, type: RunBuilder, options: [ REQUIRED ] }
+  - { name: PipelineInput, type: PipelineInput, options: [ REQUIRED ] }
+  - { name: File, type: File, options: [ REQUIRED ] }

@@ -1,0 +1,18 @@
+<%args>
+ $components
+ $pipeline
+</%args>
+
+<h1>Pipeline: Cluster Components</h1>
+<h4>The following components have parameters available.  
+Please choose a component to view its parameters.</h4>
+%foreach ( @{$components}){
+%  if ( SysMicro::ComponentBuilder->new($_)){
+% my $builder = SysMicro::ComponentBuilder->new($_);
+<p><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>"><% $_->getName %></a><br>
+<% $builder->getComponentDescription  %>
+</p>
+%}
+%}
+
+<& right_menu.mas, pipeline => $pipeline &>

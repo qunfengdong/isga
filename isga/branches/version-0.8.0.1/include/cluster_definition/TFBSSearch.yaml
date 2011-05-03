@@ -1,0 +1,4 @@
+--- !perl/ISGA::ClusterBuilder
+Cluster: TFBS Search
+Description: 'The TFBS search cluster uses <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/9520501">Mast</a> to perfom a motif search against promoter regions of predicted ORFs using motifs from <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142223">RegTransBase</a>.  The output is the raw Mast result in text format.'
+

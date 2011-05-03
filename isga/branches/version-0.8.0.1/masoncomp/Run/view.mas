@@ -1,0 +1,112 @@
+<%args>
+ $run
+</%args>
+
+<h1><% $run->getType->getName %> Run Status</h1>
+
+% my $running = $run->isRunning;
+% my $canceled = ( $running ? 0 : $run->getStatus eq 'Canceled' );
+
+% if ( $running ) {
+
+% my $now = ISGA::Timestamp->new;
+% my $new = $now + '5m';
+
+<p>This page was refreshed at <% $now->brief %>. It will refresh next at <% $new->brief %>.
+
+<sys:meta http-equiv="refresh" content="300">
+% }
+
+<& view_header.mas, run => $run &>
+
+<h2>Results</h2>
+
+% if ( $canceled ) {
+
+<p>Results are not available for canceled runs because they may be
+incorrect. The cancelation note above will explain why your run was
+canceled and what changes need to be made before resubmitting a
+run.</p>
+
+% } else {
+
+<div class="list">
+
+<& /RunOutput/print_table2.mas, run => $run, embed => 0 &>
+
+</div>
+
+<& /Run/view_raw_output.mas, run => $run &>
+
+% }
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:style type="text/css" media="all">
+ @import "/include/css/jquery.treeTable.css";
+</sys:style>
+<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
+<sys:script type="text/javascript">
+$(document).ready(function() {
+    $('#show_run').click(function() {
+      var dataString = 'runs='+<% $run %>;
+      $.ajax({
+        dataType: "html",
+        type: "POST",
+        url: "/submit/Run/Show",
+        data: dataString,
+        success: function(data) {
+          if(data.match(/Success/)){
+            window.location.reload();
+          }
+        }
+      });
+      return false;
+   });
+});
+</sys:script>
+<%once>
+my $complete = ISGA::RunStatus->new( Name => 'Complete' );
+</%once>
+
+
+<sys:rightmenu>
+
+<ul>
+
+% if ( ! $running and ! $canceled ) {
+%   my $global_pipeline = $run->getGlobalPipeline->getName;
+ <& $pipeline_map{ $global_pipeline }, run => $run &>
+% }
+
+% if ( ISGA::Login->hasGroup( ISGA::Group->new( Name => 'Run Administrators' ) )
+%      and ! $canceled ) {
+
+<li class="title">Admin Tools</li>
+
+<li class="rmbutton pointer"><a href="/Run/Cancel?run=<% $run %>">Cancel This Run</a></li>
+<li class="pointer" onclick="window.location='/Run/Cancel?run=<% $run %>'"><p>Cancel a run that can not be succesfully completed.</p></li>
+
+<li class="rmbutton pointer"><a href="/Run/Clone?run=<% $run %>">Clone This Run</a></li>
+<li class="pointer" onclick="window.location='/Run/Clone?run=<% $run %>'"><p>Clone a run that can not be succesfully completed. The run must be manually cloned in ergatis and you must have the new ergatis pipeline id.</p></li>
+
+% }
+
+</ul>
+
+</sys:rightmenu>
+
+
+<%once>
+
+my %pipeline_map =
+ (
+  'Prokaryotic Annotation Pipeline' => 'right-menu-prok-annotation-run.mas' 
+ );
+
+</%once>

@@ -1,0 +1,68 @@
+% my $account = SysMicro::Login->getAccount;
+
+<h1><% $account->getName %></h1>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th width="15%">Email</th><td width="35%"><% $account->getEmail %></td>
+   <th width="15%">Walkthroughs</th><td width="35%"><% $account->isWalkthroughDisabled ? 'off' : 'on' %></td>
+  </tr>
+  <tr>
+   <th>Institution</th><td colspan="3"><% $account->getInstitution %></td>
+  </tr>
+ </tbody>
+</table>
+
+</div> 
+
+% my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+% if ( @$runs ) {
+<h2>Runs</h2>
+
+<& /Run/list_my.mas, account => $account, runs => $runs &>
+% }
+
+% my $userpipes = SysMicro::UserPipeline->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+% if ( @$userpipes ) {
+<h2>Customized Pipelines</h2>
+<& /UserPipeline/list.mas, pipelines => $userpipes &>
+% }
+
+<& right_menu.mas &>
+
+
+
+
+
+<%doc>
+
+<h3>My Groups</h3>
+
+% if ( my @groups = @{$account->getUserGroups} ) {
+<div id="list">
+<table width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Created By</th>
+  <th>Members</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @groups ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>">
+  <td><a href="/UserGroup/View?user_group=<% $_ %>"><% $_->getName %></a></td>
+  <td><% $_->getCreatedBy->getName %></td>
+  <td><% scalar @{$_->getAccounts} %></td>
+ </tr>      
+%   }
+</table>
+</div>
+% } else {
+<p>You are not a member of any groups. For more information on groups, visit the <a href="/UserGroup/Overview">Group Overview</a> page.</p>
+% }
+
+</%doc>
+

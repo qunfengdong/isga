@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: UserGroupInvitation
+attributes:
+  - { name: UserGroup, column: usergroup_id, type: UserGroup, options: [ REQUIRED ] }
+  - { name: Account, type: Account, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }

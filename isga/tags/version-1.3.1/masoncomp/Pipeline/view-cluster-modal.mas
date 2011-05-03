@@ -1,0 +1,52 @@
+<%args>
+ $pipeline
+ $workflow
+</%args>
+
+% my $cluster = $workflow->getCluster();
+% my $c_name = $cluster->getName();
+% my $components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' );
+
+<h1 class="component"><% $c_name %></h1>
+
+% if ( $workflow->isRequired ) {
+<p class="component"><%  $c_name %> is a required module and must be run.  Use the View Parameters button below to view its parameters.</p>
+% } else {
+%   my $toggle_word = $pipeline->getWorkflowMask->isActive($cluster) ? "On" : "Off";
+<p class="component"><%  $c_name %> is currently turned <% $toggle_word eq "Off" ? "off" : "on" %>. 
+% }
+
+<p class="component">To view this modules parameters, click the View Parameters button.</p>
+
+%#<p class="component"><a class="button" href="/Pipeline/ViewComponents?pipeline=<% $pipeline %>&cluster=<% $cluster %>">View Parameters</a></p>
+% my $noParams;
+<div class="modaltable">
+  <table>
+    <tbody>
+      <tr class="list_label">
+        <td>Component</td>
+        <td>Edit Parameters</td>
+      </tr>
+%foreach ( @{$components} ){
+%  if ( my $builder = ISGA::ComponentBuilder->new($_) ){
+%    if ( $builder->{PipelineBuilder} ){
+      <tr>
+        <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
+        <td><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>">View Paramters</a></td>
+      </tr>
+%    } else {
+%      push(@{$noParams}, $_);
+%    }
+%  }
+%}
+%foreach ( @{$noParams}){
+% next unless($_->getName);
+%  my $builder = ISGA::ComponentBuilder->new($_);
+      <tr>
+        <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
+        <td><em class="red">Has no parameters to be set.</em></td>
+      </tr>
+%}
+    </tbody>
+  </table>
+</div>

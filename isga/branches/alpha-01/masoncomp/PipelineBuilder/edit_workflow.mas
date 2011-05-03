@@ -1,0 +1,28 @@
+<%args>
+ $builder
+ $pipeline_builder
+</%args>
+
+<h1>Pipeline Builder: Select Programs</h1>
+
+<p>Clusters highlighted in green will be executed. Hold your mouse
+over a cluster to get a desciption of the programs run, and click on a
+cluster to toggle it and it's children off and on.</p>
+
+<div class="workflow_container">
+  <div id="workflow">
+  <& update_workflow.mas, pipeline_builder => $pipeline_builder, 
+                           builder => $builder &>
+  </div>
+</div>
+<br>
+
+<div class="buttonHolder">
+
+<a class="resetButton button" href="/PipelineBuilder/Overview?pipeline_builder=<% $pipeline_builder %>">Cancel</a>
+
+<a class="submitButton button" href="/submit/PipelineBuilder/EditWorkflow?pipeline_builder=<% $pipeline_builder %>">Save</a>
+
+</div>
+
+<& rightmenu.mas, pipeline_builder => $pipeline_builder &>

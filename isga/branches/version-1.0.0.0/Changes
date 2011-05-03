@@ -1,0 +1,15 @@
+Revision history for ISGA
+
+1.0.0.0   Jan 04 2009
+
+	CONFIG CHANGES
+
+	Replaced ergatis_submit_uri with ergatis_base_uri in order to support linking to ergatis scripts other than running a job.
+
+        Added formengine check for illegal characters in passwords during account creation.
+
+        Escape formfield input in JavaScript for login
+
+0.8.0.2   Dec 17 2009
+
+        Initial release.

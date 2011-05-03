@@ -1,0 +1,20 @@
+---
+- Name: remove_short_sequence
+- Name: split_multifasta
+- Name: repeatmasker
+- Name: ncbi-blastx
+- Name: megan
+- Name: OrfPredictor
+- Name: remove_empty_sequence
+- Name: ps_scan
+- Name: signalp
+- Name: oligopicker
+- Name: ncbi-blastn
+- Name: ncbi-tblastx
+- Name: concatenate_files
+- Name: blast2xml
+- Name: blast2go
+- Name: classifyOrthology
+- Name: formatdb
+- Name: orthomcl
+- Name: transsummery

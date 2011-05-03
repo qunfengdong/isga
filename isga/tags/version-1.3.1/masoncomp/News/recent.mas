@@ -1,0 +1,57 @@
+<%args>
+ %active
+ @news
+</%args>
+
+<sys:style type="text/css">
+div.newsitem {
+ color: black;
+ padding: 5px 5px;
+ background: #f7f7e7;
+}
+
+div.newsheader {
+ padding: 5px 20px;
+ font-weight: bold;
+ color: #fff
+}
+
+span.newstime {
+ position: absolute;
+ right: 30px;
+}
+
+div.newsfooter {
+ padding: 2px 20px;
+ margin: 0 0 5px 0;
+}
+
+div.outage {
+ background: #b0786d;
+}
+
+div.news {
+ background: #61832d;
+}
+
+div.release {
+ background: #61832d;
+}
+
+</sys:style>
+
+<h1>ISGA Recent News</h1>
+
+% foreach ( @news ) {
+<& $type_map{ $_->getType->getName }, news => $_ &>
+% }
+
+<%once>
+
+my %type_map = ( 
+		'Pipeline Service News' => 'view_service_news.mas',
+		'Release Announcement' => 'view_release.mas',
+		'Service Outage Report' => 'view_outage.mas'
+	       );
+</%once>
+

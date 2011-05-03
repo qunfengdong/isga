@@ -1,0 +1,7 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: RunCancelation
+attributes:
+  - { name: Run, type: Run, options: [ REQUIRED ] }
+  - { name: CanceledBy, type: Account, options: [ REQUIRED ] }
+  - { name: CanceledAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: Comment, type: string, options: [ REQUIRED ] }

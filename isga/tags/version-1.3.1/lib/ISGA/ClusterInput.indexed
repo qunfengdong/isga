@@ -1,0 +1,14 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ClusterInput
+options: [ SUBCLASS ]
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: DefaultValue, type: string, options: [ REQUIRED ] }
+  - { name: Dependency, type: string, options: [ REQUIRED ] }
+  - { name: Type, type: FileType, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }
+  - { name: ErgatisFormat, type: string, options: [ REQUIRED ] }
+  - { name: HasParameters, type: boolean, options: [ REQUIRED ] }
+  - { name: IsIterator, type: boolean, options: [ REQUIRED ] }
+  - { name: ErgatisInstall, type: ErgatisInstall, options: [ REQUIRED ] }
+  - { name: SubClass, type: string }

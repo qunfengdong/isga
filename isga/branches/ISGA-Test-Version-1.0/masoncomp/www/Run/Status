@@ -1,0 +1,19 @@
+<%args>
+ $show_canceled => 0
+</%args>
+
+<%perl>
+
+my $account = SysMicro::Login->getAccount;
+
+my %args = ( CreatedBy => $account, OrderBy => 'CreatedAt' );
+$show_canceled or $args{Status} = { '!=' => SysMicro::RunStatus->new( Name => 'Canceled' ) };
+
+my $runs = SysMicro::Run->query( %args );
+my $rbs = SysMicro::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );
+
+</%perl>
+
+<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => $show_canceled &>
+<& /RunBuilder/list_my.mas, account => $account, rbs => $rbs &>
+

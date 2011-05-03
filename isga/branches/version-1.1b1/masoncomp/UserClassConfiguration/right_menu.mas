@@ -1,0 +1,45 @@
+<%args>
+ $user_class => undef
+</%args>
+
+<& /site/right_menu_js.mas &>
+
+<sys:rightmenu>
+<ul>
+
+% if ( $user_class ) {
+ <li class="title">Configuration Tools</li>
+ <li class="rmbutton pointer"><a href="/UserClassConfiguration/Edit?user_class=<% $user_class %>">Edit</a></li>
+ <li class="pointer" onclick="window.location='/UserClassConfiguration/Edit?user_class=<% $user_class %>'"><p>Edit the current configuration.</p></li>
+% }
+
+ <li class="title">Select User Class</li>
+
+ <span>
+ <form action="/UserClassConfiguration/View" name="userclass">
+  
+% my @uc = @{ISGA::UserClass->query( OrderBy => 'Name' )};
+
+ <li>
+ <p>
+ <select name="user_class" onChange="document.forms['userclass'].submit()">
+% foreach ( @uc ) {
+  <option \
+%   if ( $user_class and $user_class == $_ ) {
+  selected="selected" \
+%   }
+  value="<% $_ %>"><% $_->getName %></option>
+% }
+% if ( ! $user_class ) {
+<option value="0" selected="selected">Select a User Class</option>
+% }
+ </select>
+ </p>
+ </li>
+ </form>
+ </span>
+
+
+</ul>
+
+</sys:rightmenu>

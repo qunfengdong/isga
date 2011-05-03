@@ -1,0 +1,12 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Component
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: ErgatisName, type: string, options: [ REQUIRED ] }
+  - { name: Cluster, type: Cluster, options: [ REQUIRED ] }
+  - { name: Template, type: ComponentTemplate, options: [ REQUIRED ] }
+  - { name: IsOptional, type: boolean, options: [ REQUIRED ] }
+  - { name: IsHidden, type: boolean, options: [ REQUIRED ] }
+  - { name: Index, type: number, options: [ REQUIRED ] }
+  - { name: DependsOn, column: component_dependson, type: Component }
+  - { name: CopyParameterMask, column: component_copyparametermask, type: Component }

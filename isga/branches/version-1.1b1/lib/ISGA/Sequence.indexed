@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Sequence
+attributes:
+  - { name: Residues, type: string, options: [ REQUIRED ] }
+  - { name: MD5Checksum, type: string, options: [ REQUIRED ] }
+  - { name: Length, type: number, options: [ REQUIRED ] }

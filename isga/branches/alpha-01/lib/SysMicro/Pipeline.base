@@ -1,0 +1,9 @@
+--- !perl/MasonX::Foundation::Class::Base
+class: Pipeline
+partition: PipelinePartition
+attributes:
+  - { name: PipelinePartition, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: WorkflowMask, type: string, options: [ NOGET ] }
+  - { name: Status, type: PipelineStatus, options: [ REQUIRED ] }
+  - { name: Description, type: string, options: [ REQUIRED ] }

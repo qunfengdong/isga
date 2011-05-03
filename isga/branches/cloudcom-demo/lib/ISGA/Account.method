@@ -1,0 +1,17 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string mayRead(ShareableResource $resource);
+
+Returns the username portion of the email address for this account.
+
+=cut
+#------------------------------------------------------------------------
+  sub mayRead {
+
+    my ($self, $resource) = @_;
+    
+    # use the resource to check
+    return $resource->mayBeReadBy($self);
+  }

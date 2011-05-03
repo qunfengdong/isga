@@ -1,0 +1,56 @@
+% my $account = SysMicro::Login->getAccount;
+
+<h1><% $account->getName %></h1>
+
+<ol>
+<li>Email: <% $account->getEmail %></li>
+<li>Institution: <% $account->getInstitution %></li>
+</ol>
+
+
+<%doc>
+
+<h3>My Groups</h3>
+
+% if ( my @groups = @{$account->getUserGroups} ) {
+<div id="list">
+<table width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Created By</th>
+  <th>Members</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @groups ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>">
+  <td><a href="/UserGroup/View?user_group=<% $_ %>"><% $_->getName %></a></td>
+  <td><% $_->getCreatedBy->getName %></td>
+  <td><% scalar @{$_->getAccounts} %></td>
+ </tr>      
+%   }
+</table>
+</div>
+% } else {
+<p>You are not a member of any groups. For more information on groups, visit the <a href="/UserGroup/Overview">Group Overview</a> page.</p>
+% }
+
+</%doc>
+
+
+<sys:rightmenu>
+<ul>
+ <li class="title">Account Tools</li>
+
+ <li class="rmbutton"><a href="/Account/MyAccount">Overview</a></li>
+ <li><p>Return to the account overview page.</p></li>
+
+ <li class="rmbutton"><a href="/Account/EditMyDetails">Edit Details</a></li>
+ <li><p>Change your name, email address and other account details.</p></li>
+
+ <li class="rmbutton"><a href="/Account/ChangeMyPassword">Change Password</a></li>
+ <li><p>Change your account password. You will need to enter your current password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a> to create a new one.</p></li>
+
+</ul>
+
+</sys:rightmenu>

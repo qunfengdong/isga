@@ -1,0 +1,43 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item PRIVATE void _calculateParameters();
+
+If the component has parameters, returns an array of components this
+pipeline input is used in. Otherwise returns an empty list.
+
+=cut
+#------------------------------------------------------------------------
+  sub _calculateParameters {
+
+    my $self = shift;
+
+    my $p = $self->getPipeline;
+
+    my @full;
+    my %exists;
+
+    my @components;
+
+    # retrieve all the parameters for this pi
+    for my $c ( grep { $p->getComponentBuilder($_) } @{$p->getComponents} ) {
+      my $params = $p->getComponentBuilder($c)->getRunBuilderInputParameters($self);
+      
+      for ( @$params ) {
+	my $name = $_->{NAME};
+	if ( ! $exists{$name} ) { 
+	  push @full, $_;
+	  $exists{$name} = 1;
+	}
+      }
+
+      @$params and push @components, $c;
+    }
+
+    $self->{cache}{parameters} = \@full;
+    $self->{cache}{components} = \@components;
+
+  }
+
+    

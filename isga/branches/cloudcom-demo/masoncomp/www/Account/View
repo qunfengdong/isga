@@ -1,0 +1,9 @@
+<%args>
+ $account
+</%args>
+
+<%doc>
+ access should be controlled by group permission table.
+</%doc>
+
+<& /Account/view.mas, account => $account &>

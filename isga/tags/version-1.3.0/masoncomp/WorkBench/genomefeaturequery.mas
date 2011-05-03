@@ -1,0 +1,74 @@
+<%args>
+$term 
+$scope
+$error
+</%args>
+
+<h1>Genome Feature Query</h1>
+
+<%perl>
+my $account = ISGA::Login->getAccount;
+my $runs = ISGA::Run->query( CreatedBy => $account );
+push @$runs, @{$account->getSharedRuns()};
+my %searchableRuns = ();
+if (@$runs) {
+	foreach (@$runs) {
+		if ( $_->hasGbrowseInstallation ) {
+			$searchableRuns{$_} = $_->getName;
+		}
+	}
+}
+my @arr_scope = ();
+if (ref($scope) eq 'ARRAY') {
+	@arr_scope = @$scope;
+} else {
+	@arr_scope = ($scope);
+}
+my ($errClass, $errMsg) = ('', '');
+if ($error) {
+	$errClass = ' error';
+	$errMsg = '<p id="error1" class="errorField"><strong>Enter a search term</strong></p>';
+}
+if (%searchableRuns) {
+</%perl>
+
+<sys:style type="text/css" media="screen">
+   @import "/include/css/uni-form.css";
+</sys:style>
+
+<form class="uniForm inlineLabels" method="post" name="genome_feature_query_form" action="/WorkBench/GenomeFeatureQueryResult">
+<fieldset class="inlineLabels">
+<legend>Search</legend>
+<div class="ctrlHolder<% $errClass %>">
+<label for="term"> Search Term (e.g. hydrolase) </label>
+<% $errMsg %>
+<input type="text" name="term" value = "<% $term %>" size="20" class="textInput highlighter" /> <em>*</em>
+</div>
+<div class="ctrlHolder">
+<label for="scope">Select the runs you want to search (All the runs will be searched if none are selected)</label>
+<select name="scope" size="5" multiple>
+% foreach my $key (sort keys %searchableRuns) {
+	<option
+% 	if (grep(/^$key$/,@arr_scope)) {
+	    selected
+%	}
+	value="<% $key %>"><% $searchableRuns{$key} %></option>
+% }
+</select>
+</div>
+</fieldset>
+
+<fieldset>
+
+<div class="buttonHolder">
+   <button type="submit" class="resetButton button" tabindex="2" name="Cancel" value="Cancel">Cancel</button>
+     
+   <button type="submit" class="submitButton button" tabindex="1" name="Search" value="Search">Search</button>
+</div>
+</fieldset>
+</form>
+
+% } else {
+<p>This tool is currently unavailable because you do not have the appropriate data. You must have a completed run 
+loaded into the database to use the Genome Feature Query tool.</p>
+% }

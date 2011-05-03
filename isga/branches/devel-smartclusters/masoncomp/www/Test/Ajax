@@ -1,0 +1,24 @@
+<%args>
+ $key
+</%args>
+<% $text{ $key } %>
+<%flags>
+ inherit => undef
+</%flags>
+<%once>
+ 
+ my %text = 
+ ( 1 => 'Only genes with an entropy distance score less than x will be considered. This cutoff is made before any subsequent steps in the algorithm.  Default value is 1.15.',
+   2 => 'Set the maximum overlap length to n . Overlaps of this many or fewer bases between genes are not regarded as overlaps.  Default value is 50.',
+   3 => 'Set the minimum gene length to n nucleotides. This does not include the bases in the stop codon.  Default is 110',
+   4 => 'Set the threshold score for consideration as a gene to n . If the in-frame score is greater-than-or-equal-to n , then the region is given a number and considered a potential gene.  Note this is the integer score in the column labelled "InFrm" in the .detail file, not the decimal score in the column labelled "Raw".  Default value is 30.',
+   5 => 'Specify allowable start codons as a comma-separated list. Sample format:  atg,gtg . The default start codons are atg, gtg and ttg.  No input is required for default usage.',
+   6 => 'Genbank translation table number n to specify stop codons.  Default value is (11) Bacterial Table as this is a prokaryotic pipeline.',
+   7 => 'Assume a linear rather than circular genome, i.e., there will be no genes that "wraparound" between the beginning and end of the sequence.',
+   8 => 'Also score orfs that extend off the end of the sequence(s). This option presumes that the sequence(s) is linear and not circular. Reported positions off the end of the sequence are the nearest positions in the correct reading frame. Note that this ignores any partial codons at the ends of a sequence. Suppose, for example, that a sequence is 998bp long and an orf in reading frame +1 starts at position 601 and extends off the end of the sequence. Then the end of that gene/orf will be reported at position 999, as if the stop codon were in positions 997. . . 999. This is true even if the last two characters of the sequence are, say, cc and cannot possibly be part of a stop codon.  
+
+Any scores associated with orfs that extend past the end of a sequence are computed using only complete codons contained in the sequence.
+',
+ );
+
+</%once>

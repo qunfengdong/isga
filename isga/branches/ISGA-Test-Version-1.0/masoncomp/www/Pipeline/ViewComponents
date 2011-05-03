@@ -1,0 +1,23 @@
+<%args> #! -*- cperl -*-
+ $pipeline
+ $cluster
+</%args>
+
+<h1>Pipeline: Module Programs</h1>
+<h4>The following programs have parameters available.
+Please choose a component to view its parameters.</h4>
+% if ($cluster->getName eq 'Gene Prediction'){
+<p>Glimmer3 is run iteratively to produce more accurate start-site predictions. 
+We run Glimmer3 first without a PWM, generating a set of gene predictions. Then extracting 
+regions upstream of those predictions as input to <a class="normal" href="http://cbcb.umd.edu/software/ELPH/">
+ELPH</a> to produce a PWM. We re-run Glimmer3 using the PWM to produce a more accurate set 
+of start-site predictions.  Please see this <a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/17237039">
+article</a> for a more detailed description.</p>
+
+% }
+
+<%perl>
+my @components = SysMicro::Component->query( Cluster => $cluster, OrderBy => 'Index' );
+return $m->comp('/Pipeline/view_components.mas', pipeline => $pipeline, components => @components);
+</%perl>
+

@@ -1,0 +1,22 @@
+<h2>Welcome to The Center For Genomics and Bioinformatics Integrative Services for Genomic Analysis</h2>
+<hr />
+<p>ISGA is a service created for the purpose of providing an enhanced user
+interface to the genome annotation process powered by <a class="normal" href="http://ergatis.sourceforge.net/">Ergatis</a> workflow. We
+provide you the following:
+</p>
+
+<ul class="unordered">
+<li class="unordered">You can select which bioinformatics programs you want for your annotation process.</li>
+<li class="unordered">You have complete control over the parameters being used for each selected program.</li>
+<li class="unordered">You have the ability to track individual analysis runs, i.e., you are able to see 
+updated progress of where your analysis is and what is currently being performed.</li>
+<li class="unordered">You can do everything simply with a standard web browser without the need to install 
+or maintain complex software.</li>
+</ul>
+
+<p>
+You simply <a class="normal" href="/Account/Request">register an account</a> to begin using the service or read more on
+our <a class="normal" href="/Help/Tutorial">tutorials</a>.
+</p>
+<& right_menu.mas &>
+

@@ -1,0 +1,141 @@
+<%args>
+ $run
+</%args>
+
+<h1>Results: <% $run->getType->getName %> </h1>
+
+% if ( $run->getStatus ne 'Complete' ) {
+
+% my $now = SysMicro::Timestamp->new;
+% my $new = $now + '5m';
+
+<p>This page was refreshed at <% $now->brief %>. It will refresh next at <% $new->brief %>.
+
+<sys:meta http-equiv="refresh" content="300">
+% }
+
+% my $input_names = $run->getInputFileNames;
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th>Name</th><td><% $run->getName %></td>
+   <th>Status</th><td><% $status_map{ $run->getStatus->getName } %></td>
+  </tr>
+  <tr>
+   <th>ID</th><td><% $run->getErgatisKey %></td>
+   <th></th><td></td>
+  </tr>
+  <tr>
+    <th>Description</th><td colspan="3"><% $run->getDescription %></td>
+  </tr>
+  <tr>
+    <th rowspan="<% scalar @{$input_names}  %>">Input Files</th><td><% shift @{$input_names} %></td>
+  </tr>
+% foreach (@{$input_names}){
+<tr><td><% $_ %></td></tr>
+% }
+
+ </tbody>
+</table>
+
+</div> 
+
+<h2>Status</h2>
+
+% my $counter = 1;
+
+<div class="list">
+<table width="100%" >
+<tr><th>Job</th><th>State</th><th>Progress</th><th>Start</th><th>End</th></tr>
+
+<tr class="list_label">
+ <td>Pipeline</td>
+ <td><% $status_map{ $run->getStatus->getName } %></td>
+ <td></td>
+ <td><% $run->getCreatedAt->brief %></td>
+ <td>\
+% # if ( $run->getStatus eq 'Complete' ) {</td>
+% if ( $run->getStatus eq 'Complete' ) {
+%# my %finished_components;
+%# my $ergatis_status = SysMicro::ErgatisRunStatus->new( $run->getErgatisKey, \%finished_components );
+%# my $pipeline_end = $ergatis_status->{'start pipeline:'}->{'endTime'};
+%# my $end_object = bless \$pipeline_end, 'SysMicro::Timestamp';
+<% $run->getFinishedAt->brief  %>
+% }
+ </td>
+</tr>
+<tr class="spacer"></tr>
+
+% foreach my $run_cluster ( sort { $a <=> $b } @{$run->getClusters} ){
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+
+<tr class="<% $tr_class %>" >
+ <td><% $run_cluster->getCluster->getName %></td>
+%   my $status = $run_cluster->getStatus;
+ <td><% $status_map{ $status->getName } %></td>
+%   my $fa = $run_cluster->getFinishedActions;
+%   my $ta = $run_cluster->getTotalActions;
+
+ <td>\
+%   if ( $fa ) {
+<% $fa %>/<% $ta %>\
+%     if ( $status ne 'Complete' ) {
++
+%     }
+%   }
+ </td>
+
+ <td>\
+%   my $start = $run_cluster->getStartedAt;
+%   if ( $start ) {
+<% $start->brief %>
+%   } 
+ </td>
+
+ <td>
+%   my $fin   = $run_cluster->getFinishedAt; 
+%   if ( $fin ) {
+<% $fin->brief %>
+%   }
+ </td>
+
+</tr>
+% }
+<table>
+
+</div>
+
+<h2>Results</h2>
+
+<& /RunOutput/print_table.mas, run => $run, embed => 0 &>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:style type="text/css" media="all">
+ @import "/include/css/jquery.treeTable.css";
+</sys:style>
+<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
+
+<%once>
+
+ my %status_map = 
+ ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',
+   Canceled => '<span style="font-weight:bold; color:red" >Canceled</span>',
+   Error => '<span style="font-weight:bold; color:red" >Error</span>',
+   Interrupted => '<span style="font-weight:bold; color:purple">Interrupted</span>',
+   Running  => '<span style="font-weight:bold; color:blue" >Running</span>',
+   Incomplete => '<span style="font-weight:bold" >Incomplete</span>',
+   Submitting => '<span style="font-weight:bold; color:blue" >Submitting</span>',
+   Held => '<span style="font-weight:bold; color:purple">Held</span>',
+   Complete => '<span style="font-weight:bold; color:green">Complete</span>',
+ );
+
+</%once>

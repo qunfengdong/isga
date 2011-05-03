@@ -1,0 +1,32 @@
+<%args>
+</%args>
+
+<sys:script type="text/javascript">
+$(document).ready(toggleInputFields);
+function toggleInputFields() {
+ $('#toggleInput').click(function(){
+    $('.hide').toggle('fast');
+    $('.show').toggle('fast');
+    var el = $('#toggleInput');
+    if (el.html().match(/Manually Enter Read Information/)) {
+        el.html(el.html().replace(/Manually Enter Read Information/ig, "Upload Read Information Files"));
+    } else {
+        el.html(el.html().replace(/Upload Read Information Files/ig, "Manually Enter Read Information"));
+    }
+ });
+}
+</sys:script>
+
+<%perl> # -*- cperl -*-
+
+return $m->comp('/WorkBench/outage.mas') unless( ISGA::SiteConfiguration->value('allow_sge_requests') );
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_newblertohawkeye'
+  or $form =  ISGA::FormEngine::WorkBench->NewblerToHawkeye(\%ARGS);
+
+return $m->comp('/WorkBench/newblertohawkeye.mas', form => $form );
+#return $m->comp('/WorkBench/newblertohawkeye.mas' );
+</%perl>
+

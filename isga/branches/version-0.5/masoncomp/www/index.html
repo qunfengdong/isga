@@ -1,0 +1,73 @@
+<sys:title>SysMicro Pipeline Service</sys:title>
+%# warn Dumper($SysMicro::Session->{_session_id});
+<h1>Systems Microbiology Pipeline Service</h1>
+
+<p>Welcome to the SysMicro Pipeline Service <strong>Test</strong>. We appreciate your help in developing this utility. Please report all bugs and suggestions to <a href="mailto:biohelp@cgb.indiana.edu">biohelp@cgb.indiana.edu</a></p>
+
+<p>The Tools section to the right is used throughout the site.  It 
+provides the interface for running, building, and customizing pipelines.  
+The tools will change depending on the section you are currently working
+in.</p>
+
+<p>To begin using the service, please use the Request an Account option 
+now and follow the directions as necessary.  If you already have an account, 
+please use the login link in the upper right of the web page to log into 
+the service.</p>
+
+<p>The current release only contains our express pipeline, which runs
+glimmer3 for orf prediction, then runs HMMPFAM and BLAST to predict
+gene function.</p>
+
+<h2>Release Schedule:</h2>
+
+<p>We will be releasing a new test version each Tuesday morning. We
+will try to preserve accounts and data across versions, but some fixes
+may have incompatibilities that require a database wipe. If you
+generate important results, please be sure to save them before Monday
+evening.  Also, jobs running on Tuesday mornings may be killed by the
+release process.</p>
+
+<div id="WT" class="hidden documentation index"><div id="WT_arrow_left"></div><div id="WT_close_left">Walkthrough</div><div id="WT_copy">
+<p>Welcome to the pipeline building walkthrough.  To the right, you will 
+notice a toolbox.  Throughout the customization process, this area will 
+contain diffent sections that allow you to create your pipeline and 
+review details about your pipelines current configuration.</p>
+
+<p>To begin building and customizing a pipeline, please navigate to 
+<span class="highlight">Pipelines</span> and choose <span class="highlight">
+Public Pipelines</span> from the drop-down menu.  You may 
+notice the My Pipelines section.  If this is your first time customizing 
+a pipeline, the section will not currently contain any pipelines.  However, 
+as you customize pipelines, this section will become populated.</p>
+</div></div>
+
+<sys:rightmenu>
+
+<ul>
+ <li class="title">Getting Started</li>
+
+% if ( ! SysMicro::Login->exists ) {
+
+ <li class="rmbutton"><a href="/Account/Request">Request an Account</a></li>
+
+ <li><p> You first need to request an account before you can run or
+ customize our pipelines. If you have already created an account, log
+ in using the link at the top right of the window.</p><li>
+
+% }
+
+ <li class="rmbutton"><a href="/Pipeline/Overview">Select a Pipeline</a></li>
+
+ <li><p>Next you need to select the pipeline that you wish to use. Visit the details page of each pipeline to learn more about it and eventually run or customize it.</p></li>
+
+% # if ( SysMicro::Login->exists and ! SysMicro::Login->getAccount->isWalkthroughDisabled) {
+% if ( SysMicro::Login->exists ) {
+ <li class="rmbutton disableWalkthrough"><a class="btn-slide" href="#">Toggle Tutorial</a></li>
+ <li class="disableWalkthrough"><p>Toggle the guided walkthrough windows.  These windows provide a guide for building a custom pipeline.</p></li>
+
+% }
+
+
+</ul>
+
+</sys:rightmenu>

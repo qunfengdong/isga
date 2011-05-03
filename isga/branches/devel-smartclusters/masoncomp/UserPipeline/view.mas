@@ -1,0 +1,43 @@
+<%args>
+ $pipeline
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+  if($.browser.msie)
+  {
+   $("area.cluster")
+   .hover(function(){JT_IE_area_show(this.href,this.id,this.title,this.coords,'workflow')},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }else{
+   $("area.cluster")
+   .hover(function(){JT_area_show(this.href,this.id,this.alt,this.coords)},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }
+}
+
+</sys:script>
+
+</sys:script>
+
+<h1><% $pipeline->getName %></h1>
+
+% my $template = $pipeline->getTemplate;
+Template: <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a>
+Created At: <% $pipeline->getCreatedAt->brief %>
+Description: <% $pipeline->getDescription %>
+
+<p>Clusters highlighted in green will be executed.</p>
+
+<& /Pipeline/draw_workflow.mas, pipeline => $pipeline &>
+
+<& /Pipeline/right_menu.mas, pipeline => $pipeline &>

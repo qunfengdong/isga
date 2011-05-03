@@ -1,0 +1,17 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+my $pbuilders = ISGA::PipelineBuilder->query( CreatedBy => $account, OrderBy => 'StartedOn' );
+</%perl>
+% if(scalar @{$pbuilders} == 1){
+% my $pipeline_builder = shift @{$pbuilders};
+<& /PipelineBuilder/overview.mas, pipeline_builder => $pipeline_builder &>
+% } elsif(scalar @{$pbuilders} == 0) {
+<h1>Please choose a pipeline to customize</h1>
+<& /Pipeline/list.mas &>
+% } else {
+<& /PipelineBuilder/list_my.mas, account => $account, pbuilders => $pbuilders &>
+% } 

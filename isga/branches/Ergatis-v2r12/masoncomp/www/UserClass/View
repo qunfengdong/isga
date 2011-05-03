@@ -1,0 +1,5 @@
+<%args>
+ $user_class
+</%args>
+
+<& /UserClass/view.mas, user_class => $user_class &>

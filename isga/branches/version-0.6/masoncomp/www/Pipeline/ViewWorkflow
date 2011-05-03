@@ -1,0 +1,5 @@
+<%args>
+ $pipeline
+</%args>
+
+<& /Pipeline/view_workflow.mas, pipeline => $pipeline &>

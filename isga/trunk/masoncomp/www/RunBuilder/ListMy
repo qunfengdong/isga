@@ -1,0 +1,11 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+my $rbs = ISGA::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );
+
+$m->comp( '/RunBuilder/ListMy.mas', run_builders => $rbs);
+
+</%perl>

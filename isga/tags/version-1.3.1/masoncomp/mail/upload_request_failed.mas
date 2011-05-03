@@ -1,0 +1,22 @@
+<%args>
+ $notification
+</%args>
+
+<%perl>
+my $account = $notification->getAccount();
+my $request = ISGA::UploadRequest->new( Id => $notification->getVar1());
+</%perl>
+
+<% $account->getName %>,
+
+ISGA was unable to complete your request to upload the file at
+
+ <% $request->getURL %>
+
+Please confirm that the file is available at that location and request
+that the file be uploaded again. If the second request fails, please
+reply to this message for additional support. The error message was:
+
+
+<% $request->getException %>
+

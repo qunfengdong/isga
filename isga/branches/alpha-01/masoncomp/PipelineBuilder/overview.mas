@@ -1,0 +1,37 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+
+  $("area.cluster")
+   .hover( 
+         function(){
+         JT_area_show(this.href,this.id,this.name,this.coords)},
+         function(){$('#JT').remove();
+      })
+   .click(function(){return false});
+}
+
+</sys:script>
+
+<h1>Pipeline Builder Overview</h1>
+
+<p><strong>Pipeline:</strong> <% $pipeline_builder->getName %></p>
+<p><strong>Description:</strong> <% $pipeline_builder->getDescription %></p>
+
+<p>Clusters highlighted in green will be executed.</p>
+
+<& draw_workflow.mas, pipeline_builder => $pipeline_builder &>
+
+<& rightmenu.mas, pipeline_builder => $pipeline_builder &>

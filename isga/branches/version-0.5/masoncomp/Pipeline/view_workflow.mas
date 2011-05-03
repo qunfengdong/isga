@@ -1,0 +1,9 @@
+<%args>
+ $pipeline
+</%args>
+
+<h1><% $pipeline->getName %></h1>
+
+<img src="<% $pipeline->getImage %>" />
+
+<a href="/Pipeline/EditWorkflow<% $pipeline %>">Customize Components</a>

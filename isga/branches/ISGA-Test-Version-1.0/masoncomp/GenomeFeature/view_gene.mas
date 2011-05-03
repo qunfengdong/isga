@@ -1,0 +1,105 @@
+<%args>
+ $cds
+ $mrna
+ $gene
+</%args>
+
+% sub getPrintableSequence {
+% 	my ($sequence, $isDNA) = @_;
+% 	my $printableSequence = '';
+%       my $i = 0;
+%	my $c = 0;
+%	my $clusterSize = 10;
+%	$clusterSize = 1 unless ($isDNA);
+%	my $clusterCountPerLine = 7;
+%	$clusterCountPerLine = 38 unless ($isDNA);
+%	while ($i < length($sequence)) {
+%		$printableSequence .= substr $sequence, $i, $clusterSize; 
+%		$printableSequence .= " "; 
+%		$i += $clusterSize; 
+%		$c++; 
+%		if ($c == $clusterCountPerLine) { 
+%			$c = 0; 
+%			$printableSequence .= "\n"; 
+%		} 
+%	} 
+%	$printableSequence;
+%}
+
+
+<h1><% $gene->getUniqueName %></h1>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th width="30%">Gene Name</th><td width="70%"><% $gene->getUniqueName %></td>
+  </tr>
+  <tr> 
+   <th width="30%">mRNA Name</th><td width="70%"><% $mrna->getUniqueName %></td>
+  </tr>
+  <tr> 
+   <th width="30%">CDS Name</th><td width="70%"><% $cds->getUniqueName %></td>
+  </tr>
+  <tr>
+   <th>Position</th><td><% $gene->getStart %> - <% $gene->getEnd %> on <% $gene->getStrand eq '+' ? 'plus' : 'minus' %> strand</td>
+  </tr>
+  <tr>
+   <th>Locus</th><td><% $gene->getLocus %></td>
+  </tr>
+  <tr>
+   <th>Length</th><td><% $gene->getEnd - $gene->getStart + 1 %></td>
+  </tr>
+  <tr>
+   <th>Gene Symbol</th><td><% $mrna->getGeneSymbol %></td>
+  </tr>
+  <tr>
+   <th>Gene Symbol Source</th><td><% $mrna->getGeneSymbolSource ? '<a href = "' . $mrna->getGeneSymbolSource->getURI . '">' . $mrna->getGeneSymbolSource->getValue . '</a>' : '' %></td>
+  </tr>
+  <tr>
+   <th>Description</th><td><% $mrna->getNote %></td>
+  </tr>
+  <tr>
+   <th>TIGR_role</th><td><% $mrna->getTIGRRole ? '<a href = "' . $mrna->getTIGRRole->getURI . '">' . $mrna->getTIGRRole->getValue . '</a>' : '' %></td>
+  </tr>
+  <tr>
+   <th>Gene Product Name Source</th><td><% $mrna->getGeneProductNameSource %></td>
+  </tr>
+  <tr>
+   <th>Top COG Hit</th><td><% $cds->getTopCogHit %></td>
+  </tr>
+  <tr>
+   <th>Enzyme Nomenclature</th><td><a href=""><% $mrna->getEC ? '<a href = "' . $mrna->getEC->getURI . '">' . $mrna->getEC->getValue . '</a>' : '' %></td>
+  </tr>
+  <tr>
+   <th>Gene Ontology</th><td>
+% if (my $refExRefs = $mrna->getExRefs) {
+%	my @exRefs = @$refExRefs;
+%	foreach (@exRefs) {
+		<a href="<% $_->getURI %>"><% $_->getValue %></a><br>
+%	}
+% }
+</td>
+  </tr>
+ </tbody>
+</table>
+
+<b>Gene Sequence</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="blast.cgi?gene=<% $gene %>">BLAST</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="download.cgi?gene=<% $gene %>">Download</a>
+<br>
+<pre>
+&gt;<% $gene->getUniqueName . "\n" . getPrintableSequence($gene->getSequence, 1) %>
+</pre>
+<br>
+
+<b>CDS Sequence</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="blast.cgi?cds=<% $cds %>">BLAST</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="download.cgi?cds=<% $cds %>">Download</a>
+<br>
+<pre>
+&gt;<% $cds->getUniqueName . "\n" . getPrintableSequence($cds->getSequence, 0) %>
+</pre>
+<br>
+</div> 
+
+
+
+

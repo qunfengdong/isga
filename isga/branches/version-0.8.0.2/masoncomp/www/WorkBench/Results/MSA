@@ -1,0 +1,20 @@
+<%args>
+	$jobid
+</%args>
+<%perl>
+my $job = ISGA::Job->new(Id => $jobid);
+$job->getCreatedBy == ISGA::Login->getAccount
+       or X::User::Denied->throw;
+my $status = $job->getStatus;
+
+if($status eq "Finished"){
+	return $m->comp('/WorkBench/Results/msa.mas', 
+		job => $job, 
+		);
+} elsif ($status eq "Running" || $status eq "Pending"){
+	return $m->comp('/WorkBench/Results/running.mas');
+} elsif ($status eq "Error"){
+}
+
+
+</%perl>

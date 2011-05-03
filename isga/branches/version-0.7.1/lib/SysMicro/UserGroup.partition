@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: UserGroup
+partition_of: Party
+attributes:
+  - { name: CreatedBy, column: account_id, type: Account, options: [ REQUIRED ] }

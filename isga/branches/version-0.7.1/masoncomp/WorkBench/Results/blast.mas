@@ -1,0 +1,162 @@
+<%args>
+	$blout
+	$pid
+</%args>
+
+<h1>WorkBench: Blast Output</h1>
+<div class="data">
+<table class="tablesorter list" width="100%">
+<tbody>
+
+<%perl>
+	my $path = '/data/web/sysmicro.cgb/repository/blastserver/';
+  my $output_file = $path.$blout;
+	use Bio::SearchIO;
+	use POSIX qw(floor);
+
+	my $in = Bio::SearchIO->new(-file => $output_file, -format => "blast");
+
+	my $table_contents = '<form name="select_sequence_form" action="/WorkBench/ConfirmMSA" enctype="multipart/form-data" method="GET"><input type="submit" value="Submit" />'.$pid;
+	my $alignment = '';
+
+	my $count=0;
+	while ( my $result = $in->next_result ) { ## while 0
+		$table_contents .= '<tr><td colspan="5" bgcolor="black"></tr><tr>'
+			.'<td><input type="checkbox" name="select_sequence" value="something" /></td>'
+			.'<td colspan="2">'
+			.'<i>Query= <a href="#'.$result->query_name.'">'.$result->query_name.'</a></i>'
+			.'</td>'
+			.'<td><i>'.$result->num_hits.' hits</i></td></tr>';
+
+		my $counter=0;
+		while ( my $hit = $result->next_hit() ) { ## while 1
+			if ($counter == 0 ){
+				$table_contents .= '<tr><th>&nbsp;</td>'
+					.'<th style="color:red; text-align:left">Hit Sequence</th>'
+					.'<th style="color:red">Score</th>'
+					.'<th style="color:red">E-value</th></tr>';
+				$counter = 1;
+				$count = 1;
+			}
+			while ( my $hsp = $hit->next_hsp() ) {  ## while 2
+				my $queryseq = $hsp->query_string;
+				my $hitseq = $hsp->hit_string;
+				$table_contents .= '<tr>'
+					.'<td><input type="checkbox" name="select_sequence" value="'.$hit->accession.'" /></td>'
+					.'<td>'
+					.'<a href="#'.$hit->name. '">'
+						.$hit->accession.' ### '
+						.$hit->name.' ### '
+						.$hit->description
+					.'</a></td><td>'
+					.$hit->score
+					.'</td><td>'
+					.$hit->significance
+					.'</td></tr>';
+					
+				$alignment .= '<hr><pre>Query = <a name="'.$result->query_name.'">'.$result->query_name.'</a>'
+					."\n"
+					.'Hit   = <a name="'. $hit->name .'">'. $hit->name .'</a>'. "\n\n"
+					.'Score       = '. $hsp->bits .' bits ('. $hsp->score .')<br/>'
+					.'E-Value     = '. $hsp->evalue .'<br/>'
+					.'Identities  = '. $hsp->num_identical .'/'. $hsp->hsp_length .'  ('
+						. floor(($hsp->num_identical / $hsp->hsp_length) * 100)
+						. '%)<br />';
+
+				if ($hsp->num_conserved) {
+					$alignment .= 'Positives   = '. $hsp->num_conserved . '/'. $hsp->hsp_length .'  ('
+							.floor(($hsp->num_conserved / $hsp->hsp_length) * 100)
+							. '%)<br />';
+				}
+				
+				if ($hsp->query->frame){
+					$alignment .= 'Frame    = '. $hsp->query->frame .'<br />';
+				}
+				
+				if ($hsp->gaps){
+					$alignment .= 'Gaps        = '. $hsp->gaps .'/'. $hit->length . '  ('
+						. floor(($hsp->gaps / $hit->length) * 100)
+						. '%)<br />';
+				}
+				
+				$alignment .= 'Strand      =';
+				$alignment .=	($hsp->start('query') < $hsp->end('end'))? ' Plus /': ' Minus /';
+				
+				$alignment .= ($hsp->start('hit') < $hsp->end('hit') )? ' Plus<br />': ' Minus<br />';
+				$alignment .= '<br />';
+				
+				my $w    = 0;
+				my $qs   = $hsp->start('query');
+				my $qe   = $hsp->end('query');
+				my $hs   = $hsp->start('hit');
+				my $he   = $hsp->end('hit');
+				my $x    = $hsp->length('total');
+				my $tab;
+
+				if ( ($qs>99999) or 
+					($qe>99999) or
+					($hs>99999) or
+					($he>99999) )
+				{ $tab = "\t\t"; }
+				else
+				{ $tab = "\t"; }
+				
+				my $htab=$tab;
+				my $qtab=$tab;
+
+				while ($x >= 0) ## while 3
+				{
+					if ($hs>99999){$htab="\t"};
+					if ($qs>99999){$qtab="\t"};
+					my $q_end = $x < 60 ? $qs + $x - 1 : $qs + 60 - 1;
+					my $h_end =
+						$x < 60
+						? ($he > $hs) ? $hs + $x - 1 : $hs - $x + 1
+						: ($he > $hs)
+						? $hs + 60 - 1
+						: $hs - 60 + 1;
+					
+					my $qdash = (substr($queryseq, $w, 60) =~ tr/-//);
+					$q_end -= $qdash;
+					my $hdash = (substr($hitseq, $w, 60) =~ tr/-//);
+					$h_end = ($he > $hs) ? $h_end - $hdash : $h_end + $hdash;
+					$alignment .= 'Query   : ' . $qs . $qtab
+						. substr($queryseq, $w, 60) . "\t"
+						. $q_end . '<br/>'."\t"
+						. $tab
+						. substr($hsp->homology_string, $w, 60) . '<br/>'
+						. 'Sbjct   : '
+						. $hs
+						. $htab
+						. substr($hitseq, $w, 60) . "\t"
+						. $h_end
+						. '<br/><br/>';
+					$x -= 60;
+					$w += 60;
+					$qs = $q_end + 1;
+					$hs = ($he > $hs) ? $h_end + 1 : $h_end - 1;
+				}
+			}
+		}
+		
+		if($counter==0){ $table_contents .= '<tr><td colspan="4">***** No hits found *****</td></tr>'; }
+		$alignment .= '</pre>';
+	}
+
+	$table_contents .= '</form>';
+
+	print $table_contents;
+</%perl>
+
+
+</tbody>
+</table>
+
+<table class="tablesorter list" width="100%">
+<tbody>
+<% print $alignment %>
+</tbody>
+</table>
+</div>
+
+<& right_menu.mas, blout => $blout &>

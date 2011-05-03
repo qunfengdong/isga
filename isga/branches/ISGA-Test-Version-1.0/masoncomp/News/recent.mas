@@ -1,0 +1,26 @@
+<%args>
+ %active
+ %type_map
+</%args>
+
+
+<h1>Pipeline Service Recent News</h1>
+
+% foreach ( @types ) {
+
+%   foreach ( @{$type_map{ $_ }} ) {
+
+<h3><% $_->getTitle %></h3>
+
+<p><% $_->getBody %></p>
+
+<p>Posted At:<% $_->getCreatedAt %></p>
+
+%   }
+
+% }
+
+<%once>
+my @types = map { SysMicro::NewsType->new( Name => $_ ) } ( 'Pipeline Service News', 'Release Announcement', 'Service Outage Report' );
+</%once>
+

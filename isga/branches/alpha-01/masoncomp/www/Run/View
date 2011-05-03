@@ -1,0 +1,14 @@
+<%args> # -*- cperl -*-
+ $run 
+</%args>
+
+<%perl>
+
+  $run->getCreatedBy == SysMicro::Login->getAccount
+  or X::User::Denied->throw;
+   
+  $run->updateStatus();
+</%perl>
+
+<& /Run/view.mas, run => $run &>
+

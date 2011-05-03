@@ -1,0 +1,21 @@
+--- !perl/MasonX::Foundation::Config
+mason_data_directory: /data/web/sysmicro.cgb/mason 
+mason_component_root: /data/web/sysmicro.cgb/docs/masoncomp
+apache_session_directory: /data/web/sysmicro.cgb/session
+apache_session_lock_directory: /data/web/sysmicro.cgb/session
+database: { name: sysmicro_dev, user: cgb, type: Pg }
+test_database: { name: sysmicro_test, user: cgb, type: Pg }
+mail_config: unshift @{$Mail::Sendmail::mailcfg{'smtp'}}, 'mail.cgb.indiana.edu';
+memcached_servers: [ "islay.cgb.indiana.edu:11211" ]
+log_file: /data/web/sysmicro.cgb/log
+minimum_log_level: warning
+custom_parameters:
+  file_repository: /data/web/sysmicro.cgb/repository
+  tmp_file_directory: /research/projects/sysmicro/ergatis/tmp/
+  include_root: /data/web/sysmicro.cgb/docs/include
+  ergatis_submit_directory: /research/projects/sysmicro/ergatis/tmp/pipelines_building
+  ergatis_submit_uri: http://pipeline-dev.cgb.indiana.edu/cgi-bin/ergatis/run_prepared_pipeline.cgi
+  password_reset_cutoff: 24h
+  ergatis_output_repository: /research/projects/sysmicro/ergatis/projects/sysmicro/output_repository/
+  support_email: biohelp@cgb.indiana.edu
+

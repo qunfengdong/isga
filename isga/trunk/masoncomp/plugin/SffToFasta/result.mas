@@ -1,0 +1,70 @@
+<%args>
+	$job
+</%args>
+<%perl>
+    my $collection = $job->getCollection;
+    my $contents = $collection->getContents;
+    my $list;
+    my $output_file;
+    my $download;
+
+    foreach (@$contents){
+        if ($_->getType->getName eq 'Genome Sequence'){
+            $output_file = $_;
+            $download = $output_file->getUserName;
+        } elsif ($_->getType->getName eq 'Toolbox Job Configuration'){
+            use YAML;
+            $list = YAML::LoadFile($_->getPath);
+        } elsif ($_->getType->getName eq 'Nucleotide Sequence'){
+            $list->{input_file} = $_->getUserName;
+        }
+    }
+
+ my ($library, $clear, $trim, $linker);
+ foreach my $param (@{$list->{params}}){
+   exists $param->{library} and $library = $param->{library};
+   exists $param->{clear} and $clear = $param->{clear};
+   exists $param->{trim} and $trim = $param->{trim};
+   exists $param->{linker} and $linker = $param->{linker};
+   $linker = 'none' if $linker eq ' ';
+ }
+</%perl>
+
+<h1>WorkBench: SFF to Fasta</h1>
+<div class="list">
+<table>
+ <thead>
+  <tr>
+   <th>Input</th>
+   <th>Library</th>
+   <th>Clear</th>
+   <th>Trim</th>
+   <th>Linker</th>
+   </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><% $list->{input_file} %></td>
+   <td><% $library %></td>
+   <td><% $clear %></td>
+   <td><% $trim %></td>
+   <td><% $linker %></td>
+  </tr>
+ </tbody>
+</table>
+<div class="list">
+<div class="preview">
+<pre>
+<%perl>
+if ( $output_file->getSize < 5000000 ) {
+        open my $fh, '<', $output_file->getPath or X->throw(message => 'Error processing your BLAST job output.');
+        while ( <$fh> ) {
+            print $_;
+        }
+} else {
+  print "This file is two big to preview in your browser, please use the download link on the right.";
+}
+</%perl>
+</pre>
+</div>
+<& right_menu.mas, output_file => $output_file &>

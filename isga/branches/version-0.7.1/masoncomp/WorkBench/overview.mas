@@ -1,0 +1,11 @@
+<%args>
+ $name
+</%args>
+
+<h1>Hello! <% $name %></h1>
+
+<p>This is an overview.</p>
+
+% foreach ( qw(1 2 3 4 5 6 7 )) {
+<p>number <% $_ %></p>
+% }

@@ -1,0 +1,33 @@
+<%args> # -*- cperl -*-
+ $run
+ $all => 0
+</%args>
+
+<%perl>
+
+my %tmp_results;
+
+use List::MoreUtils qw( any );
+
+my $visibility = ['Pipeline'];
+
+foreach ( @{SysMicro::RunOutput->query( Run => $run)} ) {
+
+  my $coutput = $_->getClusterOutput;
+
+  next unless any { $coutput->getVisibility eq $_ } @$visibility;
+  
+  my $cluster = $coutput->getComponent->getCluster;
+
+  if ( exists $tmp_results{ $cluster } ) {
+
+    push @{$tmp_results{$cluster}{Output}}, $_;
+  } else {
+
+    $tmp_results{$cluster} = { Cluster => $cluster, Output => [ $_ ] };
+  }
+}
+
+</%perl>
+
+<& /Run/get_outputs.mas, run => $run, all => $all, results => [values %tmp_results] &>

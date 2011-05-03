@@ -1,0 +1,44 @@
+#------------------------------------------------------------------------
+
+=item public string getResidues();
+
+Retrieves the sequence for a gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getResidues {
+
+    my $self = shift;
+
+    my $sequence = $self->getGene->getResidues;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getUpstream(int length);
+
+Retrieves the specified length of upstream sequence for the gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getUpstream {
+
+    my ($self, $length) = @_;
+
+    return $self->getGene->getUpstream($length);
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getDownstream(int length);
+
+Retrieves the specified length of downstream sequence for the gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getDownstream {
+
+    my ($self, $length) = @_;
+
+    return $self->getGene->getDownstream($length);
+  }

@@ -1,0 +1,21 @@
+#------------------------------------------------------------------------
+
+=item public void delete();
+
+This will completely delete an object from a table. Dangling Foreign
+Key dependencies will cause an error.
+
+=cut
+#------------------------------------------------------------------------
+  sub delete {
+    
+    my $self = shift;
+
+    # delete the file or collection entry
+    $self->NEXT::delete();
+
+    my $id = SysMicro::FileResource->_column('Id');
+
+    SysMicro::DB->delete(Table => SysMicro::FileResource->_table,
+	       Fields => { $id => $self});
+  }

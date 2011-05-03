@@ -1,0 +1,13 @@
+% my $style = "1column";
+
+% my $html = $m->scomp( $m->fetch_next, %ARGS );
+% my $siteTags = SysMicro::Utility->extractSiteTags( \$html );
+
+<& /site/header.mas, siteTags => $siteTags, style => $style &>
+<& /site/nav.mas, doc => 0 &>
+<& "/site/$style.mas", siteTags => $siteTags, html => $html &>
+<& /site/footer.mas &>
+
+<%flags>
+ inherit => undef
+</%flags>

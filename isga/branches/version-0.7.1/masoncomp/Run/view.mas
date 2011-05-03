@@ -1,0 +1,49 @@
+<%args>
+ $run
+</%args>
+
+<h1><% $run->getType->getName %> Run Status</h1>
+
+% my $running = $run->isRunning;
+
+% my $account = 
+
+% if ( $running ) {
+
+% my $now = SysMicro::Timestamp->new;
+% my $new = $now + '5m';
+
+<p>This page was refreshed at <% $now->brief %>. It will refresh next at <% $new->brief %>.
+
+<sys:meta http-equiv="refresh" content="300">
+% }
+
+<& view_header.mas, run => $run &>
+
+% if ( SysMicro::Login->hasGroup( SysMicro::Group->new( Name => 'Run Administrators' ) )
+%      and $run->getStatus ne 'Canceled' ) {
+
+<p><a class="button" href="/Run/Cancel?run=<% $run %>">Cancel This Run</a></p>
+
+% }
+
+
+<h2>Results</h2>
+
+<div class="list">
+
+<& /RunOutput/print_table.mas, run => $run, embed => 0 &>
+
+</div>
+
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:style type="text/css" media="all">
+ @import "/include/css/jquery.treeTable.css";
+</sys:style>
+<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>

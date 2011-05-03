@@ -1,0 +1,59 @@
+# -*- cperl -*-
+  
+#------------------------------------------------------------------------
+
+=item public void writeConfigFile( Pipeline $pipeline, string $dir, ParameterMask $mask, { ClusterInput => string } $cluster_inputs );
+
+Write the config file for this component in support of an Ergatis run.
+
+=cut
+#------------------------------------------------------------------------
+  sub writeConfigFile {
+
+    my ($self, $pipeline, $dir, $mask, $cluster_inputs) = @_;
+
+    my $name = $self->getErgatisName . '.config';
+
+    my %inputMask;
+
+    # retrieve all inputs for this component and overlay inputs to pipeline
+    foreach ( @{SysMicro::ClusterInput->query( Component => $self )} ) {
+      $inputMask{ '___' . $_->getName . '___' } 
+	= exists $cluster_inputs->{$_} ? $cluster_inputs->{$_} : $_->getValue($pipeline);
+    }   
+
+    # read the template for the config file
+    open my $fh, '<', "___include_root___/config_template/$name"
+      or X::File->throw( error => "___include_root___/config_template/$name : $!" );
+    my $file = do { local $/; <$fh> };
+    close $fh;  
+
+    if ( my $builder = SysMicro::ComponentBuilder->new($self, $mask) ) {
+
+      my %config;
+
+      foreach ( @{$builder->getParameters} ) {
+	
+	my $command = '';
+	my $value = $_->{VALUE};
+	
+	if ( defined $value ) {
+	  $command = exists $_->{FLAG} ? "$_->{FLAG} $value " : "$value ";
+	}
+	
+	if ( defined $config{$_->{CONFIGLINE}} ) {
+	  $config{$_->{CONFIGLINE}} .= $command;
+	} else {
+	  $config{$_->{CONFIGLINE}} = $command;
+	}
+      }
+
+    while ( my ($key, $value) = each %config ) { $file =~ s/$key/$value/g; }
+    }
+
+    while ( my ($key, $value) = each %inputMask ) { $file =~ s/$key/$value/g; }
+    
+
+    SysMicro::Utility->writeFile("$dir/$name", $file);
+  }
+

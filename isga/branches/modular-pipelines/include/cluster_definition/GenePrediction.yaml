@@ -1,0 +1,4 @@
+--- !perl/ISGA::ClusterBuilder
+Cluster: Gene Prediction
+Description: 'The gene prediction cluster accepts a FASTA file as input and predicts open reading frames using gene prediction software.  Glimmer3 is the current software used.  The resulting data includes coordinate, frame, strand, and score information as well as the extracted genes in FASTA format.'
+

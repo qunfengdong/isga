@@ -1,0 +1,8 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: File
+partition_of: FileResource
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: Size, type: number, options: [ REQUIRED ] }
+  - { name: Type, type: FileType, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }

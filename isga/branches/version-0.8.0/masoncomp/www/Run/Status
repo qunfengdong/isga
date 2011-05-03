@@ -1,0 +1,20 @@
+<%args>
+ $show_canceled => 0
+ $show_hidden => 0
+</%args>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+
+my %args = ( CreatedBy => $account, OrderBy => 'CreatedAt' );
+$show_canceled or $args{Status} = { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) };
+
+my $runs = ISGA::Run->query( %args );
+my $rbs = ISGA::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );
+
+</%perl>
+
+<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => $show_canceled, show_hidden => $show_hidden &>
+<& /RunBuilder/list_my.mas, account => $account, rbs => $rbs &>
+

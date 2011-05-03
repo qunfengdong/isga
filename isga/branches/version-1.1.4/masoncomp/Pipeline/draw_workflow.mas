@@ -1,0 +1,34 @@
+<%args>
+ $pipeline
+</%args>
+
+<div id="workflow">
+
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/Pipeline/DrawWorkflow?pipeline=<% $pipeline %>">
+
+<map name="clusters" >
+
+% foreach ( @{$pipeline->getWorkflow} ) {
+% next if (not defined $_->getCoordinates);
+<area \
+  shape="rect"
+  id="<% $_ ->getCluster %>" \
+  alt="<% $_->getCluster->getName %>" \
+  title="<% $_->getCluster->getName %>" \
+  coords="<% $_->getCoordinates %>" \
+  rel="component_selection" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+% if ($_->getCluster->getName eq 'RNA Prediction' || $_->getCluster->getName eq 'Additional Gene Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+% } elsif ($_->getCluster->getName eq 'Process Annotation Input Files' || $_->getCluster->getName eq 'Output'){
+  class="noborder nofade jTip nolink" \
+% } elsif ( $_->isRequired ) {
+  class="noborder nofade requiredCluster jTip modal" \
+% } else {
+  class="noborder nofade cluster jTip modal" \
+% }
+ >
+% }
+</map>
+
+</div>

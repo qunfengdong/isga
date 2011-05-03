@@ -1,0 +1,10 @@
+<%args> # -*- cperl -*-
+</%args>
+
+<%perl>
+
+my $account = SysMicro::Login->getAccount;
+my $pbuilders = SysMicro::PipelineBuilder->query( CreatedBy => $account, OrderBy => 'StartedOn' );
+</%perl>
+
+<& /PipelineBuilder/list_my.mas, account => $account, pbuilders => $pbuilders &>

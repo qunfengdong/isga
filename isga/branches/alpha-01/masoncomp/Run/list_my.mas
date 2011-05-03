@@ -1,0 +1,53 @@
+<%args>
+ @runs
+ $pager => undef
+</%args>
+
+% if (@runs) {
+<h1>My Pipeline Runs</h1>
+<div id="list">
+<& /site/pager/header.mas, pager => $pager &>
+<table width="100%" >
+ <tr>
+  <th colspan="5">Pipeline Runs</th>
+ </tr>
+ <tr class="list_label">
+  <td>Name</td>
+  <td>Pipeline</td>
+  <td>Started At</td>
+  <td>Status</td>
+ </tr>
+%   my $counter=0;
+%   foreach ( @runs ) {
+%     $_->getCreatedBy == SysMicro::Login->getAccount
+%       or X::User::Denied->throw;
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+     <tr class="<% $tr_class %>">
+       <td><a href="/Run/View?run=<% $_ %>"><% $_->getName %></td></td>
+
+       <td><a href="/Pipeline/View?pipeline=<% $_->getType %>"><% $_->getType->getName %></a></td>
+       <td><% $_->getCreatedAt %></td>
+       <td><% $status_map{ $_->getStatus->getName} %></td>
+     </tr>
+%   }
+</table>
+<& /site/pager/footer.mas, pager => $pager &>
+</div>
+% } else {
+<p>You do not have any pipelines that have run.</p>
+% }
+
+<%once>
+
+ my %status_map = 
+ ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',
+   Canceled => '<span style="font-weight:bold; color:red" >Canceled</span>',
+   Error => '<span style="font-weight:bold; color:red" >Error</span>',
+   Running  => '<span style="font-weight:bold; color:blue" >Running</span>',
+   Incomplete => '<span style="font-weight:bold" >Incomplete</span>',
+   Submitting => '<span style="font-weight:bold; color:blue" >Submitting</span>',
+   Held => '<span style="font-weight:bold; color:purple">Held</span>',
+   Complete => '<span style="font-weight:bold; color:green">Complete</span>',
+ );
+
+</%once>

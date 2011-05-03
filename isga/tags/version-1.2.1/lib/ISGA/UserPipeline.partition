@@ -1,0 +1,8 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: UserPipeline
+partition_of: Pipeline
+attributes:
+  - { name: Template, column: userpipeline_template, type: GlobalPipeline, options: [ REQUIRED ] }
+  - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
+  - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: ParameterMask, type: string, options: [ NOGET ] }

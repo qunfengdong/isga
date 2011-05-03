@@ -1,0 +1,108 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public undef getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask { return undef; }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return ''; }
+
+#------------------------------------------------------------------------
+
+=item public GlobalPipeline getGlobalTemplate();
+
+Returns the current pipline object. This method is provided for polymorphism.
+
+=cut
+#------------------------------------------------------------------------
+  sub getGlobalTemplate { return shift; }
+
+
+#------------------------------------------------------------------------
+
+=item public string getWebPluginDirectory();
+
+Returns the directory for storing global-pipeline specific mason components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWebPluginDirectory {
+    return shift->getSubClass;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Workflow] getWorkflow();
+
+Returns the Workflow objects associated with this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflow { ISGA::Workflow->query( Pipeline => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getClusters();
+
+Convenience method to return a list of clusters in this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getClusters { 
+
+    my $self = shift;
+    return [map { $_->getCluster } @{$self->getWorkflow}];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getComponents();
+
+Returns a list of components in this pipeline.
+
+=item public [Component] getComponents(Cluster $cluster);
+
+Returns a list of components in the provided cluster of this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponents { 
+
+    my ($self, $cluster) = @_;
+
+    if ( $cluster and ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $self )) {
+      return ISGA::Component->query(Cluster => $cluster);
+    }
+    
+    return ISGA::Component->query( Cluster => $self->getClusters );
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder for the passed component. No parmater mask is applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my $self = shift;
+
+    return ISGA::ComponentBuilder->new(@_);
+  }
+

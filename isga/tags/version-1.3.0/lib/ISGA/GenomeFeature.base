@@ -1,0 +1,9 @@
+--- !perl/MasonX::Foundation::Class::Base
+class: GenomeFeature
+partition: GenomeFeaturePartition
+attributes:
+  - { name: GenomeFeaturePartition, options: [ REQUIRED ] }
+  - { name: UniqueName, type: string, options: [ REQUIRED ] }
+  - { name: Start, type: number, options: [ REQUIRED ] }
+  - { name: End, type: number, options: [ REQUIRED ] }
+  - { name: Strand, type: string }

@@ -1,0 +1,13 @@
+^MANIFEST\.SKIP$
+^_build
+^Build$
+^blib
+~$
+\.bak$
+^MANIFEST\.SKIP$
+\.svn
+^BUILD.yaml
+sql/cgb.sql
+^cgb_files
+svn_ext_val.txt
+^MYMETA.yml$

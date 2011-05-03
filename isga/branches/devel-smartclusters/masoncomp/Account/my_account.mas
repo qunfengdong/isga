@@ -1,0 +1,40 @@
+% my $account = SysMicro::Login->getAccount;
+
+<h1><% $account->getName %></h1>
+
+<ol>
+<li>Email: <% $account->getEmail %></li>
+<li>Institution: <% $account->getInstitution %></li>
+</ol>
+
+
+<%doc>
+
+<h3>My Groups</h3>
+
+% if ( my @groups = @{$account->getUserGroups} ) {
+<div id="list">
+<table width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Created By</th>
+  <th>Members</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @groups ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>">
+  <td><a href="/UserGroup/View?user_group=<% $_ %>"><% $_->getName %></a></td>
+  <td><% $_->getCreatedBy->getName %></td>
+  <td><% scalar @{$_->getAccounts} %></td>
+ </tr>      
+%   }
+</table>
+</div>
+% } else {
+<p>You are not a member of any groups. For more information on groups, visit the <a href="/UserGroup/Overview">Group Overview</a> page.</p>
+% }
+
+</%doc>
+
+<& right_menu.mas &>

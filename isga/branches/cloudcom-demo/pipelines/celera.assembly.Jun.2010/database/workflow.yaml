@@ -1,0 +1,13 @@
+---
+ - Pipeline: 'Celera Assembly Pipeline'
+   Cluster: 'SFF Preperation'
+   Coordinates: '100,0,241,53'
+   IsRequired: 0
+ - Pipeline: 'Celera Assembly Pipeline'
+   Cluster: 'Assembly Step'
+   Coordinates: '95,139,244,192'
+   IsRequired: 1
+ - Pipeline: 'Celera Assembly Pipeline'
+   Cluster: 'Hawkeye Step'
+   Coordinates: '96,279,245,333'
+   IsRequired: 0

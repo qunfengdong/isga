@@ -1,0 +1,3 @@
+--- !perl/ISGA::ModuleInstaller
+ergatis_install: ergatis-v2r11-cgbr1
+pipeline_class: SNPMapping

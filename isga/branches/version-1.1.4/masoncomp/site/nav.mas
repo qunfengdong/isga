@@ -1,0 +1,140 @@
+<%args>
+ $doc
+</%args>
+
+% my $exists = ISGA::Login->exists;
+% my $account = ISGA::Login->getAccount;
+
+%#<div id="nav">
+%#<div id="droppydiv">
+
+ <ul id="nav"> 
+  <li><a href="/Home">Home</a>
+   <ul>
+% if ( $exists and $account->hasGroup($policy_admin) ) {
+    <li><a href="/SiteConfiguration/View">Site Configuration</a></li>
+% }
+    <li><a href="/Help/Introduction">Introduction</a></li>
+% if ( ! $exists ) {
+    <li><a href="/Account/Request">Request Account</a></li>
+% }
+    <li><a href="/Help/Policies">ISGA Policies</a></li>
+    <li><a href="/Help/Acknowledgement">Acknowledgement</a></li>
+   </ul>
+  </li>
+
+  <li><a href="/Pipeline/View?pipeline=<% $prok %>">Build Pipelines</a>
+   <ul>
+    <li><a href="/Help/Tutorial?tab=pipeline">Tutorial</a></li>
+% if($prok->isInstalled){
+    <li><a href="/Pipeline/View?pipeline=<% $prok %>">Prokaryotic Annotation</a></li>
+% }
+% if($cel_assembly->isInstalled){
+    <li><a href="/Pipeline/View?pipeline=<% $cel_assembly %>">Celera Prokaryotic Assembly</a></li>
+% }
+%  if ( $account ) {
+%   if ( my $user= ISGA::UserPipeline->exists( CreatedBy => $account ) ) {
+    <il><a href="/Pipeline/List"><% $user %> Customized Pipelines</a></li>
+%   }
+%  }
+   </ul>  
+  </li>
+
+% if ( $exists ) {
+  <li><a href="/Run/Status">Monitor Pipelines</a>
+% } else {
+%#  <li><a href="/Help/Tutorial?tab=run">Monitor Pipelines</a>
+% } 
+   <ul>
+%#    <li><a href="/Help/Tutorial?tab=run">Tutorial</a></li>
+% if ( $exists ) {
+    <li><a href="/Run/Status">Pipeline Status</a></li>
+%   if ( $account->hasGroup( $run_admin ) ) {
+    <li><a href="/Run/AdminList">Administer Runs</a></li>
+%   }
+% }
+   </ul>
+  </li>
+
+
+% if ( $exists ) {
+  <li><a href="/WorkBench/Overview">Toolbox</a>
+% }
+   <ul>
+%#    <li><a href="/Help/Tutorial?tab=workbench">Tutorial</a></li>
+% if ( $exists ) {
+    <li><a href="/File/BrowseMy">My Files</a></li>
+    <li><a href="/WorkBench/BrowseMy">My Jobs</a></li>
+    <li><a href="/WorkBench/Blast">Blast Search</a></li>
+    <li><a href="/WorkBench/GBrowse">Genome Browser</a></li>
+    <li><a href="/WorkBench/GenomeFeatureQuery">Database Query</a></li>
+    <li><a href="/WorkBench/NewblerToHawkeye">Convert Newbler to Hawkeye</a></li>
+    <li><a href="/WorkBench/CeleraToHawkeye">Convert Celera to Hawkeye</a></li>
+    <li><a href="/WorkBench/MiraToHawkeye">Convert Mira to Hawkeye</a></li>
+    <li><a href="/WorkBench/NewblerForConsed">Convert Newbler For Consed</a></li>
+    <li><a href="/WorkBench/Overview">Additional Tools</a></li>
+% } else {
+    <li><a href="/WorkBench/Overview">Additional ToolBox Home</a></li>
+% }
+   </ul>
+  </li>
+
+% if ( $exists ) {
+  <li><a href="/Account/MyAccount">Account</a>
+   <ul>
+    <li><a href="/Account/MyAccount">Account Details</a></li>
+    <li><a href="/Account/ChangeMyPassword">Change Password</a></li>
+   </ul>
+  </li>
+% }
+
+  <li><a href="/News/Recent">News</a>
+   <ul>
+    <li><a href="/News/Recent">Recent News</a></li>
+% if ( $exists and $account->hasGroup($news_admin)  ) {
+    <li><a href="/News/Create">Create News Item</a></li>
+% }
+   </ul>
+  </li>
+
+  <li><a href="/Help/DownloadISGA">Download</a>
+   <ul>
+    <li><a href="/Help/DownloadISGA">Download ISGA</a></li>
+   </ul>
+  </li>
+
+  <li><a href="/Help/Overview">Help</a>
+   <ul>
+    <li><a href="/Help/Introduction">Introduction</a></li>
+    <li><a href="/Help/Tutorial">Tutorials</a>
+      <ul>
+        <li><a href="/Help/Tutorial?tab=pipeline">Pipeline Tutorial</a></li>
+        <li><a href="/Help/Tutorial?tab=account">Account Tutorial</a></li>
+      </ul>
+    </li>
+    <li><a href="/Help/FAQ">FAQs</a></li>
+    <li><a href="/Help/ContactUs">Contact Us</a></li>
+   </ul>
+  </li>
+
+
+% if ( ISGA::Login->exists && $doc ) {
+  <div id="toggle"><li class="disableWalkthrough"><a class="btn-slide" href="#"><span class="showOrHide"></span></a></li></div>
+% }
+ </ul>
+
+%#</div>
+%#</div>
+
+<%once>
+#my $prok = 1;
+
+my $policy_admin = ISGA::Group->new( Name => 'Policy Administrators' );
+
+my $news_admin = ISGA::Group->new( Name => 'News Administrators' );
+
+my $run_admin = ISGA::Group->new( Name => 'Run Administrators' );
+
+my $prok = ISGA::GlobalPipeline->new( Name => 'Prokaryotic Annotation Pipeline' );
+my $cel_assembly = ISGA::GlobalPipeline->new( Name => 'Celera Assembly Pipeline' );
+</%once>

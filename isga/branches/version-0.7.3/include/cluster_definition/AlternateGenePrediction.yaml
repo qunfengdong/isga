@@ -1,0 +1,4 @@
+--- !perl/SysMicro::ClusterBuilder
+Cluster: Alternate Gene Prediction
+Description: 'Process user supplied gene prediction coordinate results to create necessary BSML files needed downstream in the pipeline.'
+

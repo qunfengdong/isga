@@ -1,0 +1,17 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getURI();
+
+Retrieves the URI for this reference.
+
+=cut 
+#------------------------------------------------------------------------
+ sub getURI {
+  
+   my $self = shift;
+   return $self->getExDB->getBaseURI() . $self->getValue;
+ }   
+ 
+

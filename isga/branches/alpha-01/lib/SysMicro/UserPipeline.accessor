@@ -1,0 +1,69 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+sub getParameterMask {
+  return SysMicro::ParameterMask->new($_[0]->{userpipeline_parametermask});
+}
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+sub getRawParameterMask { return $_[0]->{userpipeline_parametermask}; }
+
+#------------------------------------------------------------------------
+
+=item public [Workflow] getWorkflow();
+
+Returns the Workflow objects associated with this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflow { shift->getTemplate->getWorkflow; }
+
+#------------------------------------------------------------------------
+
+=item public string getImage();
+
+Returns the path to the base image for this workflow.
+
+=cut
+#------------------------------------------------------------------------
+  sub getImage { shift->getTemplate->getImage; }
+
+#------------------------------------------------------------------------
+
+=item public string getLayout();
+
+Returns the pipeline layout for the template used to create this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getLayout { shift->getTemplate->getLayout; }
+
+#------------------------------------------------------------------------
+
+=item public getConfigFiles([RunBuilderInput] $inputs);
+
+Submits a run to ergatis.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getConfigFiles {
+
+    my $self = shift;
+    return $self->NEXT::getConfigFiles( @_, $self->getParameterMask );
+  }
+
+

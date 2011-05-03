@@ -1,0 +1,26 @@
+<%args>
+ $pipeline
+</%args>
+
+<h1><% $pipeline->getName %></h1>
+
+<p>The Prokaryote Annotation Pipeline predicts ORFs using Glimmer3, performs sequence 
+similarity searches using WU-BLAST, and performs protein domain searches using HMMPFAM.  
+The pipeline  also uses tRNA-scan and RNAMMER to predict RNA sequences and performs 
+several other analysis to discover things such as signal peptides, transmembrane regions, 
+report GO and EC numbers, etc.  This information is then used to create a final pipeline 
+summary.</p>
+<img src="<% $pipeline->getImage %>">
+
+<div id="WT" class="hidden documentation pipelineView"><div id="WT_arrow_right"></div><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Here is the overview page for this pipeline.  You will notice several tools allowing 
+you to view the required inputs, view the produced outputs, view the current parameters, 
+customize the pipeline, or run the pipeline.  Feel free to view the paramenters, inputs 
+and outputs now.</p>
+<p>To proceed with this walkthrough, click on the <span class="highlight">Customize Pipeline
+</span> option now.</p>
+</div></div>
+<div class="documentation pipelineViewClickMe"><div id="WT_arrow_right_clickme"></div><div id="WT_close_right_clickme">Click Me To Continue</div></div>
+
+
+<& right_menu.mas, pipeline => $pipeline &>
