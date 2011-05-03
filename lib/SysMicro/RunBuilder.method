@@ -1,0 +1,41 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public void _processInputs();
+
+Calculates and caches the current status of inputs.
+
+=cut 
+#------------------------------------------------------------------------
+sub _processInputs {
+  my $self = shift;
+
+  # make this method idempotent
+  exists $self->{_cached_inputs} and return;
+
+  my ( @required, @optional, %file_map );
+ 
+  for ( @{SysMicro::PipelineInput->query( Pipeline => $self->getPipeline)} ) {
+
+    $_->getDependency eq 'Required' ? push @required, $_ : push @optional, $_;
+    $file_map{$_} = undef;
+  }
+  
+  # set uploaded files
+  for ( @{SysMicro::RunBuilderInput->query( RunBuilder => $self )} ) {
+    $file_map{$_->getPipelineInput} = $_->getFileResource;
+  }
+  
+  # count missing files
+  my $missing = scalar grep { ! defined $file_map{$_} } @required;
+
+  $self->{_cached_inputs}{required} = \@required;
+  $self->{_cached_inputs}{optional} = \@optional;
+  $self->{_cached_inputs}{file_map} = \%file_map;
+  $self->{_cached_inputs}{missing} = $missing;
+}
+
+  
+
+

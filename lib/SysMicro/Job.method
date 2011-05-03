@@ -1,0 +1,50 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus();
+
+Updates the job status by running qstat on sge. This will
+update the job status.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my $self = shift;
+
+  my $status = $self->getStatus;
+  return if $status eq 'Finished';
+  return if $status eq 'Error';
+  return if $status eq 'Failed';
+
+  my $pid = $self->getPid;
+
+  eval {
+
+    SysMicro::DB->begin_work();
+
+    my $sge=SysMicro::SGEScheduler->new(
+       -executable  => {qsub=>'/cluster/sge/bin/sol-amd64/qsub', qstat=>'/cluster/sge/bin/sol-amd64/qstat'},
+    );
+
+    my $new_status = $sge->checkStatus( $pid );
+    
+    $new_status eq $status or
+      $self->edit( Status => SysMicro::JobStatus->new( Name => $new_status ) );
+
+    if ( $new_status eq 'Finished' || $new_status eq 'Error' ||  $new_status eq 'Failed' ) {
+      $self->edit( FinishedAt => SysMicro::Timestamp->new() );
+    }
+    
+    SysMicro::DB->commit();
+  };
+
+  if ( $@ ) {
+    SysMicro::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+    $e->rethrow();
+  }  
+ 
+}

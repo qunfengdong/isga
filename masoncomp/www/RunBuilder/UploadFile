@@ -1,0 +1,10 @@
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'run_builder_upload_file'
+  or $form =  SysMicro::FormEngine::RunBuilder->UploadFile(\%ARGS);
+
+return $m->comp('/RunBuilder/upload_file.mas', form => $form);
+
+</%perl>

@@ -1,0 +1,17 @@
+<%args>
+	$select_sequence
+</%args>
+
+<h1>WorkBench: Blast Output</h1>
+<div class="data">
+<table class="tablesorter list" width="100%">
+<tbody>
+</tbody>
+</table>
+
+<table class="tablesorter list" width="100%">
+<tbody>
+</tbody>
+</table>
+</div>
+

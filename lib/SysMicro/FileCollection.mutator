@@ -1,0 +1,28 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public void addContents( [FileResource] );
+
+Adds one or more file resources to a collection. The resources are added
+in the order they are passed.
+
+=cut 
+#------------------------------------------------------------------------
+  sub addContents {
+
+    my ($self, $resources) = @_;
+
+    # retrieve the current maximum index for this collection
+    my $next_index = SysMicro::FileCollectionContent->exists( FileCollection => $self );
+
+    ref $resources eq 'ARRAY' 
+      or $resources = [ $resources ];
+
+    for ( @$resources ) {
+
+      SysMicro::FileCollectionContent->create( FileCollection => $self,
+					       FileResource => $_,
+					       Index => $next_index++ );
+    }
+  }

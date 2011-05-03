@@ -15,11 +15,8 @@
 @import "/include/css/tablesorter.css";
 </sys:style>
 
-% my $default_builder = ISGA::ComponentBuilder->new($component);
-% my $note;
-
 <h1><% $component->getName %> Parameters</h1>
-<p><% $component_builder->getComponentDescription %></p>
+
 % if ( $hide_unset ) {
 
 <p>Displaying only parameters that are being used.</p>
@@ -36,7 +33,7 @@
  <tr>
   <th>Parameter</th>
   <th>Value</th>
-  <th>Parameter Note</th>
+  <th>Annotation</th>
  </tr>
 
 %   my $counter = 0;
@@ -50,10 +47,7 @@
   <span color="#8bbb40" class="sup">?</span>
  </td>
  <td><% $_->{VALUE} %></td>
-
-% $note = $default_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
-
- <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : $note %></td>
+ <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : '' %></td>
 </tr>
 %   }
 
@@ -68,10 +62,7 @@
   <span color="#8bbb40" class="sup">?</span>
  </td>
   <td><% exists $_->{VALUE} ? $_->{VALUE} : '' %></td>
-
-% $note = $default_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
-
-  <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : $note %></td>
+  <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : '' %></td>
 </tr>
 
 %   }

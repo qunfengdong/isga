@@ -1,18 +1,7 @@
 % my $style = "1column";
 
-<%perl>
-
-# retrieve the run
-my $path = $r->path_info();
-my ($run) = $path =~ /^\/(\d+)/;
-$run = ISGA::Run->new(Id => $run);
-
-my $html = $m->scomp( '/Browser/contig_select.mas', run => $run );
-
-$html .= $m->scomp( $m->fetch_next, %ARGS );
-my $siteTags = ISGA::Utility->extractSiteTags( \$html );
-
-</%perl>
+% my $html = $m->scomp( $m->fetch_next, %ARGS );
+% my $siteTags = SysMicro::Utility->extractSiteTags( \$html );
 
 <& /site/header.mas, siteTags => $siteTags, style => $style &>
 <& /site/nav.mas, doc => 0 &>

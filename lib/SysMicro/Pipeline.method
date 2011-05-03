@@ -1,0 +1,115 @@
+# -*- cperl -*-
+  
+#------------------------------------------------------------------------
+
+=item public void stage(string $dir, ParameterMask $mask, hashref $rbi);
+
+Stages pipeline files for an ergatis run. Builds pipeline.layout xml
+file and copies customized config files for components.
+
+=cut 
+#------------------------------------------------------------------------
+  sub stage {
+
+    my ($self, $dir, $mask, $rbi) = @_;
+
+    my $inputs;
+    # gather all the inputs
+    foreach my $i ( @$rbi ) {
+      my $cluster_input = $i->getPipelineInput->getClusterInput;
+      $inputs->{ $cluster_input } = "$dir/" . $i->getFileResource->getName;
+    }
+    
+    # perform input filtering if needed
+    my $filter = $self->filterInputs($dir, $mask, $inputs);
+    # write pipeline layout
+    $self->writeLayoutXML($dir, $filter);
+
+    # write component files
+    $_->writeConfigFile($self, $dir, $mask, $inputs) for @{$self->getComponents};
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public string getPipelineLayoutXML(string $dir, string $filter);
+
+Returns the pipeline.layout string in XML format for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub writeLayoutXML {
+
+    my ($self, $dir, $filter) = @_;
+
+    my $pipeline_layout = $self->getLayout;
+
+    # TODO - move this into database
+    $pipeline_layout =~ s{___Process Annotation Input Files___}{$filter}g;
+
+    foreach my $cluster ( @{$self->getClusters} ) {
+
+      my $name = $cluster->getName();
+      my $xml = $cluster->getLayoutXML();
+
+      # replace all components
+      foreach my $component ( @{$self->getComponents($cluster)} ) {
+	
+	my $name = $component->getErgatisName();
+	my $comp_xml = 
+	  "<commandSet type=\"serial\"><state>incomplete</state><name>$name</name></commandSet>";
+	$xml =~ s{___${name}___}{$comp_xml};
+      }
+
+      # remove unused components
+      $xml =~ s{___(\S+)___(\S*\n)?}{}g;
+
+      $pipeline_layout =~ s{___${name}___}{$xml};
+    }      
+
+    # remove unused place holders
+    $pipeline_layout =~ s{___[ A-za-z0-9]+___}{}g;
+ 
+    SysMicro::Utility->writeFile( "$dir/pipeline.layout", $pipeline_layout );
+  }
+    
+#------------------------------------------------------------------------
+
+=item public string filterInputs(hashref $inputs);
+
+Returns the xml for filtering input to the pipeline.
+
+=cut
+#------------------------------------------------------------------------  
+  sub filterInputs {
+
+    my ($self, $dir, $mask, $inputs) = @_;
+
+    # TODO - move this into database so not hard coded
+    my $cluster = SysMicro::Cluster->new( Name => 'Process Annotation Input Files' );
+
+    my $xml = $cluster->getLayoutXML;
+    foreach ( keys %$inputs ) {
+      
+      my $components = SysMicro::Component->query( Cluster => $cluster, ClusterInput => $_ );
+      foreach ( @$components ) {
+
+	# add this component to the pipeline
+	my $name = $_->getErgatisName();
+	my $comp_xml = 
+	  "<commandSet type=\"serial\"><state>incomplete</state><name>$name</name></commandSet>";
+	$xml =~ s{___${name}___}{$comp_xml};
+
+	# write this component config file
+	$_->writeConfigFile($self, $dir, $mask, $inputs);
+	
+      }
+
+      # remove this input from the mask so it uses the default (i.e. filtered value)
+      delete $inputs->{$_};
+    }
+    
+    $xml =~ s{___[ A-za-z0-9]+___}{}g;
+
+    return $xml;
+  }

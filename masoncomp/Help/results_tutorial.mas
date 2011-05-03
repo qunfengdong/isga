@@ -1,10 +1,10 @@
 <h4>Results Tutorial</h4>
 
 <p class="justify">After you submit your run, you will be redirected to the page below where you can track 
-the runs  progress.  In the Status section each module from the pipeline will have a row in the table where 
-the columns will provide you with the current status of the module, the number of steps remaing, the start 
-time, and the end time.  The page will update periodically as module statuses change.  The Results section 
-will also update as modules finish allowing output files to be downloaded immediately after completion.</p>
+the runs  progress.  In the Status section each cluster from the pipeline will have a row in the table where 
+the columns will provide you with the current status of the cluster, the number of steps remaing, the start 
+time, and the end time.  The page will update periodically as cluster statuses change.  The Results section 
+will also update as clusters finish allowing output files to be downloaded immediately after completion.</p>
 
 <img class="tutorial" src="/include/img/tutorial/view_run_results.png" alt="Run Results">
 
@@ -21,7 +21,7 @@ the file, or navigate to a full list of your files.</p>
 <img class="tutorial" src="/include/img/tutorial/file_details.png" alt="File Details Page">
 
 <p class="justify">It is also possible to obtain the complete raw outputs produced by the pipeline.  These outputs are 
-available under Evidence and are organized by module.  Click on the arrow next to Evidence to show the list of modules.  
+available under Evidence and are organized by cluster.  Click on the arrow next to Evidence to show the list of clusters.  
 The outputs are provided in a tarball archive.  This allows you to see the raw results of the programs run in the pipeline.  
 </p>
 

@@ -1,0 +1,7 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Cluster
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: FormPath, type: string, options: [ REQUIRED ] }
+  - { name: LayoutXML, column: cluster_layoutxml, type: string, options: [ REQUIRED ] }
+  - { name: Description, column: cluster_description, type: string }

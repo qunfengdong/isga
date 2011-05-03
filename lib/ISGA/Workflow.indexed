@@ -1,9 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: Workflow
-attributes:
-  - { name: Cluster, type: Cluster, options: [ REQUIRED ] }
-  - { name: Pipeline, type: GlobalPipeline, options: [ REQUIRED ] }
-  - { name: Coordinates, type: string }
-  - { name: IsRequired, type: boolean, options: [ REQUIRED ] }
-  - { name: AltCluster, type: Cluster, column: workflow_altcluster_id }
-  - { name: Customization, type: string, options: [ REQUIRED ] }

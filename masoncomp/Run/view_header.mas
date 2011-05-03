@@ -2,29 +2,23 @@
   $run
 </%args>
 
+% my $inputs = $run->getInputFiles;
 % my $running = $run->isRunning;
 % my $canceled = ( $running ? 0 : $run->getStatus eq 'Canceled' );
-% $canceled &&= ISGA::RunCancelation->new( Run => $run );
-
-% my $is_mine = $run->getCreatedBy == ISGA::Login->getAccount;
+% $canceled &&= SysMicro::RunCancelation->new( Run => $run );
 
 <sys:script type="text/javascript">
 
 $(document).ready(function(){
   $('#detailed_status').hide();
-  $('a#click').click(function(){
-    $(this).text($(this).text() == 'Show Detailed Status' ? 'Hide Detailed Status' : 'Show Detailed Status'); 
-    $('#detailed_status').toggle('slow'); 
-  });
+  $('a').click(function(){ $('#detailed_status').show('slow'); });
+
   $('a#close').click(function(){
-    $('a#click').text('Show Detailed Status'); 
     $('#detailed_status').hide('slow');
   })
 
 });
 </sys:script>
-
-% my $pipeline = $run->getType();
 
 <div class="data">
 
@@ -33,23 +27,8 @@ $(document).ready(function(){
   <tr> 
    <th width="15%">Name</th><td colspan="3"><% $run->getName %></td>
   </tr>
-% if ( ! $is_mine ) {
   <tr>
-   <th width="15%">Shared By</th><td colspan="3"><% $run->getCreatedBy->getName %></td>
-  </tr>
-% }
-  <tr>
-   <th width="15%">Pipeline</th><td colspan="3"><a href="/Pipeline/View?pipeline=<% $pipeline %>"><% $pipeline->getLabel %></a><?th>
-  </tr>
-
-% if ( ISGA::Login->hasGroup($admin) ) {
-  <tr>
-%   my $account = $run->getCreatedBy();
-   <th width="15%">Account</th><td colspan="3"><a href="/Account/View?account=<% $account %>"><% $account->getName %></td>
-  </tr>
-% }
-  <tr>
-   <th>ID</th><td width="25%"><% $run->getErgatisKey %></td>
+   <th>ID</th><td width="35%"><% $run->getErgatisKey %></td>
    <th width="15%">Status</th><td><% $status_map{ $run->getStatus->getName } %> (<a href="#" id="click">Show Detailed Status</a>)</td>
   </tr>
   <tr>
@@ -58,22 +37,29 @@ $(document).ready(function(){
    <th>Finished At</th><td><% $finished->brief() %> EDT</td>
 % } elsif ( $canceled ) {
    <th>Canceled At</th><td><% $canceled->getCanceledAt->brief() %> EDT</td>
-  </tr>
-  <tr>
-  <th class="warn">Cancelation Note</th><td colspan="3"><% $canceled->getComment %></td>
 % }
-  </tr>
+
   <tr>
     <th>Description</th><td colspan="3"><% $run->getDescription %></td>
   </tr>
   <tr>
+    <th rowspan="<% scalar @{$inputs}  %>">Input Files</th>
+%   my $file = shift @{$inputs};
+    <td><a href="/File/View?file=<% $file %>"><% $file->getUserName %></a></td>
+  </tr>
+% foreach (@{$inputs}){
+<tr><td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td></tr>
+% }
+
  </tbody>
 </table>
+
 </div> 
+
 
 <div id="detailed_status">
 
-<h2>Detailed Status</h2>
+<h2>DetailedStatus</h2>
 
 <p><a href="#" id="close">Close</a></p>
 
@@ -89,7 +75,12 @@ $(document).ready(function(){
  <td></td>
  <td><% $run->getCreatedAt->brief %></td>
  <td>\
+% # if ( $run->getStatus eq 'Complete' ) {</td>
 % if ( $run->getStatus eq 'Complete' ) {
+%# my %finished_components;
+%# my $ergatis_status = SysMicro::ErgatisRunStatus->new( $run->getErgatisKey, \%finished_components );
+%# my $pipeline_end = $ergatis_status->{'start pipeline:'}->{'endTime'};
+%# my $end_object = bless \$pipeline_end, 'SysMicro::Timestamp';
 <% $run->getFinishedAt->brief  %>
 % }
  </td>
@@ -135,47 +126,7 @@ $(document).ready(function(){
   </div>
 </div>
 
-
-<h2>Input Files</h2>   
-% my $inputs = $run->getInputs;
-% if ( @{$inputs} > 0 ) {
-<div class="list">
-
-<table width="100%">
-<thead>
-<tr><th width="50%">Input</th><th width="50%">File</th></tr>
-</thead>
-<tbody>
-%   foreach my $i ( @$inputs ) {
-%     my $ci = $i->getPipelineInput->getClusterInput;
-%     my $type = $ci->getType->getName;
-%     my $format = $ci->getFormat->getName;
-%     my $fr = $i->getFileResource;
-%     my $contents = $fr->isa('ISGA::File') ? [ $fr ] : $fr->getContents;
-%     foreach ( @{$contents} ) {
-<tr>
- <td><% $type %> (<% $format %>)</td>
- <td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td>
-</tr>
-%       if ( $ci->hasParameters ) {
-%         foreach ( @{$i->getParameters} ) {
-<tr><th class="parameter"><% $_->{TITLE} %></th><td colspan="2"><% $_->{VALUE} %></td></tr>
-%         }
-%       }
-%     }
-%   }
-</tbody>
-</table>
-</div>
-
-% } else {
-<div class="alert">The input files for this run are no longer available.</div>
-% }
-
-
 <%once>
-
-my $admin = ISGA::Group->new( Name => 'Account Administrators' );
 
  my %status_map = 
  ( Failed => '<span style="font-weight:bold; color:red">Failed</span>',

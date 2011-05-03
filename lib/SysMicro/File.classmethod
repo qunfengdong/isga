@@ -1,0 +1,112 @@
+# -*- cperl -*-
+
+use Digest::SHA;
+#------------------------------------------------------------------------
+
+=item public File upload(filehandle fh, Hash args);
+
+Upload a file or file collection through the web interface. 
+
+The args hash contains the following required parameters:
+
+ UserName => string
+ Type => FileType
+ Format => FileFormat
+ Description => string
+ CreatedBy => Account
+ CreatedAt => Timestamp
+ IsHidden => int
+
+=cut 
+#------------------------------------------------------------------------
+  sub upload {
+
+    my ($class, $fh, %args) = @_;
+
+    # retrieve a name for this file
+    my $name = Digest::SHA->new(256)->addfile($fh)->b64digest;
+    $name =~ s/\+/-/go;
+    $name =~ s/\//_/go;
+
+    seek($fh,0,0);
+
+    # grab the size of the file
+    $args{Size} = (stat($fh))[7];
+
+    # check to see if the file is already in the system
+    my ($file) = @{$class->query(Name => $name)};
+    
+    # the file doesn't exist, so we will create it in the filesystem
+    if ( ! $file ) {
+      
+      $class->_write($fh, $name);
+
+    # otherwise we have a file with this hash in the system
+    } else {
+
+      # if the files aren't the same size, we have a problem
+      $args{Size} == $file->getSize or X::API->throw(error => 'File Hash Conflict');
+      
+      # if the files have the same name and owner, don't add a new file.
+      if ( $file->getCreatedBy == $args{CreatedBy} and $args{UserName} eq $file->getUserName ) {
+
+	#if we add a single file, and previous copies are in collections make the file visible
+	$args{ExistsOutsideCollection} and $file->edit(ExistsOutsideCollection => 1);
+	
+	return $file;
+      }
+    }
+    
+    # save vars
+    $args{Name} = $name;
+
+    # create the file
+    return $class->create(%args);
+  }
+
+#------------------------------------------------------------------------
+
+=item PRIVATE void _write( Filehandle fh, string name );
+
+Private method to rites a file to the filesystem and returns the
+amount of data written. Used by FileResource constructors.
+
+=cut 
+#------------------------------------------------------------------------
+  sub _write {
+
+    my ($class, $fh, $name) = @_;
+
+    # hash directories on first two characters
+    my $p1 = substr($name, 0, 1);
+    my $p2 = substr($name, 1, 1); 
+
+    # write the file
+    open my $upload, ">", "___file_repository___/$p1/$p2/$name"
+      or X->throw( error => "$!:___file_repository___/$p1/$p2/$name" );
+    local ($/);
+    my $data = <$fh>;
+
+    # remove windows crlf junk
+    $data =~ s/\cM//g;
+
+    print $upload $data;
+    close $upload;
+
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public File verifyFileHandle(Filehandle fh, FileType type, FileFormat format);
+
+Confirms that a file handle types are valid.
+
+=cut 
+#------------------------------------------------------------------------
+sub verifyFileHandle {
+
+  my ($class, $fh, $type, $format) = @_;
+
+
+}

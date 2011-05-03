@@ -1,0 +1,27 @@
+<%args>
+ $blout
+</%args>
+
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<span onClick="document.forms['select_sequence_form'].submit()">
+<li class="rmbutton"><a href="/WorkBench/ConfirmMSA">Sequences</a></li>
+<li><p>Download this file to your local machine.</p></li>
+</span>
+
+<span onclick="window.location='/WorkBench/Blast'">
+<li class="rmbutton"><a href="/WorkBench/Blast>">Edit Description</a></li>
+<li><p>View and edit the description of this file.</p></li>
+</span>
+
+
+<span onclick="window.location='/File/BrowseMy'">
+<li class="rmbutton"><a href="/File/BrowseMy">Browse Files</a></li>
+<li><p>Go back to the list of your files.</p></li>
+</span>
+
+</ul>
+</sys:rightmenu>

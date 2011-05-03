@@ -17,20 +17,20 @@ $(document).ready(function()  {
 <div class="list">
 <table id="collection-<% $file_collection %>" width="100%">
  <thead>
-  <tr><th>Type</th><th>Format</th><th>Created At</th><th></th></tr>
+  <tr><th>Type</th><th>Format</th><th>Created At</th></tr>
  </thead>
  <tbody>
 % }
 
 % foreach my $resource ( @{$file_collection->getContents()} ) {
 
-%   if ( $resource->isa('ISGA::FileCollection') ) {
+%   if ( $resource->isa('SysMicro::FileCollection') ) {
 <& /FileCollection/print_table.mas, file_collection => $resource, 
                                     embed => "collection-$file_collection" &>
 %   } else {
 
 <tr id="file-<% $resource %>" class="child-of-collection<% $file_collection %>">
-  <td colspan="3"><span class="highlight"><% $resource->getUserName %></span></td>
+ <td colspan="3"><a href="/File/View?file=<% $resource %>"><% $resource->getUserName %></a></td>
 </tr>
 <tr>
 %     my $type = $resource->getType;
@@ -51,10 +51,6 @@ $(document).ready(function()  {
  </td>
 
  <td><% $resource->getCreatedAt->brief %></td>
- <td>
-   <a href="/File/View?file=<% $resource %>">View File</a> | 
-   <a button"href="/Download/<% $resource->getUserName %>?file_resource=<% $resource %>">Download File</a>
- </td>
 </tr>
 %   }
 % }

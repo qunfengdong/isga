@@ -1,4 +1,0 @@
---- !perl/MasonX::Foundation::Class::Dictionary
-class: JobType
-attributes:
-  - { name: Class, type: string }

@@ -1,0 +1,26 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public delete();
+
+Removes a file resource from a collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub delete {
+
+    my $self = shift;
+
+    # save collection and index
+    my $collection = $self->getFileCollection();
+    my $index = $self->getIndex();
+
+    # delete the database entry
+    $self->NEXT::delete();
+
+    # grab entries with a higher index
+    my $contents = SysMicro::FileCollectionContent->query( FileCollection => $collection,
+							   Index => { '>' => $index } );
+    $_->edit( Index => $_->getIndex-1 ) for @$contents;
+  }

@@ -1,7 +1,5 @@
 <%args>
  @runs
- $show_complete
- $show_canceled
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
@@ -37,8 +35,8 @@ $(document).ready(function() {
  </tr>
  <tr class="list_label">
   <th>Name</th>
-  <th>Id</th>
   <th>Account</th>
+  <th>Pipeline</th>
   <th>Started At</th>
   <th>Status</th>
  </tr>
@@ -50,14 +48,22 @@ $(document).ready(function() {
  <tr>
 
 %     my $rname = $_->getName;
-  <td><a href="/Run/View?run=<% $_ %>"><% $rname %>\
+  <td><a href="/Run/AdminView?run=<% $_ %>"><% $rname %>\
   <a class="jTip" id="r<% $_ %>c<% $counter %>" name="<% $rname %>" \
    href="/Run/GetDescription?run=<% $_ %>">
   <span class="sup">?</span>
   </a>
   </td>
-  <td><% $_->getErgatisKey %></td>
   <td><% $_->getCreatedBy->getEmail %></td>
+
+%     my $pipeline = $_->getType;
+%     my $pname = $pipeline->getName;
+  <td><% $pname %>\
+   <a class="jTip" id="p<% $pipeline %>c<% $counter %>" name="<% $pname %>" \
+   href="/Pipeline/GetDescription?pipeline=<% $pipeline %>">
+  <span class="sup">?</span>
+  </a>
+  </td>
 
        <td><% $_->getCreatedAt %></td>
        <td><% $status_map{ $_->getStatus->getName} %></td>
@@ -83,10 +89,8 @@ $(document).ready(function() {
 </div>
 
 % } else {
-<p>No piplines are running.</p>
+<p>No piplines have been run.</p>
 % }
-
-<& admin_list_right_menu.mas, show_complete => $show_complete, show_canceled => $show_canceled &>
 
 <%once>
 

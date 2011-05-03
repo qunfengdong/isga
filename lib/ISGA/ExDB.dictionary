@@ -1,5 +1,0 @@
---- !perl/MasonX::Foundation::Class::Dictionary
-class: ExDB
-table: exdb
-attributes:
-  - { name: BaseURI, type: string }

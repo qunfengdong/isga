@@ -33,22 +33,15 @@ $(document).ready(function() {
   <th>Type</th>
   <th>Format</th>
   <th>Created At</th>
-  <th>Hide</th>
  </tr>
 </thead>
 <tbody>
 %   foreach ( @files ) {
  <tr>
-% if ( $_->isa('ISGA::File') ) {
+% if ( $_->isa('SysMicro::File') ) {
   <td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td>
   <td><% $_->getType->getName %></td>
   <td><% $_->getFormat->getName %></td>
-  <td><% $_->getCreatedAt->brief %></td>
-%   if( $_->isHidden ){
-  <td><a class="normal" href="/submit/File/Restore?file=<% $_ %>&redirect=<% $r->uri %>">Restore</a></td>
-%   }else{
-  <td><a class="normal" href="/submit/File/Hide?file=<% $_ %>&redirect=<% $r->uri %>">Hide</a></td>
-%   }
 % } else {
   <td><a href="/FileCollection/View?file_collection=<% $_ %>"><% $_->getUserName %></a></td>
   <td>\
@@ -59,14 +52,8 @@ File Archive
 %   }
 </td>
   <td>Tar</td>
-  <td><% $_->getCreatedAt->brief %></td>
-%   if( $_->isHidden ){
-  <td><a class="normal" href="/submit/File/Restore?file_collection=<% $_ %>&redirect=<% $r->uri %>">Restore</a></td>
-%   }else{
-  <td><a class="normal" href="/submit/File/Hide?file_collection=<% $_ %>&redirect=<% $r->uri %>">Hide</a></td>
-%   }
 % }
-%#  <td><% $_->getCreatedAt->brief %></td>
+  <td><% $_->getCreatedAt->brief %></td>
  </tr>
 %   }
 </tbody>
@@ -98,19 +85,28 @@ File Archive
 <sys:rightmenu>
 
 <ul>
-
-<%doc>
 <li class="title">Tools</li>
 
+<span onclick="window.location='/File/Upload'">
+<li class="rmbutton"><a href="/File/Upload">Upload File</a></li>
+<li><p>Upload a new file. You can load this file into a pipeline and share it with other users.
+</p></li>
+</span>
+
+<%doc>
 % if ( $show_hidden ) {
 
-<li class="rmbutton pointer"><a href="/File/BrowseMy">Stop Showing Hidden Files & Collections</a></li>
-<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>You are currently viewing all files, including hidden ones. This tool will hide your hidden files again.</p></li>
+<span onclick="window.location='/File/BrowseMy'">
+<li class="rmbutton"><a href="/File/BrowseMy">Stop Showing Hidden Files & Collections</a></li>
+<li><p>You are currently viewing all files, including hidden ones. This tool will hide your hidden files again.</p></li>
+</span>
 
 % } else { 
 
-<li class="rmbutton pointer"><a href="/File/BrowseMy?show_hidden=1">Show Hidden Files & Collections</a></li>
-<li class="pointer" onclick="window.location='/File/BrowseMy?show_hidden=1'"><p>Show files that you have hidden. If you wish to permenantly unhide a file, select it and use the unhide tool.</p></li>
+<span onclick="window.location='/File/BrowseMy?show_hidden=1'">
+<li class="rmbutton"><a href="/File/BrowseMy?show_hidden=1">Show Hidden Files & Collections</a></li>
+<li><p>Show files that you have hidden. If you wish to permenantly unhide a file, select it and use the unhide tool.</p></li>
+</span>
 
 % }
 </%doc>

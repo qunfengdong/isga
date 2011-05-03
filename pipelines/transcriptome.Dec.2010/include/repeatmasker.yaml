@@ -1,6 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: RepeatMasker
-Description: 'RepeatMasker finds simple repeats in sequence.'
-RunBuilderParams:
-  - { templ: 'select', NAME: 'species', TITLE: 'RepeatMasker Comparison Species', REQUIRED: 1, OPTION: [ 'human', 'mouse', 'rattus', 'arabidopsis', 'mammal', 'carnivore', 'rodentia', 'rat', 'cow', 'pig', 'cat', 'dog', 'chicken', 'fugu', 'danio', '"ciona intestinalis"', 'drosophila', 'anopheles', 'elegans', 'diatoaea', 'artiodactyl', 'arabidopsis', 'rice', 'wheat', 'maize' ], DESCRIPTION: 'This specifies the species to be used for comparison in the RepeatMasker software.', CONFIGLINE: '___rm_species___' }
-
