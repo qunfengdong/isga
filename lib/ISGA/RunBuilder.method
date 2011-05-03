@@ -188,7 +188,7 @@ Replace the contents of the provided RunBuilderInput with the supplied FileColle
       
       # remove old filecollection if it was created for the run
       $old_fc->getDescription eq 'Collection Created for Run input' and $old_fc->delete();
-
+      
     } else {
       $arg3 = ISGA::RunBuilderInput->create( RunBuilder => $self,
 					     FileResource => $fc,
@@ -198,6 +198,7 @@ Replace the contents of the provided RunBuilderInput with the supplied FileColle
     # return $rbi
     return $arg3;
   }
+
 
 #------------------------------------------------------------------------
 

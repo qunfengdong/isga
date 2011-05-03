@@ -16,6 +16,7 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   $m->comp("/plugin/$plugin/walkthrough-annotate-cluster.mas");
 }
 </%perl>
+</div>
 
 <% $form->get %>
 

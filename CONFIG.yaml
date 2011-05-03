@@ -2,26 +2,41 @@
 mason_data_directory: /data/web/isga.cgb/mason 
 apache_session_directory: /data/web/isga.cgb/session
 apache_session_lock_directory: /data/web/isga.cgb/session
-database: { name: isga_dev, user: chemmeri, type: Pg }
-test_database: { name: isga, user: cgb, type: Pg }
-mail_config: localhost
+database: { name: isga_dev, user: cgb, type: Pg }
+test_database: { name: isga_test, user: cgb, type: Pg }
+mail_config: mail.cgb.indiana.edu
 log_file: /data/web/isga.cgb/log
 minimum_log_level: warning
-error_notification_email: [ 'chemmeri@islay.cgb.indiana.edu' ]
-server_name: ISGA Laptop Test
+error_notification_email: [ 'mnrusimh@cgb.indiana.edu', 'chemmeri@indiana.edu', 'krevanna@indiana.edu', 'abuechle@cgb.indiana.edu' ]
+server_name: ISGA Dev
 custom_parameters:
 # Email address to send notification mail from
-  mail_sender: 'ISGA Chris Laptop System <biohelp@cgb.indiana.edu>'
+  mail_sender: 'ISGA Dev System <biohelp@cgb.indiana.edu>'
+# Directory to store files uploaded to ISGA from users.  Please use full path.
+  file_repository: /data/web/isga.cgb/repository
 # Temporary file directory to use for ISGA.  Please use full path.
-  tmp_file_directory: /tmp/ISGA
+  tmp_file_directory: /research/projects/isga/dev/tmp
+# Directory where Ergatis submits from. Often called <path to ergatis tmp>/pipelines_building. Please use full path.
+  ergatis_submit_directory: /research/projects/isga/dev/tmp/pipelines_building
 # The URL for the cgi directory of the Ergatis installation that ISGA will use.
   ergatis_base_uri: https://ergatis-dev.cgb.indiana.edu/cgi/
 # The time allowed between resetting a password and confirming the password change.  e.g., 24h
   password_reset_cutoff: 24h
+# Directory where Ergatis writes output data.   Often called <path to ergatis project>/output_repository/.  Please use full path.
+  ergatis_output_repository: /research/projects/isga/dev/project/output_repository/
+# Directory where Ergatis writes pipeline information for runs.   Often called <path to ergatis project>/workflow/runtime/pipeline/.  Please use full path
+  ergatis_runtime_directory: /research/projects/isga/dev/project/workflow/runtime/pipeline/
 # The base url for your local ISGA web server
-  base_uri: https://aaron1-dev.cgb.indiana.edu/
+  base_uri: https://isga-dev.cgb.indiana.edu/
+# Directory to use for cgview.  Please use full path.
+  cgview_directory: /research/projects/isga/dev/cgview/
+# Path to the directory where GBrowse configuration and database files
+# will be stored.  This variable must be a full path.
+  gbrowse_directory: /research/projects/isga/dev/gbrowse/
 # Path to your local copies of searchable databases, i.e., NCBI nr, PFAM, etc.  Please use full path.
   database_path: /data/
+# Your ergatis project name
+  ergatis_project: isga-dev
 # Path to the bin directory containing scripts used in ISGA.  Please use full path.
   scripts_bin: /research/projects/isga/sw/bin/
 # Full path to your shell e.g., /bin/sh
@@ -52,5 +67,3 @@ custom_parameters:
   sffToCA_executable: /bioportal/sw/bin/sffToCA
 # Full path to amos2sq
   amos2sq_executable: /bioportal/sw/bin/amos2sq
-# Full path to clustalw2
-  clustalw_executable: /nfs/bio/sw/bin/clustalw2

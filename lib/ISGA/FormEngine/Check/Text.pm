@@ -18,8 +18,6 @@ use strict;
 use warnings;
 
 use HTML::Scrubber;
-use URI;
-use Email::Valid;
 
 #========================================================================
 
@@ -51,23 +49,6 @@ sub checkHTML {
 
 #------------------------------------------------------------------------
 
-=item public String checkEmail(string value);
-
-Returns an error if the supplied text isn't an email address. Weak validation.
-
-=cut 
-#------------------------------------------------------------------------
-sub checkEmail {
-  
-  my $value = shift;
-
-  my ($address, $object) = Email::Valid->address($value);
-  
-  return ($address ? '' : "$value is not a valid email address");  
-}
-
-#------------------------------------------------------------------------
-
 =item public String checkUnixFileName(string value);
 
 Returns an error if the supplied text contains code to break a unix file path.
@@ -78,7 +59,9 @@ sub checkUnixFileName {
 
   my $value = shift;
 
-  if ( $value !~ /^[-A-Za-z0-9_ \.]+$/ ) {
+  warn "checking Unix File Name\n";
+
+  if ( $value !~ /^[-A-Za-z0-9_ ]+$/ ) {
     return 'Must not contain special characters.';
   }
 
@@ -102,6 +85,7 @@ sub alphaNumeric {
   }
   return '';
 }
+
 
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkHTML');
 ISGA::FormEngine::SkinUniform->_register_check('Text::alphaNumeric');

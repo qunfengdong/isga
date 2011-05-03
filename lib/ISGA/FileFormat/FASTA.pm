@@ -20,10 +20,6 @@ use warnings;
 
 use ISGA::X;
 
-
-use File::Temp;
-use Bio::SeqIO;
-
 # define valid alphabets
 my @dna = qw( A a C c G g T t U u R r Y y K k M m S s W w B b D d H h V v N n X x - );
 
@@ -44,54 +40,6 @@ $aa{$_} = [] for @aa;
 
 =cut
 #========================================================================
-
-
-#------------------------------------------------------------------------
-
-=item public filehandle format(filehandle $fh);
-
-Uses BioPerl to clean up the formating of the supplied file.
-
-=cut
-#------------------------------------------------------------------------
-sub format {
-
-  my ($class, $fh) = @_;
-
-  my $new_fh = File::Temp->new();
-  
-  eval { 
-
-    my $seqio_object = Bio::SeqIO->new(-format => 'fasta', -fh => $fh);
-    
-    my $seqOut = Bio::SeqIO->new(-format => 'fasta', -noclose => 1, -fh => $new_fh );
-    
-    while ( my $seq_object = $seqio_object->next_seq ) {
-      $seqOut->write_seq($seq_object);
-    }
-
-  };
-    
-  # if we catch a bioperl error, present it to the user
-  if ( my $e = $@ ) {
-    if ( ! ref($@) ) {
-      X::Dropped->throw( error => $@ );
-    } elsif ( $e->isa('Bio::Root::Exception') ) {
-      X::User->throw( error => $e->text );
-    } else {
-      $e->rethrow();
-    }
-  }
-
-  # seek to beginning of otuput
-  $new_fh->flush();
-  seek($new_fh,0,0);
-
-  -z $new_fh and X::File::Empty->throw( name => 'ah poop');
-
-  return $new_fh;
-}
-
 
 #------------------------------------------------------------------------
 
@@ -213,9 +161,6 @@ sub verify {
 	
     }
   }
-
-  
-  seek($fh,0,0);
 
   return \%fasta;
 }

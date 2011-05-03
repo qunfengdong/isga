@@ -1,6 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: Shore Coverage
-Description: 'Estimates Read Coverage.'
-RunBuilderParams:
-  - { NAME: 'feature', TITLE: 'Feature String for GFF', REQUIRED: 1, VALUE: 'coverage', DESCRIPTION: 'The feature string used as column 3 in GFF files.', CONFIGLINE: '___feature___' }
-  - { NAME: 'maxhits', TITLE: 'Maximum Number of Hits per Read', REQUIRED: 1, VALUE: '1', DESCRIPTION: 'The maximum number of times a read can be mapped.  Should be 1 for uniquely mapping reads.', CONFIGLINE: '___max_hits___' }

@@ -49,6 +49,7 @@ sub updateStatus {
   
   my @component_names = grep { exists $ergatis->{$_} } map { $_->getErgatisName } @$components;
 
+
   # go through each component in a cluster and take the lowest number
   $key = min( $key, $status_rank{ $ergatis->{$_}{state} } ) for @component_names;
 
@@ -164,7 +165,7 @@ sub downloadEvidence {
 
   $self->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
 
-  my $archive = Archive::Tar::Wrapper->new();
+  my $archive = Archive::Tar->new();  
 
   my $run = $self->getRun;
   my $run_dir = "Run-" . $run->getErgatisKey;
@@ -181,6 +182,7 @@ sub downloadEvidence {
       
       # add contents to file
       if ( $iterations ) {
+	
 	for ( 1 .. $iterations ) {
 	  $co->downloadEvidence( $run, $cluster_dir, $archive, $_);
 	}
@@ -190,9 +192,11 @@ sub downloadEvidence {
     }
   }
 
+  $archive->add_data( $cluster_dir, '', { mode => '0700', type => 'DIR' } );
+  $archive->add_data( $run_dir, '', { mode => '0700', type => 'DIR' } );
+      
   my $tmp = File::Temp->new();
-  $archive->write($tmp->filename, 1);
-
+  $archive->write($tmp->filename, 'COMPRESS_GZIP');
   return $tmp;
 }
 

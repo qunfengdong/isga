@@ -2,9 +2,8 @@
   return if $m->cache_self;
 </%init>
 
-<div class="hidden documentation editComponent">
- <div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div>
- <div id="WT_copy">
+<div class="hidden documentation editComponent"><div id="WT_close_right"><span>Walkthrough</spa\
+n><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
 <p>On this screen, you can make notes about any parameter
 changes you made in the previous section.  These notes
 can be used as helpful reminders as to why a parameter
@@ -20,5 +19,4 @@ Edit Program Parameters</span>.</p>
 
 <p>Once you are done customizing your pipeline use the
 toolbox and choose <span class="highlight">Finalize Pipeline</span>.</p>
- </div>
 </div>

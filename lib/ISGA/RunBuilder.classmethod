@@ -18,10 +18,9 @@ exists for the pipeline this runbuilder processes.
     foreach ( @$results ) {
 
       my $template = $_->getPipeline->getGlobalTemplate();
-
+      
       if ( my $subclass = $template->getSubClass ) {
 	my $full_subclass = $class . '::' . $subclass;
-	eval "require $full_subclass";
 	$full_subclass->can('new') and bless $_, $full_subclass;
       }
     }

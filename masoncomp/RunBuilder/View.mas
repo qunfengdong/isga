@@ -16,7 +16,7 @@ my $has_run_parameters = $run_builder->hasRunParameters();
 my $runs = ISGA::Run->getCurrentRunCount($account);
 my $plugin = $run_builder->getWebPluginDirectory();
 
-$accepting_jobs or $m->comp('/site/sge_outage.mas');
+$accepting_jobs or $m->comp('sge_outage.mas');
 </%perl>
 
 <h1>Submission Builder</h1>
@@ -31,7 +31,7 @@ will process. Additionally, you may need to set information specific to
 the file being submitted.</p>
 
 <div class="data">
-<table width="100%" class="fixed">
+<table width="100%">
  <tbody>
   <tr>
    <th width="15%">Name</th><td width="35%"><% $run_builder->getName %></td>
@@ -63,7 +63,7 @@ the file being submitted.</p>
  <tr><th width="30%">Detail</th><th>Value</th></tr>
 </thead>
 <tbody>
-% foreach ( @{$run_builder->getPrettyPrint} ) {
+% foreach ( @{$run_builder->getParameterDetails} ) {
  <tr><td><% $_->[1] %></td><td><% $_->[2] %></td></tr>
 % }
 </tbody>

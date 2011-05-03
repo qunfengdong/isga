@@ -1,0 +1,11 @@
+<%init>
+  return if $m->cache_self;
+</%init>
+
+<div class="hidden documentation editRunParameters"><div id="WT_close_right"><span>Walkthrough</span><a c\
+lass="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>In this section, you can edit any required parameters for your
+pipeline submission.  Genus and Species information will always be
+required.  Additional information will be required depending on which
+modules are being ran as well.</p>
+</div>

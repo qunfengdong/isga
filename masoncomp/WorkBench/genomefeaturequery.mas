@@ -9,11 +9,11 @@ $error
 <%perl>
 my $account = ISGA::Login->getAccount;
 my $runs = ISGA::Run->query( CreatedBy => $account );
-push @$runs, @{$account->getSharedRuns()};
 my %searchableRuns = ();
 if (@$runs) {
 	foreach (@$runs) {
-		if ( $_->hasGBrowseInstallation ) {
+		bless $_, 'ISGA::Run::ProkaryoticAnnotation';
+		if ( $_->hasGbrowseInstallation ) {
 			$searchableRuns{$_} = $_->getName;
 		}
 	}
@@ -36,7 +36,7 @@ if (%searchableRuns) {
    @import "/include/css/uni-form.css";
 </sys:style>
 
-<form class="uniForm inlineLabels" method="post" name="genome_feature_query_form" action="/WorkBench/GenomeFeatureQueryResult">
+<form class="uniForm inlineLabels" method="post" name="genome_feature_query_form" action="/WorkBench/Results/GenomeFeatureQuery">
 <fieldset class="inlineLabels">
 <legend>Search</legend>
 <div class="ctrlHolder<% $errClass %>">

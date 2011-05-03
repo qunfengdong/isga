@@ -1,14 +1,43 @@
 # -*- cperl -*-
 
+  my %custom_inputs = 
+  ( 'P_Func_Evidence' => '_process_p_func_evidence_list',
+    'Parse_Evidence_Feature_Input' => '_process_parse_evidence_feature_list',
+    'FULL_TRANSLATED_LIST' => '_process_translated_list',
+    'Overlap_Analysis_RNA_Input' => '_process_overlap_analysis_RNA_list',
+    'Overlap_Analysis_Evidence_Input' => '_process_overlap_analysis_evidence_list',
+    'COG_BSML' => '_process_COG_list',
+    'Gene_Prediction' => '_process_gene_prediction_list',
+    'CDS_FASTA' => '_process_CDS_list',
+    
+    # Celera Assembly
+    'FRG_Input' => '_processFRGList',
+ );
+		     
+
 #------------------------------------------------------------------------
 
 =item public string getValue(RunBuilder $rb);
 
-Calculates the file name(s) for a component input value. Override via subclass for custom behaviour.
+Calculates the file name(s) for a component input value.
 
 =cut 
 #------------------------------------------------------------------------
-  sub getValue { return shift->getDefaultValue(); }
+  sub getValue {
+
+    my $self = shift;
+
+    my $name = $self->getName;
+
+    # if we have defined a special method for this input, use it
+    if ( exists $custom_inputs{$name} ) {
+      my $method = $custom_inputs{$name};
+      return $self->$method(@_);
+    }
+
+    # otherwise use default value
+    return $self->getDefaultValue;
+  }
 
 #------------------------------------------------------------------------
 
