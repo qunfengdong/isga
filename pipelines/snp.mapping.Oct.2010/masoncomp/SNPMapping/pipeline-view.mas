@@ -25,16 +25,6 @@ function jtUpdate() {
 
 <h1><% $pipeline->getName %></h1>
 
-<div class="hidden documentation pipelineView"><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
-<p>Here is the overview page for the <% $template->getName %>.  To the right, you will notice several tools allowing
-you to view the inputs and outputs, view the current parameters, customize the pipeline, run the pipeline, or view old runs
-you have performed for this pipeline.  Feel free to view the default paramenters, inputs and outputs now.</p>
-<p>To change any parameter values or choose which portions of the pipeline to run, click the <span class="highlight">
-Customize Pipeline</span> option now.</p>
-<p>To submit and run this pipeline using the default values, click the <span class="highlight">Run Pipeline</span> option.
-</p>
-</div></div>
-
 <p>
 The graph below illustrates the major modules of the ISGA <% $template->getName %>.  Use the 
 <span class=highlight>Pipeline Tools</span> on the right to run the default pipeline, customized the 
@@ -73,5 +63,16 @@ pipeline, or access your previously configured pipelines.
 
 <div id="component_selection" class="hidden">
 </div>
+
+<div id="WT" class="hidden documentation pipelineView"><div id="WT_arrow_left"></div><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Here is the overview page for the <% $template->getName %>.  You will notice several tools allowing 
+you to view the required inputs, view the produced outputs, view the current parameters, customize the pipeline, 
+or run the pipeline.  Feel free to view the default paramenters, inputs and outputs now.</p>
+<p>To change any parameter values or choose which portions of the pipeline to run, click the <span class="highlight">
+Customize Pipeline</span> option now.</p>
+<p>To submit and run this pipeline using the default values, click the <span class="highlight">Run Pipeline</span> option.
+</p>
+</div></div>
+
 
 <& /Pipeline/right_menu.mas, pipeline => $pipeline &>

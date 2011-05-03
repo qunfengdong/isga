@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::ParseEvidenceFeatureInput;
+package ISGA::ClusterOutput::ParseEvidenceFeatureInput;
 
 use warnings;
 use strict;

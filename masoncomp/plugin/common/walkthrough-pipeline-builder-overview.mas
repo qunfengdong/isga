@@ -6,7 +6,7 @@
  <div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div>
   <div id="WT_copy">
 <p>This is the Pipeline Building Overview page.  Using the toolbox
-you can view inputs and outputs, finalize
+you can edit your pipelines details, view inputs and outputs, finalize
 your pipeline, or cancel the building process.</p>
 
 <p>Hovering over the image of the pipeline will bring up a tip.

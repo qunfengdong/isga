@@ -6,4 +6,3 @@ attributes:
   - { name: Coordinates, type: string }
   - { name: IsRequired, type: boolean, options: [ REQUIRED ] }
   - { name: AltCluster, type: Cluster, column: workflow_altcluster_id }
-  - { name: Customization, type: string, options: [ REQUIRED ] }

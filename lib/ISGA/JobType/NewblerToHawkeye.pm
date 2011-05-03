@@ -106,15 +106,6 @@ sub buildForm {
 #        ERROR => 'not_null',
         HIDEDIV => 1
        },
-       {
-        'TITLE' => 'Email me when job completes',
-        'NAME' => 'notify_user',
-        'templ' => 'check',
-        'VALUE' => 0,
-        'OPT_VAL' => 1,
-        'OPTION' => '',
-        'HINT' => 'Check this box to receive email notification when your job completes.'
-       },
       ]
       },
     );
@@ -132,8 +123,7 @@ Build the appropriate WebApp command for this Job.
 #------------------------------------------------------------------------
 
 sub buildWebAppCommand {
-        use File::Path;
-        my ($self, $webapp, $form, $job) = @_;
+  my ($self, $webapp, $form, $job) = @_;
 
         my $web_args = $webapp->args;
 
@@ -147,10 +137,7 @@ sub buildWebAppCommand {
 
         $project =~ s/ /_/g;
         ## Hardcoded paths.
-#        my $files_path = "___tmp_file_directory___/workbench/newblertohawkeye/";
-        my $files_path = "___tmp_file_directory___/workbench/" . $job->getType->getName . "/";
-        umask(0);
-        mkpath($files_path );
+        my $files_path = "___tmp_file_directory___/workbench/newblertohawkeye/";
 
         my $log_name  = $job->getType->getName . "_" .  $job->getId;
 #        my $time = time.$$;
@@ -210,7 +197,7 @@ sub buildWebAppCommand {
             $mate_pair_args .= " -name " . $form->get_input('library_name') . " -avg " . $form->get_input('average_length') . " -stdev " . $form->get_input('stdev');
         }
 
-        my $sge_submit_script = "$out_directory/${log_name}_sge.sh";
+        my $sge_submit_script = "$out_directory/${log_name}_sge_hawkeye.sh";
 
         open my $fh, '>', $sge_submit_script or X->throw(message => 'Error creating sge shell script.');
         print $fh '#!/bin/bash'."\n\n";

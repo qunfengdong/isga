@@ -10,16 +10,12 @@ USAGE: install_pipeline.pl
          --source=path to pipeline directory
        [ --help
          --force_install
-         --status
        ]
 
 =head1 OPTIONS
 
 B<--source>
   Filesystem path to root directory of pipeline you are installing
-
-B<--status Available|Published|Retired>
-  Overrides the status of the pipeline
 
 B<--force_install>
   If database entries in this pipeline conflict with installed entries, overwrite the old version.
@@ -49,10 +45,8 @@ use ISGA::ModuleInstaller;
 use Getopt::Long qw(:config no_ignore_case no_auto_abbrev pass_through);
 use Pod::Usage;
 
-my %valid_statuses = ( Available => undef, Published => undef, Retired => undef );
-
 my %options = ();
-my $result = GetOptions (\%options, 'source=s', 'force_install', 'status=s', 'help|h');
+my $result = GetOptions (\%options, 'source=s', 'force_install', 'help|h');
 
 ## display documentation
 if( $options{help} ) {
@@ -66,20 +60,15 @@ my $mi = ISGA::ModuleInstaller->new(%options);
 
 $mi->install();
 
+
+
 sub check_parameters {
 
   my ($options) = @_;
 
-  if ( exists $options{status} ) {
-    if ( ! exists $valid_statuses{$options{status}} ) {
-      print "$options{status} is not a valid pipeline status";
-      exit(1);
-    }
-  }
-
   if ( ! exists $options{source} ) {
     
-    print "--source is a required parameter\n";
+    print "--source is q requred parameters\n";
     exit(1);
   }
 

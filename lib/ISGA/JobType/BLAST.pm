@@ -34,81 +34,44 @@ Build the appropriate FormEngine data structure for this Job.
 
 sub buildForm {
   my ($self, $args) = @_;
+  
+  my $prok_annotation_pipeline = ISGA::Pipeline->new( Name => 'Prokaryotic Annotation Pipeline' );
 
   my $form = ISGA::FormEngine->new($args);
   $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
 
   my $db_path = "___database_path___";
-
-  my @db_groups;
-
-  push @db_groups, 
-    {
-     LABEL => 'Global Databases',
-     templ => 'group',
-     OPTION => ['GenBank DNA: nt', 
-		'GenBank protein: nr', 
-		'Arabidopsis Tair9 cdna', 
-		'Arabidopsis Tair9 Pep' ],
-     OPT_VAL => ["${db_path}NCBI-nr/nr-09-20-2009/nt", 
-		 "${db_path}NCBI-nr/nr-11-19-2010/nr", 
-		 "${db_path}Tair9/Tair9_cdna_20090619/Tair9_cdna", 
-		 "${db_path}Tair9/TAIR9_pep_20090619/Tair9_pep"],
-    };
+  my @database_names = ( 'GenBank DNA: nt', 
+			 'GenBank protein: nr', 
+			 'Arabidopsis Tair9 cdna', 
+			 'Arabidopsis Tair9 Pep' );
+  my @database_values = ( "${db_path}NCBI-nr/nr-09-20-2009/nt", 
+			  "${db_path}NCBI-nr/nr-05-02-2010/nr", 
+                          "${db_path}Tair9/Tair9_cdna_20090619/Tair9_cdna", 
+			  "${db_path}Tair9/TAIR9_pep_20090619/Tair9_pep" );
 
   my $account = ISGA::Login->getAccount;
-  my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', 
-			       OrderBy => 'CreatedAt', IsHidden => 0 );
+  my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt', IsHidden => 0 );
+  foreach my $run(@$runs){
 
-  use Data::Dumper;
+    my $pipeline = $run->getGlobalPipeline();
 
-  my %my_runs = ( LABEL => 'My Runs', OPTION => [], OPT_VAL => [], templ => 'group' );
+    next unless $pipeline == $prok_annotation_pipeline;
 
-  foreach my $run (@$runs) {
-  
-    # only process pipelines that produce blast results
-    next unless $run->getGlobalPipeline->hasBlastDatabase();
-    my ($names, $values) = $run->getBlastDatabases();
+    push(@database_names, "Run ".$run->getName.": predicted gene");
+    push(@database_values,
+	 join( '/', $pipeline->getErgatisOutputRepository(), 'cgb_format', 'workbench_nuc', $run->getErgatisKey, '_run_result_nuc_db'));
 
-    push @{$my_runs{OPTION}}, @$names;
-    push @{$my_runs{OPT_VAL}}, @$values;
+    push(@database_names, "Run ".$run->getName.": predicted protein");
+    push(@database_values,
+	 join( '/', $pipeline->getErgatisOutputRepository(), 'cgb_format', 'workbench_prot', $run->getErgatisKey, '_run_result_prot_db'));
   }
 
-  # if there are runs, display them
-  @{$my_runs{OPTION}} and push @db_groups, \%my_runs;
-
-  my %shared_runs = ( LABEL => 'Shared Runs', OPTION => [], OPT_VAL => [], templ => 'group' );
-
-  my $shared_runs = $account->getSharedRuns();
-
-  foreach my $run (@$shared_runs) {
-    
-    # only process pipelines that produce blast results
-    next unless $run->getGlobalPipeline->hasBlastDatabase();
-    my ($names, $values) = $run->getBlastDatabases();
-    
-    my $owner = $run->getCreatedBy->getName();
-    $_ = "$owner: $_" for @$names;
-
-    push @{$shared_runs{OPTION}}, @$names;
-    push @{$shared_runs{OPT_VAL}}, @$values;
-  }
-
-  # if there are runs, display them
-  @{$shared_runs{OPTION}} and push @db_groups, \%shared_runs;
-  
-  
   my $files = ISGA::File->query( CreatedBy => $account, OrderBy => 'CreatedAt', Type => 'Genome Sequence', IsHidden => 0 );
-
-  my %my_files = ( LABEL => 'My Genome Sequence Files', OPTION => [], OPT_VAL => [], templ => 'group' );
-
   foreach (@$files){
-      push @{$my_files{OPTION}}, $_->getUserName;
-      push @{$my_files{OPT_VAL}}, $_->getPath;
+      push(@database_names, "Genome Sequence: ".$_->getUserName);
+      push(@database_values, $_->getPath);
   }
-  @{$my_files{OPTION}} and push @db_groups, \%my_files;
-
-
 
   my $id = $args->{feature_id};
   my $content = '';
@@ -141,16 +104,16 @@ sub buildForm {
       TITLE => 'BLAST',
       templ => 'fieldset',
       sub => [
-	      {
-	       'SIZE' => 1,
-	       'NAME' => 'sequence_database',
-	       'templ' => 'groupselect',
-	       sub     => \@db_groups,
-	       'ERROR' => 'Blast::isDatabaseSelected',
-	       'TITLE' => 'Select database'
-	      },
-	      
-	       {
+                  {
+                    'SIZE' => 1,
+                    'NAME' => 'sequence_database',
+                    'templ' => 'select',
+                    'OPTION' => \@database_names,
+                    'OPT_VAL' => \@database_values,
+                    'ERROR' => 'Blast::isDatabaseSelected',
+                    'TITLE' => 'Select database'
+                  },
+                  {
                     'ERROR' => ['Blast::compatibleBlastProgramAndDB'],
                     'OPTION' => \@blast_program,
                     'SIZE' => 1,
@@ -242,7 +205,6 @@ Build the appropriate WebApp command for this Job.
 
 sub buildWebAppCommand {
   my ($self, $webapp, $form, $job) = @_;
-        use File::Path;
 
         my $web_args = $webapp->args;
 
@@ -250,9 +212,7 @@ sub buildWebAppCommand {
         my $upload = $webapp->apache_req->upload('upload_file');
 
         ## Hardcoded paths.
-        my $files_path = "___tmp_file_directory___/workbench/" . $job->getType->getName . "/";
-        umask(0);
-        mkpath($files_path );
+        my $files_path = "___tmp_file_directory___/workbench/blast/";
 
         my $blastfilter = $form->get_input('blastfilter');
         my $scoringmatrix = $form->get_input('scoringmatrix');
@@ -274,8 +234,7 @@ sub buildWebAppCommand {
         my @database_array;
 
         foreach (@$sequence_database){
-#          if ($_ =~ /nr$/ or $_ =~ /nt$/ or $_ =~ /Tair9_pep$/ or $_ =~ /Tair9_cdna$/ or $_ =~ /run_result_prot_db$/ or $_ =~ /run_result_nuc_db$/ ){  
-          if ($_ =~ /nr$/ or $_ =~ /nt$/ or $_ =~ /Tair9_pep$/ or $_ =~ /Tair9_cdna$/ or $_ =~ /cgb_annotation.cds.fna$/ or $_ =~ /cgb_annotation.aa.fsa$/ ){
+          if ($_ =~ /nr$/ or $_ =~ /nt$/ or $_ =~ /tair9_pep$/ or $_ =~ /tair9_cdna$/ or $_ =~ /run_result_prot_db$/ or $_ =~ /run_result_nuc_db$/ ){  
             push(@database_array, $_);
           } else {
             my $formatdbpath = $out_directory."/${log_name}_genome_sequence";
@@ -301,8 +260,9 @@ sub buildWebAppCommand {
 
         my $runpath = "$out_directory/" . $input_file->getName();
 
-#        my $command;
-        my $sge_submit_script = "$out_directory/${log_name}_sge.sh";
+        my $command;
+        my $sge_submit_script = "$out_directory/${log_name}_sge_blast.sh";
+
 
         my $blast_command = "___blast_executable___ -p $blast_program -i $runpath -o $blast_output -e $evalue -d \"$database\" -F $blastfilter -b $nummatches -v $descriptions";
         $blast_command .= " -m $outputformat" if($outputformat != 0);
@@ -318,18 +278,8 @@ sub buildWebAppCommand {
             chmod(0755, $sge_submit_script);
             $command = "$sge_submit_script";
         } else {
-#            $command = $blast_command;
-            open my $fh, '>', $sge_submit_script or X->throw(message => 'Error creating sge shell script.');
-            print $fh '#!/bin/bash'."\n\n";
-            print $fh 'echo "starting blast" 1>&2'."\n";
-            print $fh "$blast_command\n\n";
-            close $fh;
-            chmod(0755, $sge_submit_script);
-            $command = "$sge_submit_script";
+            $command = $blast_command;
         }
-
-        chmod(0755, $sge_submit_script);
-        my $command = "$sge_submit_script";
 
         my @params;
         foreach (keys %{$web_args}) {

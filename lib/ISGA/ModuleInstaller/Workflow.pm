@@ -53,7 +53,7 @@ sub extractKey {
   
   my ($class, $ml, $t) = @_;
   
-  return { Pipeline => ISGA::GlobalPipeline->new( Name => $ml->getPipelineName(), Version => $ml->getVersion()),
+  return { Pipeline => ISGA::GlobalPipeline->new( Name => $t->{Pipeline}, ErgatisInstall => $ml->getErgatisInstall()),
 	   Cluster => ISGA::Cluster->new( Name => $t->{Cluster}, ErgatisInstall => $ml->getErgatisInstall()) };
 }
 
@@ -72,14 +72,11 @@ sub insert {
   my $ei = $ml->getErgatisInstall();
   
   my %args = ( 
-	      Pipeline => ISGA::GlobalPipeline->new( Name => $ml->getPipelineName(), Version => $ml->getVersion()),
+	      Pipeline => ISGA::GlobalPipeline->new( Name => $t->{Pipeline}, ErgatisInstall => $ml->getErgatisInstall()),
 	      Cluster => ISGA::Cluster->new( Name => $t->{Cluster}, ErgatisInstall => $ml->getErgatisInstall()),
-	      IsRequired => $t->{IsRequired},
-	      Customization => $t->{Customization},
+	      IsRequired => $t->{IsRequired}
 	     );
-  if ( exists $t->{AlternateCluster} ){
-    $args{AltCluster} = ISGA::Cluster->new( Name => $t->{AlternateCluster}, ErgatisInstall => $ml->getErgatisInstall());
-  }
+
   if ( exists $t->{Coordinates} ) {
     $args{Coordinates} = $t->{Coordinates};
   }
@@ -102,10 +99,9 @@ sub update {
   my $ei = $ml->getErgatisInstall();
 
   my %args = ( 
-	      Pipeline => ISGA::GlobalPipeline->new( Name => $ml->getPipelineName(), Version => $ml->getVersion()),
+	      Pipeline => ISGA::GlobalPipeline->new( Name => $t->{Pipeline}, ErgatisInstall => $ml->getErgatisInstall()),
 	      Cluster => ISGA::Cluster->new( Name => $t->{Cluster}, ErgatisInstall => $ml->getErgatisInstall()),
 	      IsRequired => $t->{IsRequired},
-	      Customization => $t->{Customization},
 	     );
 
   if ( exists $t->{Coordinates} ) {
@@ -129,19 +125,14 @@ sub checkEquality {
   
   my ($class, $ml, $o, $t) = @_;
 
-  my $pipeline_name = $ml->getPipelineName();
-
   my $Coordinates = $o->getCoordinates();
   ( defined $Coordinates xor exists $t->{Coordinates} ) and
-    X::API->throw( message => "Coordinates do not match entry for Workflow $pipeline_name $t->{Cluster}\n" );
+    X::API->throw( message => "Coordinates do not match entry for Workflow $t->{Pipeline} $t->{Cluster}\n" );
   defined $Coordinates and $Coordinates ne $t->{Coordinates} and
-    X::API->throw( message => "Coordinates does not match entry for Workflow $pipeline_name $t->{Cluster}\n" );
-
-  ( $o->getCustomization ne $t->{Customization} ) and
-    X::API->throw( message => "Customization does not match entry for Workflow $pipeline_name $t->{Cluster}\n" );
+    X::API->throw( message => "Coordinates does not match entry for Workflow $t->{Pipeline} $t->{Cluster}\n" );
 
   ( $o->isRequired xor $t->{IsRequired} ) and
-    X::API->throw( message => "IsRequired does not match entry for Workflow $pipeline_name $t->{Cluster}\n" );
+    X::API->throw( message => "IsRequired does not match entry for Workflow $t->{Pipeline} $t->{Cluster}\n" );
 
 }
 

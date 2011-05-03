@@ -36,9 +36,9 @@ use File::Basename;
 
 #------------------------------------------------------------------------
 
-=item public void RunJob();
+=item public void Blast();
 
-Run a Workbench job using SGE nodes.
+Run a Workbench Blast job using SGE nodes.
 
 =cut
 #------------------------------------------------------------------------
@@ -57,7 +57,7 @@ sub WorkBench::RunJob {
         my %job_args =
             (
              Pid => 0,
-             Status => 'Staging',
+             Status => 'Pending',
              Type => $job_type,
              CreatedBy => ISGA::Login->getAccount,
              CreatedAt => ISGA::Timestamp->new(),
@@ -68,7 +68,7 @@ sub WorkBench::RunJob {
 
         my $command = $job_type->getClass->buildWebAppCommand($self, $form, $job);
 
-#        my $log_name  = $job->getType->getName . "_" .  $job->getId;
+        my $log_name  = $job->getType->getName . "_" .  $job->getId;
 
 #        my $sge=ISGA::SGEScheduler->new(
 #                                        -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
@@ -77,9 +77,13 @@ sub WorkBench::RunJob {
 #                                       );
 #        $sge->command($command);
 
+        system("$command &");
+
+
 #        my $pid = $sge->execute();
+        my $pid = "$log_name".time;
 #        X->throw(message => 'Error submitting job.') unless($pid);
-#        $job->edit( Pid => $pid );
+        $job->edit( Pid => $pid );
 
         $self->redirect( uri => "/WorkBench/Result?job=$job" );
     }

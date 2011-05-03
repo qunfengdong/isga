@@ -8,7 +8,7 @@
    Help: 'The Celera Assembler native format.  FRG files consist of sequencer reads and relationships between the reads. Two types of relationships are defined: libraries and mates.'
    IsBinary: 0
  - Name: ASM
-   Extension: asm
+   Extension: dsm
    Help: 'The ASM file is Celera Assemblers most critical output. The ASM file is complete. The ASM was designed to be the sole deliverable of the assembly pipeline.  The ASM file provides a precise description of the assembly as a hierarchical data structure. The ASM defines all elements of the generated assembly, including the scaffolds and contigs. For every contig, the ASM file includes the multiple sequence alignment that produced it. For every contig, the ASM file includes the sequence and quality scores of the consensus. The ASM file identifies the fate of every read and mate pair used in the assembly. It even identifies the fate of most reads and mate pairs that were not used. (An exception is the ignored reads that had no high-quality bases.)'
    IsBinary: 0
  - Name: Amos Bank

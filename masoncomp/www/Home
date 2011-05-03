@@ -24,16 +24,16 @@ page to log into the service.</p>
 
 
 <div id="WT" class="hidden documentation index"><div id="WT_arrow_left"></div><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
-<p>Welcome to the ISGA walkthrough.  These prompts will 
+<p>Welcome to the pipeline building walkthrough.  These prompts will 
 be present throughout the pipeline building experience.  They are intended 
 to provided interactive guidance as well as visual prompts.  They can be turned off
 at any time by clicking the Hide Walkthrough link in the upper right of the navigation 
 menu.  They can also be permanantely disabled by editing your <a class="normal" href="/Account/EditMyDetails">
 Account Details</a>.</p>
 
-<p>To begin building and customizing a pipeline, please hover over
-<span class="highlight">Build Pipelines</span> on the drop down menu 
-and click a pipeline from the list.  You will be taken to the overview 
-page for the pipeline.  From there you will be able to choose to either 
-edit and customize the pipeline or run it using default values.</p>
+<p>To begin building and customizing a pipeline, please click 
+<span class="highlight">Build Pipelines</span> on the drop down menu.  
+You will be taken to the overview page for the Prokaryotic Annotation 
+Pipeline.  From there you will be able to choose to either edit and 
+customize the pipeline or run it using default values.</p>
 </div></div></div>

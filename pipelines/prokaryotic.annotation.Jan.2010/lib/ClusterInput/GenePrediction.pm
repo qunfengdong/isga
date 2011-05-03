@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::GenePrediction;
+package ISGA::ClusterOutput::GenePrediction;
 
 use warnings;
 use strict;
@@ -19,10 +19,10 @@ sub getValue {
   
   my %components = map{ $_->getErgatisName => '1' } @{$rb->getPipeline->getComponents};
   
-  if ( exists $components{'glimmer3.iter2'} ){
-    return '$;REPOSITORY_ROOT$;/output_repository/glimmer3/$;PIPELINEID$;_iter2/glimmer3.bsml.list';
+  if ( exists $components{'bsml2fasta.final_cds'} ){
+    return '$;REPOSITORY_ROOT$;/output_repository/bsml2fasta/$;PIPELINEID$;_final_cds/bsml2fasta.fsa.list ';
   }else{
-    return '$;REPOSITORY_ROOT$;/output_repository/geneprediction2bsml/$;PIPELINEID$;_default/geneprediction2bsml.bsml.list';
+    return '$;REPOSITORY_ROOT$;/output_repository/bsml2fasta/$;PIPELINEID$;_prediction_CDS/bsml2fasta.fsa.list';
   }  
 }
 

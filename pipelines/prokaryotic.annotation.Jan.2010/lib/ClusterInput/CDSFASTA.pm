@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::CDSFASTA;
+package ISGA::ClusterOutput::CDSFASTA;
 
 use warnings;
 use strict;

@@ -14,18 +14,6 @@ Class method to return available global pipelines
 
 #------------------------------------------------------------------------
 
-=item public [GlobalPipeline] published();
-
-Class method to return published global pipelines
-
-=cut
-#------------------------------------------------------------------------
-  sub published {
-    return shift->query( Status => ISGA::PipelineStatus->new( Name => 'Published' ), OrderBy => 'Name' );
-  }
-
-#------------------------------------------------------------------------
-
 =item public [GlobalPipeline] query();
 
 Wrapper around query method to parse objects into subclass if it exists for this pipeline.
@@ -43,7 +31,6 @@ Wrapper around query method to parse objects into subclass if it exists for this
 
       if ( my $subclass = $_->getSubClass ) {
 	my $full_subclass = $class . '::' . $subclass;
-	eval "require $full_subclass";
 	$full_subclass->can('new') and bless $_, $full_subclass;
       }
     }

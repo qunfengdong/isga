@@ -47,7 +47,7 @@ sub buildForm {
   my @form_params =
   (
     {
-      TITLE => 'BLAST',
+      TITLE => 'BLAST on Quarry',
       templ => 'fieldset',
       sub => [
                   {
@@ -203,7 +203,11 @@ sub buildWebAppCommand {
         my $sge_submit_script = "$out_directory/${log_name}_sge_blast.sh";
 
         my $workflow_ini = "$out_directory/quarry_test.ini";
+#my $blast_command = "___blast_executable___/$blast_program -db \"$database\" -query $runpath -out $blast_output -evalue $evalue -seg $blastfilter -num_alignments $nummatches -num_descriptions  $descriptions";
+-#        $blast_command .= " -outfmt $outputformat" if($outputformat != 0);
         open my $ini, '>', $workflow_ini or X->throw(message => 'Error creating workflow ini');
+# arg=/N/soft/linux-rhel4-x86_64/ncbi-blast-2.2.23+/bin/blastx -db /N/gpfs/abuechle/blastdb/nr (original)
+
         print $ini qq(; Config file for testing simple workflow
 
 [1]
@@ -211,7 +215,7 @@ sub buildWebAppCommand {
 
 [1.1]
 param.command=time
-arg=/N/soft/linux-rhel4-x86_64/ncbi-blast-2.2.23+/bin/blastx -db /N/gpfs/abuechle/blastdb/nr
+arg=/N/soft/linux-rhel4-x86_64/ncbi-blast-2.2.23+/bin/$blast_program -db /N/gpfs/abuechle/blastdb/nr -evalue $evalue -seg $blastfilter -num_alignments $nummatches -num_descriptions  $descriptions
 flag=-query
 flag=-out
 ; Unix Command Flow Comand set
@@ -226,15 +230,15 @@ dceSpec.twisterSpec.daemonPort = 12500
 dceSpec.twisterSpec.brokerHost = 156.56.96.179
 dceSpec.twisterSpec.brokerPort = 3045
 dceSpec.twisterSpec.commType = niotcp
-dceSpec.twisterSpec.nodesFile = /N/u/abuechle/Quarry/twistertest/data/bin/nodes
+dceSpec.twisterSpec.nodesFile = /N/u/abuechle/Quarry/twistertest/twister-0.8/bin/nodes
 dceSpec.twisterSpec.brokerLocation = /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/NaradaBrokering-4.2.2
-dceSpec.twisterSpec.workersPerDaemon = 24
+dceSpec.twisterSpec.workersPerDaemon = 8
 dceSpec.twisterSpec.daemonsPerNode = 1
 
-dceSpec.twisterSpec.partitionFile = /N/u/abuechle/Quarry/twistertest/data/partition/blast.pf
-dceSpec.twisterSpec.mapTaskNum = 8
+dceSpec.twisterSpec.partitionFile = $out_directory/blast.pf
+dceSpec.twisterSpec.mapTaskNum = 16
 dceSpec.twisterSpec.reduceTaskNum = 0
-dceSpec.twisterSpec.subDataDir = /blast
+dceSpec.twisterSpec.subDataDir = $log_name
 dceSpec.twisterSpec.fileExtension = .fa
 dceSpec.twisterSpec.linesPerUnit = 2
 dceSpec.twisterSpec.originalFile = $runpath
@@ -263,25 +267,28 @@ dceSpec.twisterSpec.originalFileLines = 2000
         print $fh 'export WF_ROOT_INSTALL=/research/projects/isga/vtest/workflow'."\n";
  
         print $fh "ssh abuechle\@quarry.uits.indiana.edu \"mkdir -p $out_directory\"\n\n";
-        print $fh "ssh abuechle\@quarry.uits.indiana.edu \"qsub -l nodes=1:ppn=4,walltime=01:00:00 -q pg ~/magic\"\n\n";
+        print $fh "ssh abuechle\@quarry.uits.indiana.edu \"mkdir -p /N/u/abuechle/Quarry/twistertest/data/$log_name\"\n\n";
+
+        print $fh "ssh abuechle\@quarry.uits.indiana.edu \"qsub -l nodes=2:ppn=8,walltime=01:00:00 -q pg ~/magic\"\n\n";
 
         print $fh "/research/projects/isga/vtest/workflow/create_workflow -c $out_directory/quarry_test.ini -t /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task/quarry_test_template.xml -i $out_directory/quarry_test.xml --delete-old\n";
 
         print $fh "/research/projects/isga/vtest/workflow/run_workflow -c $out_directory/quarry_test.ini -t /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task/quarry_test_template.xml -i $out_directory/quarry_test.xml -l $out_directory/quarry_test.log\n";
         
-        print $fh "/research/projects/isga/vtest/workflow/check_workflow -c $out_directory/quarry_test.ini -t /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task//quarry_test_template.xml -i $out_directory/quarry_test.xml > $out_directory/response.txt\n";
+#        print $fh "/research/projects/isga/vtest/workflow/check_workflow -c $out_directory/quarry_test.ini -t /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task//quarry_test_template.xml -i $out_directory/quarry_test.xml > $out_directory/response.txt\n";
         
         #print $fh "until grep \'No workflow based on /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task/quarry_test.xml is running.\' $out_directory/response.txt\n";
-        print $fh "until grep \'No workflow based on .* is running.\' $out_directory/response.txt\n";
-        print $fh "do\n";
-        print $fh "  /research/projects/isga/vtest/workflow/check_workflow -c $out_directory/quarry_test.ini -t /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task//quarry_test_template.xml -i $out_directory/quarry_test.xml > $out_directory/response.txt\n";
-        print $fh "  sleep 60\n";
-        print $fh "done\n";
-
+#        print $fh "until grep \'No workflow based on .* is running.\' $out_directory/response.txt\n";
+#        print $fh "do\n";
+#        print $fh "  /research/projects/isga/vtest/workflow/check_workflow -c $out_directory/quarry_test.ini -t /research/projects/isga/vtest/workflow-3.1.x-cgbr0/twister/dce_task//quarry_test_template.xml -i $out_directory/quarry_test.xml > $out_directory/response.txt\n";
+#        print $fh "  sleep 60\n";
+#        print $fh "done\n";
         
         print $fh "ssh abuechle\@quarry.uits.indiana.edu \"~/kill_magic\"\n\n";
-        print $fh "ssh abuechle\@quarry.uits.indiana.edu \"cat $out_directory/*.out > $out_directory/grid_blast.blout\"\n\n";
-        print $fh "scp abuechle\@quarry.uits.indiana.edu:$out_directory/grid_blast.blout $out_directory\n\n";
+        print $fh "ssh abuechle\@quarry.uits.indiana.edu \"cat /N/u/abuechle/Quarry/twistertest/data/$log_name/*.out > $out_directory/grid_blast.blout\"\n\n";
+#        print $fh "scp abuechle\@quarry.uits.indiana.edu:$out_directory/grid_blast.blout $out_directory\n\n";
+        print $fh "scp abuechle\@quarry.uits.indiana.edu:$out_directory/grid_blast.blout $blast_output\n\n";
+        print $fh "rm -rf /N/u/abuechle/Quarry/twistertest/twister-0.8/temporaryData/*\n\n";
         close $fh;
         chmod(0755, $sge_submit_script);
         $command = "$sge_submit_script";

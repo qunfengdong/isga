@@ -13,13 +13,6 @@
   Index: 40
   Name: Glimmer3 Refinement Pass
   Template: glimmer3
-- Cluster: Alternate Gene Prediction
-  ErgatisName: geneprediction2bsml.default
-  ClusterInput:
-    - Gene_Coords
-    - Genome_Contigs
-  Index: 10
-  Template: geneprediction2bsml
 - Cluster: Protein Domain Search
   ClusterInput:
     - HMM_Search_Input
@@ -336,45 +329,54 @@
   Index: 280
   Template: split_multifasta
 - Cluster: Alternate Start Site Analysis
+  DependsOn: wu-blastp.pre_overlap_analysis
   ErgatisName: bsml2fasta.post_overlap_analysis
   Index: 110
   Template: bsml2fasta
 - Cluster: Alternate Start Site Analysis
+  DependsOn: wu-blastp.pre_overlap_analysis
   ErgatisName: xdformat.post_overlap_analysis
   Index: 120
   Template: xdformat
 - Cluster: Alternate Start Site Analysis
+  DependsOn: wu-blastp.pre_overlap_analysis
   ErgatisName: bsml2featurerelationships.post_overlap_analysis
   Index: 130
   Template: bsml2featurerelationships
 - Cluster: Alternate Start Site Analysis
+  DependsOn: wu-blastp.pre_overlap_analysis
   ErgatisName: parse_evidence.ber_post
   Index: 170
   Template: parse_evidence
 - Cluster: Output
   ClusterInput:
     - Parse_Evidence_Feature_Input
+  DependsOn: wu-blastp.pre_overlap_analysis
   ErgatisName: parse_evidence.ber_pre
   Index: 20
   Template: parse_evidence
 - Cluster: Alternate Start Site Analysis
   CopyParameterMask: ber.pre_overlap_analysis
+  DependsOn: wu-blastp.pre_overlap_analysis
   ErgatisName: ber.post_overlap_analysis
   Index: 140
   Name: BER Alternate Start Site Analysis
   Template: ber
 - Cluster: Alternate Start Site Analysis
+  DependsOn: hmmpfam.pre_overlap_analysis
   ErgatisName: parse_evidence.hmmpfam_post
   Index: 70
   Template: parse_evidence
 - Cluster: Output
   ClusterInput:
     - Parse_Evidence_Feature_Input
+  DependsOn: hmmpfam.pre_overlap_analysis
   ErgatisName: parse_evidence.hmmpfam_pre
   Index: 10
   Template: parse_evidence
 - Cluster: Alternate Start Site Analysis
   CopyParameterMask: hmmpfam.pre_overlap_analysis
+  DependsOn: hmmpfam.pre_overlap_analysis
   ErgatisName: hmmpfam.post_overlap_analysis
   Index: 50
   Name: HMMPfam Alternate Start Site Analysis

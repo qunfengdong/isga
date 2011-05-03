@@ -329,6 +329,38 @@ Returns the cluster name to use and the xml for the
 
 #------------------------------------------------------------------------
 
+=item PRIVATE string uploadInputFile(FileHandle, %ARGS);
+
+Uploads an input file into the repository.
+
+Named Arguments:
+
+ PipelineInput => PipelineInput
+ UserName => string
+ Description => string
+
+=cut
+#------------------------------------------------------------------------
+  sub uploadInputFile {
+    
+    my ($self, $fh, %args) = @_;
+    
+    # extract Pipeline input
+    my $pi = $args{PipelineInput};
+    delete $args{PipelineInput};
+
+    # set format and type
+    $args{Format} = $pi->getFormat;
+    $args{Type} = $pi->getType;
+    
+    # call back for checking upload
+    $args{Filters} = [ $self->verifyUpload($args{UserName}, $pi) ];   
+
+    ISGA::File->upload( $fh, %args );
+  }
+
+#------------------------------------------------------------------------
+
 =item public void verifyInputs(RunBuilderInput $rbi);
 
 This method verifies the selected input files.
@@ -336,3 +368,20 @@ This method verifies the selected input files.
 =cut 
 #------------------------------------------------------------------------
 sub verifyInputs{ undef; }
+
+#------------------------------------------------------------------------
+
+=item public void verifyUpload( string $name, PipelineInput $pi);
+
+This method generates a verification callback to be used on uploaded
+files. By default we do nothing.
+
+=cut 
+#------------------------------------------------------------------------
+sub verifyUpload {
+
+  return sub {
+    my $fh = shift;
+    return $fh;
+  }
+}

@@ -8,26 +8,42 @@
 
 <%perl>
 
-# lets start with a security check
-my $account = ISGA::Login->getAccount or X::User::Denied::RequiresLogin->throw();
-
-# and save a spot for a fh
-my $fh;
+my $contents;
 
 if ( $file_resource ) {
-  ISGA::Login->getAccount->mayReadFileResource($file_resource) or X::User::Denied->throw();
-  open $fh, '<', $file_resource->getPath();
+
+  $file_resource->getCreatedBy == ISGA::Login->getAccount or X::User::Denied->throw();
+
+  warn "load the file\n";
+
+  $m->clear_buffer();
+
+  open my $fh, '<', $file_resource->getPath();
+  
+  if ( $file_resource->getSize > 50000000 ) {
+
+    while (<$fh>) {
+      $m->print($_);
+    }
+  } else {
+    $m->print($m->file($file_resource->getPath()));
+  }
+
+  warn "loaded the file\n";
+
+  $m->flush_buffer();
+  $m->abort();
 
 } elsif ( $run_cluster ) {
-  my $run = $run_cluster->getRun;
-  $account->mayRead($run) or X::User::Denied->throw();
 
-  $fh = $run_cluster->downloadEvidence();
+  my $run = $run_cluster->getRun;
+  $run->getCreatedBy => ISGA::Login->getAccount or X::User::Denied->throw();
+
+  $contents = $m->file($run_cluster->getPath());
 
 } elsif ( $genome_feature ) {
-
-  my $residues = '';
   my $locus = '';
+  my $residues = '';
   if ($genome_feature->isa('ISGA::Gene')) {
 	  $locus = $genome_feature->getLocus;
 	  $residues = $genome_feature->getUpstream($upstream) . $genome_feature->getResidues . $genome_feature->getDownstream($downstream);
@@ -35,28 +51,14 @@ if ( $file_resource ) {
 	  $locus = $genome_feature->getmRNA->getGene->getLocus;
 	  $residues = $genome_feature->getResidues;
   }
-  my $contents = ">$locus\n$residues";
-
-  open $fh, "<", \$contents;
-
-} else { X::User->throw( message => 'You have not supplied a resource to download'); }
+  $contents = ">$locus\n$residues";
+}
 
 $m->clear_buffer();
 
-# decide on how much to read in a go
-my $size = 1024 * 1024 * 4;
-my $buf;
+$m->print( $contents );
 
-# this idiom is copied from File::Copy
-for (;;) {
-  
-  my $r;
-  defined($r = read($fh, $buf, $size)) or X::API->throw( message => "error reading filehandler: $!" );
-  last unless $r;
-  
-  $m->print($buf);
-  $m->flush_buffer();
-}
+$m->flush_buffer();
 $m->abort();
 
 </%perl>
@@ -64,7 +66,3 @@ $m->abort();
 <%flags>
  inherit => undef
 </%flags>
-
-<%once>
-my $admin = ISGA::Group->new(Name => 'Run Administrators');
-</%once>

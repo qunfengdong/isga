@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::OverlapAnalysisRNAInput;
+package ISGA::ClusterOutput::OverlapAnalysisRNAInput;
 
 use warnings;
 use strict;

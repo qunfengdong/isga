@@ -2,5 +2,5 @@
 class: RunBuilderUploadRequest
 partition_of: UploadRequest
 attributes:
-  - { name: Pipeline, type: Pipeline, options: [ REQUIRED ] }
+  - { name: RunBuilder, type: RunBuilder, options: [ REQUIRED ] }
   - { name: PipelineInput, type: PipelineInput, options: [ REQUIRED ] }

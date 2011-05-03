@@ -96,7 +96,7 @@ the underlying cluster is complete to avoid getting partial results.
       # what about when the run has more than one output of the same type?
       $args{UserName} =  $run_name . '.' . $format->getExtension;
 
-      my $file = ISGA::File->addToRepository( $fh, %args );
+      my $file = ISGA::File->addToRespository( $fh, %args );
       push @files, $file;
 
       $run_collection->addContents(\@files);

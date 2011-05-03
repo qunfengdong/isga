@@ -1,40 +1,40 @@
 ---
 - Cluster: Process Gene Prediction
   IsRequired: 1
-  Customization: Standard
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: TFBS Search
   Coordinates: '0, 213, 111, 267'
   IsRequired: 0
-  Customization: Standard 
+  Pipeline: Prokaryotic Annotation Pipeline
 - AlternateCluster: Alternate Gene Prediction
   Cluster: ORF Prediction
   Coordinates: '156, 100, 295, 153'
   IsRequired: 0
-  Customization: Standard
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: Additional Gene Analysis
   Coordinates: '314, 231, 608, 365'
   IsRequired: 0
-  Customization: Modular
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: Protein Domain Search
   Coordinates: '125, 235, 275, 288'
   IsRequired: 1
-  Customization: Standard
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: Sequence Similarity Search
   Coordinates: '244, 162, 410, 215'
   IsRequired: 1
-  Customization: Standard
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: RNA Prediction
   Coordinates: '476, 100, 616, 181'
   IsRequired: 0
-  Customization: Modular
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: Alternate Start Site Analysis
   IsRequired: 0
-  Customization: Standard
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: Process Annotation Input Files
   Coordinates: '260,0,455,53'
   IsRequired: 1
-  Customization: IO
+  Pipeline: Prokaryotic Annotation Pipeline
 - Cluster: Output
   Coordinates: '150,448,575,560'
   IsRequired: 1
-  Customization: IO
+  Pipeline: Prokaryotic Annotation Pipeline

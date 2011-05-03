@@ -84,13 +84,13 @@ $(document).ready(function() {
               var elem = document.getElementById('modal_content');
               for(var i = 0; i < elem.childNodes.length; i++){
                 if(elem.childNodes[i].id=="message"){
-                  elem.childNodes[i].innerHTML = data+"<p>Please try again.</p>";
+                  elem.childNodes[i].innerHTML = data+"<p>Please try again.<\/p>";
                 }
               }
            }
         },
         error: function() {
-          $('#modal_content').append("<h2>There was an error processing your request.  Please try again.</h2>");
+          $('#modal_content').append("<h2>There was an error processing your request.  Please try again.<\/h2>");
         }
      });
      return false;
@@ -166,7 +166,6 @@ function disableWalkthrough() {
   <a href="#" rel='modal_hidden' class="modal">Login</a> | <a href="/Account/Request">Request Account</a> |\
   <div class="modal_hidden hidden" id="modal">
     <h1>Login</h1>
-    <div id="message"></div>
     <& /site/login.mas &>
   </div>
 % } else {

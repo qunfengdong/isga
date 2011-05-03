@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::PFuncEvidence;
+package ISGA::ClusterOutput::PFuncEvidence;
 
 use warnings;
 use strict;

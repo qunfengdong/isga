@@ -33,7 +33,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
     my $build_component = $self->getCopyParameterMask || $self;
 
     if ( my $builder = ISGA::ComponentBuilder->new($build_component, $mask) ) {
-
+      
       my %config;
  
       foreach ( @{$builder->getParameters} ) {
@@ -54,7 +54,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
       }
       }
 
-      # if this is an iteration, we need to ninja-set the output token
+    # if this is an iteration, we need to ninja-set the output token
       if ( $iteration ) {
 	my ($token) = $name =~ /\.(\w+).config$/;
 	$config{___output_token___} = $token;
@@ -64,14 +64,8 @@ Write the $iteration-th config file for this component in support of an Ergatis 
       
     }
 
-    # set project_id_root which is required for some ergatis components to work
-    if ( $file =~ /___project_id_root___/ ) {
-      my $value = $rb->getScrubbedName();
-      $file =~ s/___project_id_root___/$value/g;
-    }
-    
     while ( my ($key, $value) = each %inputMask ) { $file =~ s/$key/$value/g; }      
-
+    
     my $path = join("/", $rb->getFullErgatisPath, $name);
 
     ISGA::Utility->writeFile($path, $file);
@@ -101,18 +95,4 @@ Returns a cloned ComponentBuilder with ParameterMask values injected in
     }
 
     return $cb;
-  }
-
-#------------------------------------------------------------------------
-
-=item public ISGA::Component formatArrayParam(ParameterMaskValue $array);
-
-Formats an array of values for a component input value.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub formatArrayParam{
-   my ($self, $array);
-     return $array;
   }

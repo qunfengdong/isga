@@ -121,16 +121,15 @@ sub compatibleBlastProgramAndDB {
                  'tblastx' => 'nucleotide',);
   my $flag = 0;
   if($program eq 'blastn'){
-      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) );
   }elsif($program eq 'blastp'){
-#      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*run_result_prot_db$/) );
-      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) );
+      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /tair9_pep$/) and ($db !~ /.*run_result_prot_db$/) );
   }elsif($program eq 'blastx'){
-      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) );
+      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /tair9_pep$/) and ($db !~ /.*run_result_prot_db$/) );
   }elsif($program eq 'tblastn'){
-      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) );
   }elsif($program eq 'tblastx'){
-      $flag = 1 if( ($db =! /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db =! /nr$/) or ($db =~ /.*run_result_prot_db$/) );
   }
   if( $flag ){
     return '<br>The BLAST program you have selected is not compatible with your database type.  '.ucfirst($program).' needs to be used with a '.$dbtype{$program}.' database.';

@@ -61,20 +61,20 @@ sub RunBuilder::Create {
     X::User::Denied->throw( error => "This pipeline is no longer available to be run. A newer version of the pipeline may be available." );
 
   if (my ($started_builder) = @{ISGA::RunBuilder->query( Pipeline => $pipeline, 
-                                                         CreatedBy => $account )} ){
+							     CreatedBy => $account )} ){
     $self->redirect( uri => "/RunBuilder/View?run_builder=$started_builder" );
   }
 
   # count runs
   my $runs = ISGA::Run->exists( CreatedBy => $account, Type => $pipeline );
   $runs++;
-  my $pipeline_name = $pipeline->getName;
-  my $default_name = length($pipeline_name) > (39 - length(" Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Run $runs")) . " Run $runs" : $pipeline_name . " Run $runs";
+
+  my $default_name = $pipeline->getName . " Run $runs";
 
   while( ISGA::Run->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount) ||
          ISGA::RunBuilder->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount)){
     $runs++;
-    $default_name = length($pipeline_name) > (39 - length(" Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Run $runs")) . " Run $runs" : $pipeline_name . " Run $runs";
+    $default_name = $pipeline->getName . " Run $runs";
   }
 
   my %form_args =
@@ -167,19 +167,16 @@ sub RunBuilder::EditParameters {
       my $component_builder = ISGA::ComponentBuilder->new($component, $parameter_mask);
       
       foreach my $parameter ( @{$component_builder->getRunBuilderParameters} ) {
-
+	
 	my $name = $parameter->{NAME};
 
 	my $value = $form->get_input($name);
-	my $title = $parameter->{TITLE};
-	if ( exists $parameter->{COMPONENT} ) {
-	  $title = join(' ', $parameter->{COMPONENT}, $title);
-	}
+
+	my $title = "$parameter->{COMPONENT} $parameter->{TITLE}";
 
 	$parameter_mask->{Component}{$component}{$name} = { Description => 'Run Parameter',
 							    Title => $title,
 							    Value => $value };
-
       }
     }
 
@@ -299,13 +296,11 @@ sub RunBuilder::UploadInput {
 
   my $self = shift;
   my $args = $self->args;
-  
   my $form = ISGA::FormEngine::RunBuilder->UploadInput($args);
 
   my $rbi = exists $args->{run_builder_input} ? $args->{run_builder_input} : undef;
   my $pi = ( $rbi ? $rbi->getPipelineInput : $args->{pipeline_input} );
-  my $rb = $args->{run_builder};
-  my $pipeline = $rb->getPipeline();
+  my $run_builder = $args->{run_builder};
 
   # create http arg string
   my $args_string = $rbi ? "run_builder_input=$rbi" : "pipeline_input=$pi";
@@ -314,10 +309,10 @@ sub RunBuilder::UploadInput {
 
   # permissions check
   my $account = ISGA::Login->getAccount();
-  $rb->getCreatedBy == $account 
+  $run_builder->getCreatedBy == $account 
     or X::User::Denied->throw;
 
-  $form->canceled and $self->redirect( uri => "/RunBuilder/View?run_builder=$rb" );
+  $form->canceled and $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
 
   if ( $form->ok ){
 
@@ -327,35 +322,37 @@ sub RunBuilder::UploadInput {
     my $description = $form->get_input('description');
     $description and $args{Description} = $description;
 		    
+
     if ( my $file_name = $args->{file_name} ) {
     
       my $fh = $self->apache_req->upload('file_name')->fh;
 
       $args{UserName} = $new_file_name || $file_name;
 
-      $pipeline->uploadInputFile($fh, %args);
+      $run_builder->uploadInputFile($fh, %args);
 
-      $self->redirect( uri => "/RunBuilder/$url?run_builder=$rb&$args_string" );
+      $self->redirect( uri => "/RunBuilder/$url?run_builder=$run_builder&$args_string" );
 
     # otherwise we are doing a web download 
     } else {
 
       $args{Account} = $account;
-      $args{Pipeline} = $pipeline;
+      $args{RunBuilder} = $run_builder;
       $args{URL} = $form->get_input('upload_url');
       $args{Status} = 'Pending';
       $args{CreatedAt} = ISGA::Timestamp->new();
       $new_file_name and $args{UserName} = $new_file_name;
 
       my $req = ISGA::RunBuilderUploadRequest->create(%args);
-      $self->redirect( uri => "/RunBuilder/UploadRequested?run_builder_upload_request=$req&run_builder=$rb" );
+
+      $self->redirect( uri => "/RunBuilder/UploadRequested?run_builder_upload_request=$req" );
 
     }
   }
   
   # bounce!!!!!
   $self->_save_arg( 'form', $form);
-  $self->redirect( uri => "/RunBuilder/UploadInputForm?run_builder=$rb&$args_string" );
+  $self->redirect( uri => "/RunBuilder/UploadInput?run_builder=$run_builder&$args_string" );
 }
 
 #------------------------------------------------------------------------

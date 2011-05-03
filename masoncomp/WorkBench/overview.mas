@@ -21,7 +21,6 @@
   <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
   <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
   <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
 </ul>
 %   } else {
 <p>These tools are currently unavailable because you do not have the appropriate data. You must have a completed run to use the tools below.</p>

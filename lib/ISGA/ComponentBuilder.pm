@@ -42,9 +42,8 @@ use Clone qw(clone);
 
 =item public ISGA::ComponentBuilder new(Component $component);
 
-Initialize the Componentbuilder object corresponding to the supplied
-Component. If the Component does not have a builder .yaml file, undef
-is returned.
+Initialize the Componentbuilder object corresponding to the supplied 
+Component.
 
 =item public ISGA::ComponentBuilder new(Component $component, ParameterMask $mask);
 
@@ -85,7 +84,7 @@ the supplied component template.
     
     if ( exists $self->{Params} ) {
 
-      # initialize form parameters
+      # initialize PiplineBuilder form
       $self->{PipelineBuilder}{FormEngine} = {'templ' => 'fieldset',
 					      'OUTER' => '1', 
 					      'sub' => []};
@@ -251,20 +250,6 @@ and component template.
 
 =cut
 ##========================================================================
-
-#------------------------------------------------------------------------
-
-=item public boolean hasParameters();
-
-Returns true if the ComponentBuilder has defined pipeline builder parameters.
-
-=cut
-#------------------------------------------------------------------------
-sub hasParameters {
-  
-  my $self = shift;
-  return keys %{$self->{ParameterLookup}};
-}
 
 #------------------------------------------------------------------------
 
@@ -461,10 +446,8 @@ YAML files are loaded and cached at server startup.
       my $self = YAML::LoadFile($form_path);
       validate( $schema, $self );
       
-      # first we initialize the ComponentTemplate loaded from the YAML
       $self->_initialize();
       
-      # then we initialize all the components that use this template
       foreach ( @{ISGA::Component->query( Template => $template )} ){
 	$components{$_} = $self->_initializeComponent($_);
       }    

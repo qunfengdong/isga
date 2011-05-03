@@ -40,9 +40,7 @@ legal unix filename.
 sub isValidUploadURL {
 
   my ($value, $form) = @_;
-
-  return '' if $value eq '';
- 
+  
   my $uri = URI->new($value);
 
   # check scheme
@@ -57,6 +55,8 @@ sub isValidUploadURL {
 
   # make sure file is available
   $r->is_success() or return "Unable to follow the supplied link";
+
+  warn "result filename is ", $r->filename();
 
   # check name, using override or last portion of uri
   my $name = $form->get_input('new_file_name');

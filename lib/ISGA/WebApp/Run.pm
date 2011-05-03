@@ -42,13 +42,12 @@ sub Run::InstallGbrowseData {
   my $self = shift;
   my $run = $self->args->{run};
 
-  warn "class1 is ", ref($run), "\n";
+  $run->getGlobalPipeline == ISGA::Pipeline->new( Name => 'Prokaryotic Annotation Pipeline' )
+    or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
 
-  $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
-  warn "get things running\n";
-
-  $run->installGBrowseData();
+  $run->installGbrowseData();
   $self->redirect( uri => "/Browser/gbrowse/$run/" );
 }
 
@@ -56,14 +55,13 @@ sub Exception::Run::InstallGbrowseData {
 
   my $self = shift;
   my $run = $self->args->{run};
-
-  warn "class2 is ", ref($run), "\n";
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
   # remove conf
-  $run->deleteGBrowseConfigurationFile();
+  $run->deleteGbrowseConfigurationFile();
 
   # remove database dir
-  $run->deleteGBrowseDatabase();
+  $run->deleteGbrowseDatabase();
 }
 
 #------------------------------------------------------------------------
@@ -292,6 +290,7 @@ sub Run::Test {
 
   my $self = shift;
   my $run = $self->args->{run};
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
   $self->redirect( uri => "/Pipeline/View?pipeline=1" );
 }

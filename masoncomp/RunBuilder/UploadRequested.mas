@@ -1,9 +1,8 @@
 <%args>
  $rbur
- $run_builder
 </%args>
 
-% my $pipeline = $rbur->getPipeline;
+% my $rb = $rbur->getRunBuilder;
 
 
 <h1>Upload Requested</h1>
@@ -12,4 +11,4 @@
 You will receive an email message when the file is available for use
 or if there is a problem retrieving the file.</p>
 
-<& right_menu.mas, run_builder => $run_builder &>
+<& right_menu.mas, run_builder => $rb &>

@@ -46,3 +46,6 @@ will no longer be able to customize or run this pipeline.</p></div>
 <p>Here are the details for your customized pipeline.  To begin the run process, 
 choose <span class="highlight">Run Pipeline</span> from the toolbox.</p>
 </div></div>
+
+<div class="documentation runPipelineClickMe"><div id="WT_arrow_right_clickme"></div><div id="WT_close_right_clickme">Click Me To Continue</div></div>
+

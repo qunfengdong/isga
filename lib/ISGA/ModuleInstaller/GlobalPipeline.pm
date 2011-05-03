@@ -83,17 +83,9 @@ sub insert {
 
   exists $t->{SubClass} and $args{SubClass} =  $t->{SubClass};
 
-  # check for overridden status
-  if ( my $status = $ml->getStatus ) {
-    $args{Status} = ISGA::PipelineStatus->new( Name => $status );
-  }
-
   my $o = ISGA::GlobalPipeline->create(%args);
 
   $class->initializePipelineConfiguration($o);
-
-  # save the pipeline name
-  $ml->setPipelineName($t->{Name});  
 }
 
 #------------------------------------------------------------------------
@@ -147,18 +139,8 @@ sub update {
 
   exists $t->{SubClass} and $args{SubClass} =  $t->{SubClass};
 
-  # check for overridden status
-  if ( my $status = $ml->getStatus ) {
-    $args{Status} = ISGA::PipelineStatus->new( Name => $status );
-  }
-
   $o->edit(%args);
   
-  $class->initializePipelineConfiguration($o);
-
-  # save the pipeline name
-  $ml->setPipelineName($t->{Name});  
-
 }
 
 #------------------------------------------------------------------------

@@ -30,18 +30,6 @@ Returns the current pipline object. This method is provided for polymorphism.
 #------------------------------------------------------------------------
   sub getGlobalTemplate { return shift; }
 
-#------------------------------------------------------------------------
-
-=item public string getLabel();
-
-Returns the name and release of the pipeline.
-
-=cut
-#------------------------------------------------------------------------
-  sub getLabel {
-    my $self = shift;
-    return $self->getName() . ' (' . $self->getRelease() . ')';
-  }
 
 #------------------------------------------------------------------------
 
@@ -52,9 +40,7 @@ Returns the directory for storing global-pipeline specific mason components.
 =cut
 #------------------------------------------------------------------------
   sub getWebPluginDirectory {
-    my $path = shift->getSubClass;
-    $path =~ s{::}{/};
-    return $path;
+    return shift->getSubClass;
   }
 
 #------------------------------------------------------------------------
@@ -63,21 +49,9 @@ Returns the directory for storing global-pipeline specific mason components.
 
 Returns the Workflow objects associated with this pipeline.
 
-=item public Workflow getWorkflow(Cluster $cluster);
-
-Returns the Workflow object associates with this pipeline and the
-supplied Cluster. Raises an exception if the Workflow does not exist.
-
 =cut
 #------------------------------------------------------------------------
-  sub getWorkflow { 
-    
-    my $self = shift;
-    
-    $_[0] or return ISGA::Workflow->query( Pipeline => $self );
-
-    return ISGA::Workflow->new( Pipeline => $self, Cluster => shift );
-  }
+  sub getWorkflow { ISGA::Workflow->query( Pipeline => shift ); }
 
 #------------------------------------------------------------------------
 
@@ -132,23 +106,3 @@ Returns a component builder for the passed component. No parmater mask is applie
     return ISGA::ComponentBuilder->new(@_);
   }
 
-
-#------------------------------------------------------------------------
-
-=item public boolean hasGBrowseData();
-
-Returns true if the pipeline generates data for display in GBrowse
-
-=cut
-#------------------------------------------------------------------------
-  sub hasGBrowseData { return 0; }
-
-#------------------------------------------------------------------------
-
-=item public boolean hasBlastDatabase();
-
-Returns true if the pipeline provides a Blast database.
-
-=cut
-#------------------------------------------------------------------------
-  sub hasBlastDatabase { return 0; }

@@ -15,11 +15,11 @@ unless ($term) {
 my @arr_scope = ();
 my $account = ISGA::Login->getAccount;
 my $runs = ISGA::Run->query( CreatedBy => $account );
-push @$runs, @{$account->getSharedRuns()};
 my %searchableRuns = ();
 if (@$runs) {
 	foreach (@$runs) {
-		if ( $_->hasGBrowseInstallation ) {
+		bless $_, 'ISGA::Run::ProkaryoticAnnotation';
+		if ( $_->hasGbrowseInstallation ) {
 			$searchableRuns{$_} = $_->getName;
 		}
 	}

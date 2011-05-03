@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use vars qw( $VERSION );
 
-use version; $VERSION = qv('1.3.1');
+use version; $VERSION = qv('1.2.1');
 
 use ISGA::X;
 
@@ -42,9 +42,6 @@ use ISGA::JobType::NewblerToHawkeye;
 use ISGA::JobType::MiraToHawkeye;
 use ISGA::JobType::PhyloEGGS;
 use ISGA::JobType::GridBlast;
-
-use ISGA::Run::ProkaryoticAnnotation;
-use ISGA::GlobalPipeline::ProkaryoticAnnotation;
 
 1; 
 __END__

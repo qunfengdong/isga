@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::FullTranslatedList;
+package ISGA::ClusterOutput::FulLTranslatedList;
 
 use warnings;
 use strict;

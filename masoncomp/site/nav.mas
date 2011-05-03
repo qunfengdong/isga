@@ -27,7 +27,7 @@
    <ul>
     <li><a href="/Help/Tutorial?tab=pipeline">Tutorial</a></li>
 % foreach ( @{$pipelines} ) {
-   <li><a href="/Pipeline/View?pipeline=<% $_ %>"><% $_->getLabel %></a></li>
+   <li><a href="/Pipeline/View?pipeline=<% $_ %>"><% $_->getName %></a></li>
 % }
 % if ( $account ) {
 %  if ( my $user= ISGA::UserPipeline->exists( CreatedBy => $account, Status => ISGA::PipelineStatus->available() ) ) {
@@ -39,9 +39,9 @@
 
 
 % if ( $exists ) {
-  <li><a href="/Run/Status?show_shared=1">Monitor Pipelines</a>
+  <li><a href="/Run/Status">Monitor Pipelines</a>
    <ul>
-    <li><a href="/Run/Status?show_shared=1">Pipeline Status</a></li>
+    <li><a href="/Run/Status">Pipeline Status</a></li>
 %   if ( $account->hasGroup( $run_admin ) ) {
     <li><a href="/Run/AdminList">Administer Runs</a></li>
 %   }
@@ -55,6 +55,7 @@
     <li><a href="/File/BrowseMy">My Files</a></li>
     <li><a href="/WorkBench/BrowseMy">My Jobs</a></li>
     <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Blast Search</a></li>
+    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'GridBlast' ) %>">Quarry Blast Search</a></li>
     <li><a href="/WorkBench/GBrowse">Genome Browser</a></li>
     <li><a href="/WorkBench/GenomeFeatureQuery">Database Query</a></li>
     <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'NewblerToHawkeye' ) %>">Convert Newbler to Hawkeye</a></li>
@@ -62,7 +63,6 @@
     <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
     <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
     <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
     <li><a href="/WorkBench/Overview">Additional Tools</a></li>
    </ul>
 % }
@@ -121,6 +121,6 @@ my $policy_admin = ISGA::Group->new( Name => 'Policy Administrators' );
 my $news_admin = ISGA::Group->new( Name => 'News Administrators' );
 my $run_admin = ISGA::Group->new( Name => 'Run Administrators' ); 
   
-my $pipelines = ISGA::GlobalPipeline->published();
+my $pipelines = ISGA::GlobalPipeline->available();
 
 </%once>

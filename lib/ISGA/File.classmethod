@@ -2,6 +2,7 @@
 
 use Digest::SHA;
 
+
 #------------------------------------------------------------------------
 
 =item public File upload(filehandle fh, Hash args);
@@ -41,7 +42,7 @@ The args hash may contain the following optional parameters:
     # do we have verification callbacks
     if ( exists $args{Filters} ) {      
       $fh = $_->($fh) for @{$args{Filters}};
-      delete $args{Filters};
+    delete $args{Filters};
     }
     
     # strip windows characters for text files
@@ -112,12 +113,8 @@ The args hash may contain the following optional parameters:
     # otherwise we have a file with this hash in the system
     } else {
 
-      # if the files aren't the same size, create a local copy to make
-      # sure we aren't reading through a compressed fh
-      if ( $args{Size} != $file->getSize ) { 
-	my $layerstring = join('', PerlIO::get_layers($fh));
-	$layerstring =~ /gzip/ or X::API->throw(error => 'File Hash Conflict');
-      }
+      # if the files aren't the same size, we have a problem
+      $args{Size} == $file->getSize or X::API->throw(error => 'File Hash Conflict');
       
       # if the files have the same name and owner, don't add a new file.
       if ( $file->getCreatedBy == $args{CreatedBy} and $args{UserName} eq $file->getUserName ) {
@@ -157,7 +154,7 @@ amount of data written. Used by FileResource constructors.
     my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
       or X::API::Configuration::Missing->throw( variable => 'file_repository' );
 
-    # open filehandle for writing
+    # write the file
     open my $upload, ">", "$file_repository/$p1/$p2/$name"
       or X->throw( error => "$!:$file_repository/$p1/$p2/$name" );
 
@@ -168,15 +165,15 @@ amount of data written. Used by FileResource constructors.
     my $max_buffer_size = 1024 * 1024 * 2;
     my $size = (stat($fh))[7];
     $size = $max_buffer_size if ( $size > $max_buffer_size );
-
+    
     # this idiom is copied from File::Copy
     for (;;) {
       my ($r, $w, $t);
-      
+
       # use read rather than sysread to in case we are using gzip or another IO layer
       defined($r = read($fh, $buf, $size)) or X::API->throw( message => "error reading file $name: $!" );
       last unless $r;
-
+      
       # strip windows junk
       if ( $strip_dos_newlines ) {
 	$buf =~ s/\r//g;

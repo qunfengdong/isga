@@ -81,7 +81,7 @@ sub insert {
 
 =item public void insert( ModuleLoader $ml, HashRef $tuple );
 
-Updates the supplied tuple into the database.
+Inserts the supplied tuple into the database.
 
 =cut 
 #------------------------------------------------------------------------
@@ -113,13 +113,11 @@ sub checkEquality {
 
   # check extension
   my $ext = $obj->getExtension();
-  $ext ne $tuple->{Extension} and 
-    $ml->("FileFormat extension for $tuple->{Name} differs from database entry - retaining old version.");
+  $ext ne $tuple->{Extension} and X::API->throw(message => "$tuple->{Extension} differs from $ext for FileFormat $tuple->{Name}");
 
   # check help
   my $help = $obj->getHelp();
-  $help ne $tuple->{Help} and 
-    $ml->log("FileFormat help for $tuple->{Name} differs from database entry - retaining old version.");
+  $help ne $tuple->{Help} and X::API->throw(message => "$tuple->{Help} differs from $help for FileFormat $tuple->{Name}");
 
 }
 

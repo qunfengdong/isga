@@ -1,9 +1,9 @@
 ---
- - Cluster: 'Map Bisulfite-treated Reads'
+ - Pipeline: 'Methyl Seq Analysis Pipeline'
+   Cluster: 'Map Bisulfite-treated Reads'
    Coordinates: '288,31,476,129'
    IsRequired: 1 
-   Customization: Standard
- - Cluster: 'Convert Output'
+ - Pipeline: 'Methyl Seq Analysis Pipeline'
+   Cluster: 'Convert Output'
    Coordinates: '288,282,476,377'
-   IsRequired: 1
-   Customization: Standard
+   IsRequired: 1 

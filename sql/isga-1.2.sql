@@ -3337,7 +3337,7 @@ COPY usecase (usecase_id, usecase_name, usecase_action, usecase_requireslogin, u
 172	/submit/Run/Hide	Run::Hide	t	\N	\N	none	f
 173	/submit/Workbench/Notify	WorkBench::Notify	t	\N	\N	none	f
 176	/Pipeline/ClusterOptions	\N	t	\N	\N	none	f
-177	/submit/Run/Clone	Run::Clone	t	\N	\N	none	f
+177	/submit/Run/Clone	Run::Cancel	t	\N	\N	none	f
 178	/Run/Clone	\N	t	\N	Clone Run	2columnright	f
 179	/submit/Run/Show	Run::Show	t	\N	\N	none	f
 180	/Help/DownloadISGA	\N	f	\N	Download ISGA	2columnright	f

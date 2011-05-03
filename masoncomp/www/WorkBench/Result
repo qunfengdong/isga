@@ -11,7 +11,7 @@ my $status = $job->getStatus;
 if($status eq "Finished"){
         my $plugin = $job->getType->getWebPluginDirectory();
         return $m->comp("/plugin/$plugin/result.mas", job => $job );
-} elsif ($status eq "Running" || $status eq "Pending" || $status eq "Staging"){
+} elsif ($status eq "Running" || $status eq "Pending"){
         return $m->comp('/WorkBench/running.mas', job => $job);
 } elsif ($status eq "Error"){
         return $m->comp('/WorkBench/error.mas', job => $job);

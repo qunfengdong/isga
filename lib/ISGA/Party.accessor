@@ -12,39 +12,3 @@ information returns only the current party.
   sub getParties {
     return [shift];
   }
-
-#------------------------------------------------------------------------
-
-=item public [Run] getSharedRuns();
-
-Returns a list of the runs that have been shared with this group.
-
-=cut
-#------------------------------------------------------------------------
-  sub getSharedRuns { 
-
-    my $self = shift;
-
-    # retrieve share objects
-    my $shares = ISGA::RunShare->query( Party => $self->getParties );
-
-    # transform to runs
-    return [map { $_->getResource } @$shares];
-  }
-
-#------------------------------------------------------------------------
-
-=item public int getSharedRunCount();
-
-Returns a list of the runs that have been shared with this group.
-
-=cut
-#------------------------------------------------------------------------
-  sub getSharedRunCount { 
-
-    my $self = shift;
-
-    # retrieve share objects
-    return  ISGA::RunShare->exists( Party => $self->getParties );
-  }
-

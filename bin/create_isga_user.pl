@@ -26,6 +26,9 @@ B<--email>
 B<--name>
     Name of the person using the account.
 
+B<--password>
+    Password for the account.
+
 B<--institution>
     Institution the account is part of.
 
@@ -45,8 +48,6 @@ B<--help,-h>
     This help message
 
 =head1 DESCRIPTION
-
-This creates a new ISGA user.
 
 =head1 INPUT
 
@@ -84,26 +85,10 @@ if( $options{help} ) {
 
 my $uc = ISGA::UserClass->new( Name => ISGA::SiteConfiguration->value('default_user_class') );
 
-# prompt for passwords
-print "Enter a password for $options{email}:\n";
-
-my $password = <>;
-chomp $password;
-
-print "Re-enter a password for $options{email}:\n";
-
-my $password2 = <>;
-chomp $password2;
-
-if ( $password ne $password ) {
-  print "passwords do not match\n";
-  exit(1);
-}
-
 # create the account
 my $account = 
   ISGA::Account->create( Email => $options{email},
-			 Password => Digest::MD5::md5_hex($password),
+			 Password => Digest::MD5::md5_hex($options{password}),
 			 Name => $options{name}, Institution => $options{institution},
 			 IsPrivate => 1, IsWalkthroughDisabled => 0, UserClass => $uc,
 			 IsWalkthroughHidden => 0, Status => ISGA::PartyStatus->new('Active'));
@@ -124,27 +109,6 @@ while ( my ($key, $value) = each %admin_map ) {
 sub check_parameters {
 
   my ($options) = @_;
-
-  if ( ! exists $options{email} ) {
-    print "--email is a required parameters\n";
-    exit(1);
-  }
-
-  $options{email} = ISGA::Utility->cleanEmail($options{email});
-  if ( ISGA::Account->exists(Email => $email) ) {
-    print "An account with the email address $options{email} already exists\n";
-    exit(1);
-  }
-
-  if ( ! exists $options{name} ) {
-    print "--name is a required parameter\n";
-    exit(1);
-  }
-
-  if ( ! exists $options{institution} ) {
-    print "--institution is a required parameter\n";
-    exit(1);
-  }
 
 }
 

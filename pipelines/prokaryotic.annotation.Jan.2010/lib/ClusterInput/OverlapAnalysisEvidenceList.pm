@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::OverlapAnalysisEvidenceList;
+package ISGA::ClusterOutput::OverlapAnalysisEvidenceList;
 
 use warnings;
 use strict;

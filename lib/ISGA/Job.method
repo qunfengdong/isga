@@ -69,16 +69,17 @@ sub updateStatus {
 
     ISGA::DB->begin_work();
 
-    my $sge=ISGA::SGEScheduler->new(
-       -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
-    );
+#    my $sge=ISGA::SGEScheduler->new(
+#       -executable  => {qsub=>'/cluster/sge/bin/sol-amd64/qsub', qstat=>'/cluster/sge/bin/sol-amd64/qstat'},
+#    );
 
-    my $new_status = $sge->checkStatus( $pid );
+#    my $new_status = $sge->checkStatus( $pid );
 
-    $new_status eq $old_status or
-      $self->edit( Status => $new_status );
+#    $new_status eq $old_status or
+#      $self->edit( Status => $new_status );
 
-    if ( $new_status eq 'Finished' ){
+#    if ( $new_status eq 'Finished' ){
+my $new_status = $old_status;
         my $collection = $self->getCollection;
         my $contents = $collection->getContents;
         my $list;
@@ -91,6 +92,8 @@ sub updateStatus {
         
         my $output_file = $list->{'output_file'};
         if (-e $output_file) {
+$new_status = 'Finished';
+$self->edit( Status => $new_status );
           my $type = $list->{'output_type'};
           my $format = $list->{'output_format'};
           if (defined $type){
@@ -98,10 +101,10 @@ sub updateStatus {
           }else{
             $self->addOutputToCollection($output_file);
           }
-        } else {
-          $new_status = 'Error';
-          $self->edit( Status => $new_status );
-        }
+        } #else {
+#          $new_status = 'Error';
+#          $self->edit( Status => $new_status );
+#        }
 
         if (-e "$output_file.xls") {
           my $html = "$output_file.xls";
@@ -111,7 +114,7 @@ sub updateStatus {
           my $html = "$output_file.txt";
           $self->addHTMLOutputToCollection($html);
         }
-    }
+#    }
 
     if ( $new_status eq 'Finished' || $new_status eq 'Error' ||  $new_status eq 'Failed' ) {
       $self->edit( FinishedAt => ISGA::Timestamp->new() );
@@ -127,53 +130,6 @@ sub updateStatus {
   }  
  
 }
-
-#------------------------------------------------------------------------
-
-=item public void submitJob();
-
-Submit staged jobs.
-
-=cut
-#------------------------------------------------------------------------
-sub submitJob {
-  my $self = shift;
-
-  my $status = $self->getStatus;
-  my $pid = $self->getPid;
-
-  eval {
-
-    ISGA::DB->begin_work();
-    my $files_path = "___tmp_file_directory___/workbench/" . $self->getType->getName . "/";
-    my $log_name  = $self->getType->getName . "_" .  $self->getId;
-    my $out_directory = $files_path.$log_name;
-    my $command = "$out_directory/${log_name}_sge.sh";
-    $self->edit( Status => 'Pending' );
-
-    my $sge=ISGA::SGEScheduler->new(
-                                    -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
-                                    -output_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeout",
-                                    -error_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeerror",
-                                   );
-
-    $sge->command($command);
-    my $pid = $sge->execute();
-    X->throw(message => 'Error submitting job.') unless($pid);
-    $self->edit( Pid => $pid );
-
-    ISGA::DB->commit();
-  };
-
-  if ( $@ ) {
-    ISGA::DB->rollback();
-
-    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );
-    $e->rethrow();
-  }
-
-}
-
 
 ###################### New Classy Stuff ######################
 
@@ -214,8 +170,6 @@ sub buildQueryFile {
 
   # if we have a filehandle, lets create an object out of it
   if ( $fh ) {
-
-    $fh = ISGA::FileFormat::FASTA->format($fh) if($args{Format} eq 'FASTA');
 
     $input_file = ISGA::File->upload($fh,
                                          UserName => $args{Username},

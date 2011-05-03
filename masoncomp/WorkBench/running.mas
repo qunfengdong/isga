@@ -2,9 +2,9 @@
   $job
 </%args>
 
-<h1><% $job->getType->getName %> Job Running</h1>
+<h1>Job Running ..</h1>
 <p> The page will be refreshed every 30 seconds. </p>
-<p> The results of your <% $job->getType->getName %> ToolBox job will be displayed here.  You can browse old jobs using <a href="/WorkBench/BrowseMy">this link</a>.</p>
+<p> The results will be displayed here. Please do not close this tab or window.</p>
 % unless($job->notifyUser){
 <p><a href="/submit/Workbench/Notify?job=<% $job %>">Click here</a> to receive an email when your job completes.</p>
 % }

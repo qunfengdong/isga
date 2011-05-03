@@ -5,7 +5,7 @@ use Graph::Directed;
 
 #------------------------------------------------------------------------
 
-=item public string getErgatisProjectDirectory();
+=item public WorkflowMask getErgatisProjectDirectory();
 
 Returns the filesystem path for the Ergatis project this pipeline is run under.
 
@@ -16,26 +16,26 @@ Returns the filesystem path for the Ergatis project this pipeline is run under.
     my $self = shift;
 
     my $project_dir = ISGA::PipelineConfiguration->value( 'ergatis_project_directory', Pipeline => $self->getGlobalTemplate() )
-      or X::API::Configuration::Missing->throw( variable => 'ergatis_project_directory' );
+      or X::Configuration::Missing->throw( variable => 'ergatis_project_directory' );
 
     return $project_dir;
   }
 
 #------------------------------------------------------------------------
 
-=item public string getErgatisOutputRepository();
+=item public WorkflowMask getErgatisOutputRepository();
 
 Returns the filesystem path for the Ergatis output repository this pipeline will retrieve results from.
 
 =cut
 #------------------------------------------------------------------------
   sub getErgatisOutputRepository {
-    return shift->getErgatisProjectDirectory . '/output_repository';
+    return shift->getErgatisProjectDirectory . 'output_repository';
   }
 
 #------------------------------------------------------------------------
 
-=item public string getErgatisRuntimeDirectory();
+=item public WorkflowMask getErgatisRuntimeDirectory();
 
 Returns the filesystem path for the Ergatis runtime directory this pipeline will reports status in.
 
@@ -47,7 +47,7 @@ Returns the filesystem path for the Ergatis runtime directory this pipeline will
 
 #------------------------------------------------------------------------
 
-=item public string getErgatisSubmissionDirectory();
+=item public WorkflowMask getErgatisSubmissionDirectory();
 
 Returns the filesystem path for the directory this pipelie is submitted to Ergatis through.
 
@@ -57,9 +57,8 @@ Returns the filesystem path for the directory this pipelie is submitted to Ergat
     
     my $self = shift;
 
-    my $submission_dir = ISGA::PipelineConfiguration->value( 'ergatis_submission_directory', 
-							     Pipeline => $self->getGlobalTemplate() )
-      or X::API::Configuration::Missing->throw( variable => 'ergatis_submission_directory' );
+    my $submission_dir = ISGA::PipelineConfiguration->value( 'ergatis_submission_directory', Pipeline => $self )
+      or X::Configuration::Missing->throw( variable => 'ergatis_submission_directory' );
 
     return $submission_dir;
   }
@@ -76,7 +75,7 @@ Returns the workflow mask for this pipeline.
     return ISGA::WorkflowMask->new($_[0]->{pipeline_workflowmask});
   }
 
-#------------------------------------------------------------------------
+#------------------------------------------------------------------------
 
 =item public WorkflowMask getRawWorkflowMask();
 
@@ -154,3 +153,4 @@ Returns the output files for this pipeline. The following args are available.
 
     return \@results;
   }
+

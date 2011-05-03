@@ -19,24 +19,7 @@ use File::Path;
 use File::Find;
 use File::Copy::Recursive;
 
-#------------------------------------------------------------------------
 
-=item public void new();
-
-Creates a pipeline installer object. Available named parameters are:
-
-source => string
-
-The path to retrieve the pipeline source from.
-
-force_install => boolean
-
-Will install even if database conflicts are found.
-
-status
-
-=cut 
-#------------------------------------------------------------------------
 sub new {
 
   my ($class, %options) = @_;
@@ -50,64 +33,18 @@ sub new {
 
   $self->{force_install} = ( exists $options{force_install} ?  1 : 0 );
 
-  # are we overriding the source
-  if ( exists $options{status} ) {
-    $self->{status} = $options{status};
-  }
-
   # retrieve Ergatis Install
   $self->{ergatis_install} = ISGA::ErgatisInstall->new( Name => $self->{ergatis_install} );
-
-  # retrieve pipeline version
-  $self->loadVersion();
-   
+    
   return $self;
-}
-
-sub loadVersion {
-
-  my $self = shift;
-
-  my $file = YAML::LoadFile( join('/', $self->getDatabaseSourcePath(), 'pipeline.yaml') );
-
-  $self->{version} = $file->[0]{Version};
 }
 
 
 sub isForced { return shift->{force_install}; }
 
-sub getVersion { return shift->{version}; }
 sub getErgatisInstall { return shift->{ergatis_install}; }
 sub getSourcePath { return shift->{source_path}; }
 sub getClassName { return shift->{pipeline_class}; }
-
-sub isAlreadyInstalled {
-  my $self = shift;
-  return ISGA::GlobalPipeline->exists( SubClass => $self->getClassName );
-}
-
-sub getStatus {
-  my $self = shift;
-  return exists $self->{status} ? $self->{status} : undef;
-}
-
-sub setPipelineName {
-  my ($self, $name) = @_;
-  $self->{pipeline_name} = $name;
-}
-
-sub getPipelineName {
-  my $self = shift;
-  return exists $self->{pipeline_name} ? $self->{pipeline_name} : undef;
-}
-
-sub getClassPath { 
-
-  my $class = shift->{pipeline_class};
-  $class =~ s{::}{/}g;
-  
-  return $class;
-}
 
 sub getDatabaseSourcePath {
 
@@ -130,7 +67,7 @@ sub getLibrarySourcePath {
 sub getMasonSourcePath {
 
   my $self = shift;
-  return join('/', $self->getSourcePath(), 'masoncomp', $self->getClassPath );
+  return join('/', $self->getSourcePath(), 'masoncomp', $self->getClassName );
 }
 
 sub log {
@@ -157,19 +94,17 @@ sub install {
   $self->installMasonFiles();
   $self->installLibraryFiles();
 
-  unless ( $self->isAlreadyInstalled ) {
+  ISGA::ModuleInstaller::FileFormat->load($self);
+  ISGA::ModuleInstaller::FileType->load($self);
+  ISGA::ModuleInstaller::ComponentTemplate->load($self);
+  ISGA::ModuleInstaller::ClusterInput->load($self);
+  ISGA::ModuleInstaller::Cluster->load($self);
+  ISGA::ModuleInstaller::Component->load($self);
+  ISGA::ModuleInstaller::ClusterOutput->load($self);
+  ISGA::ModuleInstaller::GlobalPipeline->load($self);
+  ISGA::ModuleInstaller::Workflow->load($self);
+  ISGA::ModuleInstaller::PipelineInput->load($self);
 
-    ISGA::ModuleInstaller::FileFormat->load($self);
-    ISGA::ModuleInstaller::FileType->load($self);
-    ISGA::ModuleInstaller::ComponentTemplate->load($self);
-    ISGA::ModuleInstaller::ClusterInput->load($self);
-    ISGA::ModuleInstaller::Cluster->load($self);
-    ISGA::ModuleInstaller::Component->load($self);
-    ISGA::ModuleInstaller::ClusterOutput->load($self);
-    ISGA::ModuleInstaller::GlobalPipeline->load($self);
-    ISGA::ModuleInstaller::Workflow->load($self);
-    ISGA::ModuleInstaller::PipelineInput->load($self);
-  }
 }
 
 #------------------------------------------------------------------------
@@ -215,7 +150,7 @@ sub installMasonFiles {
   my $self = shift;
 
   # determine mason plugin directory
-  my $mas_dir = join( '/', '___package_masoncomp___', 'plugin', $self->getClassPath  );
+  my $mas_dir = join( '/', '___package_masoncomp___', 'plugin', $self->getClassName  );
 
   File::Copy::Recursive::dircopy( $self->getMasonSourcePath,  $mas_dir ) or die $!;  
 }

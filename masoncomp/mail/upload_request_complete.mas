@@ -3,8 +3,8 @@
 </%args>
 
 <%perl>
-my $account = $notification->getAccount();
-my $request = ISGA::UploadRequest->new( Id => $notification->getVar1()); 
+my $account = $run->getAccount();
+my $request = $notification->getVar1();
 </%perl>
 
 <% $account->getName %>,

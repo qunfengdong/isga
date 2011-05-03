@@ -17,7 +17,7 @@
 
 % my $description = $file_collection->getDescription();
  <tr>
-  <th>Description</th><td colspan="3"><% defined $description ? $description : '' %></td>
+  <th>Description</th><td colspan="3"><% defined $description : $description: '' %></td>
  </tr>
 
  <tr>

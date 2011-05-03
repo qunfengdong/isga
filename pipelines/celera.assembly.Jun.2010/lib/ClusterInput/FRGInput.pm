@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::FRGInput;
+package ISGA::ClusterOutput::FRGInput;
 
 use warnings;
 use strict;
@@ -30,7 +30,7 @@ sub getValue {
   my $rbi_count = ISGA::RunBuilderInput->exists( RunBuilder => $rb, PipelineInput => $pi );
   
   my @dirs;
-
+  
   for ( 1 .. $rbi_count ) {
     push @dirs, '$;REPOSITORY_ROOT$;/output_repository/sff_to_CA/$;PIPELINEID$;_default' . $_ . '/sff_to_CA.frg.list';
   }

@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ResourceShare
+attributes:
+  - { name: Party, type: Party, options: [ REQUIRED ] }
+  - { name: Resource, type: number, options: [ REQUIRED, NOGET ] }
+  - { name: ResourceClass, type: string, options: [ REQUIRED ] }

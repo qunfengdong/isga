@@ -100,14 +100,10 @@ eval {
 				     status_text => status_message($code) );
     }
     
-    # seek to the beginning of the file handle so that we can read from it later
-    seek($tmp_fh,0,0);
-
-
     # are we a run builder
     if ( $request->isa('ISGA::RunBuilderUploadRequest') ) {
       
-      my $pipeline = $request->getPipeline();
+      my $rb = $request->getRunBuilder();
       
       my %args = (UserName => $file_name,
 		  CreatedBy => $account,
@@ -117,7 +113,7 @@ eval {
 	$args{Description} = $description;
       }
       
-      $pipeline->uploadInputFile($tmp_fh, %args);
+      $rb->uploadInputFile($tmp_fh, %args);
     } elsif ( $request->isa('ISGA::JobUploadRequest') ) {
       
       

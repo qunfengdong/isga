@@ -62,9 +62,8 @@ sub submit {
       IsHidden => 0 );
 
   # create run
-  my $pipeline = $builder->getPipeline();
-  my %run_args = 
-    ( CreatedBy => ISGA::Login->getAccount, Type => $pipeline,
+  my $run =  ISGA::Run->create
+    ( CreatedBy => ISGA::Login->getAccount, Type => $builder->getPipeline, 
       FileCollection => $collection,
       RawDataStatus => 'Available',
       Status => ISGA::RunStatus->new( Name => 'Running' ),
@@ -73,12 +72,6 @@ sub submit {
       CreatedAt => ISGA::Timestamp->new,
       IsHidden => 0, 
       ErgatisKey => $id );
-
-  if ( my $subclass = $pipeline->getGlobalTemplate->getSubClass ) {
-    $run_args{SubClass} = $subclass;
-  }
-
-  my $run = ISGA::Run->create(%run_args);
 
   # log the inputs
   my $inputs = ISGA::RunBuilderInput->query( RunBuilder => $builder);
@@ -114,8 +107,7 @@ sub _submitToErgatis {
   # set credentials for 
 #  $ua->credentials("", "", "", "");
 
-  my $project = ISGA::PipelineConfiguration->value( 'ergatis_project_name', 
-						    Pipeline => $builder->getPipeline->getGlobalTemplate() );
+  my $project = ISGA::PipelineConfiguration->value( 'ergatis_project_name', Pipeline => $builder->getPipeline() );
   
   my $dir = $builder->getErgatisDirectory();
 
@@ -145,30 +137,3 @@ sub getCurrentRunCount {
 
   return ISGA::Run->exists( CreatedBy => $account, Status => \@statuses);
 }
-
-#------------------------------------------------------------------------
-
-=item public [Run] query();
-
-Wrapper around query method to parse objects into subclass if it
-exists for the pipeline this runbuilder processes.
-
-=cut
-#------------------------------------------------------------------------
-  sub query {
-
-    my $class = shift;
-
-    my $results = $class->NEXT::query(@_);
-
-    foreach ( @$results ) {
-      
-      if ( my $subclass = $_->getSubClass ) {
-	my $full_subclass = $class . '::' . $subclass;
-	eval "require $full_subclass";
-	$full_subclass->can('new') and bless $_, $full_subclass;
-      }
-    }
-    
-    return $results;
-  }  

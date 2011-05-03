@@ -30,10 +30,10 @@
  <select name="pipeline" onChange="document.forms['pipeline'].submit()">
 % foreach ( @pipes ) {
   <option \
-%   if ( $pipeline and ref($pipeline) eq ref($_) and $pipeline == $_ ) {
+%   if ( $pipeline and $pipeline == $_ ) {
   selected="selected" \
 %   }
-  value="<% $_ %>"><% $_->getLabel %></option>
+  value="<% $_ %>"><% $_->getName %></option>
 % }
 % if ( ! $pipeline ) {
  <option value="0" selected="selected">Select a Pipeline</option>

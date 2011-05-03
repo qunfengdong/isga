@@ -1,4 +1,4 @@
-package ISGA::ClusterInput::COGBSML;
+package ISGA::ClusterOutput::COGBSML;
 
 use warnings;
 use strict;

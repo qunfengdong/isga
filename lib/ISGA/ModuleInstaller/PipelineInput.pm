@@ -55,7 +55,7 @@ sub extractKey {
   
   my $ei = $ml->getErgatisInstall();
 
-  return { Pipeline => ISGA::GlobalPipeline->new( Name => $ml->getPipelineName(), Version => $ml->getVersion ),
+  return { Pipeline => ISGA::GlobalPipeline->new( Name => $t->{Pipeline}, ErgatisInstall => $ei),
 	   ClusterInput => ISGA::ClusterInput->new( Name => $t->{ClusterInput}, 
 						    ErgatisInstall => $ei) };
 }
@@ -75,7 +75,7 @@ sub insert {
   my $ei = $ml->getErgatisInstall();
   
   my %args = ( 
-	      Pipeline => ISGA::GlobalPipeline->new( Name =>  $ml->getPipelineName(), Version => $ml->getVersion ),
+	      Pipeline => ISGA::GlobalPipeline->new( Name => $t->{Pipeline}, ErgatisInstall => $ei),
 	      ClusterInput => ISGA::ClusterInput->new( Name => $t->{ClusterInput}, ErgatisInstall => $ei),
 	     );
 

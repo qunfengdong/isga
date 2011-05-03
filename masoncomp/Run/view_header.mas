@@ -6,8 +6,6 @@
 % my $canceled = ( $running ? 0 : $run->getStatus eq 'Canceled' );
 % $canceled &&= ISGA::RunCancelation->new( Run => $run );
 
-% my $is_mine = $run->getCreatedBy == ISGA::Login->getAccount;
-
 <sys:script type="text/javascript">
 
 $(document).ready(function(){
@@ -24,8 +22,6 @@ $(document).ready(function(){
 });
 </sys:script>
 
-% my $pipeline = $run->getType();
-
 <div class="data">
 
 <table width="100%">
@@ -33,15 +29,6 @@ $(document).ready(function(){
   <tr> 
    <th width="15%">Name</th><td colspan="3"><% $run->getName %></td>
   </tr>
-% if ( ! $is_mine ) {
-  <tr>
-   <th width="15%">Shared By</th><td colspan="3"><% $run->getCreatedBy->getName %></td>
-  </tr>
-% }
-  <tr>
-   <th width="15%">Pipeline</th><td colspan="3"><a href="/Pipeline/View?pipeline=<% $pipeline %>"><% $pipeline->getLabel %></a><?th>
-  </tr>
-
 % if ( ISGA::Login->hasGroup($admin) ) {
   <tr>
 %   my $account = $run->getCreatedBy();

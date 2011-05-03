@@ -1,8 +1,8 @@
 ---
- - Name: 'Celera Assembly'
-   Description: 'An assembly pipeline using the Celera Assembler.  This pipeline can accept multiple inputs from multiple libraries in SFF format.  The first step converts the SFF file to FRG files for use by the Celera Assembler.  This is followed by the assembly step.  The final step is to create the necessary files for use with Hawkeye to visualize the assembly.'
+ - Name: 'Celera Assembly Pipeline'
+   Description: '<p>An assembly pipeline using either the Celera or Mira assemblers.</p>'
    Status: Published
-   SubClass: CeleraAssembly::Jun2010
+   SubClass: CeleraAssembly
    Version: 1
    Release: 'Jun 2010'
    Image: '/include/img/assembly-pipeline.png'

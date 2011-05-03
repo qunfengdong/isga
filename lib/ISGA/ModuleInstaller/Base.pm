@@ -47,7 +47,7 @@ sub load {
 
   # read in yaml file
   my $filename = join('/', $ml->getDatabaseSourcePath(), $class->getYAMLFile());
-  $ml->log("Loading $filename");
+  
   my $file = YAML::LoadFile($filename);
   
   # test each entry
@@ -55,6 +55,7 @@ sub load {
     
     # check for a subclass
     if ( exists $_->{SubClass} ) {
+      warn "loading $obj_class\:\:$_->{SubClass}\n"; 
       eval "require $obj_class\:\:$_->{SubClass}";
     }
 

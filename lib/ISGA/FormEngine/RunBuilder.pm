@@ -126,7 +126,6 @@ sub SelectInputList {
 		 FORMNAME => 'run_builder_select_input_list',
 		 SUBMIT => 'Save',
                  CANCEL => '',
-                 UPLOADBUTTON => 'Upload File',
 		 sub => \@form } );
   $form->make;
   return $form;
@@ -169,6 +168,7 @@ sub UploadInput {
       TITLE => 'Upload File',
       sub => 
       [
+
        {
 	templ => 'print',
 	TITLE => 'File Type',
@@ -212,17 +212,14 @@ sub UploadInput {
        },
       ],
      },
-
      {
       templ => 'hidden',
       NAME => 'run_builder',
-#      ERROR => 'not_null',
       VALUE => $run_builder,
      },
      {
       templ => 'hidden',
       NAME => 'pipeline_input',
-#      ERROR => 'not_null',
       VALUE => $pipeline_input,
      },
 
@@ -235,10 +232,7 @@ sub UploadInput {
 		 SUBMIT => 'Save',
                  CANCEL => '',
 		 sub => \@form } );
-
-
   $form->make;
-
   return $form;
 } 
 
@@ -339,7 +333,6 @@ sub SelectInput {
                  FORMNAME => 'run_builder_select_input',
                  SUBMIT => 'Save',
                  CANCEL => '',
-                 UPLOADBUTTON => 'Upload File',
                  sub => \@form } );
   $form->make;
   return $form;
@@ -375,7 +368,6 @@ sub EditDetails {
 	TITLE => 'Run Name',
 	REQUIRED => 1,
 	LABEL => 'name',
-	MAXLEN => '39',
 	ERROR => ['not_null', 'Text::checkHTML', 'Text::checkUnixFileName',
 		  'RunBuilder::isUniqueName'],
 	VALUE => $rBuilder->getName,
@@ -435,6 +427,12 @@ sub EditParameters {
   my $pipeline = $run_builder->getPipeline;
   my $components = $pipeline->getComponents;
   my $parameter_mask = $run_builder->getParameterMask;
+  my $id_root = $run_builder->getName;
+
+  # remove spaces to keep perl happy
+  $id_root =~ s/\s/_/g;
+  $id_root =~ s/\./_/g;
+  $id_root = "My_$id_root" if $id_root =~ /^[0-9]/;
   
   my @form;
 
@@ -451,7 +449,11 @@ sub EditParameters {
 	  NAME => 'component',
 	  VALUE => $_
 	},
-      }
+        { templ => 'hidden',
+          NAME => 'project_id_root',
+          VALUE => $id_root
+        };
+    }
   }
 
   push @form, @hidden, 

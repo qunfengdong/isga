@@ -65,7 +65,7 @@ Returns the directory for storing global-pipeline specific mason components.
 =cut
 #------------------------------------------------------------------------
   sub getWebPluginDirectory {
-    return shift->getGlobalPipeline->getWebPluginDirectory;
+    return shift->getGlobalPipeline->getSubClass;
   }
 
 #------------------------------------------------------------------------
@@ -153,24 +153,3 @@ sub getErgatisURI {
   
   return $uri;
 }
-
-#------------------------------------------------------------------------
-
-=item public boolean hasGBrowseData();
-
-Returns true if the pipeline generates data for display in GBrowse
-
-=cut
-#------------------------------------------------------------------------
-  sub hasGBrowseData { return shift->getGlobalPipeline->hasGBrowseData; }
-
-
-#------------------------------------------------------------------------
-
-=item public boolean hasGBrowseInstallation();
-
-Returns true if the pipeline has a GBrowse installation
-
-=cut
-#------------------------------------------------------------------------
-  sub hasGBrowseInstallation { return 0; }
