@@ -1,0 +1,36 @@
+<%args>
+ $pipeline
+</%args>
+
+<h1><% $pipeline->getName %></h1>
+
+<p>Lots of pipeline details. It does all this stuff:</p>
+
+<img src="/include/img/fullpipeline-small.png">
+
+<img src="<% $pipeline->getImage %>">
+
+<& common_view.mas, pipeline => $pipeline &>
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<li class="rmbutton disabled">Run Pipeline</li>
+<li class="disabled">
+<p>Run this pipeline with default parameters.</p>
+
+<p> The complete prokaryotic annotation pipeline is not available at
+this stage of testing.</p>
+
+</li>
+<li class="rmbutton disabled">Customize Pipeline</li>
+<li class="disabled">
+<p>Customize the programs and parameters used in this pipeline.</p>
+
+<p>The complete prokaryotic annotation pipeline is not available at
+this stage of testing.</p>
+
+</li>
+</ul>
+</sys:rightmenu> 

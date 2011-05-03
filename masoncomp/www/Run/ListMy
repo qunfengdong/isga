@@ -1,13 +1,15 @@
 <%args> # -*- cperl -*-
- $show_canceled => 0
- $show_hidden => 0
+ $current_page => 1
 </%args>
 
 <%perl>
+my $pager = SysMicro::Pager->new(Current => $current_page,
+				 PerPage => 20);
 
-my $account = ISGA::Login->getAccount;
-my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
-
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
+				 Pager => $pager );
+$_->updateStatus() for @{$runs};
 </%perl>
 
-<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => $show_canceled, show_hidden => $show_hidden &>
+<& /Run/list_my.mas, account => $account, pager => $pager, runs => $runs &>

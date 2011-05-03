@@ -1,162 +1,40 @@
 <%args>
+ $pager
  @files
- $show_hidden
- $show
 </%args>
 
-<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.metadata.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.tablesorter.pager.js"></sys:script>
-
-<sys:style type="text/css" media="screen">
-  @import "/include/css/tablesorter.css";
-  @import "/include/css/jquery.tablesorter.pager.css";
-</sys:style>
-
-<sys:script type="text/javascript">
-$(document).ready(function() { 
-    // call the tablesorter plugin, the magic happens in the markup 
-    $("table")
-    .tablesorter({widgets: ['zebra']})
-    .tablesorterPager({container: $("#tablesorterpager")});
-});
-</sys:script>
-
-<h1>My Files and Collections</h1>
+<h1>My Files</h1>
 
 % if ( @files ) {
 
-<table class="tablesorter list" width="100%">
-<thead>
+<div id="list">
+<& /site/pager/header.mas, pager => $pager &>
+<table>
+ <tr></tr>
  <tr>
   <th>Name</th>
-  <th>Type</th>
+  <th>Contents</th>
   <th>Format</th>
   <th>Created At</th>
-  <th>Hide</th>
  </tr>
-</thead>
-<tbody>
+
+%   my $counter=0;
 %   foreach ( @files ) {
- <tr>
-% if ( $_->isa('ISGA::File') ) {
-  <td><a href="/File/View?file=<% $_ %>"><% $_->getUserName %></a></td>
-  <td><% $_->getType->getName %></td>
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>" >
+% my $name = $_->getUserName;
+  <td><a href="/Download/<% $name %>?file=<% $_ %>"><% $name %></a></td>
+  <td><% $_->getContent->getName %></td>
   <td><% $_->getFormat->getName %></td>
   <td><% $_->getCreatedAt->brief %></td>
-%   if( $_->isHidden ){
-  <td><a class="normal" href="/submit/File/Restore?file=<% $_ %>&redirect=<% $r->uri %>">Restore</a></td>
-%   }else{
-  <td><a class="normal" href="/submit/File/Hide?file=<% $_ %>&redirect=<% $r->uri %>">Hide</a></td>
-%   }
-% } else {
-  <td><a href="/FileCollection/View?file_collection=<% $_ %>"><% $_->getUserName %></a></td>
-  <td>\
-%   if ( $_->getType eq 'Run Results' ) {
-Collection of Run Results
-%   } else {
-File Archive
-%   }
-</td>
-  <td>Tar</td>
-  <td><% $_->getCreatedAt->brief %></td>
-%   if( $_->isHidden ){
-  <td><a class="normal" href="/submit/File/Restore?file_collection=<% $_ %>&redirect=<% $r->uri %>">Restore</a></td>
-%   }else{
-  <td><a class="normal" href="/submit/File/Hide?file_collection=<% $_ %>&redirect=<% $r->uri %>">Hide</a></td>
-%   }
-% }
-%#  <td><% $_->getCreatedAt->brief %></td>
  </tr>
 %   }
-</tbody>
 </table>
-
-<div id="tablesorterpager" class="tablesorterPager">
-  <form>
-    <img src="/include/img/tablesorter.pager/first.png" class="first"/>
-    <img src="/include/img/tablesorter.pager/prev.png" class="prev"/>
-    <input type="text" class="pagedisplay"/>
-    <img src="/include/img/tablesorter.pager/next.png" class="next"/>
-    <img src="/include/img/tablesorter.pager/last.png" class="last"/>
-    <select class="pagesize">
-      <option selected="selected"  value="10">10</option>
-      <option value="20">20</option>
-      <option value="30">30</option>
-      <option  value="40">40</option>
-    </select>
-  </form>
+<& /site/pager/footer.mas, pager => $pager &>
 </div>
-
 
 % } else {
 
-<p>You do not have any files. Visit the <a href="/Pipeline/List">Pipeline</a> section for instructions on preparing and running a pipeline to generate results.</p>
+<p>You do not have any files. Visit the <a href="/Pipeline/Overview">Pipeline</a> section for instructions on preparing and runing a pipeline to generate results.</p>
 
 % }
-
-<sys:rightmenu>
-
-<ul>
-
-<%doc>
-<li class="title">Tools</li>
-
-% if ( $show_hidden ) {
-
-<li class="rmbutton pointer"><a href="/File/BrowseMy">Stop Showing Hidden Files & Collections</a></li>
-<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>You are currently viewing all files, including hidden ones. This tool will hide your hidden files again.</p></li>
-
-% } else { 
-
-<li class="rmbutton pointer"><a href="/File/BrowseMy?show_hidden=1">Show Hidden Files & Collections</a></li>
-<li class="pointer" onclick="window.location='/File/BrowseMy?show_hidden=1'"><p>Show files that you have hidden. If you wish to permenantly unhide a file, select it and use the unhide tool.</p></li>
-
-% }
-</%doc>
-
-<li class="title">Viewing Options</li>
-
-
-
-<span>
-<form action="/File/BrowseMy" name="options">
-
-<li>
-<p>
-<input type="radio" name="show" value="all" \
-% if ( $show eq 'all' ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show files and collections <br>
-
-<input type="radio" name="show" value="File" \
-% if ( $show eq 'File' ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show files only <br>
-
-<input type="radio" name="show" value="FileCollection" \
-% if ( $show eq 'FileCollection' ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show collections only <br>
-</p>
-</li>
-
-<li>
-<p>
-<input type="checkbox" name="show_hidden" value="1" \
-% if ( $show_hidden ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show hidden files and collections <br>
-</p>
-</li>
-</form>
-</span>
-
-</ul>
-
-
-</sys:rightmenu>

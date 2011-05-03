@@ -1,0 +1,77 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public [PipelineInput] getRequiredInputs();
+
+Returns an reference to an array of pipeline inputs required by this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getRequiredInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{required};
+}
+
+#------------------------------------------------------------------------
+
+=item public [PipelineInput] getOptionalInputs();
+
+Returns an reference to an array of pipeline inputs required by this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getOptionalInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{optional};
+}
+
+#------------------------------------------------------------------------
+
+=item public File getFile(PipelineInput $input);
+
+Returns the file associated with the specified PipelineInput, or undef
+if no file is associated.
+
+=cut 
+#------------------------------------------------------------------------
+sub getFile {
+
+  my ($self, $input) = @_;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{file_map}{$input};
+}
+
+#------------------------------------------------------------------------
+
+=item public File int getMissingRequiredInputs();
+
+Returns the number of required inputs that have not been specified for
+this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getMissingRequiredInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{missing};
+}
+
+#------------------------------------------------------------------------
+
+=item public [RunBuilderInput] getInputs();
+
+Retrieves the inputs for the Run Builder.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputs { return SysMicro::RunBuilderInput->query( RunBuilder => shift ); }

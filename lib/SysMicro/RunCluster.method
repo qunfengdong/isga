@@ -1,0 +1,114 @@
+# -*- cperl -*-
+
+use List::Util qw( min reduce sum );
+
+# initialize status rank.  Lower number is higher priority
+my %status_rank = ( "error" => "1",
+		    failed => 2,
+		    "interrupted" => 3,
+		    "running" => 4,
+		    "incomplete" => 5,
+		    "complete" => 6,
+		  );
+
+my %status_reverse = ( 1 => 'Error',
+		       2 => 'Failed',
+		       3 => 'Interrupted',
+		       4 => 'Running',
+		       5 => 'Incomplete',
+		       6 => 'Complete'
+		     );
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus(hashref $ergatis);
+
+
+This will update the run cluster status, as well as pull information
+for outputs, using the supplied hash ref summarizing the pipeline.xml
+output.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my ($self, $ergatis) = @_;
+
+  # hash to store changes to runcluster object
+  my %edit;
+  
+  # to start with we are off the charts
+  my $key = 7;
+  
+  my $run = $self->getRun;
+
+  # don't process complete clusters
+  my $status = $self->getStatus;
+  return if $status eq 'Complete';
+
+  my $cluster = $self->getCluster;
+  
+  # create cluster builder and store cluster name in $key
+  my $builder = SysMicro::ClusterBuilder->new($cluster);
+  
+  # go through each component in a cluster and take the lowest number
+  $key = min( $key, $status_rank{ $ergatis->{ $_->{name} }{state} } ) for @{$builder->{Components}};
+  
+  # if we've started the cluster since the last update, grab the start time
+  if ( $status eq 'Incomplete' and $key != 5 ) {
+    
+    my @timestamps;
+    
+    foreach ( grep { exists $ergatis->{$_->{name}}->{startTime} } @{$builder->{Components}} ) {
+      push @timestamps, SysMicro::Timestamp->new( $ergatis->{$_->{name}}->{startTime}  );
+    }
+
+    $edit{ StartedAt } = reduce { $a < $b ? $a : $b } @timestamps ;
+  }
+  
+  # if we've finished the cluster since the last update, grab the end time
+  if ( $key == 6 ) {
+    
+    my @timestamps;
+    
+    foreach ( grep { exists $ergatis->{$_->{name}}->{endTime} } @{$builder->{Components}} ) {
+      push @timestamps, SysMicro::Timestamp->new( $ergatis->{$_->{name}}->{endTime}  );
+    }   
+    
+    $edit{ FinishedAt } = reduce { $a > $b ? $a : $b } @timestamps ;
+  }
+  
+  # if we've started the component, calculate the steps
+  if ( $key != 5 ) {
+    
+    $edit{FinishedActions} = 
+      sum map { $ergatis->{$_->{name}}{complete} || 0 } @{$builder->{Components}};
+    
+    $edit{TotalActions} = 
+      sum map { $ergatis->{$_->{name}}{total} || 0 } @{$builder->{Components}};
+  }
+  
+  # update status if it has changed
+  if ( $status ne $status_reverse{ $key } ) {
+    $edit{Status} = SysMicro::RunStatus->new( Name => $status_reverse{ $key } );
+  }
+
+  
+  # if it's complete we want to get all of the output
+  if ( $key == 6 ) {
+
+    # find the outputs of this cluster
+    foreach my $cout ( @{SysMicro::ClusterOutput->query( Cluster => $cluster )} ) {
+      next unless $cout->isPipelineOutput;
+
+      # find the outputs of this cluster
+      foreach ( @{SysMicro::RunOutput->query( ClusterOutput => $cout, Run => $run )} ) {
+	next if $_->getFile;
+	$_->saveErgatisOutput();
+      }      
+    }
+
+  }
+
+  $self->edit(%edit);
+}

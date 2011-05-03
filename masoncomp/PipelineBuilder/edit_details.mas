@@ -3,9 +3,9 @@
  $form
 </%args>
 
-<h1>Edit Pipeline Name and Description</h1>
+<h1>Pipeline Builder: Edit Details</h1>
 
 <% $form->get %>
 
 
-<& right_menu.mas, pipeline_builder => $pipeline_builder &>
+<& rightmenu.mas, pipeline_builder => $pipeline_builder &>

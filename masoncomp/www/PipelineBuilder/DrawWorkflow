@@ -4,7 +4,7 @@
 </%args>
 <%perl>
 
-$r->headers_out->set("Cache-Control" => "max-age=0, private");
+my $builder = SysMicro::WorkflowBuilder->restore( $pipeline_builder );
 
-$m->print($pipeline_builder->draw());
+$m->print( $builder->draw() );
 </%perl>

@@ -1,0 +1,24 @@
+--- !perl/SysMicro::ClusterBuilder
+Cluster: BLAST Search
+Description: 'Blast homology search against a non-redundant database comprised of several sources including NCBI, SwissProt, PDB, etc.  Also includes the use of the BER/Praze algorithim.'
+Components:
+  - name: wu-blastp.post_overlap_analysis
+    title: 'WU-BLASTP Post-overlap Analysis'
+    params:
+      - { templ: 'select', NAME: 'scoringmatrix', TITLE: 'Scoring Matrix', REQUIRED: 1, OPTION: ['PAM30', 'PAM70', 'BLOSUM45', 'BLOSUM62', 'BLOSUM80'], VALUE: 'BLOSUM62', DESCRIPTION: 'use the specified scoring matrix (default BLOSUM62)', CONFIGLINE: '___MATRIX___' }
+      - { NAME: 'evalue', TITLE: 'e-value', REQUIRED: 1, VALUE: '1e-5', ERROR: [], DESCRIPTION: 'Statistical significance threshold for reporting database sequence matches. Lower expected thresholds are more stringent, leading to fewer chance matches being reported. Increasing the expected threshold shows less stringent matches.', CONFIGLINE: '___EXPECT___' }
+      - { NAME: 'blastfilter', TITLE: 'BLAST Filter', REQUIRED: 1, VALUE: 'none', ERROR: [], DESCRIPTION: 'soft mask the query using the specified method.  (e.g., "seg", "xnu", "ccp", "dust" or "none")', CONFIGLINE: '___FILTER___' }
+      - { NAME: 'nummatches', TITLE: 'Number of Matches', REQUIRED: 1, VALUE: '150', ERROR: ['digitonly'], DESCRIPTION: 'number of database sequences to show alignments for.', CONFIGLINE: '___DATABASE_MATCHES___' }
+      - { NAME: 'numdescirptions', TITLE: 'Number of Descriptions', REQUIRED: 1, VALUE: '150', ERROR: ['digitonly'], DESCRIPTION: 'number of database sequences to show one-line descriptions for.', CONFIGLINE: '___DESCRIPTIONS___' }
+      - { NAME: 'gspmax', TITLE: 'GSP Max', REQUIRED: 1, VALUE: '5', ERROR: ['digitonly'], DESCRIPTION: 'max. number of gapped HSPs (GSPs) saved per subject sequence', CONFIGLINE: '___GSPMAX___' }
+      - { NAME: 'gaponepenalty', TITLE: 'Gap of Length 1 Penalty', DESCRIPTION: 'Set the penalty for a gap of length one to q (default Q=9 for proteins; Q=10 for BLASTN).', CONFIGLINE: '___OTHER_OPTS___', FLAG: '-Q' }
+      - { NAME: 'gapperresiduepenalty', TITLE: 'Per-Residue Gap Extending Penalty', DESCRIPTION: 'Set the per-residue penalty for extending a gap to r (default R=2 for proteins; R=10 for BLASTN)', CONFIGLINE: '___OTHER_OPTS___', FLAG: '-R' }
+  - name: ber.post_overlap_analysis
+    title: 'BER Post-overlap Analysis'
+    params:
+      - { NAME: 'maxevalue', TITLE: 'Max e-value', REQUIRED: 1, VALUE: '1e-5', ERROR: [], DESCRIPTION: ' ', CONFIGLINE: '___MAX_E_VALUE___' }
+      - { NAME: 'maxpvalue', TITLE: 'Max p-value', REQUIRED: 1, VALUE: '1e-5', ERROR: [], DESCRIPTION: ' ', CONFIGLINE: '___MAX_P_VALUE___' }
+      - { NAME: 'maxnumhits', TITLE: 'Max Number of Hits', REQUIRED: 1, VALUE: '150', ERROR: [], DESCRIPTION: ' ', CONFIGLINE: '___MAX_NUM_HITS___' }
+      - { NAME: 'maxperregion', TITLE: 'Max Number Hits per Region', REQUIRED: 1, VALUE: '0', ERROR: [], DESCRIPTION: 'If non-zero, overrides Max Number of Hits and displays region specific hits', CONFIGLINE: '___MAX_NUM_HITS_PER_REGION___' }
+      - { NAME: 'minnum', TITLE: 'Min Number (Experimental)', REQUIRED: 1, VALUE: '0', ERROR: [], DESCRIPTION: ' ', CONFIGLINE: '___MIN_NUM_EXPERIMENTAL___' }
+

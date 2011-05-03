@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: workflowparentage
+attributes:
+  - { name: Parent, column: workflow_parent, type: Workflow }
+  - { name: Child, column: workflow_child, plural: Children, type: Workflow }

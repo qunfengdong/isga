@@ -1,0 +1,100 @@
+# -*- cperl -*-
+
+use LWP::UserAgent;
+use File::Copy;
+
+#------------------------------------------------------------------------
+
+=item public Run submit(RunBuilder $builder);
+
+Submits a run to ergatis.
+
+=cut 
+#------------------------------------------------------------------------
+sub submit {
+
+  my ($self, $builder) = @_;
+
+  my $pipeline = $builder->getPipeline;
+  my $p_mask;
+  if ( $pipeline->isa( 'SysMicro::UserPipeline' ) ) {   
+    $p_mask = $pipeline->getParameterMask;
+  }
+ 
+  # make sure the builder is for real
+
+  # come up with a unique name for ourself
+  my $dir = time . $$;
+
+  # retrieve inputs
+  my $inputs = SysMicro::RunBuilderInput->query( RunBuilder => $builder);
+
+  # create the directory
+  mkdir( "___ergatis_submit_directory___/$dir" ) 
+    or X->throw( error => "Error creating directory: $!" );
+  
+  # write pipeline.layout
+  my $layout = $pipeline->getPipelineLayoutXML();
+  SysMicro::Utility->writeFile( "___ergatis_submit_directory___/$dir/pipeline.layout", $layout);
+
+  # write config files
+  my $configFiles = $pipeline->getConfigFiles( $inputs, $dir, $p_mask );
+  while ( my ($key, $value) = each %$configFiles ) {
+    SysMicro::Utility->writeFile
+	( "___ergatis_submit_directory___/$dir/$key", $value);	
+  }
+
+  # copy input files
+  foreach ( @$inputs ) {
+    my $file = $_->getFile;
+    my $name = $file->getName;
+    copy( "___file_repository___/$name", "___ergatis_submit_directory___/$dir/$name" );
+  }
+
+  # submit job
+  my $id = $self->_submitToErgatis($dir);
+
+  # create run
+  my $run =  SysMicro::Run->create
+    ( CreatedBy => SysMicro::Login->getAccount, Type => $pipeline, 
+      Status => SysMicro::RunStatus->new( Name => 'Running' ),
+      Name => $builder->getName,
+      Description => $builder->getDescription,
+      CreatedAt => SysMicro::Timestamp->new, ErgatisKey => $id );
+
+  # log the inputs
+  $run->addFile( $_->getFile ) for @$inputs;
+
+  # prepare the outputs
+  $run->_initializeOutputs();
+
+  # prepare the clusters
+  $run->_initializeClusters();
+
+  return $run;
+}
+
+#------------------------------------------------------------------------
+
+=item PRIVATE int _submitToErgatis(string $dir);
+
+Submits a pipeline template directory to ergatis and returns the new pipeline id.
+
+=cut 
+#------------------------------------------------------------------------
+sub _submitToErgatis {
+
+  my ($self, $dir) = @_;
+
+  my $ua = LWP::UserAgent->new;
+
+  my $response = 
+    $ua->get("___ergatis_submit_uri___?build_directory=___ergatis_submit_directory___/$dir");
+
+  $response->is_success and return $response->decoded_content;
+
+  use Data::Dumper;
+  warn Dumper $response;
+
+  X->throw( 'we had a super web error' );
+}

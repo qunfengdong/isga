@@ -5,8 +5,6 @@
 <sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
 <sys:style type="text/css" media="screen">
   @import "/include/css/jtip.css";
 </sys:style>
@@ -15,36 +13,41 @@
 $(document).ready(jtUpdate);
 
 function jtUpdate() {
-   $("area.cluster")
+
+  $("area.cluster")
+   .hover( 
+         function(){
+         JT_area_show(this.href,this.id,this.name,this.coords)},
+         function(){$('#JT').remove();
+      })
    .click(function(){return false});
 }
 
 </sys:script>
 
-<h1>Pipeline: View Parameters</h1>
+<h1>Pipeline : Edit Parameters</h1>
 
-<p>Hover your mouse over a box to view a desciption of the programs within 
-that module.  Click on a module to view it's parameters.</p>
+<p>Click on a Component to select to view it's parameters.</p>
 
 <div id="workflow">
 
 <img id="workflowimage" class="mapper" usemap="#clusters" src="/Pipeline/DrawWorkflow?pipeline=<% $pipeline %>" >
 
 <map name="clusters" >
+
 % foreach ( @{$pipeline->getWorkflow} ) {
-% next if (not defined $_->getCoordinates);
-% my $cluster = $_->getCluster;
+%   my $cluster = $_->getCluster;
+%   my $cluster_builder = SysMicro::ClusterBuilder->new( $cluster );
 <area \
   shape="rect" 
   id="<% $_ %>" \
-%#  name="<% $cluster->getName %>" \
-  alt="<% $cluster->getName %>" \
+  name="<% $cluster->getName %>" \
   class="noborder nofade cluster jTip" \
   coords="<% $_->getCoordinates %>" \
-%if ($_->getCluster->getName eq 'Process Annotation Input Files' || $_->getCluster->getName eq 'Output'){
+%   if (exists $cluster_builder->{NoParamsFlag}){
   href="/Cluster/GetClusterDescription?cluster=<% $cluster %>" \
 %    }else{
-  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>&link=<% "/Pipeline/ViewComponents?pipeline=$pipeline&cluster=$cluster" | u %>" \
+  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>&link=<% "/Pipeline/ViewParameters?pipeline=$pipeline&cluster=$cluster" | u %>" \
 %    } 
 > 
 % }
@@ -54,4 +57,8 @@ that module.  Click on a module to view it's parameters.</p>
 
 <br>
 
-<& right_menu.mas, pipeline => $pipeline &>
+<div class="buttonHolder">
+<a class="resetButton button" href="/Pipeline/View?pipeline=<% $pipeline %>">Cancel</a>
+</div>
+
+<& rightmenu.mas, pipeline => $pipeline &>

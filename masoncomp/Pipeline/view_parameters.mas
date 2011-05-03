@@ -1,47 +1,45 @@
 <%args>
  $pipeline
- $component_builder
- $component
+ $builder
+ $cluster
  $hide_unset
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
 <sys:style type="text/css" media="screen">
   @import "/include/css/jtip.css";
 </sys:style>
-<sys:style type="text/css" media="screen">
-@import "/include/css/tablesorter.css";
-</sys:style>
 
-% my $default_builder = ISGA::ComponentBuilder->new($component);
-% my $note;
+<h1><% $cluster->getName %> Parameters</h1>
 
-<h1><% $component->getName %> Parameters</h1>
-<p><% $component_builder->getComponentDescription %></p>
 % if ( $hide_unset ) {
 
 <p>Displaying only parameters that are being used.</p>
 
-<p><a class="button" href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $component %>&hide_unset=0">Show all parameters</a></p>
+<p><a class="button" href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&cluster=<% $cluster %>&hide_unset=0">Show all parameters</a></p>
 % } else {
 
 <p>Displaying all parameters.</p>
 
-<p><a class="button" href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $component %>&hide_unset=1">Hide unused parameters</a></p>
+<p><a class="button" href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&cluster=<% $cluster %>&hide_unset=1">Hide unused parameters</a></p>
 % }
 
-<table width="100%" class="tablesorter list">
+<table width="100%">
  <tr>
   <th>Parameter</th>
   <th>Value</th>
-  <th>Parameter Note</th>
+  <th>Annotation</th>
  </tr>
+
+% foreach my $component ( @{$builder->getComponents} ) {
 
 %   my $counter = 0;
 
-%   foreach ( @{$component_builder->getRequiredParameters} ) {
+ <tr class="list_label">
+  <td colspan="3"><% $component->getName %></td>
+ </tr>
+
+%   foreach ( @{$component->getRequiredParameters} ) {
 %     my $tr_class = ++$counter % 2 ? "odd" : "even";
 <tr class="<% $tr_class %>">
  <td><% $_->{TITLE} %>\
@@ -50,15 +48,12 @@
   <span color="#8bbb40" class="sup">?</span>
  </td>
  <td><% $_->{VALUE} %></td>
-
-% $note = $default_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
-
- <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : $note %></td>
+ <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : '' %></td>
 </tr>
 %   }
 
 %   my $optional = 
-%    $hide_unset ? $component_builder->getSetOptionalParameters : $component_builder->getOptionalParameters;
+%    $hide_unset ? $component->getSetOptionalParameters : $component->getOptionalParameters;
 %   foreach ( @{$optional} ) {
 %     my $tr_class = ++$counter % 2 ? "odd" : "even";
 <tr class="<% $tr_class %>">
@@ -68,15 +63,12 @@
   <span color="#8bbb40" class="sup">?</span>
  </td>
   <td><% exists $_->{VALUE} ? $_->{VALUE} : '' %></td>
-
-% $note = $default_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
-
-  <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : $note %></td>
+  <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : '' %></td>
 </tr>
 
 %   }
-%# }
+% }
  
 </table>
 
-<& right_menu.mas, pipeline => $pipeline &>
+<& rightmenu.mas, pipeline => $pipeline &>

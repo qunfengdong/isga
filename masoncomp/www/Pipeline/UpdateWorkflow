@@ -1,0 +1,15 @@
+<%args> #! -*- cperl -*-
+ $pipeline
+ $click
+</%args>
+
+<%perl>
+my $builder = SysMicro::WorkflowBuilder->restore( $pipeline );
+$click and $builder->update( $click );
+$SysMicro::Session->{ "PipelineWorkflow$pipeline" } = $builder;
+$m->comp('/Pipeline/update_workflow.mas', builder => $builder, click => $click );
+</%perl>
+
+<%flags>
+ inherit => undef
+</%flags>

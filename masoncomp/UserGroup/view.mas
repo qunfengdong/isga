@@ -2,7 +2,7 @@
  $user_group
 </%args>
 
-% my $owner = ISGA::Login->getAccount == $user_group->getCreatedBy;
+% my $owner = SysMicro::Login->getAccount == $user_group->getCreatedBy;
 
 <h1>Group: <% $user_group->getName %></h1>
 
@@ -41,8 +41,8 @@
 
 <h2>Open Invitations</h2>
 
-% my $invites  = ISGA::UserGroupInvitation->query( UserGroup => $user_group );
-% my $einvites = ISGA::UserGroupEmailInvitation->query( UserGroup => $user_group );
+% my $invites  = SysMicro::UserGroupInvitation->query( UserGroup => $user_group );
+% my $einvites = SysMicro::UserGroupEmailInvitation->query( UserGroup => $user_group );
 
 %   if ( @$invites || @$einvites ) {
 

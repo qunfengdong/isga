@@ -1,0 +1,10 @@
+<%args> # -*- cperl -*-
+ $cluster
+ $name
+</%args>
+<%perl>
+
+my $builder = SysMicro::ClusterBuilder->new( $cluster );
+
+</%perl>
+<% $builder->getParameterDescription( $name ) %>

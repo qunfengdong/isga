@@ -2,29 +2,20 @@
  $pipeline
 </%args>
 
-% my $src = "/Pipeline/DrawWorkflow?pipeline=$pipeline";
-
 <div id="workflow">
 
-<img id="workflowimage" class="mapper" usemap="#clusters" src="<% $src %>">
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/Pipeline/DrawWorkflow?pipeline=<% $pipeline %>">
 
 <map name="clusters" >
 
 % foreach ( @{$pipeline->getWorkflow} ) {
-%   next if (not defined $_->getCoordinates);
 <area \
-  shape="rect"
-  id="<% $_ ->getCluster %>" \
-  alt="<% $_->getCluster->getName %>" \
-  title="<% $_->getCluster->getName %>" \
+  shape="rect"  \
+  id="<% $_ %>" \
+  name="<% $_->getCluster->getName %>" \
+  class="noborder nofade cluster jTip" \
   coords="<% $_->getCoordinates %>" \
-  rel="component_selection" \
   href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
-%   if ($_->getCustomization eq 'IO' ) {
-  class="noborder nofade jTip nolink" \
-%   } else {
-  class="noborder nofade cluster jTip modal" \
-%   }
  >
 % }
 </map>

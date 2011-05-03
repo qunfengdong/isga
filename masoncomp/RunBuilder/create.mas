@@ -1,0 +1,18 @@
+<%args>
+ $form
+</%args>
+
+<h1>Run Builder</h1>
+
+<p>This tool allows you to describe and assign input files to a
+pipeline in order to execute a run.</p>
+
+<p>Your progress will be saved, and you can return to building your
+run at any time by clicking on 'My Run Builders' under the 'Results'
+entry in the navigation bar.</p>
+
+<p>Before you select your input files, you must choose a name to
+distinguish this run.. You may also provide an optional
+description.</p>
+
+<% $form->get %>

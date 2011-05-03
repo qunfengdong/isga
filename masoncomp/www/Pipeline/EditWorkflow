@@ -1,0 +1,44 @@
+<%args> #! -*- cperl -*-
+ $pipeline
+ @start => ()
+ @stop => ()
+</%args>
+
+<%perl>
+
+my $builder = SysMicro::WorkflowBuilder->new( $pipeline, \@start, \@stop );
+
+$SysMicro::Session->{ "PipelineWorkflow$pipeline" } = $builder;
+
+
+</%perl>
+
+<& /Pipeline/edit_workflow.mas, builder => $builder &>
+
+<%method head>
+<script type="text/javascript" src="/include/js/wz_jsgraphics.js"></script>
+<script type="text/javascript" src="/include/js/mapper.js"></script>
+<script type="text/javascript">
+
+$(document).ready(wfUpdate);
+
+function wfUpdate() {
+
+  $("area.cluster")
+   .hover( 
+	 function(){
+	 JT_show(this.href,this.id,this.name)},
+	 function(){$('#JT').remove();
+      })
+   .click(
+     function(){
+      $('#JT').remove();
+      $("#workflow").empty();
+      $('#workflow').load("/Pipeline/UpdateWorkflow?pipeline=<% $pipeline %>&click="+this.id,
+                          wfUpdate);
+      return false;
+     });
+}
+
+</script>
+</%method>

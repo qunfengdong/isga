@@ -1,6 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: Mast
-Description: 'Perform a TFBS search using Mast, a tool for searching biological sequence databases for sequences that contain one or more of a group of known motifs.'
-Params:
-  - { NAME: 'length', TITLE: 'Number of base pairs upstream', REQUIRED: 1, ERROR: ['digitonly'], VALUE: '500', DESCRIPTION: 'Number of base pairs to search upstream of a gene, default 500', CONFIGLINE: '___UPSTREAM___' }
-

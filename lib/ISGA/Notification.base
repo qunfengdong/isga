@@ -1,9 +1,0 @@
---- !perl/MasonX::Foundation::Class::Base
-class: Notification
-partition: NotificationPartition
-attributes:
-  - { name: NotificationPartition, options: [ REQUIRED ] }
-  - { name: Type, type: NotificationType, options: [ REQUIRED ] }
-  - { name: Var1, type: string }
-  - { name: Var2, type: string }
-  - { name: Var3, type: string }

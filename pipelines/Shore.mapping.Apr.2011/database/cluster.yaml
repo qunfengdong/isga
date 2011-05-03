@@ -1,5 +1,0 @@
----
- - Name: 'Run shore'
-   Description: 'Prepare the reads to be used by Shore.Map the reads to a reference genome.  This module runs the MapFlowcell, Correct4PE,and Merge portions of Shore.Identify and classify SNPs. Creates the appropriate output files for shore as well as GFF3 files.'
-   LayoutXML: |
-     ___shore.default___

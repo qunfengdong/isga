@@ -3,6 +3,7 @@
 </%args>
 <%perl>
 
+my $builder = SysMicro::ClusterBuilder->new( $cluster );
 
 </%perl>
-<% $cluster->getDescription() %>
+<% $builder->getClusterDescription() %>

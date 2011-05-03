@@ -69,5 +69,5 @@ mapping:
                   "ERROR":
                     type:    seq
                     sequence:
-                      - type:    any
+                      - type:    text
 

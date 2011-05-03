@@ -1,0 +1,39 @@
+<%args>
+ @pbuilders
+ $pager
+</%args>
+
+<h1>My Pipeline Builders</h1>
+
+<p>The following is a list of pipelines you have begun building, but
+not completed. You may select one to continue working on it.</p>
+
+% if ( @pbuilders ) {
+
+<div id="list">
+<& /site/pager/header.mas, pager => $pager &>
+<table width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Pipeline Template</th>
+  <th>Started On</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @pbuilders ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+%     my $template = $_->getPipeline;
+ <tr class="<% $tr_class %>">
+  <td><a href="/PipelineBuilder/Overview?pipeline_builder=<% $_ %>"><% $_->getName %></a></td>
+  <td><a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a></td>
+  <td><% $_->getStartedOn %></td>
+ </tr>      
+%   }
+</table>
+<& /site/pager/footer.mas, pager => $pager &>
+</div>
+
+% } else {
+<p>You do not have any pipelines in development.</p>
+
+<a class="button" href="/Pipeline/List">Select a Pipeline to Customize</a>
+% }

@@ -1,24 +1,16 @@
-<div id="login_content" style='clear:both;'>
-<div id="message"></div>
-<form id="form" action="" method="post" class='uniForm inlineLabels'>
-  <fieldset class='inlineLabels'>
-  <legend></legend>
-    <div class='ctrlHolder'>
-      <label>Email Address</label>
-      <input id="username" name="username" type="text" size="30">
-    </div>
-    <div class='ctrlHolder'>
-      <label>Password</label>
-       <input id="password" name="password" type="password" size="30">
-      </div>
-  </fieldset>
-
-%#<a href="" class="login" >Login</a>
-  <div class='buttonHolder'>
-    <button class='submitButton button login' value='Login' name='Login' type='submit'>Login</button>
-  </div>
-</form>
+<form id="form" action="<& /site/url.mas,
+                           path => '/submit/Login',
+			   query => { caller_url => $r->uri,
+			              caller_args => {$m->request_args}
+				      } &>" method="post">
 <p>
-<a href="/Account/Request">Request New Account</a> | <a href="/Account/LostPassword">Lost Password</a>
+ <label>Email Address</label>
+ <input id="username" name="username" type="text">
+ <label>Password</label>
+ <input id="password" name="password" type="password">
+
+ <input type="submit" name="Login" value="Login">
 </p>
-</div>
+</form>
+
+<a href="/Account/Request">Request New Account</a> | <a href="/Account/LostPassword">Lost Password</a>

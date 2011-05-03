@@ -1,7 +1,7 @@
 <%perl%> # -*- cperl -*-
 
 # make sure we're not in a transaction
-ISGA::DB->assertInTransaction and ISGA::DB->failTransaction();
+SysMicro::DB->assertInTransaction and SysMicro::DB->failTransaction();
 
 $m->call_next();
 

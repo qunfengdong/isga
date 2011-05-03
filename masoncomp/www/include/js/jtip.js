@@ -10,17 +10,17 @@ $(document).ready(JT_init);
 
 function JT_init(){
 	       $("a.jTip")
-//	   .hover(function(){JT_show(this.href,this.id,this.name)},function(){$('#JT').remove()})
+		   .hover(function(){JT_show(this.href,this.id,this.name)},function(){$('#JT').remove()})
            .click(function(){return false});	   
 }
 
 
-function JT_area_show(url,linkId,title,coords){
+function JT_area_show(url,linkId,title, coords){
 	if(title == false)title="&nbsp;";
 	var de = document.documentElement;
+	var img = document.getElementById(linkId).offsetParent;
 	var w = self.innerWidth || (de&&de.clientWidth) || document.body.clientWidth;
-        var img = document.getElementById(linkId).offsetParent;
-        var hasArea = w - getAbsoluteLeft(img.id);
+	var hasArea = w - getAbsoluteLeft(img.id);
 	var clickElementy = getAbsoluteTop(linkId) - 3; //set y position
 	
         var coordinates = coords.split(",");
@@ -32,7 +32,7 @@ function JT_area_show(url,linkId,title,coords){
 	var params = parseQuery( queryString );
 	if(params['width'] === undefined){params['width'] = 250};
 	if(params['link'] !== undefined){
-        $('#' + linkId).bind('click',function(){ window.location = params['link'] });
+	    $('#' + linkId).bind('click',function(){ window.location = params['link'] });
 	$('#' + linkId).css('cursor','pointer');
 	}
 	
@@ -42,40 +42,6 @@ function JT_area_show(url,linkId,title,coords){
 	}else{
 		$("body").append("<div id='JT' style='width:"+params['width']*1+"px'><div id='JT_arrow_right' style='left:"+((params['width']*1)+1)+"px'></div><div id='JT_close_right'>"+title+"</div><div id='JT_copy'><div class='JT_loader'><div></div></div>");//left side
 		var clickElementx = getAbsoluteLeft(linkId) - ((params['width']*1) + 15); //set x position
-	}
-	
-	$('#JT').css({left: clickElementx+xcor+"px", top: clickElementy + ycor+"px"}); 
-	$('#JT').show();
-	$('#JT_copy').load(url);
-
-}
-
-
-function JT_IE_area_show(url,linkId,title,coords,ieworkaround){
-	if(title == false)title="&nbsp;";
-	var de = document.documentElement;
-	var w = self.innerWidth || (de&&de.clientWidth) || document.body.clientWidth;
-        var hasArea = w - getAbsoluteLeft(ieworkaround);
-	var clickElementy = getAbsoluteTop(ieworkaround) - 3; //set y position
-        var coordinates = coords.split(",");
-        var xcor = parseInt(coordinates[2]);
-        var ycor = parseInt(coordinates[1]);
-        xcor += 11;
-
-	var queryString = url.replace(/^[^\?]+\??/,'');
-	var params = parseQuery( queryString );
-	if(params['width'] === undefined){params['width'] = 250};
-	if(params['link'] !== undefined){
-        $('#' + linkId).bind('click',function(){ window.location = params['link'] });
-	$('#' + linkId).css('cursor','pointer');
-	}
-	
-	if(hasArea>((params['width']*1)+75)){
-		$("body").append("<div id='JT' style='width:"+params['width']*1+"px'><div id='JT_arrow_left'></div><div id='JT_close_left'>"+title+"</div><div id='JT_copy'><div class='JT_loader'><div></div></div>");//right side
-		var clickElementx = getAbsoluteLeft(ieworkaround); //set x position
-	}else{
-		$("body").append("<div id='JT' style='width:"+params['width']*1+"px'><div id='JT_arrow_right' style='left:"+((params['width']*1)+1)+"px'></div><div id='JT_close_right'>"+title+"</div><div id='JT_copy'><div class='JT_loader'><div></div></div>");//left side
-		var clickElementx = getAbsoluteLeft(ieworkaround) - ((params['width']*1) + 15); //set x position
 	}
 	
 	$('#JT').css({left: clickElementx+xcor+"px", top: clickElementy + ycor+"px"}); 

@@ -1,0 +1,33 @@
+<%args>
+ $pager
+ @rbs
+</%args>
+
+<h1>My RunBuilders</h1>
+
+% if ( @rbs ) {
+
+<div id="list">
+<& /site/pager/header.mas, pager => $pager &>
+<table>
+ <tr>
+  <th>Pipeline</th>
+  <th>Started At</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @rbs ) {
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>" >
+  <td><a href="/RunBuilder/View?run_builder=<% $_ %>"><% $_->getPipeline->getName %></a></td>
+  <td><% $_->getStartedAt->brief %></td>
+ </tr>
+%   }
+</table>
+<& /site/pager/footer.mas, pager => $pager &>
+</div>
+
+% } else {
+
+<p>You are not currently building any runs. Visit the <a href="/Pipeline/Overview">Pipeline</a> section to select a pipeline to run.</p>
+
+% }

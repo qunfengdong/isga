@@ -1,16 +1,11 @@
-use Test::More tests => 2;
-
+use Test::More tests => 1;
 
 BEGIN {
 
 # set environment to fake mod_perl
 $ENV{MOD_PERL} = '2.0';
 
-use lib 'build_lib';
-
-use_ok( 'ISGA' );
-
-use_ok( 'ISGA::Objects' );
+use_ok( 'SysMicro' );
 }
 
-diag( "ISGA $ISGA::VERSION" );
+diag( "SysMicro $SysMicro::VERSION" );

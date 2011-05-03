@@ -44,6 +44,7 @@
 #col1_content li.title {
     display: block;
     padding: 7px 7px 7px 0.5em;
+    background-color: #8bbb40;
     color: #fff;
     font-size: 125%; 
     font-weight: bold;
@@ -52,6 +53,8 @@
 #col1_content li a {
     text-decoration: none;
     display: block;
+    background-color: #f7f7d4;
+    color: #61832d;
     padding: 7px 7px 7px 0.5em;
     border-left: 10px solid #61832d;
     width: 100%;
@@ -61,6 +64,7 @@
 
 #col1_content li a:hover {
     border-left: 10px solid #f8f87a;
+    background-color: #61832d;
     color: #FFFFFF;
 }
 

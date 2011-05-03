@@ -100,7 +100,6 @@ margin:20px;
 #JT_copy{
 	padding:10px 10px 10px 10px;
 	color:#333333;
-	text-align: justify;
 }
 
 .JT_loader{
@@ -139,6 +138,5 @@ margin:3px 0;
 }
 
 .jTip{
-  cursor:help;
+cursor:help;
 }
-

@@ -1,0 +1,10 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ClusterInput
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: DefaultValue, type: string, options: [ REQUIRED ] }
+  - { name: Dependency, type: InputDependency, options: [ REQUIRED ] }
+  - { name: Cluster, type: Cluster, options: [ REQUIRED ] }
+  - { name: Type, type: FileType, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }
+  - { name: ErgatisFormat, type: string, options: [ REQUIRED ] }

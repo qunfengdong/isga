@@ -1,14 +1,23 @@
 <%args> # -*- cperl -*-
  $pipeline
- $component
+ $cluster
  $hide_unset => 1
 </%args>
 
 <%perl>
 
-my $builder = ISGA::ComponentBuilder->new($component, $pipeline->getParameterMask);
+my $builder = SysMicro::ClusterBuilder->new($cluster);
+
+if ( $pipeline->isa('SysMicro::UserPipeline') ) {
+  $builder = $builder->injectMaskValues($pipeline, $cluster);
+  bless $builder, 'SysMicro::ClusterBuilder';
+}
 
 </%perl>
 
-<& /Pipeline/view_parameters.mas, component => $component, 
-  component_builder => $builder, pipeline => $pipeline, hide_unset => $hide_unset &>
+<& /Pipeline/view_parameters.mas, cluster => $cluster, 
+  builder => $builder, pipeline => $pipeline, hide_unset => $hide_unset &>
+
+
+
+ 

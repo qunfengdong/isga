@@ -1,0 +1,33 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+<sys:rightmenu>
+<ul>
+<li class="title">Pipeline Builder Tools</li>
+
+<li class="rmbutton"><a href="Overview?pipeline_builder=<% $pipeline_builder %>">Overview</a></li>
+
+<li><p>Return to the pipeline overview page, where you can view details and your current workflow.</p></li>
+
+<li class="rmbutton"><a href="EditDetails?pipeline_builder=<% $pipeline_builder %>">Edit Details</a></li>
+<li><p>Edit the name or description for the pipeline</p></li>
+
+<li class="rmbutton"><a href="EditWorkflow?pipeline_builder=<% $pipeline_builder %>">Select Programs To Run</a></li>
+<li><p>Choose the programs you want to run from a graphic representing the pipline.</p></li>
+
+<li class="rmbutton"><a href="ViewClusters?pipeline_builder=<% $pipeline_builder %>">Edit Program Parameters</a></li>
+<li><p>View and change required and optional programs for the programs part of your pipeline.</p></li>
+
+<li class="rmbutton"><a href="ViewInputs?pipeline_builder=<% $pipeline_builder %>">View Input Requirements</a></li>
+<li><p>The files you will need to upload for your pipeline depend on the programs you have chosen to run. This Tool will allow you to view those inputs.</p></li>
+
+<li class="rmbutton"><a  href="ViewOutputs?pipeline_builder=<% $pipeline_builder %>">View Pipeline Outputs</a></li>
+
+<li><p>View the files that your currently configuration will generate as output.</p></li>
+
+<li class="rmbutton"><a href="/submit/PipelineBuilder/Finalize?pipeline_builder=<% $pipeline_builder %>">Finalize Pipeline</a></li>
+<li><p>Create a pipeline with the settings you have selected.</p></li>
+
+</ul>
+</sys:rightmenu>

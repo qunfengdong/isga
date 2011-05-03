@@ -1,0 +1,10 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: PipelineBuilder
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Pipeline, type: Pipeline, options: [ REQUIRED ] }
+  - { name: Description, type: string }
+  - { name: WorkflowMask, type: string, options: [ REQUIRED, NOGET ] }
+  - { name: ParameterMask, type: string, options: [ NOGET ] }
+  - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
+  - { name: StartedOn, type: Date, options: [ REQUIRED ] }

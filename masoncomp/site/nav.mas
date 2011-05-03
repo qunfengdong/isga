@@ -1,126 +1,46 @@
-<%args>
- $doc
-</%args>
-
-% my $exists = ISGA::Login->exists;
-% my $account = ISGA::Login->getAccount;
+% my $exists = SysMicro::Login->exists;
 
 %#<div id="nav">
-%#<div id="droppydiv">
+%#<div id="nav_main">
 
  <ul id="nav"> 
-  <li><a href="/Home">Home</a>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/Pipeline/Overview">Pipelines</a>
    <ul>
-% if ( $exists and $account->hasGroup($policy_admin) ) {
-    <li><a href="/SiteConfiguration/View">Site Configuration</a></li>
-% }
-    <li><a href="/Help/Introduction">Introduction</a></li>
-% if ( ! $exists ) {
-    <li><a href="/Account/Request">Request Account</a></li>
-% }
-    <li><a href="/Help/Policies">ISGA Policies</a></li>
-    <li><a href="/Help/Acknowledgement">Acknowledgement</a></li>
-   </ul>
-  </li>
-
-  <li><a href="/Pipeline/List">Build Pipelines</a>
-   <ul>
-    <li><a href="/Help/Tutorial?tab=pipeline">Tutorial</a></li>
-% foreach ( @{$pipelines} ) {
-   <li><a href="/Pipeline/View?pipeline=<% $_ %>"><% $_->getLabel %></a></li>
-% }
-% if ( $account ) {
-%  if ( my $user= ISGA::UserPipeline->exists( CreatedBy => $account, Status => ISGA::PipelineStatus->available() ) ) {
-    <li><a href="/Pipeline/List"><% $user %> Customized Pipelines</a></li>
-%  }
+    <li><a href="/Pipeline/Overview">Overview</a></li>
+    <li><a href="/Pipeline/List">Public Pipelines</a></li>
+% if ( $exists ) {
+    <li><a href="/Pipeline/ListMy">My Pipelines</a></li>
+    <li><a href="/PipelineBuilder/ListMy">My Pipeline Builders</a></li>
 % }
    </ul>  
   </li>
-
-
-% if ( $exists ) {
-  <li><a href="/Run/Status?show_shared=1">Monitor Pipelines</a>
-   <ul>
-    <li><a href="/Run/Status?show_shared=1">Pipeline Status</a></li>
-%   if ( $account->hasGroup( $run_admin ) ) {
-    <li><a href="/Run/AdminList">Administer Runs</a></li>
-%   }
-   </ul>
-  </li>
-% }
-
-  <li><a href="/WorkBench/Overview">Toolbox</a>
+  <li><a href="/Run/Overview">Results</a>
 % if ( $exists ) {
    <ul>
+    <li><a href="/Run/ListMy">My Runs</a></li>
+    <li><a href="/RunBuilder/ListMy">My Run Builders</a></li>
     <li><a href="/File/BrowseMy">My Files</a></li>
-    <li><a href="/WorkBench/BrowseMy">My Jobs</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Blast Search</a></li>
-    <li><a href="/WorkBench/GBrowse">Genome Browser</a></li>
-    <li><a href="/WorkBench/GenomeFeatureQuery">Database Query</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'NewblerToHawkeye' ) %>">Convert Newbler to Hawkeye</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'CeleraToHawkeye' ) %>">Convert Celera to Hawkeye</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
-    <li><a href="/WorkBench/Overview">Additional Tools</a></li>
    </ul>
 % }
-  </li>
+   </li>
 
-% if ( $exists ) {
-  <li><a href="/Account/MyAccount">Account</a>
+  <li><a href="/Support/Overview">Support</a>
    <ul>
-    <li><a href="/Account/MyAccount">Account Details</a></li>
-    <li><a href="/Account/ChangeMyPassword">Change Password</a></li>
-   </ul>
-  </li>
-% }
-
-  <li><a href="/News/Recent">News</a>
-   <ul>
-    <li><a href="/News/Recent">Recent News</a></li>
-% if ( $exists and $account->hasGroup($news_admin)  ) {
-    <li><a href="/News/Create">Create News Item</a></li>
-% }
+    <li><a href="/Support/Overview">Overview</a></li>
+    <li><a href="/Support/ContactUs">Contact Us</a></li>
    </ul>
   </li>
 
-  <li><a href="/Help/DownloadISGA">Download</a>
+% if ( SysMicro::Login->exists ) {
+  <li><a href="/Account/MyAccount">My Account</a>
    <ul>
-    <li><a href="/Help/DownloadISGA">Download ISGA</a></li>
+    <li><a href="/Account/MyAccount">My Account</a></li>
+    <li><a href="/File/BrowseMy">My Files</a></li>
    </ul>
   </li>
-
-  <li><a href="/Help/Overview">Help</a>
-   <ul>
-    <li><a href="/Help/Introduction">Introduction</a></li>
-    <li><a href="/Help/Tutorial">Tutorials</a>
-      <ul>
-        <li><a href="/Help/Tutorial?tab=pipeline">Pipeline Tutorial</a></li>
-        <li><a href="/Help/Tutorial?tab=account">Account Tutorial</a></li>
-      </ul>
-    </li>
-    <li><a href="/Help/FAQ">FAQs</a></li>
-    <li><a href="/Help/ContactUs">Contact Us</a></li>
-   </ul>
-  </li>
-
-
-% if ( ISGA::Login->exists && $doc && ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  <div id="toggle"><li class="disableWalkthrough"><a class="btn-slide" href="#"><span class="showOrHide"></span></a></li></div>
 % }
  </ul>
 
+%# </div>
 %#</div>
-%#</div>
-
-<%once>
-
-my $policy_admin = ISGA::Group->new( Name => 'Policy Administrators' );
-my $news_admin = ISGA::Group->new( Name => 'News Administrators' );
-my $run_admin = ISGA::Group->new( Name => 'Run Administrators' ); 
-  
-my $pipelines = ISGA::GlobalPipeline->published();
-
-</%once>

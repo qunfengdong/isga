@@ -1,0 +1,95 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item PRIVATE void _initializeOutputs();
+
+Creates placeholders for all expected pipeline outputs.
+
+=cut 
+#------------------------------------------------------------------------
+sub _initializeOutputs {
+
+  my $self = shift;
+
+  foreach my $cluster ( @{$self->getType->getClusters} ) {
+
+    foreach ( @{SysMicro::ClusterOutput->query( Cluster => $cluster )} ){
+      next unless $_->isPipelineOutput;
+      SysMicro::RunOutput->create( Run => $self, ClusterOutput => $_ );
+    }
+  }
+}
+
+#------------------------------------------------------------------------
+
+=item PRIVATE void _initializeClusters();
+
+Creates table entries for the clusters we will run.
+
+=cut 
+#------------------------------------------------------------------------
+sub _initializeClusters {
+
+  my $self = shift;
+
+  my $incomplete = SysMicro::RunStatus->new( Name => 'Incomplete' );
+
+  foreach my $cluster ( @{$self->getType->getClusters} ) {
+    
+    SysMicro::RunCluster->create( Run => $self, Cluster => $cluster,
+				  Status => $incomplete );
+  }
+}
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus();
+
+
+Updates the run status by parsing the ergatis pipeline.xml. This will
+update the run status, as well as pull information for clusters and
+outputs.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my $self = shift;
+
+  my $status = $self->getStatus;
+
+  return if $status eq 'Complete';
+
+  eval {
+
+    SysMicro::DB->begin_work();
+    
+    my $ergatis_status = SysMicro::ErgatisRunStatus->new( $self->getErgatisKey );
+    
+    my $new_status = ucfirst( $$ergatis_status{'start pipeline:'}->{state} );
+    
+    $new_status eq 'Incomplete' and $new_status = "Submitting";  
+    
+    $new_status eq $status or
+      $self->edit( Status => SysMicro::RunStatus->new( Name => $new_status ) );
+    
+    my $pipeline = $self->getType;
+    
+    # go through each cluster
+    foreach (@{$pipeline->getClusters}){
+      
+      my ($run_cluster) = @{SysMicro::RunCluster->query( Run => $self, Cluster => $_ )};
+      $run_cluster->updateStatus($ergatis_status);
+    }
+    
+    SysMicro::DB->commit();
+  };
+
+  if ( $@ ) {
+    SysMicro::DB->rollback();
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+    $e->rethrow();
+  }  
+  
+}
