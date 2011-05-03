@@ -3,7 +3,7 @@
  $form
 </%args>
 
-<h1>Edit Pipeline Name and Description</h1>
+<h1>Pipeline Customization: Edit Details</h1>
 
 <% $form->get %>
 

@@ -1,29 +1,8 @@
-<%args>
- $show_canceled => 0
- $show_hidden => 0
- $show_shared => 0
-</%args>
-
 <%perl>
 
-my $account = ISGA::Login->getAccount;
-
-my %args = ( CreatedBy => $account, OrderBy => 'CreatedAt' );
-$show_canceled or $args{Status} = { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) };
-
-my $runs = ISGA::Run->query( %args );
-my $shared_runs = $account->getSharedRuns();
-my $rbs = ISGA::RunBuilder->query( CreatedBy => $account, OrderBy => 'StartedAt' );
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
 
 </%perl>
 
-<& /Run/list_my.mas, account => $account, runs => $runs, show_hidden => $show_hidden&>
-
-<br><br>
-
-% if ( $show_shared ) {
-<& /Run/list_shared.mas, account => $account, runs => $shared_runs &>
-% }
-<& /RunBuilder/ListMy.mas, account => $account, run_builders => $rbs &>
-
-<& /Run/list_right_menu.mas, show_canceled => $show_canceled, show_hidden => $show_hidden, show_shared => $show_shared &>
+<& /Run/list_my.mas, account => $account, runs => $runs &>

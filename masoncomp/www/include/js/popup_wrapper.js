@@ -8,16 +8,15 @@ function tipUpdate() {
     var shown = false;
     var idCheck = null;
 
-   $("area.jTip")
+   $("area.cluster")
    .mouseover(function () {
       if (hideDelayTimer) clearTimeout(hideDelayTimer);
       if ((beingShown || shown) && idCheck == this.id) {
         return;
       } else {
-        $('#JT').remove(); 
         idCheck = this.id;
         beingShown = true;
-      if($.browser.msie || $.browser.safari){
+      if($.browser.msie){
         JT_IE_area_show(this.href,this.id,this.title,this.coords,'workflow');
       } else {
         JT_area_show(this.href,this.id,this.alt,this.coords);
@@ -31,7 +30,7 @@ function tipUpdate() {
       hideDelayTimer = setTimeout(function () {
         hideDelayTimer = null;
         shown = false;
-        $('#JT').remove(); 
+        $('#JT').remove();
       }, hideDelay);
     })
 
@@ -42,7 +41,6 @@ function tipUpdate() {
       if ((beingShown || shown) && idCheck == this.id) {
         return;
       } else {
-        $('#JT').remove();
         idCheck = this.id;
         beingShown = true;
         JT_show(this.href,this.id,this.name);

@@ -1,7 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: tRNAscan-SE
-Description: '<a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/9023104">tRNAscan-SE</a> identifies transfer RNA genes in genomic DNA or RNA sequences.'
-Params:
-  - { NAME: 'score', TITLE: 'Cutoff Score', ERROR: ['digitonly'], DESCRIPTION: 'Set cutoff score (in bits) for reporting tRNAs (default=20)', CONFIGLINE: '___OPTS___', FLAG: '-X' }
-  - { NAME: 'length', TITLE: 'Max. Length', ERROR: ['digitonly'], DESCRIPTION: 'Set max length of tRNA intron+variable region (default=116bp)', CONFIGLINE: '___OPTS___', FLAG: '-L' }
-  - { NAME: 'padding', TITLE: 'Nucleotide Padding', ERROR: ['digitonly'], DESCRIPTION: 'Use <number> nucleotides padding when passing first-pass tRNA bounds predictions to CM analysis (default=7)', CONFIGLINE: '___OPTS___', FLAG: '-z' }

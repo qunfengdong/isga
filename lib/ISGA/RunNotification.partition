@@ -1,6 +1,0 @@
---- !perl/MasonX::Foundation::Class::Partition
-class: RunNotification
-partition_of: Notification
-attributes:
-  - { name: Account, type: Account, options: [ REQUIRED ] }
-  - { name: Run, type: Run, options: [ REQUIRED ] }

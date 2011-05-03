@@ -1,10 +1,10 @@
-package ISGA::Party::Test;
+package SysMicro::Party::Test;
 #------------------------------------------------------------------------
 =pod
 
 =head1 NAME
 
-ISGA::Party::Test - test methods for the account class.
+SysMicro::Party::Test - test methods for the account class.
 
 =head1 METHODS
 
@@ -27,13 +27,13 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA;
+use SysMicro;
 
-use ISGA::Test::Transactions;
+use SysMicro::Test::Transactions;
 
 use base 'Test::Class';
 
-my $class = 'ISGA::Party';
+my $class = 'SysMicro::Party';
 
 #========================================================================
 

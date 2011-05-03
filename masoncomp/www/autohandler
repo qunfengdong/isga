@@ -8,9 +8,11 @@ my $doc = 0;
 my $html;
 
 # make sure there weren't any web app errors we want to handle inline
-my $session_args = $ISGA::WebApp->saved_args();
+my $session_args = $SysMicro::WebApp->saved_args();
 
 if ( exists $session_args->{error} ) {
+
+  warn "we found a session error\n";
 
   $html = $m->scomp('.show_error', e => $session_args->{error});
 
@@ -20,7 +22,7 @@ if ( exists $session_args->{error} ) {
 } else {
   
   # use case is ok, so grab specific details
-  my $use = ISGA::Login->getUseCase;
+  my $use = SysMicro::Login->getUseCase;
   $style = $use->getStyle;
   $doc = $use->hasDocumentation;
 
@@ -38,7 +40,7 @@ if ( exists $session_args->{error} ) {
   }
 }
 
-my $siteTags = ISGA::Utility->extractSiteTags( \$html );
+my $siteTags = SysMicro::Utility->extractSiteTags( \$html );
 
 </%perl>
 % if ( $style eq 'none' ) {
@@ -58,7 +60,7 @@ my $siteTags = ISGA::Utility->extractSiteTags( \$html );
 <%perl>
 
 unless( $e->isa( 'X::User' ) ) {
-  ISGA::Log->logWebException($r, $e);
+  SysMicro::Log->logWebException($r, $e);
 }    
 
 # print error message
@@ -67,9 +69,9 @@ if ( $e->isa('X::User::Denied::RequiresLogin') ) {
 } elsif ( $e->isa('X::User::Denied') ) {
   $m->comp('/site/error/denied.mas');
 } elsif ( $e->isa('X::User') ) {
-  $m->comp('/site/error/user_error.mas');
+  $m->comp('/site/error/user.mas');
 } else { 
-  $m->comp('/site/error/system_error.mas');
+  $m->comp('/site/error/unrecoverable.mas', e => $e);
 }
 </%perl>
 </%def>

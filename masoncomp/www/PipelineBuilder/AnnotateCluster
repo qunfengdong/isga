@@ -6,10 +6,10 @@
 <%perl>
 
 # check that we have a form cached and it is the correct type
-my $form = $ISGA::WebApp->saved_args->{'form'};
+my $form = $SysMicro::WebApp->saved_args->{'form'};
 
 $form and $form->get_formname() eq 'annotate_cluster'
-  or $form =  ISGA::FormEngine::PipelineBuilder->AnnotateCluster(\%ARGS);
+  or $form =  SysMicro::FormEngine::PipelineBuilder->AnnotateCluster(\%ARGS);
 
 $pipeline_builder ||= $form->get_input('pipeline_builder');
 

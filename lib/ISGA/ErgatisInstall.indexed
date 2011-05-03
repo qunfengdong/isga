@@ -1,5 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: ErgatisInstall
-attributes:
-  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ]  }
-  - { name: Version, type: string, options: [ REQUIRED, UNIQUE ] }

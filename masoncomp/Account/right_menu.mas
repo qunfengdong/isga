@@ -27,14 +27,20 @@ function sectionHighlight() {
 <ul>
  <li class="title">Account Tools</li>
 
- <li class="rmbutton pointer"><a href="/Account/MyAccount">Overview</a></li>
- <li class="pointer" onclick="window.location='/Account/MyAccount'"><p>Return to the account overview page.</p></li>
+ <span onclick="window.location='/Account/MyAccount'">
+ <li class="rmbutton"><a href="/Account/MyAccount">Overview</a></li>
+ <li><p>Return to the account overview page.</p></li>
+ </span>
 
- <li class="rmbutton pointer"><a href="/Account/EditMyDetails">Edit Details</a></li>
- <li class="pointer" onclick="window.location='/Account/EditMyDetails'"><p>Change your name, email address and other account details.</p></li>
+ <span onclick="window.location='/Account/EditMyDetails'">
+ <li class="rmbutton"><a href="/Account/EditMyDetails">Edit Details</a></li>
+ <li><p>Change your name, email address and other account details.</p></li>
+ </span>
 
- <li class="rmbutton pointer"><a href="/Account/ChangeMyPassword">Change Password</a></li>
- <li class="pointer" onclick="window.location='/Account/ChangeMyPassword'"><p>Change your account password. You will need to enter your current password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a> to create a new one.</p></li>
+ <span onclick="window.location='/Account/ChangeMyPassword'">
+ <li class="rmbutton"><a href="/Account/ChangeMyPassword">Change Password</a></li>
+ <li><p>Change your account password. You will need to enter your current password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a> to create a new one.</p></li>
+ </span>
 
 </ul>
 

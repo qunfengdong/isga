@@ -1,9 +1,9 @@
-package ISGA::Test::Methods;
+package SysMicro::Test::Methods;
 #------------------------------------------------------------------------
 
 =head1 NAME
 
-ISGA::Test::Methods
+SysMicro::Test::Methods
 
 =head1 METHODS
 
@@ -23,7 +23,7 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA::X;
+use SysMicro::X;
 
 use base 'Test::Class';
 

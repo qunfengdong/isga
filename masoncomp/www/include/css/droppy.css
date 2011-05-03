@@ -1,6 +1,6 @@
 /* Basic code - don't modify */
  
- #nav { display: block; margin: 0; padding: 0; position: relative; z-index: 2; }
+ #nav { display: block; margin: 0; padding: 0; position: relative; z-index: 1; }
   #nav li { display: block; list-style: none; margin: 0; padding: 0; float: left; position: relative; }
   #nav a { display: block; }
   #nav ul { display: none; position: absolute; left: 0; margin: 0; padding: 0; }

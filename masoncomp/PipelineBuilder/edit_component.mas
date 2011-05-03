@@ -10,7 +10,7 @@
   @import "/include/css/jtip.css";
 </sys:style>
 
-<h1>Pipeline Building: Edit Parameters</h1>
+<h1>Pipeline Customization: Edit Parameters</h1>
 
 % #<h1><% $pipeline->getName %></h1>
 
