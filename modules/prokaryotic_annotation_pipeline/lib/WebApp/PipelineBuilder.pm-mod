@@ -1,0 +1,54 @@
+#------------------------------------------------------------------------
+
+=item public void ChooseComponent();
+
+Processes optional components so only user selected are run
+
+=cut
+
+#------------------------------------------------------------------------
+sub PipelineBuilder::ChooseComponent {
+  my $self = shift;
+  my $web_args = $self->args;
+  my $form = ISGA::FormEngine::PipelineBuilder->ChooseComponent($web_args);
+
+  my $pipeline_builder = $self->args->{pipeline_builder};
+  my $cluster = $self->args->{cluster};
+  if ($form->canceled( )) {
+
+    $self->redirect(
+     uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder"
+                   );
+  }
+
+ if ( $form->ok ) {
+
+    my $wf_mask = $pipeline_builder->getWorkflowMask;
+    my %disabled = map{ $_->getErgatisName => $_ } grep { ! defined $_->getDependsOn } @{ISGA::Component->query( Cluster => $cluster )};
+    my $cluster_flag = 1;
+
+    while ( my ($key, $value) = each %$web_args ) {
+      next if ($key eq 'cluster' or $key eq 'pipeline_builder' 
+               or $key eq 'Additional_Gene_Analysis_choose_component' 
+               or $key eq 'RNA_Prediction_choose_component' 
+               or $key eq 'Select All' or $key eq 'Unselect All');
+      $cluster_flag = 0;
+      $disabled{$key} and delete $disabled{$key};
+      exists $wf_mask->{component}{$key} and delete $wf_mask->{component}{$key};
+    }
+
+    foreach ( values %disabled ){
+      $wf_mask->disableComponent($_);
+    }
+    if ($cluster_flag){
+      $wf_mask->disableCluster($cluster);
+    }else{
+      $wf_mask->enableCluster($cluster);
+   }
+    $pipeline_builder->edit( WorkflowMask => $wf_mask );
+    $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
+ }
+
+  $self->_save_arg( 'form', $form);
+  $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
+}

@@ -1,0 +1,4 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: Variable
+attributes:
+  - { name: Value, type: string }

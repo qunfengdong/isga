@@ -8,4 +8,3 @@ attributes:
  - { name: FinishedAt, type: Timestamp }
  - { name: FinishedActions, type: number }
  - { name: TotalActions, type: number }
- - { name: Iterations, type: number }

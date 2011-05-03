@@ -201,35 +201,6 @@ sub extractSiteTags {
 
 #------------------------------------------------------------------------
 
-=item public string url( Path => string, Query => hashref );
-
-Writes the supplied contents to the supplied file.
-
-=cut
-#------------------------------------------------------------------------
-sub url {
-
- my ($class, %args) = @_;
-
- my $uri = URI->new;
-
- $uri->path($args{Path});
-
- my %query = $args{Query} ? @{$args{Query}} : ();
-
- # $uri->query_form doesn't handle hash ref values properly
- while ( my ( $key, $value ) = each %query ) {
-     $query{$key} = ref $value eq 'HASH' ? [ %$value ] : $value;
- }
-
- $uri->query_form(%query) if %query;
-
- return $uri->canonical;
-}
-
-
-#------------------------------------------------------------------------
-
 =item public void writeFile(string $file, string $contents);
 
 Writes the supplied contents to the supplied file.

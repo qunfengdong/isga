@@ -1,9 +1,0 @@
-<%args>
- @run_builders
-</%args>
-
-<h1>Current RunBuilders</h1>
-
-<p>ISGA Run Builders are temporary objects and are deleted when a user cancels or uses them to invoke a pipeline.</p>
-
-$m->comp( '/RunBuilder/list.mas', show_account => 1, run_builders => \@run_builders );

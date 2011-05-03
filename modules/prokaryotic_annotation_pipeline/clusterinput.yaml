@@ -1,0 +1,123 @@
+---
+- Name: Genome_Contigs
+  Type: 'Genome Sequence'
+  Format: FASTA
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  PipelineInput: TRUE
+  ComponentInput: [ split_multifasta.default, glimmer3.iter1, tRNAscan-SE.find_tRNA, RNAmmer.default, geneprediction2bsml.default, train_for_glimmer3_iteration.train_for_glimmer, glimmer3.iter2 ]
+- Name: HMM_Search_Input
+  Type: 'Translated ORF Sequence'
+  Format: FASTA
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  ComponentInput: [ hmmpfam.pre_overlap_analysis ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/translate_sequence/$;PIPELINEID$;_translate/translate_sequence.fsa.list
+- Name: BLAST_Search_Input
+  Type: 'Translated ORF Sequence'
+  Format: FASTA
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  ComponentInput: [ wu-blastp.pre_overlap_analysis ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/translate_sequence/$;PIPELINEID$;_translate/translate_sequence.fsa.list
+- Name: FULL_TRANSLATED_LIST
+  Type: 'Translated ORF Sequence'
+  Format: FASTA
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  ComponentInput: [ pipeline_summary.default, signalp.default, tmhmm.default, ps_scan.default, lipop.default, rpsblast.priam, wu-blastp.COGS, join_multifasta.asgard, ncbi-blastp.asgard ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/translate_sequence/$;PIPELINEID$;_final_polypeptides/translate_sequence.fsa.list
+- Name: CDS_FASTA
+  Type: 'Nucleotide Sequence'
+  Format: FASTA
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ pipeline_summary.default ]  
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/bsml2fasta/$;PIPELINEID$;_final_cds/bsml2fasta.fsa.list
+- Name: Parse_Evidence_Feature_Input
+  Type: 'Start Site Curation Result'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ parse_evidence.priam_ec, bsml2fasta.oligopicker, parse_evidence.ber_pre, p_func.default, transterm.default, bsml2interevidence_fasta.default, parse_evidence.hypothetical, parse_evidence.tmhmm, parse_evidence.hmmpfam_pre, parse_evidence.lipoprotein ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/start_site_curation/$;PIPELINEID$;_default/start_site_curation.bsml.list
+- Name: Promote_Gene_Input
+  Type: 'Promote Gene Prediction Result'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  ComponentInput: [ bsml2fasta.pre_overlap_analysis, bsml2featurerelationships.pre_overlap_analysis ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/promote_gene_prediction/$;PIPELINEID$;_promote_prediction/promote_gene_prediction.bsml.list
+- Name: Start_Site_Input
+  Type: 'Promote Gene Prediction Result'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  ComponentInput: [ overlap_analysis.default ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/promote_gene_prediction/$;PIPELINEID$;_promote_prediction/promote_gene_prediction.bsml.list
+- Name: Start_Site_BER_Input
+  Type: 'BER Search Result Pre'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: Required
+  ComponentInput: [ start_site_curation.default ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/ber/$;PIPELINEID$;_pre_overlap_analysis/ber.bsml.list
+- Name: COG_BSML
+  Type: 'BLAST Search Result'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ pipeline_summary.default ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/wu-blastp/$;PIPELINEID$;_COGS/wu-blastp.bsml.list
+- Name: Gene_Prediction
+  Type: 'ORF Prediction Raw Evidence'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ promote_gene_prediction.promote_prediction, bsml2promoterregion.default, bsml2fasta.prediction_CDS, translate_sequence.translate_prediction ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/glimmer3/$;PIPELINEID$;_iter2/glimmer3.bsml.list
+- Name: Overlap_Analysis_RNA_Input
+  Type: 'RNA Function Evidence'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ pipeline_summary.default, overlap_analysis.default ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/tRNAscan-SE/$;PIPELINEID$;_find_tRNA/tRNAscan-SE.bsml.list,$;REPOSITORY_ROOT$;/output_repository/RNAmmer/$;PIPELINEID$;_default/RNAmmer.bsml.list
+- Name: Overlap_Analysis_Evidence_Input
+  Type: 'Protein Function Evidence'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ bsml2interevidence_fasta.default, overlap_analysis.default ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/hmmpfam/$;PIPELINEID$;_pre_overlap_analysis/hmmpfam.bsml.list,$;REPOSITORY_ROOT$;/output_repository/ber/$;PIPELINEID$;_pre_overlap_analysis/ber.bsml.list
+- Name: P_Func_Evidence
+  Type: 'Protein Function Evidence'
+  Format: BSML
+  ErgatisFormat: 'File List'
+  Dependency: 'Internal Only'
+  ComponentInput: [ p_func.default ]
+  DefaultValue: |
+    $;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_hmmpfam_pre/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_hmmpfam_post/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_ber_pre/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_ber_post/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_tmhmm/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_lipoprotein/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_priam_ec/parse_evidence.tab.list,$;REPOSITORY_ROOT$;/output_repository/parse_evidence/$;PIPELINEID$;_hypothetical/parse_evidence.tab.list
+- Name: Gene_Coords
+  Type: 'User ORF Prediction Raw Evidence'
+  Format: 'Glimmer3 Prediction Results'
+  ErgatisFormat: 'File'
+  ComponentInput: [ ncbi-blastp.asgard ]
+  Dependency: Required
+#SELECT a.clusterinput_name, b.filetype_name, c.fileformat_name, a.clusterinput_ergatisformat, a.clusterinput_dependency
+#FROM clusterinput a NATURAL JOIN filetype b NATURAL JOIN fileformat c;
+#SELECT clusterinput_name, clusterinput_defaultvalue FROM clusterinput;
+
+SELECT c.clusterinput_name, b.component_ergatisname FROM componentinputmap a NATURAL JOIN component b NATURAL JOIN clusterinput c ORDER BY c.clusterinput_name;

@@ -1,5 +1,5 @@
 # -*- cperl -*-
-use List::Util qw(min max);
+use List::Util qw(min);
 
 
 #------------------------------------------------------------------------
@@ -14,7 +14,7 @@ Retrieves the sequence for a gene.
 
     my $self = shift;
 
-    my $start = max($self->getStart, 1);
+    my $start = $self->getStart;
     my $end = $self->getEnd;
 
     my $seq = substr $self->getContig->getSequence->getResidues, ($start -1), ($end - $start + 1);
@@ -57,12 +57,11 @@ Retrieves the specified length of upstream sequence for the gene.
       return substr($residues, ( $start - $length - 1 ), $length);
     }
  
-    # if a contig cuts of a gene, it's end will be one past the contig end
-    my $stop = min($self->getEnd, $contig->getEnd);
+    my $stop = $self->getEnd;
 
     # otherwise we have a gene on the negative strand
     $length = min( $length, ($contig->getEnd - $stop) );
-
+    
     my $obj = Bio::Seq->new( -seq => substr($residues, $stop, $length) );
     return $obj->revcom->seq;
   }
@@ -96,7 +95,7 @@ Retrieves the specified length of downstream sequence for the gene.
       return substr($residues, $stop, $length);
     }
 
-    my $start = max($self->getStart,1);
+    my $start = $self->getStart;
     
     # we can't start any earlier than position 1
     $length >= $start and $length = $start - 1;

@@ -2,13 +2,13 @@
 
 #------------------------------------------------------------------------
 
-=item public string getValue(RunBuilder $rb);
+=item public string getValue(Pipeline $pipeline);
 
-Calculates the file name(s) for a component input value. Override via subclass for custom behaviour.
+Calculates the file name(s) for a component input value.
 
 =cut 
 #------------------------------------------------------------------------
-  sub getValue { return shift->getDefaultValue(); }
+  sub getValue { return shift->getDefaultValue; }
 
 #------------------------------------------------------------------------
 

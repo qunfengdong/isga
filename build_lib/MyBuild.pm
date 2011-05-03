@@ -55,8 +55,7 @@ sub write_build_yaml {
   $build{package_include} = $self->install_destination('include');
   $build{package_lib} = $self->install_destination('lib');
   $build{package_masoncomp} = $self->install_destination('masoncomp');
-  $build{package_bin} = $self->install_destination('bin');
-
+  
   YAML::DumpFile('BUILD.yaml', \%build);
 }
 
@@ -106,9 +105,6 @@ sub process_script_files {
   File::Path::mkpath( $script_dir );
   
   foreach my $file (keys %$files) {
-
-    # skip temp files
-    next if $file =~ /\~$/;
 
     my $result = $self->copy_if_modified($file, $script_dir, 'flatten') or next;
     $self->fix_use_line($result);

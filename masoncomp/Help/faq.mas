@@ -50,9 +50,4 @@ the <a class="normal" href="/Pipeline/View?pipeline=1">Build Pipeline</a> link i
 components are also freely available. You can follow the "Download" entry 
 in the above header.</p>
 
-<p><a name="SubmitNCBI">Q. Can I use the provided tbl file to submit to Genebank?</a></p>
 
-<p>A. Yes, however, due to the nature of automated annotation, this file will not be perfect. Manual editing of this file will be 
-required in order for NCBI to accept your submission.  Please see our 
-<a href="https://wiki.cgb.indiana.edu/display/brp/guide-genbank-submit">detailed guide</a> for more detailed help and a list of 
-known issues.</p>

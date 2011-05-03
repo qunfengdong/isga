@@ -95,6 +95,7 @@ sub _0_base : Test( 43 ) {
   # methods defined in .method  
   can_ok( $class, 'stage' );
   can_ok( $class, 'writeLayoutXML' );
+  can_ok( $class, 'filterInputs' );
 
   # test attributes
   is( $class->_table(), 'pipeline' );

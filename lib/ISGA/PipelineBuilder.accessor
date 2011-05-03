@@ -24,18 +24,6 @@ when you dont want to pay to load the YAML object.
 
 #------------------------------------------------------------------------
 
-=item public string getWebPluginDirectory();
-
-Returns the directory for storing global-pipeline specific mason components.
-
-=cut
-#------------------------------------------------------------------------
-  sub getWebPluginDirectory {
-    return shift->getPipeline->getWebPluginDirectory();
-  }
-
-#------------------------------------------------------------------------
-
 =item public ParameterMask getParameterMask();
 
 Returns the parameter mask for this pipeline.
@@ -85,12 +73,10 @@ Returns the clusters that are active in this pipeline builder.
 
     my $self = shift;
 
-    # create a lookup hash of disabled clusters
-    my %dis_clusters = map { $_ => undef } @{$self->getWorkflowMask->getDisabledClusters};
+    my $dis_clusters = $self->getWorkflowMask->getDisabledClusters;
     my $clusters = $self->getPipeline->getClusters();
-    defined $self->getActiveAlternateClusters and push(@$clusters, @{$self->getActiveAlternateClusters});
 
-    return [grep { ! exists $dis_clusters{$_} } @$clusters];
+    return [grep { ! exists $dis_clusters->{ $_->getName } } @$clusters];
   }
 
 #------------------------------------------------------------------------
@@ -105,14 +91,15 @@ Returns the alternate clusters that are active in this pipeline builder.
 
     my $self = shift;
 
-    my $active_alt = [];
-
-    foreach my $cluster ( @{$self->getWorkflowMask->getDisabledClusters} ) {
-      if ( my $alt_cluster = ISGA::Workflow->new(Cluster => $cluster)->getAltCluster ) {
-	push @$active_alt, $alt_cluster;
-      }
+    my $dis_clusters = $self->getWorkflowMask->getDisabledClusters;
+    my $clusters = $self->getPipeline->getClusters();
+    my $template = $self->getPipeline;
+    my $active_alt;
+    foreach my $cluster (@$clusters){
+      next unless( (ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $template)) && (exists $dis_clusters->{ $cluster->getName }) );
+        my $alt_cluster = ISGA::Workflow->new(Cluster => $cluster)->getAltCluster;
+        push(@$active_alt, $alt_cluster) if(defined $alt_cluster);
     }
-    
     return $active_alt;
   }
 
@@ -133,32 +120,36 @@ Return a list of activated components in cluster of the pipeline.
 
     my ($self, $cluster) = @_;
 
-    my $components  = [];
-    
+    my $components = [];
     my $template = $self->getPipeline;
-    my $wf_mask = $self->getWorkflowMask();
+    my $wf_mask = $self->getWorkflowMask;
 
     # if we are given a cluster and it is part of our pipeline check for components
     if ( $cluster and ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $template) ) {
+      my $alt_cluster = ISGA::Workflow->new(Cluster => $cluster)->getAltCluster;
 
-      # if the cluster is active get the components
-      if ( $wf_mask->isActive($cluster) ) {
-	$components = ISGA::Component->query( Cluster => $cluster );
-	
-      # otherwise if it has an alternate use that
-      } elsif ( my $alt = ISGA::Workflow->new(Cluster => $cluster, Pipeline => $template)->getAltCluster ) {
-        $components = ISGA::Component->query( Cluster => $alt );
+      # if the cluster isn't disabled, grab all the components
+      my $dis_clusters = $wf_mask->getDisabledClusters;
+      if( (exists $dis_clusters->{ $cluster->getName }) && (defined $alt_cluster) ){
+        $components = ISGA::Component->query( Cluster => $alt_cluster );
+      } else {
+        exists $dis_clusters->{ $cluster->getName } 
+         or $components = ISGA::Component->query( Cluster => $cluster );
       }
-
-    # if they didn't supply a cluster, grab components from all active clusters
+	
     } else {
       $components = ISGA::Component->query( Cluster => $self->getActiveClusters );
+      defined $self->getActiveAlternateClusters and push(@$components, @{ISGA::Component->query( Cluster => $self->getActiveAlternateClusters )});
+
     }
 
-    # filter out components that aren't active
-    return [grep { $wf_mask->isActive($_) } @$components];
+    
+    my %off_components = %{$wf_mask->getDisabledComponents};
+    my %orp_components = %{$wf_mask->getOrphanedComponents};
+    @off_components{ keys %orp_components} = 'orphaned';
+    
+    return [grep { ! exists $off_components{ $_->getName } } @$components];
   }
-
 
 #------------------------------------------------------------------------
 
@@ -177,7 +168,6 @@ by other components.
     # grab components
 
     my $components = $self->getActiveComponents();
-
     my $inputs = ISGA::ClusterInput->query( Component => $components );    
     for (@$inputs){
       $results{ $_->getType } = $_;

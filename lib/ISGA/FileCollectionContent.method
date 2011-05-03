@@ -4,8 +4,7 @@
 
 =item public delete();
 
-Removes a file resource from a collection. If that file resource
-doesn't exist outside of the collection, it is deleted.
+Removes a file resource from a collection.
 
 =cut 
 #------------------------------------------------------------------------
@@ -16,16 +15,9 @@ doesn't exist outside of the collection, it is deleted.
     # save collection and index
     my $collection = $self->getFileCollection();
     my $index = $self->getIndex();
-    my $resource = $self->getFileResource();
-    
+
     # delete the database entry
     $self->NEXT::delete();
-
-    # if the resource isn't referenced elsewhere, we delete it
-    if ( ! $resource->existsOutsideCollection 
-	 and ! ISGA::FileCollectionContent->query( FileResource => $resource ) ) {
-      $resource->delete();
-    }
 
     # grab entries with a higher index
     my $contents = ISGA::FileCollectionContent->query( FileCollection => $collection,

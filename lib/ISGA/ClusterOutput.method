@@ -4,25 +4,21 @@ use File::Basename;
 
 #------------------------------------------------------------------------
 
-=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive);
+=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar $archive);
 
 Add the results for this cluster output to a cluster evidence archive.
-
-=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive, int iteration);
-
-Add the results for this cluster output to a cluster evidence archive - process an iteration.
 
 =cut
 #------------------------------------------------------------------------
   sub downloadEvidence {
 
-    my ($self, $run, $cluster_dir, $archive, $iteration) = @_;
+    my ($self, $run, $cluster_dir, $archive) = @_;
 
     my $id = $run->getErgatisKey;
 
-    my $raw_output =  join( '/', $run->getType->getErgatisOutputRepository,$self->getFileLocation );
+
+    my $raw_output = '___ergatis_output_repository___' . $self->getFileLocation;
     $raw_output =~ s/___id___/$id/go;
-    $iteration and $raw_output =~ s/___iteration___/$iteration/go;
 
     my @files;
     
@@ -38,22 +34,15 @@ Add the results for this cluster output to a cluster evidence archive - process 
 
       $cluster_dir .= "/$name_units[-1]";
 
-    } elsif ( $self->getErgatisFormat eq 'Directory' ) {
-      opendir my $dh, $raw_output or X->throw( error => "$raw_output - $!" );
-      while (defined(my $file = readdir($dh))){
-        push @files, "$raw_output/$file" unless ( $file eq '.' || $file eq '..' );
-      }
-      my @name_units = split(/\//, $self->getFileLocation );
-
-      $cluster_dir .= "/$name_units[-1]";
+      
     # otherwise, just use the output file
     } else {
       push @files, $raw_output;
     }
 
     foreach ( @files ) {
-      my $logical_path = $cluster_dir . "/" . basename($_);
-      my ( $file ) = $archive->add( $logical_path, $_ );
+      my ( $file ) = $archive->add_files( $_ );
+      $file->prefix( $cluster_dir );
     }
   }
     

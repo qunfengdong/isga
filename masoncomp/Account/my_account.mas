@@ -1,6 +1,22 @@
 % my $account = ISGA::Login->getAccount;
 
-<& view_header.mas, account => $account &>
+<h1><% $account->getName %></h1>
+
+<div class="data">
+
+<table>
+ <tbody>
+  <tr> 
+   <th>Email</th><td><% $account->getEmail %></td>
+   <th>Walkthroughs</th><td><% $account->isWalkthroughDisabled ? 'off' : 'on' %></td>
+  </tr>
+  <tr>
+   <th>Institution</th><td colspan="3"><% $account->getInstitution %></td>
+  </tr>
+ </tbody>
+</table>
+
+</div> 
 
 % my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
 %                                  Status => { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) } );

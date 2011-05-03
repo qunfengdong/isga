@@ -1,0 +1,100 @@
+sub SelectInputList {
+
+  my ($class, $args) = @_;
+
+  my $form = ISGA::FormEngine->new($args);
+  $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
+
+  my $run_builder = $args->{run_builder};
+  my $pipeline_input = $args->{pipeline_input};
+  my $pipeline = $run_builder->getPipeline;
+
+  my $type = $pipeline_input->getType;
+  my $format = $pipeline_input->getFormat;
+  my $account = ISGA::Login->getAccount;
+  
+  my @files = 
+    sort { $a->[0] cmp $b->[0] }
+      map { [ $_->getUserName, $_ ] }
+	@{ISGA::File->query( CreatedBy => $account, Type => $type, Format => $format )};
+
+  my ( $rbi ) = @{ISGA::RunBuilderInput->query( PipelineInput => $pipeline_input, 
+						    RunBuilder => $run_builder)};
+  my $sample_data = $type->getName eq 'User ORF Prediction Raw Evidence' ? '<a href="/sample_data.predict">Download Sample Data</a>' : '<a href="/sample_data.fna">Download Sample Data</a>';
+
+  my $selected = [];
+
+  if ( my $current_file = $rbi && $rbi->getFileResource ) {
+    $selected = $current_file->getFlattenedContents;
+  }
+
+  my @form = 
+    (
+     {
+      templ => 'fieldset',
+      TITLE => 'Select Input',
+      sub => 
+      [
+       {
+	templ => 'print',
+	TITLE => 'File Type',
+	VALUE => $type->getName,
+       },
+       {
+	templ => 'print',
+	TITLE => 'File Format',
+	VALUE => $format->getName,
+       },
+       {
+	templ => 'select',
+	NAME => 'file',
+	MULTIPLE => 1,
+	TITLE => 'Compatible Files',
+	SIZE  => min( scalar(@files), 8),
+	OPTION => [map { $_->[0] } @files ],
+	OPT_VAL => [map { $_->[1] } @files ],	
+	VALUE => $selected,
+	HINT => 'Hold the ctrl key to select multiple files.',
+        HIDEDIV => 1,
+       },
+       {
+        templ   => 'upload',
+        NAME    => 'file_name',
+        TITLE   => 'File',
+        HINT    => $sample_data,
+        ERROR   => ['Text::checkHTML', 'File::isUniqueName'],
+        SHOWDIV => 1,
+       },
+       {
+        templ => 'textarea',
+        NAME  => 'description',
+        TITLE => 'Description',
+        LABEL => 'description',
+        ROWS => ' " style="height: 3em;"',
+        ERROR => 'Text::checkHTML',
+       },
+      ],
+     },
+     {
+      templ => 'hidden',
+      NAME => 'run_builder',
+      VALUE => $run_builder,
+     },
+     {
+      templ => 'hidden',
+      NAME => 'pipeline_input',
+      VALUE => $pipeline_input,
+     },
+
+    );
+  
+  $form->conf( { ACTION => '/submit/RunBuilder/SelectInputList',
+		 FORMNAME => 'run_builder_select_input_list',
+                 ENCTYPE => 'multipart/form-data',
+		 SUBMIT => 'Save',
+                 CANCEL => '',
+                 TOGGLELINK => 'Select Previously Uploaded File',
+		 sub => \@form } );
+  $form->make;
+  return $form;
+}

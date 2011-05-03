@@ -17,8 +17,6 @@ methods tied to the FormEngine system.
 use strict;
 use warnings;
 
-use List::Util qw(first);
-
 #========================================================================
 
 =head2 CLASS METHODS
@@ -27,31 +25,6 @@ use List::Util qw(first);
 
 =cut
 #========================================================================
-
-#------------------------------------------------------------------------
-
-=item public string matches(number value, Form form, string caller, ARRAY number);
-
-Asserts that the value matches one of the provided numbers.
-
-=cut 
-#------------------------------------------------------------------------
-sub matches {
-
-  my ($value, $form, $caller, @numbers) = @_;
-
-  if (not ($value =~ /^\-?\d*\.?\d+$/o)){
-    return 'Input is not a number.';
-  }  
-  
-  my $first = first { $value == $_ } @numbers;
-
-  if ( ! defined $first ) {
-    return "Value must match one of " . join (',', @numbers);
-  }
-
-  return '';
-}
 
 #------------------------------------------------------------------------
 
@@ -64,10 +37,6 @@ Asserts that the number supplied is between min and max, inclusive.
 sub isBetween {
 
   my ($value, $form, $caller, $min, $max) = @_;
-
-  if (not ($value =~ /^\-?\d*\.?\d+$/o)){
-    return 'Input is not a number.';
-  }  
 
   if ( $value > $max or $value < $min ) {
     return "Value must be between $min and $max";
@@ -168,58 +137,14 @@ sub isGreaterThan {
   return '';
 }
 
-#------------------------------------------------------------------------
 
-=item public string isGreaterOrEqualFormValue(string value, Form form, string caller, string value, string value);
-
-Asserts that the input values supplied are the same
-
-=cut
-#------------------------------------------------------------------------
-sub isGreaterOrEqualFormValue {
-
-  my ($value, $form, $caller, $input1, $input2, $title) = @_;
-
-  my $value1 = $form->get_input($input1);
-  my $value2 = $form->get_input($input2);
-
-  if ( $value1 < $value2 ) {
-    return "Value for this input must be greater than or equal to the value for $title.";
-  }
-
-  return '';
-}
-
-#------------------------------------------------------------------------
-
-=item public string isLesserOrEqualFormValue(string value, Form form, string caller, string value, string value);
-
-Asserts that the input values supplied are the same
-
-=cut
-#------------------------------------------------------------------------
-sub isLesserOrEqualFormValue {
-
-  my ($value, $form, $caller, $input1, $input2, $title) = @_;
-
-  my $value1 = $form->get_input($input1);
-  my $value2 = $form->get_input($input2);
-
-  if ( $value1 > $value2 ) {
-    return "Value for this input must be less than or equal to the value for $title.";
-  }
-
-  return '';
-}
-ISGA::FormEngine::SkinUniform->_register_check('Number::matches');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isBetween');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isNumber');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isPositive');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isScientificNotation');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isInteger');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isGreaterThan');
-ISGA::FormEngine::SkinUniform->_register_check('Number::isGreaterOrEqualFormValue');
-ISGA::FormEngine::SkinUniform->_register_check('Number::isLesserOrEqualFormValue');
+
 1;
 __END__
 

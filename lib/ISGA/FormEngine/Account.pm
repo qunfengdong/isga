@@ -325,7 +325,7 @@ sub Request {
 	SIZE => 60,
 	MAXLEN => 60,
 	REQUIRED => 1,
-	ERROR => ['not_null', 'Text::checkHTML', 'Text::checkEmail', 'Account::emailIsAvailable'],
+	ERROR => ['not_null', 'Text::checkHTML', 'Account::emailIsAvailable'],
        },     
 
        {
