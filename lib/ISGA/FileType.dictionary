@@ -2,3 +2,4 @@
 class: FileType
 attributes:
   - { name: Help, type: string }
+  - { name: Content, type: FileContent }

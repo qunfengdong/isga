@@ -122,24 +122,6 @@ sub emailsMatch {
   return 'Email addresses do not match.';
 }
 
-#------------------------------------------------------------------------
-
-=item public String emailsMatch(String value, String name, Form form);
-
-Asserts that the two email addresses entered are identical.
-
-=cut
-#------------------------------------------------------------------------
-sub illegalCharacters {
-
-  my ($data, $form) = @_;
-
-  if ( $form->get_input('password') =~ /(\;|\`|\^)/g ) {
-    return 'You password contains an illegal character.  The characters for acute accent, caret, and semi-colon are not allowed';
-  }
-  return '';
-}
-
 #
 #
 # Register all methods below
@@ -150,7 +132,7 @@ ISGA::FormEngine::SkinUniform->_register_check('Account::emailIsAvailableOrMine'
 ISGA::FormEngine::SkinUniform->_register_check('Account::passwordsMatch');
 ISGA::FormEngine::SkinUniform->_register_check('Account::emailsMatch');
 ISGA::FormEngine::SkinUniform->_register_check('Account::isCorrectPassword');
-ISGA::FormEngine::SkinUniform->_register_check('Account::illegalCharacters');
+
 
 1;
 __END__

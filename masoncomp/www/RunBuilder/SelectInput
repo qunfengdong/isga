@@ -1,27 +1,6 @@
 <%args> # -*- cperl -*-
  $run_builder
- $pipeline_input => undef
- $run_builder_input => undef
 </%args>
-
-% $pipeline_input ||= $run_builder_input->getPipelineInput;
-
-<sys:script type="text/javascript">
-  $(document).ready(confirm_upload);
-  function confirm_upload() {
-  $(".upload")
-   .click(
-     function(){
-      $.ajax({
-        url: "/RunBuilder/UploadInput?run_builder=<% $run_builder %>&pipeline_input=<% $pipeline_input %>",
-        success: function(html){
-          $('#modal_content').append(html);
-        }
-      });
-      return false;
-     });
-  }
-</sys:script>
 
 <%perl> 
 

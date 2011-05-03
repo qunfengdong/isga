@@ -1,6 +1,0 @@
-<%args>
- $account
-</%args>
-
-<& view_header.mas, account => $account &>
-

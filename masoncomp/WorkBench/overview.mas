@@ -5,42 +5,26 @@
 <h1>Toolbox Home</h1>
 
 <%perl>
-  if ( my $account = ISGA::Login->getAccount ) {
+my $account = ISGA::Login->getAccount;
+my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt' );
 
-    my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt' );
-
-    if (@$runs) {
+if (@$runs) {
 </%perl>
 <ul>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Blast Search</a></li>
-  <li><a href="/WorkBench/GBrowse">GBrowse</a></li>
-  <li><a href="/WorkBench/GenomeFeatureQuery">Keyword Search</a></li>
-  <li><a href="/File/BrowseMy">Browse All Files</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'NewblerToHawkeye' ) %>">Convert Newbler to Hawkeye</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'CeleraToHawkeye' ) %>">Convert Celera to Hawkeye</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
+<li><a href="/WorkBench/Blast">BLAST</a></li>
+<li><a href="/WorkBench/GBrowse">GBrowse</a></li>
+<li><a href="/WorkBench/GenomeFeatureQuery">Keyword Search</a></li>
+<li><a href="/File/BrowseMy">Browse All Files</a></li>
 </ul>
-%   } else {
+% } else {
 <p>These tools are currently unavailable because you do not have the appropriate data. You must have a completed run to use the tools below.</p>
 <ul>
 	<li>BLAST</li>
 	<li>GBrowse</li>
         <li>Keyword Search</li>
         <li>Browse All Files</li>
-        <li>Convert Newbler to Hawkeye</li>
-        <li>Convert Celera to Hawkeye</li>
-        <li>Convert Mira to Hawkeye</li>
-        <li>Convert Newbler For Consed</li>
-        <li>Convert SFF to FASTA</li>
 </ul>
-%   }
-% } else {
-<p>You must log in to use the ISGA Toolbox.</p>
-%}
-
+% }
 <h2>Other Useful Tools at The Center for Genomics and Bioinformatics</h2>
 <ul>
 <li><a href="http://cgcv.cgb.indiana.edu/cgi-bin/index.cgi">Comparative Gene Cluster Visualization Tool</a></li>

@@ -7,13 +7,4 @@
 ^MANIFEST\.SKIP$
 \.svn
 ^BUILD.yaml
-^cgb_files
-svn_ext_val.txt
-^MYMETA.yml$
-bin/fasta_fix.pl
-bin/fasta_fix_2.pl
-^doc
-sql/cgb
-sql/isga-1.1.sql
-sql/update-1.0-to-1.1.sql
-sql/isga-1.0.0.0.sql
+sql/cgb.sql

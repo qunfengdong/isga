@@ -1,9 +1,28 @@
-<h1>Account Request Processed</h1>
+<%args> # -*- cperl -*-
+ $account_request
+</%args>
 
-<p>Your account request was successfully processed, and a confirmation
-email message was sent to the email address you provided. You must
-follow the link in that message within 48 hours to confirm the
-request.</p>
+<%perl> 
 
-<p>Some spam filters may confuse this confirmation as spam, so please
-check your filtered messages if you do not receive this message.</p>
+# This is a bit fragile: Ideally we would send mail from within the transaction
+# but that is done outside of mason and we would lose the nice text formatting
+# We will try it this way, and revert if we see problems sending messages.
+#
+# If the mailing fails in a detectable manner, the user will get a visual error.
+
+# see if we can resend the request
+if ( $account_request->getStatus eq 'Open' ) {
+
+  my %mail = 
+    ( To      => $account_request->getEmail,
+      From    => 'ISGA Accounts <biohelp@cgb.indiana.edu>',
+      Subject => 'Please confirm your account',
+      Message => $m->scomp('/mail/account_request.mas', account_request => $account_request),
+    );
+      
+  Mail::Sendmail::sendmail(%mail) or X::Mail::Send->throw( text => $Mail::Sendmail::error, message => \%mail );
+}
+
+</%perl>
+
+<& /Account/requested.mas &>

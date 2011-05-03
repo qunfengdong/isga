@@ -33,7 +33,7 @@ use XML::Twig;
 
 #------------------------------------------------------------------------
 
-=item public ISGA::ErgatisRunStatus new(Run $run, hashref $finished_components);
+=item public ISGA::ErgatisRunStatus new(Ergatis_ID $ergatis_id, hashref $finished_components);
 
 Initialize the ErgatisRunStatus object corresponding to the supplied cluster.
 
@@ -41,10 +41,10 @@ Initialize the ErgatisRunStatus object corresponding to the supplied cluster.
 #------------------------------------------------------------------------
   sub new {
     
-    my ($self, $run, $finished_components) = @_; 
+    my ($self, $ergatis_id, $finished_components) = @_; 
 
     # path to runs pipeline.xml
-    my $pipeline_xml = $run->getErgatisPipelineXML();
+    my $pipeline_xml = '___ergatis_runtime_directory___' . $ergatis_id . '/pipeline.xml';
     
     my %status;
     #  my $twig_root = {commandSet};

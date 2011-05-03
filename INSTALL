@@ -1,9 +1,198 @@
 
-For complete ISGA installation instructions visit:
+DEPENDENCIES
 
-  https://projects.cgb.indiana.edu/display/brp/isga-install
 
-For help with ISGA installation or usage, join the ISGA users mailing list at the ISGA SourceForge site
+Applications:
 
-  https://sourceforge.net/projects/isga/
+Ergatis
+Apache 
+PostgreSQL
+
+Perl Modules:
+
+MasonX::Foundation = 0.7.4.1
+Pod::Simple::HTMLBatch
+Test::More
+Graph
+version
+HTML::Scrubber
+Digest::SHA
+GD::Image
+Email::Find
+Schedule::SGE
+File::Pid
+Bio::Graphics
+Date::Manip < 6.0
+
+
+ISGA & Ergatis
+
+* ISGA needs read access to ergatis results
+
+* ISGA needs write access to pipelines_building directory
+
+* add run_prepared_pipeline.cgi
+
+* Prokaryotic Annotation Pipeline must run
+
+
+INSTALLATION
+
+1. Set Configuration
+
+The first step is to define several configuration values for
+ISGA. These variables allow ISGA to utilize your Ergatis installation
+and set information to your specific installation ( such as email
+address and machine name ).
+
+vi CONFIG.yaml
+
+2. Build and Install ISGA
+
+perl Build.PL --install_base=/data/web/isga.cgb --use_foundation=/data/web/perl
+./Build
+
+OPTIONAL: Run Tests
+./Build test
+
+./Build install
+
+3. Create Necessary Directories
+
+The following paths need to be created for ISGA to run
+properly. Substitute file_repository entry from CONFIG.yaml for
+REPO_PATH and gbrowse_directory for GBROWSE_PATH.
+
+mkdir -p REPO_PATH
+mkdir -p GBROWSE_PATH/databases
+mkdir GBROWSE_PATH/conf
+mkdir GBROWSE_PATH/tmp
+
+4. Create repository hash directories
+
+The repository is where all user files are stored. The filenames are
+generated based on the contents of the files, and the names are hased
+on the first two characters of the name. Execute the following
+commands in a bash or sh shell substituting your file_repository entry
+from CONFIG.yaml for REPO_PATH.
+
+for a in A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 _ -
+do
+for b in A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 _ -
+do
+mkdir -p REPO_PATH/$a/$b
+done
+done
+
+5. Create and Load ISGA database
+
+Using the username and database values defined in CONFIG.yaml, create the the database.
+
+createdb -U USER DB_NAME
+
+Now populate the database with the required data.
+
+psql -U USER -f sql/isga.sql DB_NAME 2>&! | grep -E 'ERROR|FATAL|No such file or directory'
+
+6. Create Apache Configuration for ISGA
+
+The following Apache virtual host should be used as template for
+building your local configuration.
+
+<VirtualHost>
+
+   RewriteEngine On
+   RewriteRule ^/$ /Home [R]
+   RewriteRule ^/gbrowse/(.*)$ /include/gbrowse/$1 [L]
+   RewriteRule .favicon.ico /include/img/favicon.ico [passthrough]
+
+   DocumentRoot ISGA_INSTALL_PATH/masoncomp/www
+
+   DefaultType text/html
+
+   <Perl>
+   use lib qw( ISGA_INSTALL_PATH/docs/lib );
+   </Perl>
+
+   PerlModule ISGA
+   PerlModule ISGA::WebApp
+   PerlModule ISGA::Handler::Gbrowse
+
+   <Perl>
+    ISGA::DB->_disconnect();
+   </Perl>
+
+   <Directory "ISGA_INSTALL_PATH/docs/masoncomp/www">
+    SetHandler perl-script
+    PerlHandler ISGA::Handler
+    Options -Indexes
+   </Directory>
+
+   <Directory "ISGA_INSTALL_PATH/docs/masoncomp/www/include">
+    SetHandler None
+   </Directory>
+
+   <Directory "ISGA_INSTALL_PATH/docs/masoncomp/www/pod">
+
+    SetHandler None
+   </Directory>
+
+   <Directory "ISGA_INSTALL_PATH/docs/masoncomp/www/Browser">
+    PerlHandler ISGA::Handler::Gbrowse
+    SetHandler perl-script
+    PerlResponseHandler ModPerl::Registry
+   </Directory>
+
+
+   <FilesMatch "\.mas|\.pl|.frm|handler$">
+    SetHandler perl-script
+    PerlHandler "sub { return 404; }"
+   </FilesMatch>
+</VirtualHost>
+
+7. Create Administrative accounts
+
+ISGA Defines two administrative groups:
+
+  Run Administrators
+
+Users in this group can monitor running pipelines, as well as cancel
+failed pipelines or update pipelines that have been cloned through the
+Ergatis interface. To add a user to this group, execute the following SQL
+
+INSERT INTO groupmembership ( accountgroup_id, party_id ) VALUES 
+  ((SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Run Administrators' ),
+   (SELECT party_id FROM account WHERE account_email = 'ACCOUNT_EMAIL_ADDRESS' ) );
+
+  News Administrators
+
+Users in this group can post news announcements on the ISGA web
+site. To add a user to this group, execute the following SQL
+
+INSERT INTO groupmembership ( accountgroup_id, party_id ) VALUES 
+  ((SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'News Administrators' ),
+   (SELECT party_id FROM account WHERE account_email = 'ACCOUNT_EMAIL_ADDRESS' ) );
+
+
+8. Add maintanence scripts to cron
+
+There are three scripts in the bin directory that should be run regularly for ISGA to function:
+
+update_run_status.pl 
+
+This script polls the ergatis working directories to update the status
+of ISGA runs. This can take several minutes to run, so we recommend
+running it every five minutes.
+
+update_job_status.pl
+
+This script polls the Sun Grid Engine queue to update the status of
+jobs running from the ISGA tool box (e.g. BLAST). We run this script
+every minute as jobs can finish quickly.
+
+send_notifications.pl
+
+This script handles sending email messages to users in various
+situations. We run this script every minute so that users don't wait
+for account creation.
 

@@ -3,5 +3,3 @@ class: RunInput
 attributes:
   - { name: Run, type: Run }
   - { name: FileResource, type: FileResource }
-  - { name: PipelineInput, type: PipelineInput, options: [ REQUIRED ] }
-  - { name: ParameterMask, type: string, options: [ NOGET ] }

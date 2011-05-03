@@ -20,7 +20,6 @@ use strict;
 use warnings;
 
 use Apache2::Upload;
-
 #========================================================================
 
 =head2 CLASS METHODS
@@ -49,32 +48,27 @@ sub RunBuilder::Create {
     and X::User::Denied->throw( error => 'Pipeline has been retired.' );
 
   # make sure we have permission to run this
-  # allow for pipeline sharing in the future
   if ( $pipeline->isa( 'ISGA::UserPipeline' ) ) {
     
     $pipeline->getCreatedBy == $account or
       X::User::Denied->throw( error => 'You do not have permission to execute this pipeline.' );
+
+    # allow for pipeline sharing in the future
   }
-
-
-  $pipeline->getStatus->isAvailable or
-    X::User::Denied->throw( error => "This pipeline is no longer available to be run. A newer version of the pipeline may be available." );
-
   if (my ($started_builder) = @{ISGA::RunBuilder->query( Pipeline => $pipeline, 
-                                                         CreatedBy => $account )} ){
+							     CreatedBy => $account )} ){
     $self->redirect( uri => "/RunBuilder/View?run_builder=$started_builder" );
   }
-
   # count runs
   my $runs = ISGA::Run->exists( CreatedBy => $account, Type => $pipeline );
   $runs++;
-  my $pipeline_name = $pipeline->getName;
-  my $default_name = length($pipeline_name) > (39 - length(" Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Run $runs")) . " Run $runs" : $pipeline_name . " Run $runs";
+
+  my $default_name = $pipeline->getName . " Run $runs";
 
   while( ISGA::Run->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount) ||
          ISGA::RunBuilder->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount)){
     $runs++;
-    $default_name = length($pipeline_name) > (39 - length(" Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Run $runs")) . " Run $runs" : $pipeline_name . " Run $runs";
+    $default_name = $pipeline->getName . " Run $runs";
   }
 
   my %form_args =
@@ -129,6 +123,11 @@ sub RunBuilder::EditDetails {
     $self->redirect
       ( uri => "/RunBuilder/View?run_builder=$run_builder" );
   }
+
+
+  use Data::Dumper;
+
+  warn Dumper($form);
   
   $self->_save_arg( 'form', $form);
   $self->redirect( uri => "/RunBuilder/EditDetails?run_builder=$run_builder" );
@@ -167,19 +166,22 @@ sub RunBuilder::EditParameters {
       my $component_builder = ISGA::ComponentBuilder->new($component, $parameter_mask);
       
       foreach my $parameter ( @{$component_builder->getRunBuilderParameters} ) {
-
+	
 	my $name = $parameter->{NAME};
 
 	my $value = $form->get_input($name);
-	my $title = $parameter->{TITLE};
-	if ( exists $parameter->{COMPONENT} ) {
-	  $title = join(' ', $parameter->{COMPONENT}, $title);
+
+	# parameter names may have conflicts, so save arrays
+	if ( ref $value eq 'ARRAY' ) {
+	  exists $inputs{$name} or $inputs{$name} = $value;
+	  $value = shift @{$inputs{$name}};
 	}
+
+	my $title = "$parameter->{COMPONENT} $parameter->{TITLE}";
 
 	$parameter_mask->{Component}{$component}{$name} = { Description => 'Run Parameter',
 							    Title => $title,
 							    Value => $value };
-
       }
     }
 
@@ -188,13 +190,14 @@ sub RunBuilder::EditParameters {
   }
 
 
+  use Data::Dumper;
+
+  warn Dumper($form);
+
   # bounce them back to finish the page
   $self->_save_arg( 'form', $form );
   $self->redirect( uri => "/RunBuilder/EditParameters?run_builder=$run_builder" );
 }
-
-
-
 
 #------------------------------------------------------------------------
 
@@ -208,7 +211,6 @@ sub RunBuilder::SelectInput {
 
   my $self = shift;
   my $args = $self->args;
-  my $form = ISGA::FormEngine::RunBuilder->SelectInput($args);
 
   my $file = $args->{file};
   my $pi = $args->{pipeline_input};
@@ -218,144 +220,33 @@ sub RunBuilder::SelectInput {
   $run_builder->getCreatedBy == ISGA::Login->getAccount 
     or X::User::Denied->throw;
 
-  $form->canceled and $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
+  # make sure there is only one file
+  ref($file) eq 'ARRAY' and X->throw( Error => 'Only Single Files are Supported' );
 
-  # do we have an rbi
-  my $rbi = exists $args->{run_builder_input} ? $args->{run_builder_input} : undef;
+  if ( $file ) {
+    $file->getCreatedBy == ISGA::Login->getAccount
+      or X::User::Denied->throw;
+  }
 
-  if ( $form->ok ){
+  # calculate the rbi
+  my ($rbi) = 
+    @{ISGA::RunBuilderInput->query( RunBuilder => $run_builder,
+					PipelineInput => $pi )};
 
-    # make sure there is only one file
-    ref($file) eq 'ARRAY' and X->throw( Error => 'Only Single Files are Supported' );
-    
+  # probably should confirm type/format here
+  if ( $rbi ) {
     if ( $file ) {
-      $file->getCreatedBy == ISGA::Login->getAccount
-	or X::User::Denied->throw;
-    }
-    
-    # probably should confirm type/format here
-    if ( $rbi ) {
-      if ( $file ) {
-	$rbi->edit( FileResource => $file );
-      } else {
-	$rbi->delete();
-      }
+      $rbi->edit( FileResource => $file );
     } else {
-      $rbi = ISGA::RunBuilderInput->create( RunBuilder => $run_builder,
-                                            FileResource => $file,
-                                            PipelineInput => $pi );
+      $rbi->delete();
     }
-    
-    if ( $pi->hasParameters ) {
-      
-      my %inputs;
-      my $mask = $rbi->getParameterMask();
-
-      # loop through components
-      for my $component ( @{$form->get_inputs('component')} ) {
-      
-	# grab component builder
-	my $component_builder = ISGA::ComponentBuilder->new($component, $mask);
-	foreach my $parameter ( @{$component_builder->getRunBuilderInputParameters($pi)} ) {
-	
-	  my $name = $parameter->{NAME};
-	  my $value = $form->get_input($name);
-
-	  # parameter names may have conflicts, so save arrays
-	  if ( ref $value eq 'ARRAY' ) {
-	    exists $inputs{$name} or $inputs{$name} = $value;
-	    $value = shift @{$inputs{$name}};
-	  }
-
-	  $mask->{Component}{$component}{$name} = { Value => $value };
-	}
-      }
-
-      $rbi->edit( ParameterMask => $mask );
-    }
-
-    $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
-  }
-
-  # bounce!!!!!
-  $self->_save_arg( 'form', $form);
-
-  # we need to look for pipeline_input or run_builder_input
-  my $uri = "/RunBuilder/SelectInput?run_builder=$run_builder&pipeline_input=$pi";
-  $rbi and $uri .= "&run_builder_input=$rbi";
-  $self->redirect( uri => $uri );
-}
-
-#------------------------------------------------------------------------
-
-=item public void RunBuilder::UploadInput();
-
-Uploads a file so that it can be selected as input for a runbuilder.
-Saves the selection of a file as input for a RunBuilder.
-
-=cut
-#------------------------------------------------------------------------
-sub RunBuilder::UploadInput {
-
-  my $self = shift;
-  my $args = $self->args;
-  
-  my $form = ISGA::FormEngine::RunBuilder->UploadInput($args);
-
-  my $rbi = exists $args->{run_builder_input} ? $args->{run_builder_input} : undef;
-  my $pi = ( $rbi ? $rbi->getPipelineInput : $args->{pipeline_input} );
-  my $rb = $args->{run_builder};
-  my $pipeline = $rb->getPipeline();
-
-  # create http arg string
-  my $args_string = $rbi ? "run_builder_input=$rbi" : "pipeline_input=$pi";
-  my $url = $pi->getClusterInput->getErgatisFormat eq 'File List' 
-    ? 'SelectInputList' : 'SelectInput';
-
-  # permissions check
-  my $account = ISGA::Login->getAccount();
-  $rb->getCreatedBy == $account 
-    or X::User::Denied->throw;
-
-  $form->canceled and $self->redirect( uri => "/RunBuilder/View?run_builder=$rb" );
-
-  if ( $form->ok ){
-
-    my $new_file_name = $form->get_input('new_file_name');
-
-    my %args = ( PipelineInput => $pi );
-    my $description = $form->get_input('description');
-    $description and $args{Description} = $description;
-		    
-    if ( my $file_name = $args->{file_name} ) {
-    
-      my $fh = $self->apache_req->upload('file_name')->fh;
-
-      $args{UserName} = $new_file_name || $file_name;
-
-      $pipeline->uploadInputFile($fh, %args);
-
-      $self->redirect( uri => "/RunBuilder/$url?run_builder=$rb&$args_string" );
-
-    # otherwise we are doing a web download 
-    } else {
-
-      $args{Account} = $account;
-      $args{Pipeline} = $pipeline;
-      $args{URL} = $form->get_input('upload_url');
-      $args{Status} = 'Pending';
-      $args{CreatedAt} = ISGA::Timestamp->new();
-      $new_file_name and $args{UserName} = $new_file_name;
-
-      my $req = ISGA::RunBuilderUploadRequest->create(%args);
-      $self->redirect( uri => "/RunBuilder/UploadRequested?run_builder_upload_request=$req&run_builder=$rb" );
-
-    }
+  } else {
+    ISGA::RunBuilderInput->create( RunBuilder => $run_builder,
+				       FileResource => $file,
+				       PipelineInput => $pi );
   }
   
-  # bounce!!!!!
-  $self->_save_arg( 'form', $form);
-  $self->redirect( uri => "/RunBuilder/UploadInputForm?run_builder=$rb&$args_string" );
+  $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
 }
 
 #------------------------------------------------------------------------
@@ -372,143 +263,121 @@ sub RunBuilder::SelectInputList {
   my $args = $self->args;
   my $form = ISGA::FormEngine::RunBuilder->SelectInputList($args);
 
+
+#  my $file = $args->{file};
   my $pi = $args->{pipeline_input};
   my $run_builder = $args->{run_builder};
+
 
   # permissions check
   $run_builder->getCreatedBy == ISGA::Login->getAccount 
     or X::User::Denied->throw;
 
-  $form->canceled and $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
 
-  # do we have an rbi
-  my $rbi = exists $args->{run_builder_input} ? $args->{run_builder_input} : undef;
+  $form->canceled and $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
 
   if ( $form->ok ){
 
-    # build collection and save it as the input
-    my $collection = $run_builder->assembleInputList($args->{file});
+    my $file = $args->{file};
 
-    # Check to see if there was already a defined input
-    $rbi = $run_builder->setInputList($collection, $rbi || $pi);
+    my $run_builder = $form->get_input('run_builder');
+    my $upload = $self->apache_req->upload('file_name');
 
-    # verify inputs
-    $run_builder->verifyInputs($rbi);
 
-    if ( $pi->hasParameters ) {
+    if ( defined $upload && $form->get_input('file_name') ne '' ){
+
+      my %args = ( UserName => $args->{file_name},
+		   Type => $pi->getType,
+		   Format => $pi->getFormat,
+		   Description => $args->{description},
+		   CreatedBy => ISGA::Login->getAccount,
+		   CreatedAt => ISGA::Timestamp->new,
+		   IsHidden => 0 );
       
-      my %inputs;
-
-      my $mask = $rbi->getParameterMask();
-
-      # loop through components
-      for my $component ( @{$form->get_inputs('component')} ) {
+      my $uploaded_file = ISGA::FileResource->upload( $upload->fh, %args );
       
-	# grab component builder
-	my $component_builder = ISGA::ComponentBuilder->new($component, $mask);
+      # if there is no file, then we proceed with upload
+      if (! defined $file){
+	$file = $uploaded_file;
+	      
+      # if there are more than one files selected, add new file to the list
+      } elsif ( ref($file) eq 'ARRAY' ) {
+	push @$file, $uploaded_file;
 
-	foreach my $parameter ( @{$component_builder->getRunBuilderInputParameters($pi)} ) {
-	
-	  my $name = $parameter->{NAME};
-
-	  my $value = $form->get_input($name);
-
-	  # parameter names may have conflicts, so save arrays
-	  if ( ref $value eq 'ARRAY' ) {
-	    exists $inputs{$name} or $inputs{$name} = $value;
-	    $value = shift @{$inputs{$name}};
-	  }
-
-	  $mask->{Component}{$component}{$name} = { Value => $value };
-	}
+      # if there is one file, we make a list of it and our upload
+      } else {	
+	$file = [ $file, $uploaded_file ];
       }
-      
-      $rbi->edit( ParameterMask => $mask );
     }
+
+    my $collection;
+    
+    if ( UNIVERSAL::isa($file, 'ISGA::FileCollection') ) {
+      
+      $file->getCreatedBy == ISGA::Login->getAccount
+	or X::User::Denied->throw;
+      
+      $collection = $file;
+      
+    } else {
+      
+      # promote single file to array for consistency
+      ref($file) eq 'ARRAY' or $file = [ $file ];
+      
+      # build collection for files
+      $collection = 
+	ISGA::FileCollection->create( Type => ISGA::FileCollectionType->new('File List'),
+					  CreatedAt => ISGA::Timestamp->new(),
+					  CreatedBy => ISGA::Login->getAccount,
+					  Description => 'Collection Created for Run input',
+					  IsHidden => 1,
+					  ExistsOutsideCollection => 1,
+					  UserName => "test" . $$ . $pi,
+					);
+      
+      my $index = 0;
+      
+      foreach  ( @$file ) {
+	$_->getCreatedBy == ISGA::Login->getAccount
+	  or X::User::Denied->throw;
+	
+	ISGA::FileCollectionContent->create( FileCollection => $collection,
+						 FileResource => $_,
+						 Index => $index++ );
+      }
+    }
+    
+    # Check to see if there was already a defined input
+    my ($rbi) = 
+      @{ISGA::RunBuilderInput->query( RunBuilder => $run_builder,
+					  PipelineInput => $pi )};
+    
+    # TODO - probably should confirm type/format here
+    # replace old contents of the rbi with the new collection
+    if ( $rbi ) {
+      if ( $collection ) {
+	$rbi->edit( FileResource => $collection );
+	# TODO - delete old_file if it was a pipeline input collection
+      } else {
+	X::API->throw( message => "Pre-existing runbuilderinput was not a collection");
+      }
+    } else {
+      ISGA::RunBuilderInput->create( RunBuilder => $run_builder,
+					 FileResource => $collection,
+					 PipelineInput => $pi );
+    }
+    
     
     $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
   }
   
   # bounce!!!!!
   $self->_save_arg( 'form', $form);
+  $self->redirect( uri => "/RunBuilder/SelectInputList?run_builder=$run_builder" );
 
-  # we need to look for pipeline_input or run_builder_input
-  my $uri = "/RunBuilder/SelectInputList?run_builder=$run_builder&pipeline_input=$pi";
-  $rbi and $uri .= "&run_builder_input=$rbi";
-  $self->redirect( uri => $uri );
 }
 
-sub Exception::RunBuilder::SelectInputList {
-
-  my ($self, $e) = @_;
-
-  my $args = $self->args();
-
-  if ( $e->isa('X::File') ) {
-
-    my $run_builder = $args->{run_builder};
-
-    $self->_add_error_message( $e );
-
-    $self->redirect( uri => "/RunBuilder/ViewInputError?run_builder=$run_builder");
-
-  }
-}
-
-#------------------------------------------------------------------------
-
-=item public void RemoveInputList();
-
-Removes an entry from an iterative input list from a run builder.
-
-=cut
-#------------------------------------------------------------------------
-sub RunBuilder::RemoveInputList {
-
-  my $self = shift;
-  my $args = $self->args;
- 
-  my $rb = $args->{run_builder};
-  my $rbi = $args->{run_builder_input};
-
-  my $pi = $rbi->getPipelineInput();
-#  $pi->isIterator or X->throw("Expected Iterator Input");
-
-  my $fc = $rbi->getFileResource();
-
-  $fc->isa('ISGA::FileCollection') or X->throw("Expected File Collection");
-
-  # remove the run builder input and file collection
-  $rbi->delete();
-  $fc->delete();
   
-  $self->redirect( uri => "/RunBuilder/View?run_builder=$rb" );
-}
-  
-#------------------------------------------------------------------------
-
-=item public void RemoveInput();
-
-Removes an entry from an iterative input from a run builder.
-
-=cut
-#------------------------------------------------------------------------
-sub RunBuilder::RemoveInput {
-
-  my $self = shift;
-  my $args = $self->args;
- 
-  my $rb = $args->{run_builder};
-  my $rbi = $args->{run_builder_input};
-
-  my $pi = $rbi->getPipelineInput();
-#  $pi->isIterator or X->throw("Expected Iterator Input");
-
-  $rbi->delete();
-
-  $self->redirect( uri => "/RunBuilder/View?run_builder=$rb" );
-}
-
 #------------------------------------------------------------------------
 
 =item public void Cancel();
@@ -524,7 +393,7 @@ sub RunBuilder::Cancel {
 
   # make sure they supplied a builder
   my $run_builder = $args->{run_builder};
-  my $redirect =  $args->{redirect}; 
+ 
   # make sure they own the runbuilder
   my $account = ISGA::Login->getAccount;
   $run_builder->getCreatedBy == ISGA::Login->getAccount
@@ -539,8 +408,8 @@ sub RunBuilder::Cancel {
 
   # nuke it and redirect
   $run_builder->delete();
-#  $self->redirect( uri => "/RunBuilder/ListMy" );
-  $self->redirect( uri => "$redirect" );
+#  $self->redirect( uri => "/Pipeline/View?pipeline=$pipeline" );
+  $self->redirect( uri => "/RunBuilder/ListMy" );
 }
 
 sub Exception::RunBuilder::Cancel {

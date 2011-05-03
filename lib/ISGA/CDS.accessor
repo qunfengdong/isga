@@ -9,7 +9,7 @@ use Bio::SeqIO;
 
 =item public string getResidues();
 
-Retrieves the sequence for a cds.
+Retrieves the sequence for a gene.
 
 =cut 
 #------------------------------------------------------------------------
@@ -17,16 +17,7 @@ Retrieves the sequence for a cds.
 
     my $self = shift;
 
-    my $gene = $self->getmRNA->getGene();
-
     my $sequence = $self->getmRNA->getGene->getResidues;
-    
-    # do we need to shift the seq to get in the correct frame?
-    my $shift = $self->getmRNA->getGene->getEdgeFrameshift();
-    
-    if ( $shift ) {
-      $sequence = substr( $sequence, $shift );
-    }
 
     return Bio::Seq->new( -seq => $sequence )->translate->seq;
   }

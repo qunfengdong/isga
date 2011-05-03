@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------
 
-=item PRIVATE void _initializeOutputs(RunBuilder $rb);
+=item PRIVATE void _initializeOutputs();
 
 Creates placeholders for all expected pipeline outputs.
 
@@ -10,23 +10,20 @@ Creates placeholders for all expected pipeline outputs.
 #------------------------------------------------------------------------
 sub _initializeOutputs {
 
-  my ($self, $rb) = @_;
+  my $self = shift;
 
-  foreach my $cluster ( @{$rb->getPipeline->getClusters} ) {
+  foreach my $component ( @{$self->getType->getComponents} ) {
 
-    foreach my $component ( @{$rb->getComponents($cluster)} ) {
-      
-      foreach ( @{ISGA::ClusterOutput->query( Component => $component )} ){
-	next if $_->getVisibility ne 'Pipeline';
-	ISGA::RunOutput->create( Run => $self, ClusterOutput => $_ );
-      }
+    foreach ( @{ISGA::ClusterOutput->query( Component => $component )} ){
+      next if $_->getVisibility ne 'Pipeline';
+      ISGA::RunOutput->create( Run => $self, ClusterOutput => $_ );
     }
   }
 }
 
 #------------------------------------------------------------------------
 
-=item PRIVATE void _initializeClusters(RunBuilder $rb);
+=item PRIVATE void _initializeClusters();
 
 Creates table entries for the clusters we will run.
 
@@ -34,54 +31,17 @@ Creates table entries for the clusters we will run.
 #------------------------------------------------------------------------
 sub _initializeClusters {
 
-  my ($self, $rb) = @_;
+  my $self = shift;
 
   my $incomplete = ISGA::RunStatus->new( Name => 'Incomplete' );
 
-  my $p = $self->getType;
-
-  foreach my $cluster ( @{$p->getClusters} ) {
+  foreach my $cluster ( @{$self->getType->getClusters} ) {
     
-    my %args = ( Run => $self, Cluster => $cluster, Status => $incomplete );
-    
-    if ( my $iterations = $rb->getIterationCount($cluster) ) {      
-      $args{Iterations} = $iterations;
-    }
-
-    ISGA::RunCluster->create( %args );
+    ISGA::RunCluster->create( Run => $self, Cluster => $cluster,
+				  Status => $incomplete );
   }
 }
 
-#------------------------------------------------------------------------
-
-=item PRIVATE void _getCurrentStatus();
-
-Retrieves the current status of components in the Run
-
-=cut 
-#------------------------------------------------------------------------
-  sub _getCurrentStatus {
-
-    my $self = shift;
-
-    my %finished;
-    my @working;   
-
-    foreach my $run_cluster ( @{ISGA::RunCluster->query( Run => $self )} ) {
-
-      my $components = $run_cluster->getComponents();
-
-      if ( $run_cluster->getStatus eq 'Complete' ) {
-	map {$finished{ $_->getErgatisName }++} @$components;
-	
-      } else {
-	push @working, [ $run_cluster, $components ];
-      }
-    }
-
-    return [\%finished, \@working];
-  }
-      
 #------------------------------------------------------------------------
 
 =item public void updateStatus();
@@ -92,42 +52,62 @@ outputs.
 
 =cut
 #------------------------------------------------------------------------
-  sub updateStatus {
-    
-    my $self = shift;
+sub updateStatus {
 
-    my $status = $self->getStatus;
-    return if $status eq 'Complete';
+  my $self = shift;
 
-    eval {
+  my $status = $self->getStatus;
 
-      ISGA::DB->begin_work();
+  return if $status eq 'Complete';
 
-      my ($finished, $working) = @{$self->_getCurrentStatus};
+  eval {
 
-      my $ergatis_status = ISGA::ErgatisRunStatus->new( $self, $finished );
+    ISGA::DB->begin_work();
 
-      my $new_status = ucfirst( $$ergatis_status{'start pipeline:'}->{state} );
-    
-      $new_status ||= "Submitting";  
-      
-      $new_status eq $status or
-	$self->edit( Status => ISGA::RunStatus->new( Name => $new_status ) );
-      
-      if ( $new_status eq 'Complete' ) {
-	$self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'});
+    my $pipeline = $self->getType;
+    my $clusters = $pipeline->getClusters;
+
+    my %finished_components;
+    my @working_clusters;
+
+    foreach ( @$clusters ) {
+
+      my ($run_cluster) = @{ISGA::RunCluster->query( Run => $self, Cluster => $_ )};
+      my $components = $pipeline->getComponents($_);
+
+      if ( $run_cluster->getStatus eq 'Complete' ) {
+	map {$finished_components{ $_->getErgatisName }++} @$components;
+	
+      } else {
+	push @working_clusters, [ $run_cluster, $components ];
       }
-      
-      # go through each cluster
-      $_->[0]->updateStatus($ergatis_status, $_->[1]) for @$working;
-      
-      ISGA::DB->commit();
-    };
+    }
+   
+    my $ergatis_status = 
+      ISGA::ErgatisRunStatus->new( $self->getErgatisKey, \%finished_components );
+
+    my $new_status = ucfirst( $$ergatis_status{'start pipeline:'}->{state} );
     
-    if ( $@ ) {
-      ISGA::DB->rollback();
-      
-      my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
-      $e->rethrow();
-    }  
-  }
+    $new_status ||= "Submitting";  
+
+    $new_status eq $status or
+      $self->edit( Status => ISGA::RunStatus->new( Name => $new_status ) );
+
+    if ( $new_status eq 'Complete' ) {
+      $self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'});
+    }
+
+    # go through each cluster
+    $_->[0]->updateStatus($ergatis_status, $_->[1]) for @working_clusters;
+    
+    ISGA::DB->commit();
+  };
+
+  if ( $@ ) {
+    ISGA::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+    $e->rethrow();
+  }  
+ 
+}

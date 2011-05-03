@@ -54,7 +54,6 @@ sub EditDetails {
 	TITLE => 'Pipeline Name',
 	REQUIRED => 1,
 	LABEL => 'name',
-        MAXLEN => 32,
 	ERROR => ['not_null', 'Text::checkHTML'],
 	VALUE => $pBuilder->getName,
        },
@@ -204,58 +203,71 @@ sub ChooseComponent {
   my $pBuilder = $args->{pipeline_builder};
   my $cluster = $args->{cluster};
   my $components = ISGA::Component->query( Cluster => $cluster );
-  my $wf_mask = $pBuilder->getWorkflowMask();
+  my $wf_mask = $pBuilder->getWorkflowMask;
+  my $disabled = $wf_mask->getDisabledComponents;
   
   my $form = ISGA::FormEngine->new($args);
   $form->set_skin_obj('ISGA::FormEngine::SkinTable');
 
   my @form;
   my $check_class;
-
   foreach ( @{$components} ) {
-   
-    # In a modular cluster, a component dependent on another isn't shown in the selection form
-    # and is controlled by the top level component it's dependency is traced to.
-    next if $_->getDependsOn;
-    
-    $check_class = $_->getCluster->getName;
-    $check_class =~ s/ /_/g;
+    unless( defined $_->getDependsOn ){
+      $check_class = $_->getCluster->getName;
+      $check_class =~ s/ /_/g;
+      my $count = 0;
+      my $link = "No Parameters";
+      my @dependents = @{ISGA::Component->query( DependsOn => $_ )};
 
-    my $count = 0;
-    my $link = "No Parameters";
-    
-    foreach my $dep_components (  @{ISGA::Component->query( DependsOn => $_ )}  ){
-      if (my $builder = ISGA::ComponentBuilder->new($dep_components)){
-	if ( $builder->{PipelineBuilder} ){
-	  $count++;
-	  $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$dep_components\">Edit</a>";
-	}
+      foreach my $dep_components (@dependents){
+         if (my $builder = ISGA::ComponentBuilder->new($dep_components)){
+           if ( $builder->{PipelineBuilder} ){
+               $count++;
+               $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$dep_components\">Edit</a>";
+           }
+         }
+      }
+      my $b = ISGA::ComponentBuilder->new($_);
+      $b->{PipelineBuilder} and $count == 0 and $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$_\">Edit</a>";
+
+      if(exists $$disabled{$_->getErgatisName}){
+        push(@form,
+                    {templ => 'data_row',
+                     sub => [
+                        {templ => 'print',
+                         ALIGN => 'right',
+                         VALUE => $_->getName},
+                        {templ => 'check',
+                         NAME => $_->getErgatisName,
+                         ALIGN => 'right',
+                         CLASS => $check_class." centertext",
+                         OPT_VAL => $_->getErgatisName},
+                        {templ => 'print',
+                         CLASS => "centertext",
+                         VALUE => $link},
+                     ]},
+                   );
+      }else{
+        push(@form,
+                    {templ => 'data_row',
+                     sub => [
+                        {templ => 'print',
+                         ALIGN => 'right',
+                         VALUE => $_->getName},
+                        {templ => 'check',
+                         NAME => $_->getErgatisName,
+                         ALIGN => 'right',
+                         CLASS => $check_class." centertext",
+                         OPT_VAL => $_->getErgatisName,
+                         VALUE => $_->getErgatisName},
+                        {templ => 'print',
+                         CLASS => "centertext",
+                         VALUE => $link},
+                     ]},
+                   );
       }
     }
-
-    my $b = ISGA::ComponentBuilder->new($_);
-    $b->{PipelineBuilder} and $count == 0 and $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$_\">Edit</a>";
-    
-    my $entry = {templ => 'data_row',
-		 sub => [
-			 {templ => 'print',
-			  ALIGN => 'right',
-			  VALUE => $_->getName},
-			 {templ => 'check',
-			  NAME => 'component',
-			  ALIGN => 'right',
-			  CLASS => $check_class." centertext",
-			  OPT_VAL => $_},
-			 {templ => 'print',
-			  CLASS => "centertext",
-			  VALUE => $link},
-			]};
-    
-    $wf_mask->isActive($_) and $entry->{sub}[1]{VALUE} = $_;
-    push @form, $entry;
   }
-
-
   my $select_link = "<a onclick=\"\$(\'input[\@type=checkbox].".$check_class."\').attr(\'checked\', \'checked\')\">Select All</a>";
   my $deselect_link = "<a onclick=\"\$(\'input[\@type=checkbox].".$check_class."\').removeAttr(\'checked\')\">Deselect All</a>"; 
 

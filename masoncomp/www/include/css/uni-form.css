@@ -20,8 +20,7 @@
       /* .inlineLabel is used for inputs within labels - checkboxes and radio buttons */
       .uniForm .inlineLabel input,
       .uniForm .inlineLabels .inlineLabel input,
-/*      .uniForm .blockLabels .inlineLabel input{ float: left; margin: 0 .4em 0 0; } */
-      .uniForm .blockLabels .inlineLabel input{ float: left; margin: 0 .4em 0 47%; }
+      .uniForm .blockLabels .inlineLabel input{ float: left; margin: 0 .4em 0 0; }
         .uniForm .inlineLabel span{ float: left; width: 90%; }
 
 /* ------------------------------------------------------------------------------ */
@@ -66,7 +65,7 @@
     .uniForm .inlineLabels .ctrlHolder{}
     
     .uniForm .inlineLabels label,
-    .uniForm .inlineLabels .label{ width: 45%; /* <- Required property */ margin: .3em 2% 0 0; /* <- Required property */ clear: left; }
+    .uniForm .inlineLabels .label{ width: 45%; /* <- Required property */ margin: .3em 2% 0 0; /* <- Required property */ }
     
     .uniForm .inlineLabels .textInput,
     .uniForm .inlineLabels .fileUpload{ width: 45%; /* <- Required property */ }

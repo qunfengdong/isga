@@ -83,7 +83,7 @@ $(document).ready(function() {
 </div>
 
 % } else {
-<p>No piplines are running.</p>
+<p>No piplines have been run.</p>
 % }
 
 <& admin_list_right_menu.mas, show_complete => $show_complete, show_canceled => $show_canceled &>
