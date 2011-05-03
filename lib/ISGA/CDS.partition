@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: CDS
+partition_of: GenomeFeature
+attributes:
+  - { name: TopCogHit, type: string }
+  - { name: mRNA, column: cds_mrna, type: mRNA, options: [ REQUIRED ] }

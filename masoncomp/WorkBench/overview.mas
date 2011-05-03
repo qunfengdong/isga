@@ -1,0 +1,65 @@
+<%args>
+
+</%args>
+
+<h1>Toolbox Home</h1>
+
+<%perl>
+  if ( my $account = ISGA::Login->getAccount ) {
+
+    my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt' );
+
+    if (@$runs) {
+</%perl>
+<ul>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Blast Search</a></li>
+  <li><a href="/WorkBench/GBrowse">GBrowse</a></li>
+  <li><a href="/WorkBench/GenomeFeatureQuery">Keyword Search</a></li>
+  <li><a href="/File/BrowseMy">Browse All Files</a></li>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'NewblerToHawkeye' ) %>">Convert Newbler to Hawkeye</a></li>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'CeleraToHawkeye' ) %>">Convert Celera to Hawkeye</a></li>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
+  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
+</ul>
+%   } else {
+<p>These tools are currently unavailable because you do not have the appropriate data. You must have a completed run to use the tools below.</p>
+<ul>
+	<li>BLAST</li>
+	<li>GBrowse</li>
+        <li>Keyword Search</li>
+        <li>Browse All Files</li>
+        <li>Convert Newbler to Hawkeye</li>
+        <li>Convert Celera to Hawkeye</li>
+        <li>Convert Mira to Hawkeye</li>
+        <li>Convert Newbler For Consed</li>
+        <li>Convert SFF to FASTA</li>
+</ul>
+%   }
+% } else {
+<p>You must log in to use the ISGA Toolbox.</p>
+%}
+
+<h2>Other Useful Tools at The Center for Genomics and Bioinformatics</h2>
+<ul>
+<li><a href="http://cgcv.cgb.indiana.edu/cgi-bin/index.cgi">Comparative Gene Cluster Visualization Tool</a></li>
+<li><a href="http://bioportal.cgb.indiana.edu/bov">BLAST Output Visualization Tool</a></li>
+<li><a href="http://richest.cgb.indiana.edu">RICHEST</a></li>
+<li><a href="http://webgbrowse.cgb.indiana.edu">WebGBrowse</a></li>
+</ul>
+
+<h2>External Resources</h2>
+<ul>
+<li><a href="http://ergatis.sourceforge.net/">Ergatis</a></li>
+<li><a href="http://www.jcvi.org/cms/research/projects/annotation-service/overview/">JCVI Annotation Service</a></li>
+<li><a href="http://cmr.jcvi.org/cgi-bin/CMR/CmrHomePage.cgi">Comprehensive Microbial Resource</a></li>
+<li><a href="http://img.jgi.doe.gov/">IMG</a></li>
+<li><a href="http://www.microbesonline.org/">MicrobesOnline</a></li>
+<li><a href="http://www.cebitec.uni-bielefeld.de/groups/brf/software/gendb_info/index.html">GenDB</a></li>
+<li><a href="http://www.sanger.ac.uk/Software/Artemis/">Artemis</a></li>
+<li><a href="http://wishart.biology.ualberta.ca/basys/cgi/submit.pl">BASys</a></li>
+<li><a href="http://www.cns.fr/agc/mage/wwwpkgdb/MageHome/index.php?webpage=mage">MaGe</a></li>
+<li><a href="http://genome.jouy.inra.fr/agmial/">AGMIAL</a></li>
+</ul>
+

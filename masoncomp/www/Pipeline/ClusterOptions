@@ -1,0 +1,12 @@
+<%args> #! -*- cperl -*-
+$pipeline
+$cluster
+</%args>
+
+% my $workflow = $pipeline->getWorkflow($cluster);
+
+% if ( $workflow->getCustomization() eq 'Modular' ) {
+<& /Pipeline/view-modular-cluster-modal.mas, pipeline => $pipeline, workflow => $workflow &>
+% } else {
+<& /Pipeline/view-cluster-modal.mas, pipeline => $pipeline, workflow => $workflow &>
+% }

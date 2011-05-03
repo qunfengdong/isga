@@ -1,0 +1,15 @@
+--- !perl/ISGA::ComponentBuilder
+Name: Shore 
+Description: 'This component contain all shore command.'
+RunBuilderParams:
+  - { NAME: 'application', TITLE: 'Data Type', templ: 'select',DESCRIPTION: 'app', OPTION: ['genomic','mRNA','ChIPseq'], OPT_VAL: ['genomic' , 'mRNA' , 'ChIPseq'], CONFIGLINE: '___application___' }
+  - { NAME: 'editdistance', TITLE: 'Maximum edit distance', VALUE: '4', REQUIRED: 1, DESCRIPTION: 'Maximum edit distance', CONFIGLINE: '___editdistance___' }
+  - { NAME: 'maxgaps', TITLE: 'Maximum Allowed Gaps', VALUE: '3', REQUIRED: 1,  DESCRIPTION: 'The maximum number of allowable Gaps.  Must be a Whole Number greater than or equal to zero.', CONFIGLINE: '___maxgaps___' }
+  - { NAME: 'mapper', TITLE: 'Mapping tool', templ: 'select', REQUIRED: 1, DESCRIPTION: 'Mapping tool can be one of genomemapper bowtie or bwa', CONFIGLINE: '___mapper___', OPTION: ['genomemapper','bowtie','bwa'], OPT_VAL: ['genomemapper','bowtie','bwa'] }
+  - { NAME: 'insert_size', TITLE: 'Insert size', DESCRIPTION: 'Expected insert size has to be larger than 0', CONFIGLINE: '___insert_size___' }
+  - { NAME: 'library_identifier', TITLE: 'Library identifier', DESCRIPTION: 'Library identifier, defines name space of the read identifiers (equal or larger than 1)', VALUE: '1' ,CONFIGLINE: '___library_identifier___' }
+  - { NAME: 'sample_id', TITLE: 'Sample ID', REQUIRED: 1, VALUE: 'Sample', DESCRIPTION: 'Name of any species, strain, accession, project or any other ID', CONFIGLINE: '___name___' }
+  - { NAME: 'referencegenome', TITLE: 'Reference Genome', templ: 'select', REQUIRED: 1, OPTION: ['Arabidopsis thaliana'], OPT_VAL: ['/research/projects/ergatis/ergatis-sandbox/tmp/shoretest/arabIndex1/arab9.fa.shore'], DESCRIPTION: 'Reference genome used to map.', CONFIGLINE: '___shore_index___' }
+  - { NAME: 'min_hit', TITLE: 'minimal hit', REQUIRED: 1, DESCRIPTION: 'minimal hit for coverage analysis', VALUE: '1', CONFIGLINE: '___min_hit___' }
+  - { NAME: 'max_hit', TITLE: 'maximal hit', REQUIRED: 1, DESCRIPTION: 'maximal hit for coverage analysis', VALUE: '1', CONFIGLINE: '___max_hit___' }
+

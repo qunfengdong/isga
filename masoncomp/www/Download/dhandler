@@ -1,0 +1,70 @@
+<%args> # -*- cperl -*-
+ $file_resource => undef
+ $run_cluster => undef
+ $genome_feature => undef
+ $upstream => 0
+ $downstream => 0
+</%args>
+
+<%perl>
+
+# lets start with a security check
+my $account = ISGA::Login->getAccount or X::User::Denied::RequiresLogin->throw();
+
+# and save a spot for a fh
+my $fh;
+
+if ( $file_resource ) {
+  ISGA::Login->getAccount->mayReadFileResource($file_resource) or X::User::Denied->throw();
+  open $fh, '<', $file_resource->getPath();
+
+} elsif ( $run_cluster ) {
+  my $run = $run_cluster->getRun;
+  $account->mayRead($run) or X::User::Denied->throw();
+
+  $fh = $run_cluster->downloadEvidence();
+
+} elsif ( $genome_feature ) {
+
+  my $residues = '';
+  my $locus = '';
+  if ($genome_feature->isa('ISGA::Gene')) {
+	  $locus = $genome_feature->getLocus;
+	  $residues = $genome_feature->getUpstream($upstream) . $genome_feature->getResidues . $genome_feature->getDownstream($downstream);
+  } elsif ($genome_feature->isa('ISGA::CDS')) {
+	  $locus = $genome_feature->getmRNA->getGene->getLocus;
+	  $residues = $genome_feature->getResidues;
+  }
+  my $contents = ">$locus\n$residues";
+
+  open $fh, "<", \$contents;
+
+} else { X::User->throw( message => 'You have not supplied a resource to download'); }
+
+$m->clear_buffer();
+
+# decide on how much to read in a go
+my $size = 1024 * 1024 * 4;
+my $buf;
+
+# this idiom is copied from File::Copy
+for (;;) {
+  
+  my $r;
+  defined($r = read($fh, $buf, $size)) or X::API->throw( message => "error reading filehandler: $!" );
+  last unless $r;
+  
+  $m->print($buf);
+  $m->flush_buffer();
+}
+$m->abort();
+
+</%perl>
+
+<%flags>
+ inherit => undef
+</%flags>
+
+<%once>
+my $admin = ISGA::Group->new(Name => 'Run Administrators');
+</%once>

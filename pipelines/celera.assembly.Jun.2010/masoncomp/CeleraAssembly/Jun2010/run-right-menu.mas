@@ -1,0 +1,10 @@
+<%args>
+  $run
+</%args>
+
+% if ($run->isHidden){
+  <li class="title">Analysis Tools</li>
+  <li class="rmbutton" id="show_run"><a href="#">Unhide Run</a></li>
+  <li id="show_run"><p>Unhide this run.</p></li>
+% }
+

@@ -1,0 +1,21 @@
+---
+ - Name: FASTQ
+   Extension: fq
+   Help: 'FASTQ format is a text-based format for storing both a biological sequence (usually nucleotide sequence) and its corresponding quality scores.'
+   IsBinary: 0
+ - Name: SHORE_HETEROZYGOUS
+   Extension: txt 
+   Help: 'The heterozygous snp output from Shore.'
+   IsBinary: 0
+ - Name: SHORE_HOMOZYGOUS
+   Extension: txt
+   Help: 'The homozygous snp output from Shore.'
+   IsBinary: 0
+ - Name: SHORE_INSERTION
+   Extension: txt
+   Help: 'The insertion output from Shore.'
+   IsBinary: 0
+ - Name: SHORE_DELETION
+   Extension: txt
+   Help: 'The deletion output from Shore.'
+   IsBinary: 0

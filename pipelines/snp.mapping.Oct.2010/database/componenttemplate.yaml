@@ -1,0 +1,7 @@
+---
+- Name: shore_illumina2flat
+- Name: shore_mapflowcell
+- Name: shore_correct4pe
+- Name: shore_merge
+- Name: shore_consensus
+- Name: shore_coverage

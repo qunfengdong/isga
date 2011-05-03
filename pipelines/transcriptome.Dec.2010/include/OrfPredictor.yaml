@@ -1,0 +1,8 @@
+--- !perl/ISGA::ComponentBuilder
+Name: OrfPredictor
+Description: 'OrfPredictor utilizes BLAST results to predict ORFs in EST sequences.'
+Params:
+  - { NAME: 'evalue', TITLE: 'e-value', REQUIRED: 1, VALUE: '1e-5', ERROR: ['Number::isScientificNotation'], DESCRIPTION: 'Statistical significance threshold for reporting database sequence matches. Lower expected thresholds are more stringent, leading to fewer chance matches being reported. Increasing the expected threshold shows less stringent matches.', CONFIGLINE: '___EXPECT___' }
+RunBuilderParams:
+  - { templ: 'select', NAME: 'bflag', TITLE: 'Bacteria Flag', REQUIRED: 1, OPTION: ['False', 'True'], OPT_VAL: ['0', '1'], VALUE: '1', DESCRIPTION: 'This specifies whether the organism is a bacteria or not.', CONFIGLINE: '___bflag___' }
+

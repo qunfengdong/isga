@@ -1,0 +1,9 @@
+<%args>
+  $run
+</%args>
+%# bless $run, 'ISGA::Run::Transcriptome';
+<li class="title">Analysis Tools</li>
+% if ($run->isHidden){
+  <li class="rmbutton" id="show_run"><a href="#">Unhide Run</a></li>
+  <li id="show_run"><p>Unhide this run.</p></li>
+% }

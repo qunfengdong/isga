@@ -1,0 +1,34 @@
+<%init>
+   return if $m->cache_self;
+</%init>
+
+<h1>ISGA Policies</h1>
+
+<& /Help/disclaimer.mas &>
+<hr />
+<p>The policies below are subject to change at any time. Any changes
+will be announced as a news item.</p>
+
+
+<a name="DataRetention"></a>
+<h2>Data Retention</h2>
+
+<p>This retention policy represents our efforts to retain all user
+data for as long as our storage capacity allows. This policy is not a
+guarantee against data loss.</p>
+
+<h2>Accounts</h2>
+
+<p>ISGA accounts are maintained indefinitely.</p>
+
+<h2>Pipeline Results</h2>
+
+<p>Pipelines and final results are preserved indefinitely. The raw
+results form intermediate steps in pipelines consume gigabytes of
+storage, and as such are purged periodically. When available space is
+low, we will delete raw results older than 30 days.<p>
+
+<h2>Acknowledgement</h2>
+<p>This research is supported in part by the Indiana METACyt Initiative of
+Indiana University, funded in part through a major grant from the Lilly
+Endowment, Inc.</p>

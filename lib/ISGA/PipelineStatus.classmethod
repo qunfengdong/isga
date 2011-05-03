@@ -1,0 +1,11 @@
+# -*- cperl -*-
+
+#-----------------------------------------------------------------------
+
+=item public [PipelineStatus] available();
+
+Returns the existing pipeline statuses that are available for execution.
+
+=cut
+#------------------------------------------------------------------------
+  sub available { return shift->query(IsAvailable => 1); }
