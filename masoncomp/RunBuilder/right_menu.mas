@@ -4,8 +4,8 @@
 
 % my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
 % my $account = ISGA::Login->getAccount;
-% my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', UserClass => $account->getUserClass);
-% my $runs = ISGA::Run->getCurrentRunCount($account);
+% my @statuses = map { ISGA::RunStatus->new( Name => $_ ) } qw( Running Submitting Error Incomplete Failed Interrupted );
+% my $runs = grep($_, @{ISGA::Run->query( CreatedBy => $account, Status => \@statuses )});
 
 % my $has_run_parameters = $run_builder->hasRunParameters();                    
 <sys:rightmenu>
@@ -48,14 +48,12 @@
 
 <li class="title">Submission Tools</li>
 
-%
-
-% if ( $missing_inputs or $missing_params or ! $accepting_jobs or ($runs >= $quota) ) {
+% if ( $missing_inputs or $missing_params or ! $accepting_jobs or ($runs >= ISGA::Variable->value('pipeline_quota')) ) {
 <li class="rmbutton disabled">Submit Run</li>
 <li class="disabled">\
 %   if ( ! $accepting_jobs ) {
  <p>ISGA is currently not accepting new jobs.  Please see the latest news for more information.</p>
-%   }elsif( $runs >= $quota ){
+%   }elsif( $runs >= ISGA::Variable->value('pipeline_quota') ){
 <p>You are currently at your quota for the allowable number of simultaneous pipeline runs.</p>
 %   } else {
 %   if ( $missing_params ) {
@@ -81,7 +79,7 @@
 </ul>
 </sys:rightmenu>
 
-<div href="#" class="modal" id="modal_div" class="hidden">
+<div id="modal_div" class="hidden">
 </div>
 
 %# javascript

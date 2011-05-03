@@ -5,10 +5,6 @@
 
 
 <%perl>
-
-# if user class is 0, make it undef
-$user_class ||= undef;
-
 if ( $pipeline ) {
   $m->comp('/PipelineConfiguration/view.mas', pipeline => $pipeline, user_class => $user_class);
 } else { 

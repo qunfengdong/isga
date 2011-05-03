@@ -59,32 +59,15 @@ sub SiteConfiguration::Edit {
       $sc->edit( Value => $allow_sge_requests );
     }
 
-    # process paths
-    foreach ( qw( file_repository gbrowse_directory) ) {
-      my $new_value = $form->get_input($_);
-      $new_value =~ s{/$}{};
-      if ( $new_value ne ISGA::SiteConfiguration->value($_) ) {
-	my $var = ISGA::ConfigurationVariable->new( Name => $_ );
-	ISGA::SiteConfiguration->new( Variable => $var )->edit( Value => $new_value );
-      }
-    }
+    # process default_user_class
+    my $default_user_class = $form->get_input('default_user_class');
 
-    # process strings
-    foreach ( qw( default_user_class support_email ) ) {
-      my $new_value = $form->get_input($_);
-      if ( $new_value ne ISGA::SiteConfiguration->value($_) ) {
-	my $var = ISGA::ConfigurationVariable->new( Name => $_ );
-	ISGA::SiteConfiguration->new( Variable => $var )->edit( Value => $new_value );
-      }
-    }
+    if ( $default_user_class ne ISGA::SiteConfiguration->value('default_user_class') ) {
 
-    # process numbers
-    foreach ( qw( upload_size_limit ) ) {
-      my $new_value = $form->get_input($_);
-      if ( $new_value != ISGA::SiteConfiguration->value($_) ) {
-	my $var = ISGA::ConfigurationVariable->new( Name => $_ );
-	ISGA::SiteConfiguration->new( Variable => $var )->edit( Value => $new_value );
-      }
+      my $var = ISGA::ConfigurationVariable->new( Name => 'default_user_class' );
+      my $sc = ISGA::SiteConfiguration->new( Variable => $var );
+
+      $sc->edit( Value => $default_user_class );
     }
 
     $self->redirect( uri => '/SiteConfiguration/View' );

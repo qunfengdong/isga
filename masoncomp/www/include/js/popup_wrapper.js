@@ -17,7 +17,7 @@ function tipUpdate() {
         $('#JT').remove(); 
         idCheck = this.id;
         beingShown = true;
-      if($.browser.msie || $.browser.safari){
+      if($.browser.msie){
         JT_IE_area_show(this.href,this.id,this.title,this.coords,'workflow');
       } else {
         JT_area_show(this.href,this.id,this.alt,this.coords);

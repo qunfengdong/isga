@@ -1,0 +1,34 @@
+<%args>
+	$infile
+</%args>
+
+<h1>Neighbor Joining results</h1>
+<%perl>
+my $path = '/mnt/isga/tmp/workbench/msa/'.$infile;
+my $outfile = $path.'_neighbor_outfile';
+my $outtree = $path.'_neighbor_outtree';
+warn "files $infile <> $outfile <> $outtree";
+my $output_content = `cat $outfile`;
+my $outtree_content = `cat $outtree`;
+</%perl>
+
+
+<div class="data overflow">
+<table class="tablesorter list" width="100%">
+<tbody>
+<tr><td>
+<pre>
+<br />
+% print $output_content;
+</pre>
+<br />
+</td></tr><tr><td>
+<pre>
+<br />
+% print $outtree_content;
+</pre>
+<br />
+</td></tr>
+</tbody>
+</table>
+</div>

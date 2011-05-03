@@ -190,27 +190,6 @@ sub isGreaterOrEqualFormValue {
   return '';
 }
 
-#------------------------------------------------------------------------
-
-=item public string isLesserOrEqualFormValue(string value, Form form, string caller, string value, string value);
-
-Asserts that the input values supplied are the same
-
-=cut
-#------------------------------------------------------------------------
-sub isLesserOrEqualFormValue {
-
-  my ($value, $form, $caller, $input1, $input2, $title) = @_;
-
-  my $value1 = $form->get_input($input1);
-  my $value2 = $form->get_input($input2);
-
-  if ( $value1 > $value2 ) {
-    return "Value for this input must be less than or equal to the value for $title.";
-  }
-
-  return '';
-}
 ISGA::FormEngine::SkinUniform->_register_check('Number::matches');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isBetween');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isNumber');
@@ -219,7 +198,6 @@ ISGA::FormEngine::SkinUniform->_register_check('Number::isScientificNotation');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isInteger');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isGreaterThan');
 ISGA::FormEngine::SkinUniform->_register_check('Number::isGreaterOrEqualFormValue');
-ISGA::FormEngine::SkinUniform->_register_check('Number::isLesserOrEqualFormValue');
 1;
 __END__
 

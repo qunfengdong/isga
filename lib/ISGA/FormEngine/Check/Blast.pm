@@ -81,19 +81,15 @@ sub checkBlastProgram {
     local ($/);
     $sequence = <$fh>;
     seek($fh,0,0);
-    undef $fh;
   }
   $sequence =~ s/>(\S| )*(\n|\r\n)//og;
   $sequence =~ s/\s//og;
 
   if($sequence =~ /[^ATGCRYSWKMDHBVN]/oig){
-     undef $sequence;
      return '<br>'.ucfirst($value).' is not compatible with the provided input sequence type.  '.ucfirst($value).' needs a nucleotide sequence as input.' if($value ne 'blastp' && $value ne 'tblastn');
   } else {
-     undef $sequence;
      return '<br>'.ucfirst($value).' is not compatible with the provided input sequence type.  '.ucfirst($value).' needs an amino acid sequence as input.' if($value ne 'blastn' && $value ne 'blastx' && $value ne 'tblastx');
   }
-  undef $sequence;
   return ''; 
 }
 
@@ -121,16 +117,15 @@ sub compatibleBlastProgramAndDB {
                  'tblastx' => 'nucleotide',);
   my $flag = 0;
   if($program eq 'blastn'){
-      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db eq 'nr') or ($db =~ /.*run_result_prot_db$/) );
   }elsif($program eq 'blastp'){
-#      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*run_result_prot_db$/) );
-      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) );
+      $flag = 1 if( ($db ne 'nr') and ($db ne 'tair9_pep') and ($db !~ /.*run_result_prot_db$/) );
   }elsif($program eq 'blastx'){
-      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) );
+      $flag = 1 if( ($db ne 'nr') and ($db ne 'tair9_pep') and ($db !~ /.*run_result_prot_db$/) );
   }elsif($program eq 'tblastn'){
-      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db eq 'nr') or ($db =~ /.*run_result_prot_db$/) );
   }elsif($program eq 'tblastx'){
-      $flag = 1 if( ($db =! /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db eq 'nr') or ($db =~ /.*run_result_prot_db$/) );
   }
   if( $flag ){
     return '<br>The BLAST program you have selected is not compatible with your database type.  '.ucfirst($program).' needs to be used with a '.$dbtype{$program}.' database.';
@@ -140,7 +135,7 @@ sub compatibleBlastProgramAndDB {
 }
 #------------------------------------------------------------------------
 
-=item public String checkFastaHeader(string value);
+=item public String checkBlastProgram(string value);
 
 Checks input sequene to see if it is compatible with selected blast program
 
@@ -157,60 +152,12 @@ sub checkFastaHeader {
     local ($/);
     $sequence = <$fh>;
     seek($fh,0,0);
-    undef $fh;
   }
   $sequence =~ s/\s//og;
 
   if($sequence !~ /^>/o){
-     undef $sequence;
      return '<br>You must supply a FASTA header with your sequence';
-  }
-  undef $sequence; 
-  return '';
-}
-
-
-#------------------------------------------------------------------------
-
-=item public String sanityFastaChecks(string value);
-
-Checks input sequene to see if it is compatible with selected blast program 
-and has a header.  Combining these checks to reduce the number of file opens 
-we must perform.
-
-=cut
-#------------------------------------------------------------------------
-sub sanityFastaChecks {
-  my ($value, $form) = @_;
-  my $blast_program = $form->get_input('blast_program');
-  my $sequence = $form->get_input('query_sequence');
-  if(not $sequence){
-
-    my $upload = $ISGA::APR->upload('upload_file');
-    return '' if( $upload eq '' );
-    my $fh = $upload->fh;
-    local ($/);
-    $sequence = <$fh>;
-    seek($fh,0,0);
-    undef $fh;
-  }
-#  $sequence =~ s/\s//og;
-
-  if($sequence !~ /^>/o){
-     undef $sequence;
-     return '<br>You must supply a FASTA header with your sequence';
-  }
-
-  $sequence =~ s/>(\S| )*(\n|\r\n)//og;
-  $sequence =~ s/\s//og;
-  if($sequence =~ /[^ATGCRYSWKMDHBVN]/oig){
-     undef $sequence;
-     return '<br>'.ucfirst($blast_program).' is not compatible with the provided input sequence type.  '.ucfirst($blast_program).' needs a nucleotide sequence as input.' if($blast_program ne 'blastp' && $blast_program ne 'tblastn');
-  } else {
-     undef $sequence;
-     return '<br>'.ucfirst($blast_program).' is not compatible with the provided input sequence type.  '.ucfirst($blast_program).' needs an amino acid sequence as input.' if($blast_program ne 'blastn' && $blast_program ne 'blastx' && $blast_program ne 'tblastx');
-  }
-  undef $sequence;
+  } 
   return '';
 }
 
@@ -220,8 +167,6 @@ ISGA::FormEngine::SkinUniform->_register_check('Blast::isDatabaseSelected');
 ISGA::FormEngine::SkinUniform->_register_check('Blast::checkBlastProgram');
 ISGA::FormEngine::SkinUniform->_register_check('Blast::compatibleBlastProgramAndDB');
 ISGA::FormEngine::SkinUniform->_register_check('Blast::checkFastaHeader');
-ISGA::FormEngine::SkinUniform->_register_check('Blast::sanityFastaChecks');
-
 1;
 __END__
 

@@ -6,5 +6,5 @@
 <p>This will delete your Run Builder and you will lose any saved configuration information.</p>
 <p>
 <a href="/RunBuilder/View?run_builder=<% $run_builder %>" class="button">No</a>
-<a href="/submit/RunBuilder/Cancel?run_builder=<% $run_builder %>&redirect=/Pipeline/View?pipeline=<% $run_builder->getPipeline %>" class="button">Yes</a>
+<a href="/submit/RunBuilder/Cancel?run_builder=<% $run_builder %>&redirect=<% $r->uri %>" class="button">Yes</a>
 </p>

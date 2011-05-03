@@ -34,5 +34,5 @@ Draw a graphic of the pipeline.
     
     my $self = shift;
 
-    $self->getGlobalTemplate->draw($self->getWorkflowMask);
+    $self->getGlobalTemplate->draw($self->getClusters, $self->getWorkflowMask);
   }

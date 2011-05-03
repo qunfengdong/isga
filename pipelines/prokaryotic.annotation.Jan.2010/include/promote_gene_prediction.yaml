@@ -1,3 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: Promote Gene Prediction
-Description: 'Associates CDS and polypeptide results of the pipeline.'

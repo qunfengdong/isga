@@ -28,10 +28,9 @@ use warnings;
 
 #------------------------------------------------------------------------
 
-=item public string isErgatisPipeline(int id, form form);
+=item public string isErgatisPipeline(int id);
 
-Checks to make sure the supplied id is an existing ergatis
-pipeline. The supplied form object must have the run.
+Checks to make sure the supplied id is an existing ergatis pipeline.
 
 =cut 
 #------------------------------------------------------------------------
@@ -41,9 +40,7 @@ sub isErgatisPipeline {
 
   $data =~ /^\d+$/ or return "Ergatis Pipeline Id must be integer";
 
-  my $run = $form->get_input('run');
-
-  -d join( '/', $run->getType->getErgatisRuntimeDirectory(), $data )
+  -d "___ergatis_runtime_directory___$data"
     or return "$data is not a valid Ergatis Pipeline";
 
   return '';

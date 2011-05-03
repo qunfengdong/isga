@@ -19,9 +19,6 @@ my @sorted =
  <li class="rmbutton pointer"><a href="/SiteConfiguration/Edit">Edit</a></li>
  <li class="pointer" onclick="window.location='/SiteConfiguration/Edit'"><p>Edit the ISGA Site Configuration.</p></li>
 
-<& /Configuration/right_menu.mas &>
-
 </ul>
-
 
 </sys:rightmenu>

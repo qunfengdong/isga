@@ -6,9 +6,7 @@
 
 # handle global pipelines
 if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
-
-  my $plugin = $pipeline->getWebPluginDirectory();
-  $m->comp("/plugin/$plugin/pipeline-view.mas", pipeline => $pipeline);
+  $m->comp( $component_lookup{ $pipeline->getName }, pipeline => $pipeline );
 
 # handle user pipelines
 } else {
@@ -35,7 +33,7 @@ if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
   @import "/include/css/uni-form.css";
 </sys:style>
 <sys:style type="text/css" media="screen">
-  @import "/include/css/workflow-modal.css";
+  @import "/include/css/wide-modal.css";
 </sys:style>
 
 
@@ -67,14 +65,48 @@ function showActions() {
      function(){
     $("#JT").remove();
       $.ajax({
-        url: "/Pipeline/ClusterOptions?pipeline=<% $pipeline %>&cluster="+this.id,
+        url: "/Pipeline/ClusterOptions?pipeline=<% $pipeline %>&class=cluster&cluster="+this.id,
         success: function(html){
           $('#modal_content').append(html);
         }
       });
       return false;
      });
+  $("area.clusterOption")
+   .click(
+     function(){
+      $("#JT").remove();
+      $.ajax({
+        url: "/Pipeline/ClusterOptions?pipeline=<% $pipeline %>&class=clusterOption&cluster="+this.id,
+        success: function(html){
+          $('#modal_content').append(html);
+        }
+      });
+      return false;
+    });
+  $("area.requiredCluster")
+   .click(
+     function(){
+      $("#JT").remove();
+      $.ajax({
+        url: "/Pipeline/ClusterOptions?pipeline=<% $pipeline %>&class=requiredCluster&cluster="+this.id,
+        success: function(html){
+          $('#modal_content').append(html);
+        }
+      });
+      return false;
+    });
   $("area.nolink")
    .click(function(){return false});
 }
 </sys:script>
+
+
+<%once>
+
+my %component_lookup =
+  ( 'Prokaryotic Annotation Pipeline' => '/Pipeline/prokaryote_annotation_pipeline_view.mas',
+    'Celera Assembly Pipeline' => '/Pipeline/celera_assembly_view.mas'
+  );
+
+</%once>

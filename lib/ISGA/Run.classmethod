@@ -22,7 +22,7 @@ sub submit {
   $builder->stage();
 
   # submit job
-  my $id = $class->_submitToErgatis($builder);
+  my $id = $class->_submitToErgatis($builder->getErgatisDirectory);
 
   # make sure we got a run id
   if ( $id !~ m{\A\d+\z} ) {
@@ -62,9 +62,8 @@ sub submit {
       IsHidden => 0 );
 
   # create run
-  my $pipeline = $builder->getPipeline();
-  my %run_args = 
-    ( CreatedBy => ISGA::Login->getAccount, Type => $pipeline,
+  my $run =  ISGA::Run->create
+    ( CreatedBy => ISGA::Login->getAccount, Type => $builder->getPipeline, 
       FileCollection => $collection,
       RawDataStatus => 'Available',
       Status => ISGA::RunStatus->new( Name => 'Running' ),
@@ -73,12 +72,6 @@ sub submit {
       CreatedAt => ISGA::Timestamp->new,
       IsHidden => 0, 
       ErgatisKey => $id );
-
-  if ( my $subclass = $pipeline->getGlobalTemplate->getSubClass ) {
-    $run_args{SubClass} = $subclass;
-  }
-
-  my $run = ISGA::Run->create(%run_args);
 
   # log the inputs
   my $inputs = ISGA::RunBuilderInput->query( RunBuilder => $builder);
@@ -107,68 +100,17 @@ Submits a pipeline template directory to ergatis and returns the new pipeline id
 #------------------------------------------------------------------------
 sub _submitToErgatis {
 
-  my ($class, $builder) = @_;
+  my ($class, $dir) = @_;
 
   my $ua = LWP::UserAgent->new;
 
   # set credentials for 
 #  $ua->credentials("", "", "", "");
 
-  my $project = ISGA::PipelineConfiguration->value( 'ergatis_project_name', 
-						    Pipeline => $builder->getPipeline->getGlobalTemplate() );
-  
-  my $dir = $builder->getErgatisDirectory();
-
   my $response = 
-    $ua->get("___ergatis_base_uri___run_prepared_pipeline.cgi?build_directory=$dir&project=$project");
+    $ua->get("___ergatis_base_uri___run_prepared_pipeline.cgi?build_directory=$dir&project=___ergatis_project___");
 
   $response->is_success and return $response->decoded_content;
 
   X::Ergatis::Submit->throw( $response );
 }
-
-#------------------------------------------------------------------------
-
-=item int getCurrentRunCount(Account $account);
-
-Returns the number of runs the user has that count againt their quota.
-
-=cut 
-#------------------------------------------------------------------------
-my @statuses = 
-  map { ISGA::RunStatus->new( Name => $_ ) } 
-  qw( Running Submitting Error Incomplete Failed Interrupted );
-
-sub getCurrentRunCount {
-
-  my ($class, $account) = @_;
-
-  return ISGA::Run->exists( CreatedBy => $account, Status => \@statuses);
-}
-
-#------------------------------------------------------------------------
-
-=item public [Run] query();
-
-Wrapper around query method to parse objects into subclass if it
-exists for the pipeline this runbuilder processes.
-
-=cut
-#------------------------------------------------------------------------
-  sub query {
-
-    my $class = shift;
-
-    my $results = $class->NEXT::query(@_);
-
-    foreach ( @$results ) {
-      
-      if ( my $subclass = $_->getSubClass ) {
-	my $full_subclass = $class . '::' . $subclass;
-	eval "require $full_subclass";
-	$full_subclass->can('new') and bless $_, $full_subclass;
-      }
-    }
-    
-    return $results;
-  }  

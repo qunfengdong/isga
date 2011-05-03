@@ -15,10 +15,7 @@
 $(document).ready(function() { 
     // call the tablesorter plugin, the magic happens in the markup 
     $("table")
-    .tablesorter({
-       widgets: ['zebra'],
-       sortList: [[3,1]]
-    })
+    .tablesorter({widgets: ['zebra']})
     .tablesorterPager({container: $("#tablesorterpager")});
 });
 </sys:script>
@@ -39,7 +36,8 @@ $(document).ready(function() {
 <tbody>
 %   foreach ( @jobs ) {
  <tr>
-  <td><a href="/WorkBench/Result?job=<% $_->getId %>"><% $_->getId %></a></td>
+
+  <td><a href="/WorkBench/Results/<% $_->getType->getName %>?job=<% $_->getId %>"><% $_->getId %></a></td>
   <td><% $_->getType->getName %></td>
   <td><% $_->getStatus %></td>
   <td><% $_->getCreatedAt->brief %></td>
@@ -57,10 +55,10 @@ $(document).ready(function() {
     <img src="/include/img/tablesorter.pager/next.png" class="next"/>
     <img src="/include/img/tablesorter.pager/last.png" class="last"/>
     <select class="pagesize">
-      <option value="10">10</option>
-      <option selected="selected" value="20">20</option>
+      <option selected="selected"  value="10">10</option>
+      <option value="20">20</option>
       <option value="30">30</option>
-      <option value="40">40</option>
+      <option  value="40">40</option>
     </select>
   </form>
 </div>

@@ -17,21 +17,3 @@ Returns the username portion of the email address for this account.
     
     return $1;
   }
-
-#------------------------------------------------------------------------
-
-=item public [Parties] getParties();
-
-Returns all of the parties this user is a member of.
-
-=cut
-#------------------------------------------------------------------------
-  sub getParties {
-
-    my $self = shift;
-
-    # This result can be cached to reduce database connections.
-    my $groups = $self->getUserGroups();
-
-    return [$self, @$groups];
-  }

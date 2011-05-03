@@ -25,23 +25,27 @@ sufficient.
 use ISGA;
 
 my $today = ISGA::Date->new();
+my $raw_data_persist = ISGA::Variable->value('raw_data_retention');
 
 # retrieve all runs that aren't expired
 foreach my $run ( @{ISGA::Run->query( RawDataStatus => 'Available' )} ) {
 
+  warn "found run $run\n";
+
   # expire canceled runs imediately
   if ( $run->getStatus eq 'Canceled' ) {
+
+    warn "tagging up canceled run $run\n";
 
     $run->edit( RawDataStatus => 'Tagged for Deletion' );
     
   } elsif ( $run->getStatus eq 'Complete' ) {
-
-    my $uc = $run->getCreatedBy->getUserClass();
-    my $rdp = ISGA::UserClassConfiguration->value('raw_data_retention', UserClass => $uc);
     
-    my $expires = $run->getFinishedAt->getDate() + "${rdp}D";
+    my $expires = $run->getFinishedAt->getDate() + "${raw_data_persist}D";
 
     if ( $expires < $today ) {
+
+      warn "tagging old run $run\n";
 
       $run->edit( RawDataStatus => 'Tagged for Deletion' );
     }

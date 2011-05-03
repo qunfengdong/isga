@@ -87,7 +87,7 @@ $(document).ready(function() {
       $("a.clickmeupdate").attr("href", "#");
       window.location = link;
       document.getElementById('ajax_loader').innerHTML = 'Loading data into GBrowse<br><img src="/include/img/loader.gif" />'
-      this.id="disabled";
+      this.id="diabled";
       return false;
   });
 });
@@ -107,24 +107,22 @@ my $complete = ISGA::RunStatus->new( Name => 'Complete' );
 </%once>
 
 
-% my $is_admin = ISGA::Login->hasGroup( ISGA::Group->new( Name => 'Run Administrators' ));
-
 <sys:rightmenu>
+
 <ul>
+
 % if ( ! $running and ! $canceled ) {
-%   if ( ! $is_admin or $run->getCreatedBy == ISGA::Login->getAccount ) {
-% my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
-<& "/plugin/$plugin/run-right-menu.mas", run => $run &>
-%   }
+%   my $global_pipeline = $run->getGlobalPipeline->getName;
+ <& $pipeline_map{ $global_pipeline }, run => $run &>
 % }
 
-% if ( $is_admin ) {
-%   my $ergatis_uri = $run->getErgatisURI;
+% if ( ISGA::Login->hasGroup( ISGA::Group->new( Name => 'Run Administrators' )) ) {
+%  my $ergatis_uri = $run->getErgatisURI;
 <li class="title">Admin Tools</li>
 <li class="rmbutton pointer"><a href="<% $ergatis_uri %>">View Run In Ergatis</a></li>
 <li class="pointer onclick="window.location='<% $ergatis_uri %>'"><p>View this run in the Ergatis administrative interface.</p></li>
 
-%   if ( ! $canceled and $running ) {
+%   if ( ! $canceled ) {
 
 <li class="rmbutton pointer"><a href="/Run/Cancel?run=<% $run %>">Cancel This Run</a></li>
 <li class="pointer" onclick="window.location='/Run/Cancel?run=<% $run %>'"><p>Cancel a run that can not be succesfully completed.</p></li>
@@ -136,3 +134,14 @@ my $complete = ISGA::RunStatus->new( Name => 'Complete' );
 </ul>
 
 </sys:rightmenu>
+
+
+<%once>
+
+my %pipeline_map =
+ (
+  'Prokaryotic Annotation Pipeline' => 'right-menu-prok-annotation-run.mas',
+  'Celera Assembly Pipeline' => 'right-menu-celera-assembly-run.mas' 
+ );
+
+</%once>

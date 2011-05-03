@@ -1,5 +1,6 @@
 <%args>
  @runs
+ $show_canceled
  $show_hidden
 </%args>
 
@@ -22,11 +23,8 @@
 <sys:script type="text/javascript">
 $(document).ready(function() { 
     // call the tablesorter plugin, the magic happens in the markup
-    $("#run-list")
-    .tablesorter({
-        widgets: ['zebra'],
-        sortList: [[2,1]]
-    })
+    $("table")
+    .tablesorter({widgets: ['zebra']})
     .tablesorterPager({container: $("#tablesorterpager")});
 });
 </sys:script>
@@ -59,18 +57,18 @@ $(document).ready(function() {
 });
 </sys:script>
 
-<h1>Your Pipeline Run History</h1>
+<h1>Submitted Pipelines</h1>
 
 % if (@runs) {
-<table id="run-list" width="100%" class="tablesorter list">
+<table width="100%" class="tablesorter list">
 <thead>
  <tr class="psuedo-head">
- <td colspan="5">Pipeline Run History</td>
+ <td colspan="5">Pipeline Runs</td>
  </tr>
  <tr class="list_label">
   <th>Name</th>
   <th>Pipeline</th>
-  <th>Started On</th>
+  <th>Started At</th>
   <th>Status</th>
   <th>Hide</th>
  </tr>
@@ -84,6 +82,7 @@ $(document).ready(function() {
 %     $counter++;
 % next if( $_->isHidden && not $show_hidden);
  <tr>
+
 %     my $rname = $_->getName;
   <td>
   <a href="/Run/View?run=<% $_ %>"><% $rname %></a>
@@ -92,6 +91,7 @@ $(document).ready(function() {
   <span class="sup">?</span>
   </a>
   </td>
+
 %     my $pipeline = $_->getType;
 %     my $pname = $pipeline->getName;
   <td><% $pname %>\
@@ -100,15 +100,17 @@ $(document).ready(function() {
   <span class="sup">?</span>
   </a>
   </td>
-  <td><% $_->getCreatedAt->getDate %></td>
-  <td><% $status_map{ $_->getStatus->getName} %></td>
+
+       <td><% $_->getCreatedAt %></td>
+       <td><% $status_map{ $_->getStatus->getName} %></td>
 % if($_->isHidden){
-  <td class="centertext">Hidden</td>
+       <td class="centertext">Hidden</td>
 % } else {
-  <td class="centertext"><input type="checkbox" name="runs" value="<% $_ %>"></td>
+       <td class="centertext"><input type="checkbox" name="runs" value="<% $_ %>"></td>
 % }
- </tr>
+     </tr>
 %   }
+
 </tbody>
 </table>
 
@@ -126,13 +128,14 @@ $(document).ready(function() {
       <option  value="40">40</option>
     </select>
   </form>
-  <button type="submit" id="hide_runs" class="button" name="hideruns" value="Hide Runs">Hide Selected Runs</button>
+  <button type="submit" id="hide_runs" class="button" name="hideruns" value="Hide Runs">Hide Runs</button>
 </div>
 </form>
 % } else {
 <p>You do not have any pipelines that have run.</p>
 % }
 
+<& list_right_menu.mas, show_canceled => $show_canceled, show_hidden => $show_hidden &>
 
 <%once>
 
