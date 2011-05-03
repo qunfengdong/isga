@@ -9,7 +9,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
-% if ( ! ISGA::Login->exists ) {
+% if ( ! SysMicro::Login->exists ) {
 
 	$(".btn-slide").click(function(){
 		$("#panel").slideToggle("slow");
@@ -66,14 +66,14 @@ a:focus {
 
 <div id="container">
 
-% if ( ! ISGA::Login->exists ) {
+% if ( ! SysMicro::Login->exists ) {
 <div id="panel">
 <& /site/login.mas &>
 </div>
 % } 
 <div id="header">
 <img src="/include/img/cgb-logo.png" alt="The Center for Genomics and Bioinformatics">
-% if ( ! ISGA::Login->exists ) {
+% if ( ! SysMicro::Login->exists ) {
 <a href="#" class="btn-slide">Login</a>
 % } else {
 <a href="/submit/Logout">Logout</a>

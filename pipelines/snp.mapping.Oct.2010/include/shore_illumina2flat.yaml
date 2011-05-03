@@ -1,5 +1,0 @@
---- !perl/ISGA::ComponentBuilder
-Name: ShoreIllumina2Flat
-Description: 'This component preprocesses the input for Shore.'
-#InputParams:
-#  - { input: 'Shore_Input_Pair', templ: 'hidden', NAME: 'pairedinput', VALUE: '&#45;y', TITLE: 'Second Paired End FASTAQ', DESCRIPTION: 'The second paired end file for the experiment.', CONFIGLINE: '___Is_Paired___' }

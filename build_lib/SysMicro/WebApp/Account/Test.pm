@@ -1,10 +1,10 @@
-package ISGA::WebApp::Account::Test;
+package SysMicro::WebApp::Account::Test;
 #------------------------------------------------------------------------
 =pod
 
 =head1 NAME
 
-ISGA::WebApp::Account::Test - test methods for account use cases.
+SysMicro::WebApp::Account::Test - test methods for account use cases.
 
 =head1 METHODS
 
@@ -24,10 +24,10 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA;
-use ISGA::Objects;
+use SysMicro;
+use SysMicro::Objects;
 
-use ISGA::Test::Transactions;
+use SysMicro::Test::Transactions;
 
 use base 'Test::Class';
 
@@ -50,7 +50,7 @@ Test availability of class methods.
 #------------------------------------------------------------------------
 sub _methods : Test( 7 ) {
 
-  my $class = 'ISGA::WebApp';
+  my $class = 'SysMicro::WebApp';
 
   use_ok( $class );  # a gimme
 
@@ -72,7 +72,7 @@ Test availability of class methods.
 #------------------------------------------------------------------------
 #sub create : Test( 2 ) {
 
-#  my $class = 'ISGA::WebApp';
+#  my $class = 'SysMicro::WebApp';
   
   
 

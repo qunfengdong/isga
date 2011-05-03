@@ -1,9 +1,9 @@
-package ISGA::Test::Attributes;
+package SysMicro::Test::Attributes;
 #------------------------------------------------------------------------
 
 =head1 NAME
 
-ISGA::Test::Attributes;
+SysMicro::Test::Attributes;
 
 =head1 METHODS
 
@@ -23,7 +23,7 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA::X;
+use SysMicro::X;
 
 use base 'Test::Class';
 

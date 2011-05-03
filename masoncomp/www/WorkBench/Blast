@@ -1,0 +1,18 @@
+<%args>
+	$feature_id => undef
+	$upstream => undef
+	$downstream => undef
+</%args>
+
+<%perl> # -*- cperl -*-
+
+return $m->comp('/WorkBench/outage.mas') unless( SysMicro::Variable->value('allow_sge_requests') );
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_blast'
+  or $form =  SysMicro::FormEngine::WorkBench->Blast(\%ARGS);
+
+return $m->comp('/WorkBench/blast.mas', form => $form, feature_id => $feature_id, upstream => $upstream, downstream => $downstream );
+
+</%perl>

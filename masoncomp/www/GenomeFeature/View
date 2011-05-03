@@ -1,4 +1,4 @@
-<%args> # -*- cperl -*-
+<%args>
  $genome_feature
  $upstream => 0
  $downstream => 0
@@ -7,36 +7,32 @@
 
 <%perl>
 
-# use the type of RNA this gene produces to find that rna
-if( $genome_feature->isa( 'ISGA::Gene' ) ) {
+# dirty if-else tree to get to the correct component.
 
-  my $type = 'ISGA::' . $genome_feature->getType;
-  $genome_feature = $type->new( Gene => $genome_feature );
-}
+if( $genome_feature->isa( 'SysMicro::Gene' ) ) {
 
-if ( $genome_feature->isa( 'ISGA::CDS' ) ) {
+  my $mrna = SysMicro::mRNA->new( Parent => $genome_feature );
+  my $cds = SysMicro::CDS->new( Parent => $mrna );
 
-  my $mrna = $genome_feature->getmRNA;
-  my $gene = $mrna->getGene;
+  $m->comp('/GenomeFeature/view_gene.mas', cds => $cds, mrna => $mrna, gene => $genome_feature,
+                                           upstream => $upstream, downstream => $downstream );
+    
+} elsif ( $genome_feature->isa( 'SysMicro::CDS' ) ) {
+
+  my $mrna = $genome_feature->getParent;
+  my $gene = $mrna->getParent;
 
   $m->comp('/GenomeFeature/view_gene.mas', cds => $genome_feature, mrna => $mrna, gene => $gene, 
                                            upstream => $upstream, downstream => $downstream );
 
-} elsif ( $genome_feature->isa( 'ISGA::mRNA' ) ) {
+} elsif ( $genome_feature->isa( 'SysMicro::tRNA' ) ) {
 
-  my $cds = ISGA::CDS->new( mRNA => $genome_feature );
-
-  $m->comp('/GenomeFeature/view_gene.mas', cds => $cds, mrna => $genome_feature, gene => $genome_feature->getGene, 
+  $m->comp('/GenomeFeature/view_trna.mas', trna => $genome_feature,
                                            upstream => $upstream, downstream => $downstream );
 
-} elsif ( $genome_feature->isa( 'ISGA::tRNA' ) ) {
+} elsif ( $genome_feature->isa( 'SysMicro::rRNA' ) ) {
 
-  $m->comp('/GenomeFeature/view_trna.mas', trna => $genome_feature, gene => $genome_feature->getGene,
-                                           upstream => $upstream, downstream => $downstream );
-
-} elsif ( $genome_feature->isa( 'ISGA::rRNA' ) ) {
-
-  $m->comp('/GenomeFeature/view_rrna.mas', rrna => $genome_feature, gene => $genome_feature->getGene,
+  $m->comp('/GenomeFeature/view_rrna.mas', rrna => $genome_feature, 
                                            upstream => $upstream, downstream => $downstream );
 
 } else {

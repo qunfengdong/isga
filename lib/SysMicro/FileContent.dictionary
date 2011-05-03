@@ -1,0 +1,4 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: FileContent
+attributes:
+  - { name: Help, type: string }

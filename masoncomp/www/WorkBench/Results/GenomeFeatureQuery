@@ -1,0 +1,45 @@
+<%args>
+  $term => ''
+  $scope => undef
+</%args>
+
+<%perl> # -*- cperl -*-
+unless ($term) {
+	return $m->comp('/WorkBench/genomefeaturequery.mas', term=>$term, scope=>$scope, error=>1);
+	exit(0);
+}
+
+my @arr_scope = ();
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account );
+my %searchableRuns = ();
+if (@$runs) {
+	foreach (@$runs) {
+		bless $_, 'SysMicro::Run::ProkaryoticAnnotation';
+		if ( $_->hasGbrowseInstallation ) {
+			$searchableRuns{$_} = $_->getName;
+		}
+	}
+}
+
+if (%searchableRuns) {
+	if ($scope) {
+		if (ref($scope) eq 'ARRAY') {
+			@arr_scope = @$scope;
+		} else {
+			@arr_scope = ($scope);
+		}
+	} else {
+		@arr_scope = sort keys %searchableRuns;
+	}
+
+	foreach (@arr_scope) {
+</%perl>
+The following runs will be searched.<br>
+	<% $searchableRuns{$_} %> <br>
+% }
+
+% } else {
+	<p> You must have at least a run with data loaded into the database to be able to use Genome Feature Query.</p>
+% }
+

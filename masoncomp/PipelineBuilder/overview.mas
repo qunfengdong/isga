@@ -2,25 +2,14 @@
  $pipeline_builder
 </%args>
 
-<h1>Build Your Pipeline</h1>
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $pipeline_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-overview.mas");
-}
-</%perl>
-% my $template = $pipeline_builder->getPipeline;
-<p>
-<strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
-<strong>Started On:</strong> <% $pipeline_builder->getStartedOn->text %>
-% if(defined $pipeline_builder->getDescription && $pipeline_builder->getDescription ne ''){
-<br><strong>Description:</strong> <% $pipeline_builder->getDescription %>
-% }
-</p>
-<p>
-1. Hover your mouse over a module to view a desciption of the programs within that module.<br>
-2. Click on the module you wish to modify to see the actions available for that module.
-</p>
+<h1>Pipeline Building Overview</h1>
+
+<p><strong>Pipeline:</strong> <% $pipeline_builder->getName %></p>
+<p><strong>Description:</strong> <% $pipeline_builder->getDescription %></p>
+
+<p>Hover your mouse over a module to view a desciption of the programs within
+that module.  Click on the module you wish to modify to see the actions available 
+for that module.</p>
 
 
 <div id="workflow">
@@ -30,9 +19,9 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
 
 <map name="clusters" >
 
-% foreach ( @{ISGA::Workflow->query( Pipeline => $pipeline )} ) {
-%   next if ( (not defined $_->getCoordinates) || ($_->getCoordinates eq '') );
-%   my $cluster = $_->getCluster;
+% foreach ( @{SysMicro::Workflow->query( Pipeline => $pipeline )} ) {
+% next if ( (not defined $_->getCoordinates) || ($_->getCoordinates eq '') );
+% my $cluster = $_->getCluster;
 <area \
   shape="rect"
   id="<% $_ ->getCluster %>" \
@@ -41,11 +30,15 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   coords="<% $_->getCoordinates %>" \
   rel="component_selection" \
   href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
-%   if ($_->getCustomization eq 'IO' ) {
+% if ($_->getCluster->getName eq 'RNA Prediction' || $_->getCluster->getName eq 'Additional Gene Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+% } elsif ($_->getCluster->getName eq 'Process Annotation Input Files' || $_->getCluster->getName eq 'Output'){
   class="noborder nofade jTip nolink" \
-%   } else {
+% } elsif ( $_->isRequired ) {
+  class="noborder nofade requiredCluster jTip modal" \
+% } else {
   class="noborder nofade cluster jTip modal" \
-%   }
+% }
  >
 % }
 </map>
@@ -56,3 +49,24 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
 
 
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>
+
+<div class="hidden documentation builderView"><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>This is the Pipeline Building Overview page.  Using the toolbox 
+you can edit your pipelines details, view inputs and outputs, finalize 
+your pipeline, or cancel the building process.</p>
+
+<p>Hovering over the image of the pipeline will bring up a tip.  
+This tip contains a description of what is executed in that 
+module.  Green boxes are active modules which will be run, 
+red boxes are inactive modules which will not be run, 
+grey boxes are required modules which must be run, and 
+yellow boxes indicate only a portion of that module 
+is being executed.</p>
+
+<p>Clicking on a module will bring up options for that particular module.  
+Those options include turning the module on or off, as well as editing the 
+parameters for that module.</p>
+
+<p>Once you are done customizing your pipeline use the 
+toolbox and choose <span class="highlight">Finalize Pipeline<span class="highlight">.</p>
+</div></div>

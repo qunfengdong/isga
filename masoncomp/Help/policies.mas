@@ -4,8 +4,18 @@
 
 <h1>ISGA Policies</h1>
 
-<& /Help/disclaimer.mas &>
-<hr />
+<h2>Disclaimer</h2>
+<p>
+BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED 
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK
+AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD
+THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, 
+REPAIR OR CORRECTION.
+</p>
 <p>The policies below are subject to change at any time. Any changes
 will be announced as a news item.</p>
 
@@ -15,20 +25,20 @@ will be announced as a news item.</p>
 
 <p>This retention policy represents our efforts to retain all user
 data for as long as our storage capacity allows. This policy is not a
-guarantee against data loss.</p>
+gaurantee against data loss.</p>
 
-<h2>Accounts</h2>
+<h3>Accounts</h3>
 
 <p>ISGA accounts are maintained indefinitely.</p>
 
-<h2>Pipeline Results</h2>
+<h3>Pipeline Results</h3>
 
 <p>Pipelines and final results are preserved indefinitely. The raw
 results form intermediate steps in pipelines consume gigabytes of
 storage, and as such are purged periodically. When available space is
 low, we will delete raw results older than 30 days.<p>
 
-<h2>Acknowledgement</h2>
+<h3>Acknowledgement</h3>
 <p>This research is supported in part by the Indiana METACyt Initiative of
 Indiana University, funded in part through a major grant from the Lilly
 Endowment, Inc.</p>

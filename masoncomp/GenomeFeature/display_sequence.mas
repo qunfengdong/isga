@@ -6,8 +6,9 @@
 <sys:style type="text/css" media="screen">
    @import "/include/css/uni-form.css";
 </sys:style>
-
 % my $isvalid = 1;
+% $upstream = 0 unless (defined $upstream);
+% $downstream = 0 unless (defined $downstream);
 % my ($upstreamVal, $downstreamVal) = ($upstream, $downstream);
 % unless ($upstream =~ /^\d+$/) {
 %	  $isvalid = 0;
@@ -40,16 +41,14 @@ Includes <span class="upstream"><input type="text" size="3" name="upstream" valu
 </fieldset>
 </form>
 <br>&nbsp;<br>
-<a class="button" href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>&feature_id=<% $genome_feature %>&upstream=<% $upstream %>&downstream=<% $downstream %>">BLAST the Sequence<% $hint %></a> 
+<a class="button" href="/WorkBench/Blast?feature_id=<% $genome_feature %>&upstream=<% $upstream %>&downstream=<% $downstream %>">BLAST the Sequence<% $hint %></a> 
 <br>&nbsp;<br>
-<a class="button" href="/Download/<% $genome_feature->getLocus %>.fasta?genome_feature=<% $genome_feature %>&upstream=<% $upstream %>&downstream=<% $downstream %>">Download the Sequence<% $hint %></a>
+<a class="button" href="download.cgi?genome_feature=<% $genome_feature %>">Download the Sequence<% $hint %></a>
 <br>&nbsp;<br>
 
 <pre>
-&gt;<% $genome_feature->getLocus %>
-<span class="upstream"><% getPrintableSequence($genome_feature->getUpstream($upstream), 1) %>\
-</span><% getPrintableSequence($genome_feature->getResidues, 1, $upstream) %>\
-<span class="downstream"><% getPrintableSequence($genome_feature->getDownstream($downstream), 1, ($upstream + length($genome_feature->getResidues))) %></span>
+&gt;<% $genome_feature->getUniqueName %>
+<span class="upstream"><% getPrintableSequence($genome_feature->getUpstream($upstream), 1) %></span><% getPrintableSequence($genome_feature->getResidues, 1, $upstream) %><span class="downstream"><% getPrintableSequence($genome_feature->getDownstream($downstream), 1, ($upstream + length($genome_feature->getResidues))) %></span>
 </pre>
 <br>
 

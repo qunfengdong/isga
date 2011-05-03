@@ -14,15 +14,15 @@ values for the pipeline as well.  There are also links to run or customize the p
 
 <h4>Pipeline Customization</h4>
 
-%#<p class="justify">If you choose to begin the customization process you will be presented 
-%#with the following form.</p>
+<p class="justify">If you choose to begin the customization process you will be presented 
+with the following form.</p>
 
-%#<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_create_form.png" alt="Pipeline Create Form" width="100%">
+<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_create_form.png" alt="Pipeline Create Form" width="100%">
 
-%#<p class="justify">In the form you will be required to enter a unique name for your pipeline.  It is also recommended 
-%#that you enter a description for your pipeline to later help you identify it.</p>
+<p class="justify">In the form you will be required to enter a unique name for your pipeline.  It is also recommended 
+that you enter a description for your pipeline to later help you identify it.</p>
 
-<p class="justify">If you choose to begin the customization process you will be taken to the Pipeline Building Overview page.  
+<p class="justify">After entering a name and description you will be taken to the Pipeline Building Overview page.  
 On the left of the page, you will see an infographic describing which modules are active for the current 
 pipeline.  A module colored green means that the module is active and will be run.  A red colored module 
 signifies a module that has been deactivated and will not be run.  A yellow module signifies a module
@@ -33,7 +33,7 @@ over a module with your mouse will cause a pop-up tip to appear.  These tips pro
 performed within each module.  On the right of the page, you will see the Pipeline Customization Tool box.  The toolbox provides 
 links to information describing your current pipeline settings as well as links to Finalize or Cancel your pipeline.</p>
 
-<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_overview.png" alt="Pipeline Overview" width="100%">
+<img class="tutorial" src="/include/img/tutorial/pipelinebuilder_overview.png" alt="Pipeline Overview">
 
 <p class="justify">To begin customizing your pipeline, you can click on any module you wish to modify.  Clicking on a module will 
 bring up the available actions for that module, allowing you to activate or deactivate it and also edit any associated parameters. 
@@ -71,13 +71,13 @@ pipeline or to run you new pipeline.</p>
 <h4>Pipeline Submission Tutorial</h4>
 <p class="justify">Run building is the process of setting up a pipeline to run.  This 
 involves a few steps, naming your run, providing organism specific information, and selecting a 
-file to use for your run.  Choosing to create a run will bring you to the page below.</p>
+file to use for your run.  Choosing to create a run will bring you to the form below.</p>
 
-%#<img class="tutorial" src="/include/img/tutorial/create_a_new_run.png" alt="Create Run Form" width="100%">
+<img class="tutorial" src="/include/img/tutorial/create_a_new_run.png" alt="Create Run Form" width="100%">
 
-%#<p class="justify">In the form you will be required to enter a unique name for your run.  
-%#It is also recommended that you enter a description for your run to later help you 
-%#identify it.  After entering a name and description, you will be taken to the page below.</p>
+<p class="justify">In the form you will be required to enter a unique name for your run.  
+It is also recommended that you enter a description for your run to later help you 
+identify it.  After entering a name and description, you will be taken to the page below.</p>
 
 <img class="tutorial" src="/include/img/tutorial/view_runbuilder.png" alt="Run View" width="100%">
 
@@ -107,14 +107,8 @@ the file type you wish to choose.  This will bring you the page below.</p>
 <img class="tutorial" src="/include/img/tutorial/select_input_list.png" alt="Select Input Page">
 
 <p class="justify">If you wish upload a file, click the Browse button to select a file to upload from your 
-computer.</p>
-
-<p>Alternatively, you can use a file you have previously uploaded.  Click the <span class="tutorialHighlight">
-Select Previously Uploaded File</span> link to show previously uploaded files.</p> 
-
-<img class="tutorial" src="/include/img/tutorial/select_input_list_2.png" alt="Select Input Page 2">
-
-<p>In the Compatible Files selection box, you will see a list of compatible files for the File Type you chose.  
+computer.  Alternatively, you can use a file you have previously uploaded.  In the Compatible Files selection 
+box, you will see a list of compatible files for the File Type you choose that have already been uploaded.  
 Highlight the file of your chose by clicking on it.  You can select multiple files by pressing the ctrl key on 
 your keyboard and clicking on several files.  When you have selected the file(s) of your chose, click the Save button.  
 You will be returned to the Submission Builder page.  The Input Data section will be updated displaying your current file.</p>

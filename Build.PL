@@ -5,41 +5,39 @@ use lib 'build_lib';
 use MyBuild;
 
 my $builder = MyBuild->new(
-    module_name         => 'ISGA',
+    module_name         => 'SysMicro',
     license             => 'perl',
-    dist_abstract       => 'Integrative Services for Genomic Analysis',
-    dist_author         => 'Center for Genomics and Bioinformatics <biohelp@cgb.indiana.edu>',
-    dist_version_from   => 'lib/ISGA.pm',
+    dist_author         => 'Chris Hemmerich <biohelp@cgb.indiana.edu>',
+    dist_version_from   => 'lib/SysMicro.pm',
     create_packlist     => 0,
     requires => {
-		 'Apache2::UploadProgress' => 0,
-		 'Archive::Tar::Wrapper' => 0,
-		 'Bio::Graphics' => 0,
-		 'Crypt::SSLeay' => 0,
-		 'Date::Manip' => 0,
-		 'Digest::SHA' => 0,
-		 'Email::Find' => 0,
-		 'File::Copy::Recursive' => 0,    	
-		 'File::Pid' => 0,
-		 'File::Temp' => 0,
-		 'GD::Image' => 0,
-		 'Graph'      => 0,
-		 'Hash::Merge::Simple' => 0,
-		 'HTML::Scrubber' => 0,
-		 'HTTP::Headers' => '> 5',
-		 'HTTP::Request' => 0,
-		 'IO::String' => 0,
-		 'LWP::UserAgent' => 0,
-		 'PerlIO::gzip' => 0,
-		 'Pod::Simple::HTMLBatch' => 0,
-		 'Schedule::SGE' => 0,	 
-		 'Test::More' => 0,
-		 'URI' => 0,
-		 'version'    => 0,
-		 'XML::Twig' => 0,
-		},
-    add_to_cleanup      => [ 'ISGA-*' ],
+        'Pod::Simple::HTMLBatch' => 0,
+        'Test::More' => 0,
+        'Graph'      => 0,
+        'version'    => 0,
+	'HTML::Scrubber' => 0,
+	'Digest::SHA' => 0,
+	'GD::Image' => 0,
+	'Email::Find' => 0,
+	'Schedule::SGE' => 0,	 
+	'File::Pid' => 0,
+        'Bio::Graphics' => 0,
+    },
+    add_to_cleanup      => [ 'SysMicro-*' ],
 );
+
+$builder->args('test_db_name') 
+  || $builder->args('test_db_name', 'lims_test');
+$builder->args('test_db_password') || $builder->args('test_db_password', '');
+$builder->args('test_db_type') || $builder->args('test_db_type', 'Pg');
+$builder->args('test_db_user') || $builder->args('test_db_user', 'cgb');
+$builder->args('test_db_host') || $builder->args('test_db_host', '');
+
+$builder->args('db_name') || $builder->args('db_name', 'lims_dev');
+$builder->args('db_password') || $builder->args('db_password', '');
+$builder->args('db_type') || $builder->args('db_type', 'Pg');
+$builder->args('db_user') || $builder->args('db_user', 'cgb');
+$builder->args('db_host') || $builder->args('db_host', '');
 
 # installation base dir
 $builder->install_base or 
@@ -50,6 +48,8 @@ $builder->args('use_foundation') or
 
 # we will install a custom include directory
 my $base = $builder->install_base;
+
+warn "relative lib path is", $builder->install_base_relpaths('lib');
 
 $builder->add_build_element('include');
 $builder->install_path( include => "$base/include" );

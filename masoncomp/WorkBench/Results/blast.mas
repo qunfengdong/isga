@@ -1,0 +1,35 @@
+<%args>
+	$job
+</%args>
+
+<h1>WorkBench: Blast Output</h1>
+<div class="preview">
+<pre>
+
+<%perl>
+	my $collection = $job->getCollection;
+	my $contents = $collection->getContents;
+	my $list;
+	use Data::Dumper;
+	
+	foreach (@$contents){
+		if ($_->getType->getName eq 'Toolbox Job Configuration'){
+			use YAML;
+			$list = YAML::LoadFile($_->getPath);
+			warn Dumper($list);
+		}
+	}
+
+	my $output_file = $list->{'output_file'};
+	
+	open my $fh, '<', $output_file;
+	while ( <$fh> ) {
+		print $_;
+	}
+	
+</%perl>
+
+</pre>
+</div>
+
+<& right_menu_blast.mas, output_file => $output_file &>

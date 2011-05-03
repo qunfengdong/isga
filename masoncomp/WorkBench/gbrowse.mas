@@ -1,26 +1,35 @@
+<%args>
+
+</%args>
+
 <h1>GBrowse Run Selection Home</h1>
 
 <%perl>
-my $account = ISGA::Login->getAccount;
-my @runs = grep { $_->hasGBrowseData() } @{ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt' )};
-</%perl>
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
 
-% if (@runs) {
+if (@$runs) {
+</%perl>
 <div class=list>
-<table style="width: 100%;">
-<tr class="list_label"><td colspan="2">Run</td></tr>
-%   foreach my $run (@runs) {
+<table style="width: auto;">
+<tr class="list_label"><td>Run</td><td>GBrowse Action</td></tr>
+% foreach my $run (@$runs) {
+%  bless $run, 'SysMicro::Run::ProkaryoticAnnotation';
+%  if ( $run->hasGbrowseInstallation ) {
 <tr>
 <td><% $run->getName %></td>
-%     if ( $run->hasGBrowseInstallation ) {
 <td><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></td>
-%     } else {
-<td><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></td>
-%     } 
 </tr>
-%   }
+%   } else {
+<tr>
+<td><% $run->getName %></td>
+<td><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></td>
+</tr>
+%   } 
+%  }
 </table>
 </div>
 % } else {
-	<p>To use the GBrowse tool, you must run a pipeline that generates compatible data.</p>
+	<p> You must have a completed run to use GBrowse.</p>
 % }
+

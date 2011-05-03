@@ -18,7 +18,7 @@ article</a> for a more detailed description.</p>
 
 
 <%perl>
-my @components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' );
+my @components = SysMicro::Component->query( Cluster => $cluster, OrderBy => 'Index' );
 return $m->comp('/PipelineBuilder/edit_cluster.mas', pipeline_builder => $pipeline_builder, components => @components, cluster => $cluster);
 </%perl>
 

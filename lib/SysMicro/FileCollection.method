@@ -1,0 +1,108 @@
+# -*- cperl -*-
+
+use File::Copy;
+
+
+#------------------------------------------------------------------------
+
+=item public filehandle addToTar( Archive::Tar $archive, string $prefix );
+
+Adds the contents of the current file collection the the passed tar
+archive reference. This nests a file collection inside another one.
+
+=cut 
+#------------------------------------------------------------------------
+  sub addToTar {
+
+    my ($self, $archive, $prefix) = @_;
+
+    my $contents = $self->getContents;
+
+    $prefix .= '/' . $self->getUserName;
+
+    foreach ( @$contents ) {
+
+      if ( $_->isa('SysMicro::File') ) {
+
+	my ( $file ) = $archive->add_files( $_->getPath );
+	$file->rename( $_->getUserName );
+	$file->prefix( $prefix );
+
+      # process nested collections
+      } else {
+	$_->addToTar( $archive, $prefix );
+      }
+    }
+
+    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
+  }
+  
+#------------------------------------------------------------------------
+
+=item public void delete();
+
+Removes a file collection and it's contents from the system.
+
+=cut 
+#------------------------------------------------------------------------
+  sub delete {
+
+    my $self = shift;
+
+    # delete all the contents
+    my $contents = SysMicro::FileCollectionContent->query( FileCollection => $self,
+							   OrderBy => 'Index' );
+    $_->delete for reverse @$contents;
+  
+    # delete the database entry
+    $self->NEXT::delete();
+  }
+
+#------------------------------------------------------------------------
+
+=item public void deleteContents();
+
+Removes a file collection's contents from the system and marks the collection as hidden
+
+=cut 
+#------------------------------------------------------------------------
+  sub deleteContents {
+
+    my $self = shift;
+
+    # delete all the contents
+    my $contents = SysMicro::FileCollectionContent->query( FileCollection => $self,
+							   OrderBy => 'Index' );
+    $_->delete for reverse @$contents;
+  
+    # hide the collection
+    $self->edit( IsHidden => 1 );
+  }
+
+#------------------------------------------------------------------------
+
+=item public void stage(string $dir);
+
+Stages this file for an ergatis run.
+
+=cut 
+#------------------------------------------------------------------------
+  sub stage {
+
+    my ($self, $dir) = @_;
+
+    my $name = $self->getName;
+
+    # open file for writing
+    open my $fh, '>', "$dir/$name" or X::File->throw( error => $! );
+
+    foreach ( @{$self->getFlattenedContents} ) {
+
+      # write the file to the file system
+      $_->stage($dir);
+
+      print $fh $dir, "/", $_->getName, "\n";
+    }
+    
+    close $fh;
+  }

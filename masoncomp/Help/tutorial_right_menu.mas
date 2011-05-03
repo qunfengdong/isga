@@ -30,7 +30,7 @@ function sectionHighlight() {
 <ul>
  <li class="title">Tutorials</li>
 
-% if ( ! ISGA::Login->exists ) {
+% if ( ! SysMicro::Login->exists ) {
 
  <li class="rmbutton"><a href="/Account/Request">Request an Account</a></li>
  <li><p> You first need to request an account before you can run or

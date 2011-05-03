@@ -1,0 +1,121 @@
+# -*- cperl -*-
+
+use Archive::Tar;
+
+use File::Basename;
+
+use File::Temp;
+
+
+#------------------------------------------------------------------------
+
+=item public [FileResource] getContents();
+
+Returns a reference to an array of the resources contained in this collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getContents {
+
+    my $self = shift;
+
+    my $content = SysMicro::FileCollectionContent->query( FileCollection => $self,
+							  OrderBy => 'Index' );
+
+    # Foundation efficiency breaks down here, we have a bunch of db queries
+    return [map { $_->getFileResource } @$content];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [File] getFlattenedContents();
+
+Returns a reference to an array of the files contained in this
+collection and in any child collections.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getFlattenedContents {
+
+    my $self = shift;
+
+    my $content = $self->getContents;
+
+    my @return;
+
+    foreach ( @$content ) {
+      
+      if ( $_->isa('SysMicro::File') ) {
+	push @return, $_;
+      } else {
+	push @return, @{$_->getFlattenedContents};
+      }
+    }
+
+    return \@return;
+  }
+
+#------------------------------------------------------------------------
+
+=item public filehandle getTar();
+
+Builds and returns an Archive::Tar object contain the contents of this
+file collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getTar {
+
+    my $self = shift;
+
+    my $contents = $self->getContents;
+
+    # create the archive
+    my $archive = Archive::Tar->new();
+
+    my $prefix = $self->getUserName;
+
+    # retrieve the path for file contents
+#    my $path = basename( $self->getUserName );
+
+    foreach ( @$contents ) {
+
+      if ( $_->isa('SysMicro::File') ) {
+	my ( $file ) = $archive->add_files( $_->getPath );
+	$file->rename( $_->getUserName );
+	$file->prefix( $prefix );
+      } else {
+	$_->addToTar( $archive, $prefix );
+      }
+    }
+	
+
+    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
+
+	
+    my $tmp = File::Temp->new();
+
+    $archive->write($tmp->filename, 'COMPRESS_GZIP');
+        
+    return $tmp;
+  }
+
+#------------------------------------------------------------------------
+
+=item public File::Temp getPath();
+
+Returns the filesystem path to the file.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getPath { return shift->getTar; }
+
+#------------------------------------------------------------------------
+
+=item public string getName();
+
+Returns a name for the FileCollection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getName { my $self = shift; return "FileCollection$self"; }

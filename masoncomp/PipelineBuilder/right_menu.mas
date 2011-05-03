@@ -1,6 +1,7 @@
 <%args>
  $pipeline_builder
 </%args>
+% use SysMicro::Site;
 <sys:script type="text/javascript">
   $(document).ready(confirm);
   function confirm() {
@@ -42,6 +43,9 @@ $(document).ready(sectionHighlight);
 function sectionHighlight() {
   var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
   var url = window.location.href;
+  if (url.match(/PipelineBuilder\/EditCluster/) || url.match(/PipelineBuilder\/EditComponent/)){
+      url = "<% SysMicro::Site->getBaseURI  %>PipelineBuilder/ViewClusters?pipeline_builder=<% $pipeline_builder %>";
+  }
   for(var i = 0; i < menuLinks.length; i++){
     if(url == menuLinks[i].href)
     {
@@ -69,7 +73,7 @@ function sectionHighlight() {
 <li class="rmbutton pointer"><a href="Overview?pipeline_builder=<% $pipeline_builder %>">Overview</a></li>
 <li class="pointer" onclick="window.location='Overview?pipeline_builder=<% $pipeline_builder %>'"><p>Return to the pipeline overview page, where you can view details and your current workflow.</p></li>
 
-<li class="rmbutton pointer"><a href="EditDetails?pipeline_builder=<% $pipeline_builder %>">Edit Pipeline Name and Description</a></li>
+<li class="rmbutton pointer"><a href="EditDetails?pipeline_builder=<% $pipeline_builder %>">Edit Details</a></li>
 <li class="pointer" onclick="window.location='EditDetails?pipeline_builder=<% $pipeline_builder %>'"><p>Edit the name or description for the pipeline</p></li>
 
 <li class="rmbutton pointer"><a href="ViewInputsOutputs?pipeline_builder=<% $pipeline_builder %>">View Inputs and Outputs</a></li>

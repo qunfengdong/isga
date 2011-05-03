@@ -12,7 +12,7 @@ my $type_map = {};
 
 # query active news
 
-my $news = ISGA::News->query( IsArchived => 0, OrderBy => { DESC => 'CreatedAt' } );
+my $news = SysMicro::News->query( IsArchived => 0, OrderBy => 'CreatedAt' );
 
 </%perl>
 

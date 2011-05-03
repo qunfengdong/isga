@@ -4,16 +4,14 @@ $scope
 $error
 </%args>
 
-<h1>Genome Feature Query</h1>
-
 <%perl>
-my $account = ISGA::Login->getAccount;
-my $runs = ISGA::Run->query( CreatedBy => $account );
-push @$runs, @{$account->getSharedRuns()};
+my $account = SysMicro::Login->getAccount;
+my $runs = SysMicro::Run->query( CreatedBy => $account );
 my %searchableRuns = ();
 if (@$runs) {
 	foreach (@$runs) {
-		if ( $_->hasGBrowseInstallation ) {
+		bless $_, 'SysMicro::Run::ProkaryoticAnnotation';
+		if ( $_->hasGbrowseInstallation ) {
 			$searchableRuns{$_} = $_->getName;
 		}
 	}
@@ -36,11 +34,11 @@ if (%searchableRuns) {
    @import "/include/css/uni-form.css";
 </sys:style>
 
-<form class="uniForm inlineLabels" method="post" name="genome_feature_query_form" action="/WorkBench/GenomeFeatureQueryResult">
+<form class="uniForm inlineLabels" method="post" name="genome_feature_query_form" action="/WorkBench/Results/GenomeFeatureQuery">
 <fieldset class="inlineLabels">
 <legend>Search</legend>
 <div class="ctrlHolder<% $errClass %>">
-<label for="term"> Search Term (e.g. hydrolase) </label>
+<label for="term"> Search Term </label>
 <% $errMsg %>
 <input type="text" name="term" value = "<% $term %>" size="20" class="textInput highlighter" /> <em>*</em>
 </div>
@@ -69,6 +67,5 @@ if (%searchableRuns) {
 </form>
 
 % } else {
-<p>This tool is currently unavailable because you do not have the appropriate data. You must have a completed run 
-loaded into the database to use the Genome Feature Query tool.</p>
+        <p> You must have at least a run with data loaded into the database to be able to use Genome Feature Query.</p>
 % }
