@@ -11,10 +11,92 @@ Draw a graphic of the users custom pipeline.
 =cut
 #------------------------------------------------------------------------
   sub draw {
-    
+
     my $self = shift;
 
-    my $pipeline = $self->getPipeline->getGlobalTemplate;
+    my $pipeline = $self->getPipeline;
+    
+    my $image = GD::Image->new( '___package_masoncomp___/www/' . $pipeline->getImage );
+    
+    my $green = $image->colorClosest(162,210,99);
+    my $yellow = $image->colorClosest(223,210,91);
+    my $red = $image->colorClosest(177,118,110);
 
-    $pipeline->draw( $self->getWorkflowMask );
+    # retrieve information for clustesr
+    my $clusters = $self->getActiveClusters;
+    my $workflow = ISGA::Workflow->query( Pipeline => $pipeline, Cluster => $clusters );
+
+    my $wf_mask = $self->getWorkflowMask;
+    my $disabled_components = $wf_mask->getDisabledComponents;
+    my $disabled = [];
+    while ( my ($key, $value) = each %{$disabled_components} ) {
+      my @components = ISGA::Component->query( ErgatisName => $key);
+      push(@{$disabled}, $components[0][0]) if $value eq 'disabled';
+    }
+    my %partial_cluster = map { $_->getCluster->getName => $_->getCluster } @{$disabled};
+
+    foreach my $cluster ( @$clusters ) {
+      
+      my $wf = shift @$workflow;
+
+      next if($wf->isHidden);
+      next if($wf->getCoordinates eq ''); 
+      my @coords = split ( /,/, $wf->getCoordinates );
+
+      # draw lines for partial clusters (some components are disabled) 
+      if ( defined $partial_cluster{$cluster->getName} ){
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+          for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+            $image->setPixel($i,$j, $yellow) if ($image->getPixel($i,$j) == $red || $image->getPixel($i,$j) == $green);
+          }
+        }
+
+      } else {
+
+	my $color = ( $wf->isRequired ? $yellow : $green );
+	
+	# color enabled components
+	for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+           $image->setPixel($i,$j, $green) if ($image->getPixel($i,$j) == $red || $image->getPixel($i,$j) == $yellow);
+	  }
+	}
+	
+      }
+    }
+
+    foreach (keys %{$self->getWorkflowMask->getDisabledClusters}){
+      my $disabled_workflow = ISGA::Workflow->new( Pipeline => $pipeline, Cluster => ISGA::Cluster->new(Name => $_ ));
+      my @coords = split ( /,/, $disabled_workflow->getCoordinates );
+      next if($disabled_workflow->isHidden);
+      next if($disabled_workflow->getCoordinates eq '');
+      for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+        for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+         $image->setPixel($i,$j, $red) if ($image->getPixel($i,$j) == $green || $image->getPixel($i,$j) == $yellow);
+        }
+      }
+    }
+
+    print $image->png;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void update(Cluster $cluster);
+
+Record a click on the workflow.
+
+=cut
+#------------------------------------------------------------------------
+  sub update {
+
+    my ($self, $cluster) = @_;
+
+    my $workflow = ISGA::Workflow->new( Pipeline => $self->getPipeline, Cluster => $cluster );
+
+    $workflow->isRequired and X::API->throw( message => "Can not toggle a required cluster" );
+
+    my $wf_mask = $self->getWorkflowMask;
+    $wf_mask->toggleCluster($cluster);
+    $self->edit( WorkflowMask => $wf_mask );
   }

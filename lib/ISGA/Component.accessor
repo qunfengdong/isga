@@ -14,10 +14,9 @@ Returns a string containing this components config file.
     
     my $name = $self->getConfigFileName;
 
-    my $path = (join '/', '___package_include___', $self->getErgatisInstall->getName, $name);
-
     # read the template for the config file
-    open my $fh, '<', $path or X::File->throw( error => "$path: $!" );
+    open my $fh, '<', "___package_include___/config_template/$name"
+      or X::File->throw( error => "___package_include___/config_template/$name : $!" );
     my $file = do { local $/; <$fh> };
     close $fh;  
 
@@ -37,18 +36,4 @@ Returns the name of this components config file.
      my $self = shift;
 
      return $self->getErgatisName . '.config';
-   }
-
-#------------------------------------------------------------------------
-
-=item public string getDecoratedInputValue(ClusterInput, string);
-
-Returns the specified cluster input value modified to meet any
-specific formatting needs of this component.
-
-=cut 
-#------------------------------------------------------------------------
-   sub getDecoratedInputValue {
-     my ($self, $ci, $string) = @_;
-     return $string;
    }

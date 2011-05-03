@@ -26,49 +26,6 @@ use warnings;
 =cut
 #========================================================================
 
-my %valid_schemes = ( http => [], https => [], ftp => [] );
-
-#------------------------------------------------------------------------
-
-=item public string isValidUploadURL(string value, Form form);
-
-Returns an error if the supplied url is not valid or does not have a
-legal unix filename.
-
-=cut
-#------------------------------------------------------------------------
-sub isValidUploadURL {
-
-  my ($value, $form) = @_;
-
-  return '' if $value eq '';
- 
-  my $uri = URI->new($value);
-
-  # check scheme
-  my $scheme = $uri->scheme();
-  
-  (defined $scheme and exists $valid_schemes{$scheme}) or
-  return "URL is not a valid web or ftp link.";
-
-  # make a head request to the link
-  my $ua = LWP::UserAgent->new();
-  my $r = $ua->head($value);
-
-  # make sure file is available
-  $r->is_success() or return "Unable to follow the supplied link";
-
-  # check name, using override or last portion of uri
-  my $name = $form->get_input('new_file_name');
-  $name ||= $r->filename();
-
-  if ( $name !~ /^[-A-Za-z0-9_ \.]+$/ ) {
-    return "File name $name contains illegal special characters.";
-  }  
-
-  return '';
-}
-
 #------------------------------------------------------------------------
 
 =item public string isUniqueName(string value);
@@ -116,13 +73,12 @@ sub isFileProvided {
 
   my ($data, $form) = @_;
 
-  $form->get_input('upload_url') or $form->get_input('file_name') or $form->get_input('file') 
-    or return 'You must either upload a file from your computer or submit a url where ISGA can retrieve the file from.';
+  $form->get_input('file') or $form->get_input('file_name') 
+    or return 'You must either upload a new file or select an existing file.';
 
   return '';
 }
 
-ISGA::FormEngine::SkinUniform->_register_check('RunBuilder::isValidUploadURL');
 ISGA::FormEngine::SkinUniform->_register_check('RunBuilder::isUniqueName');
 ISGA::FormEngine::SkinUniform->_register_check('RunBuilder::isFileProvided');
 

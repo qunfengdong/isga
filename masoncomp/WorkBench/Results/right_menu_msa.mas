@@ -1,0 +1,29 @@
+<%args>
+	$input
+	$boolean_dist
+	$sequence_type
+</%args>
+
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<%perl>
+	my $content = '';
+	my $dist_file = 'ProtDist';
+	$dist_file = 'DnaDist' if( $sequence_type eq 'dna');
+	if ($boolean_dist) {
+		$content = ' 
+			<li class="rmbutton pointer"><a href="/WorkBench/'.$dist_file.'?infile='.$input.'">Distance</a></li>
+			<li class="pointer" onclick="window.location=\'/File/BrowseMy\'"><p>Phylogenetic Analysis using Distance matrix.</p></li>
+		';
+	}
+	print $content;
+</%perl>
+
+<li class="rmbutton pointer"><a href="/File/BrowseMy">Browse Files</a></li>
+<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>Go back to the list of your files.</p></li>
+
+</ul>
+</sys:rightmenu>

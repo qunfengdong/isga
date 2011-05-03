@@ -37,9 +37,7 @@ Returns the filesystem path to the file.
     my $p1 = substr($name, 0, 1);
     my $p2 = substr($name, 1, 1); 
 
-    my $file_repository = ISGA::SiteConfiguration->value('file_repository') or X::API::Configuration::Missing->throw( variable => 'file_repository' );
-
-    return "$file_repository/$p1/$p2/$name";
+    return "___file_repository___/$p1/$p2/$name";
   }
 
 #------------------------------------------------------------------------

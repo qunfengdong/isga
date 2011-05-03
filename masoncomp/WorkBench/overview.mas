@@ -12,16 +12,15 @@
     if (@$runs) {
 </%perl>
 <ul>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Blast Search</a></li>
-  <li><a href="/WorkBench/GBrowse">GBrowse</a></li>
-  <li><a href="/WorkBench/GenomeFeatureQuery">Keyword Search</a></li>
-  <li><a href="/File/BrowseMy">Browse All Files</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'NewblerToHawkeye' ) %>">Convert Newbler to Hawkeye</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'CeleraToHawkeye' ) %>">Convert Celera to Hawkeye</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
-  <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
+<li><a href="/WorkBench/Blast">BLAST</a></li>
+<li><a href="/WorkBench/GBrowse">GBrowse</a></li>
+<li><a href="/WorkBench/GenomeFeatureQuery">Keyword Search</a></li>
+<li><a href="/File/BrowseMy">Browse All Files</a></li>
+<li><a href="/WorkBench/NewblerToHawkeye">Convert Newbler to Hawkeye</a></li>
+<li><a href="/WorkBench/CeleraToHawkeye">Convert Celera to Hawkeye</a></li>
+<li><a href="/WorkBench/MiraToHawkeye">Convert Mira to Hawkeye</a></li>
+<li><a href="/WorkBench/NewblerForConsed">Convert Newbler For Consed</a></li>
+<li><a href="/WorkBench/SffToFasta">Convert SFF to FASTA</a></li>
 </ul>
 %   } else {
 <p>These tools are currently unavailable because you do not have the appropriate data. You must have a completed run to use the tools below.</p>

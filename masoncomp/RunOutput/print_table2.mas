@@ -80,7 +80,7 @@ href="/Cluster/GetClusterDescription?cluster=<% $cluster->{Cluster} %>">
 
 %       } else {
    <a href="/FileCollection/View?file_collection=<% $file %>">View</a> |\
-   <a  class="downloadRemove" href="/Download/<% $file->getUserName %>.tar.gz?file_resource=<% $file %>">Download</a>
+   <a  href="/Download/<% $file->getUserName %>.tar.gz?file_resource=<% $file %>">Download</a>
 
 %       } 
  </td>

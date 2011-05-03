@@ -1,6 +1,14 @@
 <%args>
  $pipeline_builder
+ $cluster => undef
 </%args>
+
+<%perl>
+if(defined $cluster){
+  $pipeline_builder->update($cluster);
+  sleep(1);
+}
+</%perl>
 
 <& /PipelineBuilder/overview.mas, pipeline_builder => $pipeline_builder &>
 <sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
@@ -15,7 +23,7 @@
   @import "/include/css/uni-form.css";
 </sys:style>
 <sys:style type="text/css" media="screen">
-  @import "/include/css/workflow-modal.css";
+  @import "/include/css/wide-modal.css";
 </sys:style>
 
 
@@ -40,26 +48,6 @@ $('input.cancel')
 </sys:script>
 
 <sys:script type="text/javascript">
-$(document).ready(wfUpdate);
-function wfUpdate() {
-$('a.toggleModule')
-    .livequery('click', function(event) {
-       $.ajax({
-         url: "/submit/PipelineBuilder/EditWorkflow?pipeline_builder=<% $pipeline_builder %>&cluster="+this.id,
-         success: function(html){
-           $("#modal_content").remove();
-           $("#modal_overlay").remove();
-           window.location.reload();
-         }
-       }); 
-
-    });
-}
-</sys:script>
-
-
-
-<sys:script type="text/javascript">
 $(document).ready(showActions);
 function showActions() {
   $("area.cluster")
@@ -67,13 +55,37 @@ function showActions() {
      function(){  
     $("#JT").remove();
       $.ajax({
-        url: "/PipelineBuilder/ChooseComponent?pipeline_builder=<% $pipeline_builder %>&cluster="+this.id,
+        url: "/PipelineBuilder/ChooseComponent?pipeline_builder=<% $pipeline_builder %>&class=cluster&cluster="+this.id,
         success: function(html){
           $('#modal_content').append(html);
         }
       });
       return false;
      });
+  $("area.clusterOption")
+   .click(
+     function(){
+      $("#JT").remove();
+      $.ajax({
+        url: "/PipelineBuilder/ChooseComponent?pipeline_builder=<% $pipeline_builder %>&class=clusterOption&cluster="+this.id,
+        success: function(html){
+          $('#modal_content').append(html);
+        }
+      });
+      return false;
+    });
+  $("area.requiredCluster")
+   .click(
+     function(){
+      $("#JT").remove();
+      $.ajax({
+        url: "/PipelineBuilder/ChooseComponent?pipeline_builder=<% $pipeline_builder %>&class=requiredCluster&cluster="+this.id,
+        success: function(html){
+          $('#modal_content').append(html);
+        }
+      });
+      return false;
+    });
   $("area.nolink")
    .click(function(){return false});
 }

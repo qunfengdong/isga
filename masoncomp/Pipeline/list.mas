@@ -1,55 +1,73 @@
-% foreach ( @{ISGA::GlobalPipeline->published()} ) {
-%   my @pipelines = @{ISGA::UserPipeline->query( CreatedBy => ISGA::Login->getAccount, Template => $_ )};
-%   my @runs = @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $_ )};
-%   my @rbs = @{ISGA::RunBuilder->query( CreatedBy => ISGA::Login->getAccount,  Pipeline => $_ )};
-%   my @versions = @{ISGA::GlobalPipeline->query( Status => ISGA::PipelineStatus->new( Name => 'Available' ), Name => $_->getName )};
+<h1>Your Customized Pipelines</h1>
 
-<div class="list-container">
-<h1><% $_->getName %></h1>
-<img class="thumbnail" src="<%  $_->getImage %>"/>
-  <ul id="menu_<% $_ %>" class="menu collapsible listmenu">
-    <li><a href="/Pipeline/View?pipeline=<% $_ %>">View <% $_->getName %></a></li>
-%  if(scalar @versions > 0){
-    <li>
-      <a href="#">> View Old Versions</a>
-    <ul>
-%    foreach my $ver (@versions){
-    <li><a href="/Pipeline/View?pipeline=<% $ver %>"><% $ver->getLabel %></a></li>
-%    }
-    </ul>
-    </li>
-%  }
-%  if(scalar @rbs > 0){
-%    foreach my $rb (@rbs){
-    <li><a href="/RunBuilder/View?run_builder=<% $rb %>">Incomplete Pipeline Submission</a></li>
-%    }
-%  }
-    <li>
-%    if (scalar @pipelines < 1) {
-        <a href="#">No Customized Pipelines Exist</a>
-%    }else{
-      <a href="#">> You Have <% scalar @pipelines %> Customized Pipeline(s)</a>
-      <ul>
-%      foreach my $userpipeline (@pipelines){
-        <li style="overflow: hidden;"><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %></a></li>
-%        push(@runs, @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $userpipeline )});
-%      }
-      </ul>
-%    }
-    </li>
-    <li>
-%    if (scalar @runs < 1) {
-        <a href="#">No Pipeline Runs Exist</a>
-%    }else{
-      <a href="#">> You Have <% scalar @runs %> Pipeline Run(s)</a>
-      <ul>
-%      foreach my $userrun (@runs){
-        <li><a href="/Run/View?run=<% $userrun %>"><% $userrun->getName %></a></li>
-%      }
-      </ul>
-%    }
-    </li>
-  </ul>
-<p class="description"><% $_->getDescription %></p>
-</div>
+<p>The following custom pipelines are available for you to run or customize.</p>
+
+% foreach ( @{ISGA::GlobalPipeline->query( OrderBy => 'Name' )} ) {
+
+%   if ( ISGA::Login->exists ) {
+%   my @pipelines = @{ISGA::UserPipeline->query( CreatedBy => ISGA::Login->getAccount, Template => $_ )};
+%     if ( @pipelines ) {
+%       foreach ( @pipelines ) {
+
+<div class="pipelineContainer userPipeline">
+<h4><% $_->getName %></h4>
+
+<p>Template: <% $_->getTemplate->getName %><br>Created At: <% $_->getCreatedAt->getDate %>
+% if( (defined $_->getDescription) and ($_->getDescription ne '') ){
+<br>Description: <% $_->getDescription %>
 % }
+</p>
+<p>
+<a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Pipeline</a> |
+<a class="button" href="/submit/RunBuilder/Create?pipeline=<% $_ %>">Run Pipeline</a> |
+<a class="button" href="/submit/PipelineBuilder/Create?pipeline=<% $_ %>">Customize Pipeline</a>
+</p>
+</div>
+
+%       }
+%     } 
+%   }
+% }
+
+
+% if ( ISGA::Login->exists ) {
+%   my @pipelinebuilders = @{ISGA::PipelineBuilder->query( CreatedBy => ISGA::Login->getAccount)};
+%   if ( @pipelinebuilders ) {
+<h1>Continue Customizing</h1>
+%     foreach ( @pipelinebuilders ) {
+<div class="pipelineContainer">
+<h4><% $_->getName %></h4>
+
+<p>Started On: <% $_->getStartedOn %>
+% if( (defined $_->getDescription) and ($_->getDescription ne '') ){
+<br>Description: <% $_->getDescription %>
+% }
+</p>
+<p>
+<a class="button" href="/PipelineBuilder/Overview?pipeline_builder=<% $_ %>">Continue Customizing</a> | 
+<a class="button" href="/submit/PipelineBuilder/Remove?pipeline_builder=<% $_ %>&redirect=<% $r->uri %>">Delete Builder</a>
+</p>
+</div>
+
+%     }
+%   }
+% }
+
+
+<div id="WT" class="hidden documentation pipelineList"><div id="WT_arrow_left"></div><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Here is a list of available pipelines available to you. 
+Please click on the <span class="highlight">View Pipeline</span> Button to view 
+the pipeline in greater detail.</p>
+<p>Alternatively, you can choose <span class="highlight">Run Pipeline</span> to begin the run process 
+or choose <span class="highlight">Customize Pipeline</span> to begin the pipeline customization process.</p>
+</div></div>
+
+
+<%once>
+
+my %component_lookup =
+  ( 'Complete Prokaryote Annotation Pipeline' 
+    => '/Pipeline/complete_pipeline_overview.mas',
+  );
+
+</%once>

@@ -33,9 +33,6 @@ use Exception::Class
  'X::File::Tar::IllegalContent' => { isa => 'X::File::Tar', fields => [ 'content' ] },
 
 
- 'X::API::Configuration' => { isa => 'X::API', fields => [ 'variable' ] },
- 'X::API::Configuration::Missing' => { isa => 'X::API::Configuration' },
-
 
  'X::File::FASTA' => { isa => 'X::File' },
  'X::File::FASTA::Binary' => { isa => 'X::File::FASTA' },
@@ -50,10 +47,6 @@ use Exception::Class
 
  'X::Ergatis' => { isa => 'X' },
  'X::Ergatis::Submit' => { isa => 'X::Ergatis' },
-
- # User Errors
- 'X::User::HTTP::Request' => { isa => 'X::User', 
-			       fields => [ 'url', 'status_code', 'status_text' ] },
 
  'X::GBrowse' => { isa => 'X' },
  'X::GBrowse::IncompleteInstallation' => => { isa => 'X::GBrowse' },
@@ -90,14 +83,6 @@ sub X::File::Tar::IllegalContent::user_message {
 sub X::Ergatis::Submit::user_message {
   
   return 'There was a problem submitting your run for execution. Adminstrators have been notified, and will send you an email message when the service is restored. The configuration of your Run Builder has been saved for later use.';
-}
-
-# since this is X::User user_message() defaults to message().
-sub X::User::HTTP::Request::message {
-  my $e = shift;
-
-  return 'Error retrieving ' . $e->url . ' HTTP status was (' . $e->status_code . ') ' . 
-    $e->status_text;
 }
 
 

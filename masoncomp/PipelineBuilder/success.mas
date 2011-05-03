@@ -18,3 +18,5 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-success.mas");
 }
 </%perl>
+
+</div>

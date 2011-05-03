@@ -22,8 +22,8 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 
     # retrieve all inputs for this component and overlay inputs to pipeline
     foreach ( @{ISGA::ClusterInput->query( Component => $self )} ) {
-      my $value = exists $cluster_inputs->{$_} ? $cluster_inputs->{$_} : $_->getValue($rb);
-      $inputMask{ '___' . $_->getName . '___' } = $self->getDecoratedInputValue($_, $value) 
+      $inputMask{ '___' . $_->getName . '___' } 
+	= exists $cluster_inputs->{$_} ? $cluster_inputs->{$_} : $_->getValue($rb);
     }  
 
     # read the template for the config file
@@ -33,7 +33,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
     my $build_component = $self->getCopyParameterMask || $self;
 
     if ( my $builder = ISGA::ComponentBuilder->new($build_component, $mask) ) {
-
+      
       my %config;
  
       foreach ( @{$builder->getParameters} ) {
@@ -54,7 +54,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
       }
       }
 
-      # if this is an iteration, we need to ninja-set the output token
+    # if this is an iteration, we need to ninja-set the output token
       if ( $iteration ) {
 	my ($token) = $name =~ /\.(\w+).config$/;
 	$config{___output_token___} = $token;
@@ -64,55 +64,9 @@ Write the $iteration-th config file for this component in support of an Ergatis 
       
     }
 
-    # set project_id_root which is required for some ergatis components to work
-    if ( $file =~ /___project_id_root___/ ) {
-      my $value = $rb->getScrubbedName();
-      $file =~ s/___project_id_root___/$value/g;
-    }
-    
     while ( my ($key, $value) = each %inputMask ) { $file =~ s/$key/$value/g; }      
-
-    my $path = join("/", $rb->getFullErgatisPath, $name);
+    
+    my $path = $rb->getFullErgatisPath . $name;
 
     ISGA::Utility->writeFile($path, $file);
-  }
-
-
-#------------------------------------------------------------------------
-
-=item public ISGA::ComponentBuilder injectMaskValues(ParameterMask $mask, ComponentBuilder $cb);
-
-Returns a cloned ComponentBuilder with ParameterMask values injected in
-
-=cut
-
-#------------------------------------------------------------------------
-  sub injectMaskValues{
-
-    my ($self, $parameter_mask, $cb) = @_;
-    
-    my $mask_params = exists $parameter_mask->{Component}->{$self} ?
-      $parameter_mask->{Component}->{$self} : undef;
-    
-    foreach (keys %$mask_params){
-#      $cb->{ParameterLookup}{$_}{VALUE} = $mask_params->{$_}->{Value};
-      $cb->{ParameterLookup}{$_}{VALUE} = ref $mask_params->{$_}->{Value} eq 'ARRAY' ? $self->formatArrayParam($mask_params->{$_}->{Value}) : $mask_params->{$_}->{Value};
-      $cb->{ParameterLookup}{$_}{ANNOTATION} = $mask_params->{$_}->{Description};
-    }
-
-    return $cb;
-  }
-
-#------------------------------------------------------------------------
-
-=item public ISGA::Component formatArrayParam(ParameterMaskValue $array);
-
-Formats an array of values for a component input value.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub formatArrayParam{
-   my ($self, $array);
-     return $array;
   }

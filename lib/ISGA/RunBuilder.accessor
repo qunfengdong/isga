@@ -2,18 +2,6 @@
 
 #------------------------------------------------------------------------
 
-=item public GlobalPipeline getGlobalPipeline();
-
-Returns the global pipeline for the run builder.
-
-=cut 
-#------------------------------------------------------------------------
-  sub getGlobalPipeline {
-    return shift->getPipeline->getGlobalTemplate();
-  }
-
-#------------------------------------------------------------------------
-
 =item public string getFullErgatisPath();
 
 Returns a string giving the full path to to the ergatis directory for
@@ -24,7 +12,7 @@ this run builder.
   sub getFullErgatisPath {
 
     my $self = shift;
-    return join( '/', $self->getPipeline->getErgatisSubmissionDirectory, $self->getErgatisDirectory );
+    return '___ergatis_submit_directory___/' . $self->getErgatisDirectory . '/';
   }
 
 #------------------------------------------------------------------------
@@ -36,28 +24,7 @@ Returns the directory for storing global-pipeline specific mason components.
 =cut
 #------------------------------------------------------------------------
   sub getWebPluginDirectory {
-    return shift->getPipeline->getWebPluginDirectory();
-  }
-
-#------------------------------------------------------------------------
-
-=item public string getScrubbedName();
-
-Returns the name of the RunBuilder after being scrubbed so that it can
-be safely interpretted as a perl variable by ergatis scripts.
-
-=cut
-#------------------------------------------------------------------------
-  sub getScrubbedName {
-    
-    my $id_root = shift->getName;
-    $id_root =~ s/\s/_/g;
-    $id_root =~ s/\./_/g;
-    $id_root = "My_$id_root" if $id_root =~ /^[0-9]/;
-    
-    # formatdb fails for long strings, so let's control the length
-    length($id_root) > 39 and $id_root = substr($id_root, 0, 39);
-    return $id_root;
+    return shift->getPipeline->getGlobalTemplate->getSubClass();
   }
 
 #------------------------------------------------------------------------
@@ -301,9 +268,7 @@ for each runbuilder parameter.
 	my @details = ( $cluster_name, $_->{TITLE} );
 
 	push @details, ( exists $_->{VALUE} ? $_->{VALUE} : '<span class="alert">None</span>' );
-
-        $details[2] = $parameter_mask->{Component}{$component}{$_->{NAME}}{Print} if(exists $parameter_mask->{Component}{$component}{$_->{NAME}}{Print});
-
+	
 	push @params, \@details;
       }
     }
@@ -311,46 +276,7 @@ for each runbuilder parameter.
     return \@params;
   }
 
-#------------------------------------------------------------------------
+	
 
-=item public ArrayRef getPrettyPrint();
 
-Returns [string $clustername, string $parametername, string $value]
-for each runbuilder parameter.
-
-=cut
-#------------------------------------------------------------------------
-  sub getPrettyPrint {
-
-    my $self = shift;
-
-    my $pipeline = $self->getPipeline;
-    my $components = $pipeline->getComponents;
-    my $parameter_mask = $self->getParameterMask;
-
-    my @params;
-
-    for my $component ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
-
-      my $cluster_name = $component->getCluster->getName;
-
-      my $run_builder_form =
-        $pipeline->getComponentBuilder($component, $parameter_mask)->getRunBuilderForm;
-
-      foreach my $field ( @{$run_builder_form->{sub}} ) {
-        next if ( defined $field->{templ} and $field->{templ} eq 'hidden' );
-        my @details = ( $cluster_name, $field->{TITLE} );
-
-        push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
-
-        if(exists $field->{OPT_VAL} && exists $field->{VALUE}){
-          my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[2] } 0..$#{$field->{OPT_VAL}};
-          $details[2] = ${$field->{OPTION}}[$index];
-        }
-        push @params, \@details;
-      }
-    }
-
-    return \@params;
-  }
-
+    

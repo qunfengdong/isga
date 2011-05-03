@@ -3,12 +3,6 @@
 </%args>
 
 <h1>Build Your Pipeline</h1>
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $pipeline_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-overview.mas");
-}
-</%perl>
 % my $template = $pipeline_builder->getPipeline;
 <p>
 <strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
@@ -31,8 +25,8 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
 <map name="clusters" >
 
 % foreach ( @{ISGA::Workflow->query( Pipeline => $pipeline )} ) {
-%   next if ( (not defined $_->getCoordinates) || ($_->getCoordinates eq '') );
-%   my $cluster = $_->getCluster;
+% next if ( (not defined $_->getCoordinates) || ($_->getCoordinates eq '') );
+% my $cluster = $_->getCluster;
 <area \
   shape="rect"
   id="<% $_ ->getCluster %>" \
@@ -41,11 +35,15 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   coords="<% $_->getCoordinates %>" \
   rel="component_selection" \
   href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
-%   if ($_->getCustomization eq 'IO' ) {
+% if ($_->getCluster->getName eq 'RNA Prediction' || $_->getCluster->getName eq 'Additional Gene Analysis'){
+  class="noborder nofade clusterOption jTip modal" \
+% } elsif ($_->getCluster->getName eq 'Process Annotation Input Files' || $_->getCluster->getName eq 'Output'){
   class="noborder nofade jTip nolink" \
-%   } else {
+% } elsif ( $_->isRequired ) {
+  class="noborder nofade requiredCluster jTip modal" \
+% } else {
   class="noborder nofade cluster jTip modal" \
-%   }
+% }
  >
 % }
 </map>
@@ -56,3 +54,12 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
 
 
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>
+
+<%perl>
+if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
+  my $plugin = $pipeline_builder->getWebPluginDirectory;
+  $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-overview.mas");
+}
+</%perl>
+
+</div>

@@ -1,0 +1,8 @@
+<%args>
+	$form
+	$infile
+</%args>
+
+<h1>Maximum Likelihood</h1>
+
+<% $form->get %>
