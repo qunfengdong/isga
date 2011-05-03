@@ -1,7 +1,7 @@
 # -*- cperl -*-
 
-#use Archive::Tar;
-use Archive::Tar::Wrapper;
+use Archive::Tar;
+
 use File::Basename;
 
 use File::Temp;
@@ -57,10 +57,10 @@ collection and in any child collections.
 
 #------------------------------------------------------------------------
 
-=item public Archive::Tar::Wrapper getTar();
+=item public filehandle getTar();
 
-Builds and returns an Archive::Tar::Wrapper object containing the
-contents of this file collection.
+Builds and returns an Archive::Tar object contain the contents of this
+file collection.
 
 =cut 
 #------------------------------------------------------------------------
@@ -71,53 +71,44 @@ contents of this file collection.
     my $contents = $self->getContents;
 
     # create the archive
-    my $archive = Archive::Tar::Wrapper->new();
+    my $archive = Archive::Tar->new();
 
     my $prefix = $self->getUserName;
+
+    # retrieve the path for file contents
+#    my $path = basename( $self->getUserName );
 
     foreach ( @$contents ) {
 
       if ( $_->isa('ISGA::File') ) {
-	my $logical_path = $prefix . "/" . $_->getUserName;
-	my ( $file ) = $archive->add( $logical_path, $_->getPath );
-
+	my ( $file ) = $archive->add_files( $_->getPath );
+	$file->rename( $_->getUserName );
+	$file->prefix( $prefix );
       } else {
 	$_->addToTar( $archive, $prefix );
       }
     }
 	
-    return $archive;
+
+    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
+
+	
+    my $tmp = File::Temp->new();
+
+    $archive->write($tmp->filename, 'COMPRESS_GZIP');
+        
+    return $tmp;
   }
 
 #------------------------------------------------------------------------
 
-=item public string getPath();
+=item public File::Temp getPath();
 
-Returns the filesystem path to a temporary tar file for this collection.
+Returns the filesystem path to the file.
 
 =cut 
 #------------------------------------------------------------------------
-  sub getPath {
-
-    my $self = shift;
-    
-    # see if we've cached the path
-    exists $self->{cached_file_path} and return $self->{cached_file_path};
-    
-    # retrieve the wrapped tar contents
-    my $archive = $self->getTar();
-
-    # open a "temporary" file, but we'll let it hang around
-    my $tmp = File::Temp->new();
-    $tmp->unlink_on_destroy(0);
-
-    # cache the name of this file for the lifetime of the object
-    $self->{cached_file_path} = $tmp->filename();
-
-    # write the tarball to the temporary file
-    $archive->write($self->{cached_file_path}, 1);
-    return $self->{cached_file_path};
-  }
+  sub getPath { return shift->getTar; }
 
 #------------------------------------------------------------------------
 

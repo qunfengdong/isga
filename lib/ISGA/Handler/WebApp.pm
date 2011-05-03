@@ -60,7 +60,7 @@ Wrapper to do some custom work
 
       my $run = ISGA::Run->new( Id => $id );
 
-      ISGA::Login->getAccount->mayRead($run)
+      $run->getCreatedBy == ISGA::Login->getAccount
 	or X::User::Denied->throw();
 
     }; 

@@ -42,6 +42,9 @@ $(document).ready(sectionHighlight);
 function sectionHighlight() {
   var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
   var url = window.location.href;
+  if (url.match(/PipelineBuilder\/EditCluster/) || url.match(/PipelineBuilder\/EditComponent/)){
+      url = "<% ISGA::Site->getBaseURI  %>PipelineBuilder/ViewClusters?pipeline_builder=<% $pipeline_builder %>";
+  }
   for(var i = 0; i < menuLinks.length; i++){
     if(url == menuLinks[i].href)
     {

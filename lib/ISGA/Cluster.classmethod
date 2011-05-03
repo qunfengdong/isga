@@ -19,7 +19,6 @@ exists for the pipeline this runbuilder processes.
 
       if ( my $subclass = $_->getSubClass ) {
 	my $full_subclass = $class . '::' . $subclass;
-	eval "require $full_subclass";	
 	$full_subclass->can('new') and bless $_, $full_subclass;
       }
     }

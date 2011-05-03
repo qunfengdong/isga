@@ -6,6 +6,6 @@ attributes:
   - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
   - { name: CreatedAt, type: Timestamp, options: [ REQUIRED ] }
   - { name: UserName, type: string, options: [ REQUIRED ] }
-  - { name: Description, type: string }
+  - { name: Description, type: string, options: [ REQUIRED ] }
   - { name: IsHidden, type: boolean, options: [ REQUIRED ] }
   - { name: ExistsOutsideCollection, type: boolean, options: [ REQUIRED ] }

@@ -153,6 +153,7 @@ values indicated in $samples, selected at even intervals from the
 range $start to $end. The return value is an arrayref of exactly
 $samples values.
 
+=back
 
 
 =cut

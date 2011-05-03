@@ -1,0 +1,7 @@
+--- !perl/ISGA::ComponentBuilder
+Name: SignalP
+Description: '<a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/15223320">SignalP 3.0</a> predicts the presence and location of signal peptide cleavage sites in amino acid sequences from different organisms: Gram-positive prokaryotes, Gram-negative prokaryotes, and eukaryotes. The method incorporates a prediction of cleavage sites and a signal peptide/non-signal peptide prediction based on a combination of several artificial neural networks and hidden Markov models.'
+RunBuilderParams:
+  - { templ: 'select', NAME: 'organismtype', TITLE: 'Organism Type', REQUIRED: 1, OPTION: ['gram-', 'gram+'], DESCRIPTION: 'Declare whether your species of bacteria is Gram-negative or Gram-positive.', CONFIGLINE: '___type___' }
+  - { templ: 'hidden', NAME: 'genus', TITLE: 'Genus', REQUIRED: 1, DESCRIPTION: 'Organism Genus', CONFIGLINE: '___genus___' }
+  - { templ: 'hidden', NAME: 'species', TITLE: 'Species', REQUIRED: 1, DESCRIPTION: 'Organism Species', CONFIGLINE: '___species___' }

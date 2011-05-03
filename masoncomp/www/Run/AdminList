@@ -19,6 +19,7 @@ return $m->comp( '/Run/admin_list.mas', runs => $runs, show_canceled => $show_ca
 
 <%once>
 
+  my $admin = ISGA::Group->new( Name => 'Run Administrators' );
   my $canceled = ISGA::RunStatus->new( Name => 'Canceled' );				   
 
 </%once>
