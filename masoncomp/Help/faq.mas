@@ -23,21 +23,11 @@ forms.</p>
 
 <p><a name="RunTime">Q. How long does it take to finish a whole genome annotation?</a></p>
 
-<p>A. It depends on how busy our server is. Our benchmarking shows that it takes 
+<p>A. It depends on how busy our server is. Our benchwork shows that it takes 
 about 12 hours for a typical bacterial genome to complete all the 
 computations. An email will be automatically sent to you for notification 
 once your job is finished. You can also monitor the pipeline status by navigating to
 "Monitor Pipelines" in the header.</p>
-
-<p><a name="MultipleContigs">Q. My genome assembly program produces multiple contigs instead of a single genome sequence.  
-Can I upload all the multiple contigs together?</a></p>
-
-<p>A. Yes, multiple contigs can be uploaded together.</p>
-
-
-<p><a name="CompressedFasta">Q. Can I upload my FASTA sequence in compressed format to speed up the file upload?</a></p>
-
-<p>A. ISGA automatically uncompress .gz file.</p>
 
 <p><a name="GettingStarted">Q. Where do I get started?</a></p>
 
@@ -50,9 +40,4 @@ the <a class="normal" href="/Pipeline/View?pipeline=1">Build Pipeline</a> link i
 components are also freely available. You can follow the "Download" entry 
 in the above header.</p>
 
-<p><a name="SubmitNCBI">Q. Can I use the provided tbl file to submit to Genebank?</a></p>
 
-<p>A. Yes, however, due to the nature of automated annotation, this file will not be perfect. Manual editing of this file will be 
-required in order for NCBI to accept your submission.  Please see our 
-<a href="https://wiki.cgb.indiana.edu/display/brp/guide-genbank-submit">detailed guide</a> for more detailed help and a list of 
-known issues.</p>

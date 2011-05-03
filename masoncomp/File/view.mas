@@ -10,9 +10,8 @@
   <th>Name</th><td colspan="3"><% $file->getUserName %></td>
  </tr>
 
-% my $description = $file->getDescription();
  <tr>
-  <th>Description</th><td colspan="3"><% defined $description ? $description : '' %></td>
+  <th>Description</th><td colspan="3"><% $file->getDescription %></td>
  </tr>
 
  <tr>
@@ -35,10 +34,7 @@
 
 <h3>File Preview</h3>
 
-% if ( $file->getFormat->isBinary ) {
-<p>This is a binary file, and can not be previewed.</p>
-% } else {
 <& preview-text.mas, file => $file &>
-% }
+
 
 <& right_menu.mas, file => $file &>

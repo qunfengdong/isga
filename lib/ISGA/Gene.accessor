@@ -25,31 +25,3 @@ sub getCGViewColorAndDecoration {
   return 'color="blue" decoration="counterclockwise-arrow"';
 }
     
-#------------------------------------------------------------------------
-
-=item public int getEdgeFrameshift();
-
-If the gene is on either end of the contig, returns the number of
-nucleotides we need to discard to get the correct frame.
-
-=cut
-#------------------------------------------------------------------------
-sub getEdgeFrameshift {
-
-  my $self = shift;
-
-  my $strand = $self->getStrand() eq '+';
-
-  # on positive strand and beginning is before 0
-  if ( $strand ) {
-
-    my $start = $self->getStart();
-    $start < 0 or return 0;
-    return ( $start == -1 ? 2 : 1 );
-  }
-
-  # on negative strand and end is past contig end
-  my $diff = $self->getContig->getEnd - $self->getEnd;
-  $diff < 0 or return 0;
-  return ( $diff == -1 ? 2 : 1 );
-}

@@ -1,4 +1,3 @@
-# -*- cperl -*-
 #------------------------------------------------------------------------
 
 =item public [Component] getComponents();
@@ -8,21 +7,6 @@ Returns a reference to an array of components that are part of this cluster.
 =cut
 #------------------------------------------------------------------------
   sub getComponents { return ISGA::Component->query( Cluster => shift ); }
-
-#------------------------------------------------------------------------
-
-=item public bool isIterated();
-
-Returns true if the cluster iterates over an input.
-
-=cut
-#------------------------------------------------------------------------
-  sub isIterated {
-    
-    my $self = shift;
-
-    return ( $self->getIteratesOn ? 1 : 0 );
-  }
 
 #------------------------------------------------------------------------
 

@@ -39,7 +39,7 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
 % foreach my $cluster ( values %results ) {
 %   my $cname = $cluster->{Cluster}->getName;
 <tr class="list_label">
- <td colspan="4" style="font-weight: bold;"><% $cluster->{Cluster}->getName %>\
+ <td colspan="4"><% $cluster->{Cluster}->getName %>\
 <a class="jTip" id="c<% $cluster->{Cluster} %>r<% $run %>" name="<% $cname %>" \
 href="/Cluster/GetClusterDescription?cluster=<% $cluster->{Cluster} %>">
  <span class="sup">?</span>
@@ -76,13 +76,10 @@ href="/Cluster/GetClusterDescription?cluster=<% $cluster->{Cluster} %>">
  <td>
 %       if ( $file->isa('ISGA::File') ) {
    <a href="/File/View?file=<% $file %>">View</a> |\
-   <a  href="/Download/<% $file->getUserName %>?file_resource=<% $file %>">Download</a>
-
 %       } else {
-   <a href="/FileCollection/View?file_collection=<% $file %>">View</a> |\
-   <a  class="downloadRemove" href="/Download/<% $file->getUserName %>.tar.gz?file_resource=<% $file %>">Download</a>
-
+<a href="/FileCollection/View?file_collection=<% $file %>">View</a> |\
 %       } 
+   <a  href="/Download/<% $file->getUserName %>?file_resource=<% $file %>">Download</a>
  </td>
 %     } else {
   <td></td>

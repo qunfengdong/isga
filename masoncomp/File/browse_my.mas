@@ -98,10 +98,13 @@ File Archive
 <sys:rightmenu>
 
 <ul>
-
-<%doc>
 <li class="title">Tools</li>
 
+<li class="rmbutton pointer"><a href="/File/Upload">Upload File</a></li>
+<li class="pointer" onclick="window.location='/File/Upload'"><p>Upload a new file. You can load this file into a pipeline and share it with other users.
+</p></li>
+
+<%doc>
 % if ( $show_hidden ) {
 
 <li class="rmbutton pointer"><a href="/File/BrowseMy">Stop Showing Hidden Files & Collections</a></li>

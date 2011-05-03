@@ -1,7 +1,0 @@
----
- - Component: shore.default
-   Type: 'SNP Analysis Output'
-   Format: SHORE_RESULT
-   ErgatisFormat: 'File'
-   Visibility: Pipeline
-   FileLocation: 'shore/___id____default/output/results.tar.gz'

@@ -22,10 +22,10 @@ use base 'Schedule::SGE';
 
 BEGIN {
  # set some default environment variables. These are default for me, but we'll provide a method to handle them too
- $ENV{'SGE_CELL'}="___SGE_CELL___";
- $ENV{'SGE_EXECD_PORT'}="___SGE_EXECD_PORT___";
- $ENV{'SGE_QMASTER_PORT'}="___SGE_QMASTER_PORT___";
- $ENV{'SGE_ROOT'}="___SGE_ROOT___";
+ !$ENV{'SGE_CELL'}              && ($ENV{'SGE_CELL'}="default");
+ !$ENV{'SGE_EXECD_PORT'}        && ($ENV{'SGE_EXECD_PORT'}="6445");
+ !$ENV{'SGE_QMASTER_PORT'}      && ($ENV{'SGE_QMASTER_PORT'}="6444");
+ !$ENV{'SGE_ROOT'}              && ($ENV{'SGE_ROOT'}="/cluster/sge");
  our $VERSION=0.01;
 };
 
@@ -57,13 +57,12 @@ sub checkStatus {
   my %seenpid;
   while (@status) {
     my $line=shift @status;
-
     chomp($line);
     next if ($line =~ /^\-/);
     next if ($line =~ /queuename/);
     next if (!$line || $line =~ /^\s*$/);
-#    next  if ($line =~ /^\S+/ && $line !~ /^\#/);
-    if ($line =~ m#^\s*(\d+)\s+(\d+\.\d+)\s+(\S+.*?)\s+\S+\s+(\S+)\s+(\d+/\d+/\d+\s+\d+\:\d+\:\d+)\s+\S+#) {
+    next  if ($line =~ /^\S+/ && $line !~ /^\#/);
+    if ($line =~ m#^\s+(\d+)\s+(\d+\.\d+)\s+(\S+.*?)\s+\S+\s+(\S+)\s+(\d+/\d+/\d+\s+\d+\:\d+\:\d+)\s+\S+#) {
       # it is a job
       # something like 
       # 1441 0.56000 testing123 rob          r     03/25/2005 11:59:12     1
@@ -84,7 +83,6 @@ sub checkStatus {
       print STDERR "We don't know how to parse |$line|\n";
     }
   }
-
   if(defined $self->{'job'}->{$job} && defined $seenpid{$job} && ( $seenpid{$job} eq "r" || $seenpid{$job} eq "Rr" )){
     return "Running";
   }elsif(defined $self->{'job'}->{$job} && defined $seenpid{$job} && ( $seenpid{$job} eq "qw" || $seenpid{$job} eq "hqw" || $seenpid{$job} eq "hRqw" || $seenpid{$job} eq "Rq" )){

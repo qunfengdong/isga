@@ -1,118 +1,82 @@
 # -*- cperl -*-
-
+  
 #------------------------------------------------------------------------
 
-=item public void writeConfigFile( RunBuilder $rb, ParameterMask $mask, { ClusterInput => string } $cluster_inputs );
+=item public void writeConfigFile( Pipeline $pipeline, string $dir, ParameterMask $mask, { ClusterInput => string } $cluster_inputs );
 
 Write the config file for this component in support of an Ergatis run.
-
-=item public void writeConfigFile( RunBuilder $rb, ParameterMask $mask, { ClusterInput => string } $cluster_inputs, int $iteration );
-
-Write the $iteration-th config file for this component in support of an Ergatis run.
 
 =cut
 #------------------------------------------------------------------------
   sub writeConfigFile {
 
-    my ($self, $rb, $mask, $cluster_inputs, $iteration) = @_;
+    my ($self, $pipeline, $dir, $mask, $cluster_inputs) = @_;
 
     my $name = $self->getErgatisName . '.config';
-    
+
     my %inputMask;
 
     # retrieve all inputs for this component and overlay inputs to pipeline
     foreach ( @{ISGA::ClusterInput->query( Component => $self )} ) {
-      my $value = exists $cluster_inputs->{$_} ? $cluster_inputs->{$_} : $_->getValue($rb);
-      $inputMask{ '___' . $_->getName . '___' } = $self->getDecoratedInputValue($_, $value) 
+      $inputMask{ '___' . $_->getName . '___' } 
+	= exists $cluster_inputs->{$_} ? $cluster_inputs->{$_} : $_->getValue($pipeline);
     }  
 
     # read the template for the config file
-    my $file = $self->getConfigFile;
+    open my $fh, '<', "___package_include___/config_template/$name"
+      or X::File->throw( error => "___package_include___/config_template/$name : $!" );
+    my $file = do { local $/; <$fh> };
+    close $fh;  
 
-    # do we copy our parameter mask from a different component
-    my $build_component = $self->getCopyParameterMask || $self;
+    if (my $copy_component = $self->getCopyParameterMask){
+ 
+      my $builder = ISGA::ComponentBuilder->new($copy_component, $mask);
+      my %config;
 
-    if ( my $builder = ISGA::ComponentBuilder->new($build_component, $mask) ) {
+      foreach ( @{$builder->getParameters} ) {
+
+        my $command = '';
+        my $value = $_->{VALUE};
+
+        if ( defined $value ) {
+          $command = exists $_->{FLAG} ? "$_->{FLAG} $value " : "$value ";
+        }
+
+        if ( defined $config{$_->{CONFIGLINE}} ) {
+          $config{$_->{CONFIGLINE}} .= $command;
+        } else {
+          $config{$_->{CONFIGLINE}} = $command;
+        }
+      }
+
+    while ( my ($key, $value) = each %config ) { $file =~ s/$key/$value/g; }
+
+    } elsif ( my $builder = ISGA::ComponentBuilder->new($self, $mask) ) {
 
       my %config;
- 
+
       foreach ( @{$builder->getParameters} ) {
 	
 	my $command = '';
 	my $value = $_->{VALUE};
 	
-	# if the parameter uses a command line flag, supply it here
 	if ( defined $value ) {
-	  $command = exists $_->{FLAG} ? "$_->{FLAG} $value" : "$value";
+	  $command = exists $_->{FLAG} ? "$_->{FLAG} $value " : "$value ";
 	}
 	
-	# add separating space to command if it already has a value
 	if ( defined $config{$_->{CONFIGLINE}} ) {
-	  $config{$_->{CONFIGLINE}} .= " $command";
-      } else {
-	$config{$_->{CONFIGLINE}} = $command;
-      }
-      }
-
-      # if this is an iteration, we need to ninja-set the output token
-      if ( $iteration ) {
-	my ($token) = $name =~ /\.(\w+).config$/;
-	$config{___output_token___} = $token;
+	  $config{$_->{CONFIGLINE}} .= $command;
+	} else {
+	  $config{$_->{CONFIGLINE}} = $command;
+	}
       }
 
-      while ( my ($key, $value) = each %config ) { $file =~ s/$key/$value/g; }
-      
+    while ( my ($key, $value) = each %config ) { $file =~ s/$key/$value/g; }
     }
 
-    # set project_id_root which is required for some ergatis components to work
-    if ( $file =~ /___project_id_root___/ ) {
-      my $value = $rb->getScrubbedName();
-      $file =~ s/___project_id_root___/$value/g;
-    }
+    while ( my ($key, $value) = each %inputMask ) { $file =~ s/$key/$value/g; }
     
-    while ( my ($key, $value) = each %inputMask ) { $file =~ s/$key/$value/g; }      
 
-    my $path = join("/", $rb->getFullErgatisPath, $name);
-
-    ISGA::Utility->writeFile($path, $file);
+    ISGA::Utility->writeFile("$dir/$name", $file);
   }
 
-
-#------------------------------------------------------------------------
-
-=item public ISGA::ComponentBuilder injectMaskValues(ParameterMask $mask, ComponentBuilder $cb);
-
-Returns a cloned ComponentBuilder with ParameterMask values injected in
-
-=cut
-
-#------------------------------------------------------------------------
-  sub injectMaskValues{
-
-    my ($self, $parameter_mask, $cb) = @_;
-    
-    my $mask_params = exists $parameter_mask->{Component}->{$self} ?
-      $parameter_mask->{Component}->{$self} : undef;
-    
-    foreach (keys %$mask_params){
-#      $cb->{ParameterLookup}{$_}{VALUE} = $mask_params->{$_}->{Value};
-      $cb->{ParameterLookup}{$_}{VALUE} = ref $mask_params->{$_}->{Value} eq 'ARRAY' ? $self->formatArrayParam($mask_params->{$_}->{Value}) : $mask_params->{$_}->{Value};
-      $cb->{ParameterLookup}{$_}{ANNOTATION} = $mask_params->{$_}->{Description};
-    }
-
-    return $cb;
-  }
-
-#------------------------------------------------------------------------
-
-=item public ISGA::Component formatArrayParam(ParameterMaskValue $array);
-
-Formats an array of values for a component input value.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub formatArrayParam{
-   my ($self, $array);
-     return $array;
-  }

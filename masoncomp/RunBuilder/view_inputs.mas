@@ -12,7 +12,7 @@ use List::Util qw(min);
 
 % my $account = ISGA::Login->getAccount;
 
-<h2>Input Data</h2>
+<h1>Run Inputs</h1>
 
 <p>The following files will be used as input for this run. You can
 select new input files using the buttons below, or upload a new file
@@ -30,21 +30,70 @@ using the tool to the left.</p>
 
 <tbody>
 % if ( @required ) {
+
 <tr><th class="subhead" colspan="4">Required</th></tr>
 %   foreach ( @required ) {
-%     my $comp = ( $_->isIterator ? 'view_iterator_input_line.mas' : 'view_input_line.mas' );
-<& $comp, pipeline_input => $_, run_builder => $run_builder &>
+%     my $type = $_->getType;
+%     my $format = $_->getFormat;
+%     my ( $run_builder_input ) = 
+%       @{ISGA::RunBuilderInput->query( PipelineInput => $_, RunBuilder => $run_builder)};
+%     my $current_file = $run_builder_input && $run_builder_input->getFileResource || 0;
+
+%     my $action = ( $_->getErgatisFormat eq 'File List' ? 'SelectInputList' : 'SelectInput' );
+
+<tr>
+ <td><% $type->getName %></td>
+ <td><% $format->getName %></td>
+ <td>\
+%     if ( $current_file ) {
+%#       if ( $_->getErgatisFormat eq 'File List' ) {
+<% join "<br>", map { $_->getUserName } @{$current_file->getFlattenedContents} %>
+%#       } else {
+%# <% $current_file->getUserName %>\
+%#       }
+%     } else {
+<span class="alert">None</span>\
+%     }
+ </td>
+ <td width="25%">
+<a href="/RunBuilder/<% $action %>?run_builder=<% $run_builder %>&pipeline_input=<% $_ %>"><% $current_file ? 'Edit File' : 'Select File' %></a>
+ </td>
+</tr>
 %   }
 % }
 
 % if ( @optional ) {
 <tr><th class="subhead" colspan="4">Optional</th></tr>
 %   foreach ( @optional ) {
-%     my $comp = ( $_->isIterator ? 'view_iterator_input_line.mas' : 'view_input_line.mas' );
-<& $comp, pipeline_input => $_, run_builder => $run_builder &>
+%     my ( $run_builder_input ) = 
+%       @{ISGA::RunBuilderInput->query( PipelineInput => $_, RunBuilder => $run_builder)};
+%     my $current_file = $run_builder_input && $run_builder_input->getFileResource || 0;
+
+%     my $action = ( $_->getErgatisFormat eq 'File List' ? 'SelectInputList' : 'SelectInput' );
+
+<tr>
+ <td><% $_->getType->getName %></td>
+ <td><% $_->getFormat->getName %></td>
+ <td>\
+%     if ( $current_file ) {
+%       if ( $_->getErgatisFormat eq 'File List' ) {
+<% join "<br>", map { $_->getUserName } @{$current_file->getFlattenedContents} %>
+%       } else {
+<% $current_file->getUserName %>\
+%       }
+%     } else {
+<span class="alert">None</span>\
+%     }
+ </td>
+ <td>
+<a class="button" href="/RunBuilder/<% $action %>?run_builder=<% $run_builder %>&pipeline_input=<% $_ %>"><% $current_file ? 'Edit' : 'Select File' %></a>
+ </td>
+</tr>
 %   }
 % }
 </tbody>
 </table>
 
 </div>
+
+<& right_menu.mas, run_builder => $run_builder &>

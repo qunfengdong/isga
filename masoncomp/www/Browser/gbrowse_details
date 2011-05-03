@@ -20,7 +20,7 @@ use vars qw($CONFIG $VERSION $CONF_DIR $LANG
 # Non-modperl users should change this variable if needed to point
 # to the directory in which the configuration files are stored.
 #
-$CONF_DIR  = ISGA::SiteConfiguration->value('gbrowse_directory') . '/conf';
+$CONF_DIR  = '/research/projects/isga/dev/gbrowse/conf';
 #
 ###################################################################
 $VERSION   = 1.70;

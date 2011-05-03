@@ -7,19 +7,17 @@
 
 <& format_sequence_display.mas &>
 
-<h1><% $gene->getLocus %></h1>
+<h1><% $rrna->getUniqueName %></h1>
 
 <div class="data">
 
 <table width="100%">
  <tbody>
-  <tr>
-     <th width="30%">Locus</th><td width="70%"><% $gene->getLocus %></td>
+  <tr> 
+   <th width="30%">rRNA Name</th><td width="70%"><% $rrna->getUniqueName %></td>
   </tr>
   <tr>
-% my $contig = $gene->getContig;
-% my $run = $contig->getRun;
-      <th>Position</th><td><a href="/Browser/gbrowse/<% $run %>/?name=<% $contig->getUniqueName %>:<% $gene->getStart %>..<% $gene->getEnd %>"><% $gene->getStart %> - <% $gene->getEnd %> on <% $gene->getStrand eq '+' ? 'plus' : 'minus' %> strand</a></td>
+   <th>Position</th><td><% $rrna->getStart %> - <% $rrna->getEnd %> on <% $rrna->getStrand eq '+' ? 'plus' : 'minus' %> strand</td>
   </tr>
   <tr>
    <th>Length</th><td><% $rrna->getEnd - $rrna->getStart + 1 %></td>
@@ -30,13 +28,10 @@
   <tr>
    <th>Description</th><td><% $gene->getNote %></td>
   </tr>
-  <tr> 
-   <th width="30%">rRNA Name</th><td width="70%"><% $rrna->getUniqueName %></td>
-  </tr>
  </tbody>
 </table>
 
-<b>rRNA Sequence</b> 
+<b>rRNA Sequence</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="blast.cgi?rrna=<% $rrna %>">BLAST</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="download.cgi?rrna=<% $rrna %>">Download</a>
 <br>
 <& display_sequence.mas, genome_feature => $gene, upstream => $upstream, downstream => $downstream &>
 

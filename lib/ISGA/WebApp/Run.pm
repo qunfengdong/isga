@@ -19,7 +19,6 @@ ISGA::WebApp manages the interface to MASON for ISGA.
 use strict;
 use warnings;
 
-
 #========================================================================
 
 =head2 CLASS METHODS
@@ -41,14 +40,9 @@ sub Run::InstallGbrowseData {
 
   my $self = shift;
   my $run = $self->args->{run};
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
-  warn "class1 is ", ref($run), "\n";
-
-  $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
-
-  warn "get things running\n";
-
-  $run->installGBrowseData();
+  $run->installGbrowseData();
   $self->redirect( uri => "/Browser/gbrowse/$run/" );
 }
 
@@ -56,14 +50,19 @@ sub Exception::Run::InstallGbrowseData {
 
   my $self = shift;
   my $run = $self->args->{run};
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
-  warn "class2 is ", ref($run), "\n";
+  warn "trying to clean up data\n";
 
   # remove conf
-  $run->deleteGBrowseConfigurationFile();
+  $run->deleteGbrowseConfigurationFile();
+
+  warn "removed config file\n";
 
   # remove database dir
-  $run->deleteGBrowseDatabase();
+  $run->deleteGbrowseDatabase();
+
+  warn "removed db\n";
 }
 
 #------------------------------------------------------------------------
@@ -93,10 +92,9 @@ sub Run::Cancel {
 
     # create run cancellation
     my $cancelation = ISGA::RunCancelation->create( Run => $run,
-						    CanceledBy => ISGA::Login->getAccount,
-						    CanceledAt => ISGA::Timestamp->new(),
-						    Comment => $comment );
-
+							CanceledBy => ISGA::Login->getAccount,
+							CanceledAt => ISGA::Timestamp->new(),
+							Comment => $comment );
     # update run status
     $run->edit( Status => ISGA::RunStatus->new( Name => 'Canceled' ) );
 
@@ -112,9 +110,9 @@ sub Run::Cancel {
     
     # notify the user their run was canceled
     ISGA::RunNotification->create( Run => $run,
-				   Account => $run->getCreatedBy,
-				   Type =>  ISGA::NotificationType->new( Name => 'Run Canceled'),
-				   Var1 => $comment );
+				       Account => $run->getCreatedBy,
+				       Type =>  ISGA::NotificationType->new( Name => 'Run Canceled'),
+				       Var1 => $comment );
     
     $self->redirect( uri => "/Run/View?run=$run" );
   }
@@ -122,61 +120,6 @@ sub Run::Cancel {
   $self->_save_arg( 'form', $form);
   $self->redirect( uri => "/Run/Cancel?run=$run" );
 }
-
-#------------------------------------------------------------------------
-
-=item public void Clone();
-
-Method to Clone a run.
-
-=cut
-#------------------------------------------------------------------------
-sub Run::Clone {
-
-  my $self = shift;
-  my $args = $self->args;
-
-  my $form = ISGA::FormEngine::Run->Clone($args);
-  my $run = $args->{run} or X::API::Parameter::Missing->throw();
-
-  # we already know we are a run administrator through Foundation
- 
-  if ($form->canceled( )) {
-
-    $self->redirect( uri => "/Run/View?run=$run" );
-
-  } elsif ( $form->ok ) {
-
-    my $incomplete = ISGA::RunStatus->new( Name => 'Incomplete' );
-
-    my $newid = $form->get_input('newid');
-
-    # update run status
-    $run->edit( Status => ISGA::RunStatus->new( Name => 'Running' ),
-	        ErgatisKey => $newid );
-
-    # delete contents of run output collection and hide it
-    $run->getFileCollection->deleteContents();
-
-    # clean up the clusters
-    foreach ( @{ISGA::RunCluster->query( Run => $run )} ) {
-      $_->edit( Status => $incomplete, StartedAt => undef, FinishedAt => undef,
-		FinishedActions => undef, TotalActions => undef );
-    }
-
-    # retrieve run outputs that have a file resource, and delete them
-    foreach ( @{ISGA::RunOutput->query(Run => $run, FileResource => {'NOT NULL' => undef})} ) {
-      my $fr = $_->getFileResource;
-      $_->edit( FileResource => undef );
-    }
-    
-    $self->redirect( uri => "/Run/View?run=$run" );
-  }
-  
-  $self->_save_arg( 'form', $form);
-  $self->redirect( uri => "/Run/Clone?run=$run" );
-}
-
 
 #------------------------------------------------------------------------
 
@@ -193,20 +136,9 @@ sub Run::Submit {
 
   my $run_builder = $args->{run_builder} or X::API::Parameter::Missing->throw();
 
-  my $account = ISGA::Login->getAccount;
-  my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', 
-						  UserClass => $account->getUserClass);
-  my $runs = ISGA::Run->getCurrentRunCount($account);
-
   # make sure this is my run_builder
-  $run_builder->getCreatedBy == $account
+  $run_builder->getCreatedBy == ISGA::Login->getAccount
    or  X::User::Denied->throw( error => 'You do not own this.' );
-
-  # make sure the user isn't over their quota
-  $runs >= $quota 
-    and X::User::Denied->throw( error => 'You have reached your concurrent pipeline quota.');
-  
-
 
   my $run = ISGA::Run->submit($run_builder);
 
@@ -214,9 +146,9 @@ sub Run::Submit {
   foreach ( @{$run_builder->getInputs} ) {
     $_->delete();
   }
-
-#  X->throw('bam!');
   
+  my $pipeline = $run_builder->getPipeline;
+
   # nuke it and redirect
   $run_builder->delete();
 
@@ -227,9 +159,7 @@ sub Exception::Run::Submit {
 
   my $self = shift;
 
-  my $run_builder = $self->args->{run_builder};
-
-  my $old = join( '/', $run_builder->getPipeline->getErgatisSubmissionDirectory, $run_builder->getErgatisDirectory );
+  my $old = '___ergatis_submit_directory___/' . $self->args->{run_builder}->getErgatisDirectory;
   my $new = $old . '-save-' . time;
 
   # send email about error
@@ -259,42 +189,6 @@ sub Run::Hide {
 
 }
 
-#------------------------------------------------------------------------
-
-=item public void Submit();
-
-Method to Submit a run.
-
-=cut
-#------------------------------------------------------------------------
-sub Run::Show {
-
-  my $self = shift;
-  my $web_args = $self->args;
-  my $account = ISGA::Login->getAccount;
-  my $runs = $web_args->{'runs'};
-  my @run = split(/\|/, $runs);
-
-  map { ISGA::Run->new(Id => $_)->edit( IsHidden => 0 ) } @run;
-  $self->redirect( uri => '/Success' );
-
-}
-
-#------------------------------------------------------------------------
-
-=item public void Test();
-
-Method to test setup gbrowse data.
-
-=cut
-#------------------------------------------------------------------------
-sub Run::Test {
-
-  my $self = shift;
-  my $run = $self->args->{run};
-
-  $self->redirect( uri => "/Pipeline/View?pipeline=1" );
-}
 
 return 1;
 

@@ -33,7 +33,7 @@ use vars qw($CONFIG $MAX_SEGMENT $DEFAULT_SEGMENT
 # Non-modperl users should change this variable if needed to point
 # to the directory in which the configuration files are stored.
 #
-$CONF_DIR  =  ISGA::SiteConfiguration->value('gbrowse_directory') . '/conf';
+$CONF_DIR  = '/research/projects/isga/dev/gbrowse/conf';
 #
 ###################################################################
 $VERSION   = " 1.70";
@@ -160,17 +160,17 @@ if (param('reset')) {
 if (handle_asynchronous_events($page_settings)) {
   print CGI::header(-status=>'204 No Content');
   $session->session->flush;
-  return;
+  exit 0;
 }
 
 if (my $label = param('configure_track')) {
   track_config($page_settings,$label);
-  return;
+  exit 0;
 }
 
 if (my $label = param('share_track')) {
     track_share($page_settings,$label);
-    return;
+    exit 0;
 }
 
 
@@ -236,28 +236,19 @@ my ($file_action) = grep {/^modify\./} param();
 # NOTE THE EXIT 0 HERE IF THE DUMP IS SUCCESSFUL!
 
 if ((@segments||param('plugin_config')) && $plugin_action eq $CONFIG->tr('Go') && $plugin_type eq 'dumper') {
-   
-  warn "hihihihi\n";
   do_plugin_header(param('plugin'),$page_settings,$cookie);
-  do_plugin_dump(param('plugin'),$segments[0],$page_settings);
-  $m->flush_buffer();
-#  $m->abort();
-  return;
+  do_plugin_dump(param('plugin'),$segments[0],$page_settings) && exit 0
 }
 
 elsif ($plugin_action eq $CONFIG->tr('Go') && 
        $plugin_type eq 'dumper' 
        && $PLUGINS->plugin(param('plugin'))->verb eq ($CONFIG->tr('Import')||'Import') ) {
-
-  warn "bybyby\n";				  
-
-    $m->clear_buffer();
     do_plugin_header(param('plugin'),
 		     $page_settings,
 		     $cookie);
     do_plugin_dump(param('plugin'),
 		   $segments[0],
-		   $page_settings) && return;
+		   $page_settings) && exit 0
 }
 
 ###############################################################################################
@@ -268,7 +259,7 @@ if (my $to_download = (param($CONFIG->tr('Download_file')) ||
 		       ($file_action && param($file_action) eq $CONFIG->tr('Download_file')) && $file)) {
   warn "FILE DOWNLOAD, download = $to_download" if DEBUG;
   do_annotation_file_download($to_download,$page_settings);
-  return;
+  exit 0;
 }
 
 warn "TRACKS = @{$page_settings->{tracks}}" if DEBUG;
@@ -283,7 +274,7 @@ warn "ADJUSTED TRACKS = @{$page_settings->{tracks}}" if DEBUG;
 
 # NOTE: we may exit out on the next statement if the user wants to download a previously-
 # uploaded file
-handle_uploads($page_settings) || return 
+handle_uploads($page_settings) || exit 0 
     unless $CONFIG->section_setting('upload_tracks') eq 'off';
 
 ## UPDATING THE PERSISTENT SETTINGS##############################################################
@@ -297,7 +288,7 @@ print_header(-cookie => $cookies,
 	     -charset=>$CONFIG->tr('CHARSET')
 	     );
 
-if (request_method eq 'HEAD') {return; }
+if (request_method eq 'HEAD') {exit 0}
 
 my $description = $CONFIG->setting('description');
 my $segment;
@@ -804,7 +795,7 @@ sub page_settings {
 	    print ul(li(\@links));
 	}
 	print_bottom($VERSION);
-	return;
+	exit 0;
     }
   }
 

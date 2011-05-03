@@ -80,65 +80,6 @@ sub Cancel {
   return $form;
 }
 
-#------------------------------------------------------------------------
-
-=item public hashref form Clone();
-
-Build a FormEngine object to cancel runs.
-
-=cut
-#------------------------------------------------------------------------
-sub Clone {
-
-  my ($class, $args) = @_;
-
-  my $account = ISGA::Login->getAccount;
-
-  my $form = ISGA::FormEngine->new($args);
-  $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
-
-  my $run = $args->{run};
-
-  my @form =
-    (
-     {
-      templ => 'fieldset',
-      TITLE => 'Clone Details',
-      sub =>
-      [
-       {
-	templ => 'print',
-	TITLE => 'Old Ergatis ID',
-	VALUE => $run->getErgatisKey,
-       },
-       {
-	templ => 'print',
-	TITLE => 'Cloned By',
-	VALUE => $account->getName,
-       },     
-       {
-	templ => 'text',
-	NAME  => 'newid',
-	TITLE => 'New Ergatis Id',
-	ERROR => [ 'not_null', 'digitonly', 'Run::isErgatisPipeline' ]
-       },      
-      ]
-     },
-     { templ => 'hidden',
-       NAME  => 'run',
-       VALUE => $run,
-     }
-    );	     
-  
-  $form->conf( { ACTION => '/submit/Run/Clone',
-		 FORMNAME => 'run_clone',
-		 SUBMIT => 'Clone Run',
-		 sub => \@form } );
-  
-  $form->make;
-  return $form;
-}
-
 1;
 __END__
 

@@ -1,0 +1,17 @@
+<%args>
+	$select_sequence => undef
+	$job => undef
+</%args>
+<%perl> # -*- cperl -*-
+
+return $m->comp('/WorkBench/outage.mas') unless( ISGA::Variable->value('allow_sge_requests') );
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_msa'
+  or $form =  ISGA::FormEngine::WorkBench->MSA(\%ARGS);
+
+return $m->comp('/WorkBench/msa.mas', form => $form, select_sequence => $select_sequence, job => $job);
+
+</%perl>
+

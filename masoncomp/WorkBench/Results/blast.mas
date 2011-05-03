@@ -1,0 +1,30 @@
+<%args>
+	$job
+</%args>
+
+<h1>WorkBench: Blast Output</h1>
+<div class="preview">
+<pre>
+
+<%perl>
+	my $collection = $job->getCollection;
+	my $contents = $collection->getContents;
+	my $list;
+	my $output_file;
+	
+	foreach (@$contents){
+		if ($_->getType->getName eq 'BLAST Search Result'){
+			$output_file = $_;
+		}
+	}
+	open my $fh, '<', $output_file->getPath;
+	while ( <$fh> ) {
+		print $_;
+	}
+	
+</%perl>
+
+</pre>
+</div>
+
+<& right_menu_blast.mas, output_file => $output_file &>

@@ -1,7 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: PipelineConfiguration
-attributes:
-  - { name: Variable, type: ConfigurationVariable, options: [ REQUIRED, UNIQUE ] }
-  - { name: Pipeline, type: GlobalPipeline, options: [ REQUIRED ] }
-  - { name: UserClass, type: UserClass }
-  - { name: Value, type: string, options: [ REQUIRED ] }

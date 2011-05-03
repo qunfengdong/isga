@@ -11,61 +11,61 @@
  <ul id="nav"> 
   <li><a href="/Home">Home</a>
    <ul>
-% if ( $exists and $account->hasGroup($policy_admin) ) {
-    <li><a href="/SiteConfiguration/View">Site Configuration</a></li>
-% }
     <li><a href="/Help/Introduction">Introduction</a></li>
 % if ( ! $exists ) {
     <li><a href="/Account/Request">Request Account</a></li>
+% }
+%#    <li><a href="/News/Recent">ISGA News</a></li>
+% if ( $exists and $account->hasGroup($news_admin)  ) {
+    <li><a href="/News/Create">Create News Item</a></li>
 % }
     <li><a href="/Help/Policies">ISGA Policies</a></li>
     <li><a href="/Help/Acknowledgement">Acknowledgement</a></li>
    </ul>
   </li>
 
-  <li><a href="/Pipeline/List">Build Pipelines</a>
+  <li><a href="/Pipeline/View?pipeline=<% $prok %>">Build Pipelines</a>
    <ul>
     <li><a href="/Help/Tutorial?tab=pipeline">Tutorial</a></li>
-% foreach ( @{$pipelines} ) {
-   <li><a href="/Pipeline/View?pipeline=<% $_ %>"><% $_->getLabel %></a></li>
-% }
-% if ( $account ) {
-%  if ( my $user= ISGA::UserPipeline->exists( CreatedBy => $account, Status => ISGA::PipelineStatus->available() ) ) {
-    <li><a href="/Pipeline/List"><% $user %> Customized Pipelines</a></li>
-%  }
-% }
+%#    <li><a href="/Pipeline/List">Available Pipelines</a></li>
+    <li><a href="/Pipeline/View?pipeline=<% $prok %>">Prokaryotic Annotation</a></li>
    </ul>  
   </li>
 
-
 % if ( $exists ) {
-  <li><a href="/Run/Status?show_shared=1">Monitor Pipelines</a>
+  <li><a href="/Run/Status">Monitor Pipelines</a>
+% } else {
+%#  <li><a href="/Help/Tutorial?tab=run">Monitor Pipelines</a>
+% } 
    <ul>
-    <li><a href="/Run/Status?show_shared=1">Pipeline Status</a></li>
+%#    <li><a href="/Help/Tutorial?tab=run">Tutorial</a></li>
+% if ( $exists ) {
+    <li><a href="/Run/Status">Pipeline Status</a></li>
 %   if ( $account->hasGroup( $run_admin ) ) {
     <li><a href="/Run/AdminList">Administer Runs</a></li>
 %   }
+% }
    </ul>
   </li>
-% }
 
-  <li><a href="/WorkBench/Overview">Toolbox</a>
+
 % if ( $exists ) {
+  <li><a href="/WorkBench/Overview">Toolbox</a>
+% } else {
+%#  <li><a href="/Help/Tutorial?tab=workbench">Toolbox</a>
+% }
    <ul>
+%#    <li><a href="/Help/Tutorial?tab=workbench">Tutorial</a></li>
+% if ( $exists ) {
     <li><a href="/File/BrowseMy">My Files</a></li>
-    <li><a href="/WorkBench/BrowseMy">My Jobs</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>">Blast Search</a></li>
+    <li><a href="/WorkBench/Blast">Blast Search</a></li>
     <li><a href="/WorkBench/GBrowse">Genome Browser</a></li>
     <li><a href="/WorkBench/GenomeFeatureQuery">Database Query</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'NewblerToHawkeye' ) %>">Convert Newbler to Hawkeye</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'CeleraToHawkeye' ) %>">Convert Celera to Hawkeye</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'MiraToHawkeye' ) %>">Convert Mira to Hawkeye</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Consed' ) %>">Convert Newbler For Consed</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'SffToFasta' ) %>">Convert SFF to FASTA</a></li>
-    <li><a href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'PhyloEGGS' ) %>">PhyloEGGS</a></li>
     <li><a href="/WorkBench/Overview">Additional Tools</a></li>
-   </ul>
+% } else {
+    <li><a href="/WorkBench/Overview">Additional ToolBox Home</a></li>
 % }
+   </ul>
   </li>
 
 % if ( $exists ) {
@@ -76,21 +76,6 @@
    </ul>
   </li>
 % }
-
-  <li><a href="/News/Recent">News</a>
-   <ul>
-    <li><a href="/News/Recent">Recent News</a></li>
-% if ( $exists and $account->hasGroup($news_admin)  ) {
-    <li><a href="/News/Create">Create News Item</a></li>
-% }
-   </ul>
-  </li>
-
-  <li><a href="/Help/DownloadISGA">Download</a>
-   <ul>
-    <li><a href="/Help/DownloadISGA">Download ISGA</a></li>
-   </ul>
-  </li>
 
   <li><a href="/Help/Overview">Help</a>
    <ul>
@@ -107,7 +92,7 @@
   </li>
 
 
-% if ( ISGA::Login->exists && $doc && ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
+% if ( ISGA::Login->exists && $doc ) {
   <div id="toggle"><li class="disableWalkthrough"><a class="btn-slide" href="#"><span class="showOrHide"></span></a></li></div>
 % }
  </ul>
@@ -116,11 +101,11 @@
 %#</div>
 
 <%once>
+my $prok = 1;
 
-my $policy_admin = ISGA::Group->new( Name => 'Policy Administrators' );
 my $news_admin = ISGA::Group->new( Name => 'News Administrators' );
-my $run_admin = ISGA::Group->new( Name => 'Run Administrators' ); 
-  
-my $pipelines = ISGA::GlobalPipeline->published();
 
+my $run_admin = ISGA::Group->new( Name => 'Run Administrators' );
+
+#  my $prok = ISGA::GlobalPipeline->new( Name => 'Prokaryotyic Annotation Pipeline' );
 </%once>
