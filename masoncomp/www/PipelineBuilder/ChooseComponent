@@ -2,50 +2,23 @@
 $pipeline_builder
 $cluster
 </%args>
-% my $workflow = $pipeline_builder->getPipeline->getWorkflow($cluster);
-% if( $workflow->getCustomization eq 'Modular' ) {
-
 <%perl>
 my $check_class = $cluster->getName;
 $check_class =~ s/ /_/g;
-$check_class .= "_choose_component";
-
+$check_class .= '_choose_component';
 # check that we have a form cached and it is the correct type
-my $form = $ISGA::WebApp->saved_args->{'form'};
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+
 $form and $form->get_formname() eq $check_class
-  or $form =  ISGA::FormEngine::PipelineBuilder->ChooseComponent(\%ARGS);
+  or $form =  SysMicro::FormEngine::PipelineBuilder->ChooseComponent(\%ARGS);
+
 $pipeline_builder ||= $form->get_input('pipeline_builder');
 </%perl>
 
-<h1 class="component"><%  $cluster->getName %></h1>
-<p class="component"><%  $cluster->getName %> has the following components available.</p>
-<p class="component">Please check the components you wish to run or use the Edit Parameters link to edit that components parameters.</p>
+<h1 class="component">Choose Components</h1>
+<p class="component">The following components are available to be executed under this cluster.</p>
+<p class="component">Please check the components you wish to run.</p>
+
+
 <% $form->get %>
 
-% } elsif ( $workflow->isRequired ) {
-<h1 class="component"><%  $cluster->getName %></h1>
-<p class="component"><%  $cluster->getName %> is a required module and must be run.  Use the Edit Parameters button below to edit its parameters.</p>
-%   my @components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' );
-<& /PipelineBuilder/modal_edit_cluster.mas, pipeline_builder => $pipeline_builder, components => @components, cluster => $cluster &>
-% } else {
-<h1 class="component"><%  $cluster->getName %></h1>
-%   my $status = $pipeline_builder->getWorkflowMask->isActive($cluster) ? 'On' : 'Off';
-%   my $new_status = $status eq 'On' ? 'Off' : 'On';
-
-<p class="component"><%  $cluster->getName %> is currently turned <% lc($status) %>.  Click the <span class="highlight">Toggle <% $new_status %></span> button below to turn the module <% lc($new_status) %>.</p>
-
-%   my $hasParams = 0;
-%   foreach ( @{$cluster->getComponents}){
-%     if (my $builder =  ISGA::ComponentBuilder->new($_) ){
-%       $hasParams = 1;
-%       my @components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' );
-<& /PipelineBuilder/modal_edit_cluster.mas, pipeline_builder => $pipeline_builder, components => @components, cluster => $cluster &>
-<hr /><p class="component"><a id="<% $cluster %>" class="button toggleModule">Toggle <% $new_status %></a>
-%       last;
-%     }
-%   }
-%   unless($hasParams){
-<p class="component">This module does not have any editable parameters.</p>
-<p class="component"><a id="<% $cluster %>" class="button toggleModule">Toggle <% $new_status %></a>
-%   }
-% }

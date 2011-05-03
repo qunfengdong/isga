@@ -1,5 +1,0 @@
-<%init>
-   return if $m->cache_self;
-</%init>
-
-<& /Help/acknowledgement.mas &>

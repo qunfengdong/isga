@@ -33,7 +33,6 @@
   #col1_content ul li p {
     margin: 3px 0 3px 0;
     padding-left: 10px;
-    padding-right: 10px;
   }
 
   #col1_content ul li.title {
@@ -74,9 +73,6 @@
     color : #FF0000;
   }
 
-  #col1_content span{
-    cursor: pointer;
-  }
   /*-------------------------------------------------------------------------*/
 
 

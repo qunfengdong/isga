@@ -1,0 +1,31 @@
+<%args>
+ $form
+</%args>
+
+<h1>Pipeline Builder</h1>
+
+<p>This tool allows you to customize an existing pipeline to meet your
+specific needs. You can remove unwanted clusters and customize
+cutoffs and other options. You can save your pipeline to run on
+additional data sets, and share both the pipeline and results with
+other users.</p>
+
+<p>You can save your new pipeline at any point in the creation
+process, and return later to complete it. You can also revise the
+pipeline after it has been completed.</p>
+
+<p>Before you customize your pipeline, you must choose a name to
+distinguish your pipeline. You may also provide an optional
+description to explain the reasons behind the customization.</p>
+
+<% $form->get %>
+
+<a class="btn-slide disableWalkthrough" href="#">Toggle Tutorial</a>
+
+<div id="WT" class="hidden documentation createPipeline"><div id="WT_arrow_left"></div><div id="WT_close_left">Walkthrough</div><div id="WT_copy">
+Please create a descriptive name for you pipeline.  This name 
+will follow your pipeline through completion.  Also, use the 
+Description box to make any notes that may be helpful to you 
+in the future.  You will be able to edit these details later 
+on at any time during the customization process if necessary.
+</div></div>

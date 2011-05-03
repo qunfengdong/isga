@@ -1,0 +1,9 @@
+<%args>
+ $form
+ $pipeline
+</%args>
+
+<% @_ %>
+
+<h1><% $pipeline->getName %> Configuration</h1>
+<% $form->get %>

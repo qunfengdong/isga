@@ -1,0 +1,11 @@
+<%args>
+ $builder
+</%args>
+
+<h1>Here's Your Pipeline</h1>
+
+<div id="workflow">
+<& update_workflow.mas, builder => $builder &>
+</div>
+
+<a href="/Pipeline/ConfigureClusters?pipeline=<% $builder->getPipeline %>">Continue with these Clusters</a>

@@ -3,8 +3,6 @@
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
 <sys:style type="text/css" media="screen">
   @import "/include/css/jtip.css";
 </sys:style>
@@ -17,8 +15,7 @@
 
 <table width="100%">
 <tr>
-%# <th>Input</th><th>Format</th><th>Modules</th></tr>
- <th>Input</th><th>Format</th></tr>
+ <th>Input</th><th>Format</th><th>Cluster</th></tr>
 % my $counter =0;
 % foreach my $input ( map { $_->getClusterInput } @{$pipeline->getInputs} ) {
 %   my $tr_class = ++$counter % 2 ? "odd" : "even";
@@ -43,12 +40,12 @@
  </td>
 %   my $cluster = $input->getCluster;
 %   my $cname = $cluster->getName;
-%# <td><% $cname %>\
+ <td><% $cname %>\
 
-%# <a class="jTip" id="c<% $cluster %><% $counter %>" name="<% $cname %>" href="/Cluster/GetClusterDescription?cluster=<% $cluster %>">
-%#<span color="#8bbb40" class="sup">?</span>
-%# </a>
-%# </td>
+ <a class="jTip" id="c<% $cluster %><% $counter %>" name="<% $cname %>" href="/Cluster/GetClusterDescription?cluster=<% $cluster %>">
+<span color="#8bbb40" class="sup">?</span>
+ </a>
+ </td>
 </tr>
 % }
 </table>

@@ -2,21 +2,19 @@
 .hidden{display:none;}
 
 #modal_content {
-  z-index: 2000;
-  display: none;
+	display: none;
   position: fixed;
   left: 55%;
   padding: 15px;
-  top:5%;
+	top:10%;
   -webkit-box-shadow: 0px 0px 8px #111;
   background:#FFF;
-  width:455px; /* 400px originally */
-  margin-left:-455px; /* -200px originally */
-  text-align:center;
-  clear:none;
-  -moz-border-radius:10px; 
-  -webkit-border-radius:10px; /* all corners */
-
+	width:425px; /* 400px originally */
+	margin-left:-455px; /* -200px originally */
+	text-align:center;
+	clear:none;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px; /* all corners */
 }
 #modal_content small{font-size:77%;}
 #modal_content div.modal_close{
@@ -58,4 +56,3 @@ div.modal_close {
 }
 #modal_content div.modalCheck,
 #modal_content button.button{ margin: 2px;  }
-

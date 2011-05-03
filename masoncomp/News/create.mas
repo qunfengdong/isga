@@ -1,7 +1,0 @@
-<%args>
- $form
-</%args>
-
-<h1>Create News Entry</h1>
-
-<% $form->get %>

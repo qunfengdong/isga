@@ -2,57 +2,59 @@
  $pipeline_builder
 </%args>
 
-<h1>Build Your Pipeline</h1>
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $pipeline_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-overview.mas");
+<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(jtUpdate);
+
+function jtUpdate() {
+  if($.browser.msie)
+  {
+   $("area.cluster")
+   .hover(function(){JT_IE_area_show(this.href,this.id,this.title,this.coords,'workflow')},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }else{
+   $("area.cluster")
+   .hover(function(){JT_area_show(this.href,this.id,this.alt,this.coords)},function(){$('#JT').remove()})
+   .click(function(){return false});
+  }
 }
-</%perl>
-% my $template = $pipeline_builder->getPipeline;
-<p>
-<strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
-<strong>Started On:</strong> <% $pipeline_builder->getStartedOn->text %>
-% if(defined $pipeline_builder->getDescription && $pipeline_builder->getDescription ne ''){
-<br><strong>Description:</strong> <% $pipeline_builder->getDescription %>
-% }
-</p>
-<p>
-1. Hover your mouse over a module to view a desciption of the programs within that module.<br>
-2. Click on the module you wish to modify to see the actions available for that module.
-</p>
 
+</sys:script>
 
-<div id="workflow">
+<h1>Pipeline Builder Overview</h1>
 
-% my $pipeline = $pipeline_builder->getPipeline;
-<img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
+<p><strong>Pipeline:</strong> <% $pipeline_builder->getName %></p>
+<p><strong>Description:</strong> <% $pipeline_builder->getDescription %></p>
 
-<map name="clusters" >
+<p>Clusters highlighted in green will be executed.</p>
 
-% foreach ( @{ISGA::Workflow->query( Pipeline => $pipeline )} ) {
-%   next if ( (not defined $_->getCoordinates) || ($_->getCoordinates eq '') );
-%   my $cluster = $_->getCluster;
-<area \
-  shape="rect"
-  id="<% $_ ->getCluster %>" \
-  alt="<% $_->getCluster->getName %>" \
-  title="<% $_->getCluster->getName %>" \
-  coords="<% $_->getCoordinates %>" \
-  rel="component_selection" \
-  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
-%   if ($_->getCustomization eq 'IO' ) {
-  class="noborder nofade jTip nolink" \
-%   } else {
-  class="noborder nofade cluster jTip modal" \
-%   }
- >
-% }
-</map>
-</div>
-
-<div id="component_selection" class="hidden">
-</div>
-
+<& draw_workflow.mas, pipeline_builder => $pipeline_builder &>
 
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>
+
+<div id="WT" class="hidden documentation pipelineView"><div id="WT_arrow_right"></div><div id="WT_close_right">Walkthrough</div><div id="WT_copy">
+<p>This is the pipelinebuilder overview page.  Using the toolbox 
+you can edit you pipelines details, select which programs to 
+run, edit program paramenters, view inputs or outputs, cancel 
+your pipelinebuilder, or finalize your pipeline.</p>
+
+<p>Hovering over the image of the pipeline will bring up a tip.  
+This tip contains a description of what is executed in that 
+cluster.  Green clusters are active clusters which will be run, 
+white clusters are inactive cluster which will not be run, 
+yellow clusters are required clusters which must be run, and 
+green striped clusters indicate only a portion of that cluster 
+is being executed.</p>
+
+<p>To continue with this tutorial choose <span class="highlight">
+Select Programs to Run</span> from the toolbox.</p>
+
+<p>Once you are done customizing your pipeline use the 
+toolbox and choose <span class="highlight">Finalize Pipeline<span class="highlight">.</p>
+</div></div>

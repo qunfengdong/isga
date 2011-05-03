@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Dictionary
+class: FileFormat
+attributes:
+  - { name: Extension, type: string }
+  - { name: Help, type: string }

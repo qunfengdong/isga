@@ -1,0 +1,29 @@
+<%args>
+  @pipelines
+</%args>
+
+<h1>Public Pipelines</h1>
+
+<p>The following pipelines are available to all users.</p>
+
+
+% foreach ( @pipelines ) {
+<h3><% $_->getName %></h3>
+
+<% $_->getDescription %>
+% if($_->getName eq 'Complete Prokaryote Annotation Pipeline'){ 
+        <p class='unavailable'><a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Details</a> <strong> Note: </strong> This is not available in the current release</p>
+% } else{
+        <p><a class="button" href="/Pipeline/View?pipeline=<% $_ %>">View Details</a></p>
+% }
+% }
+<a class="btn-slide disableWalkthrough" href="#">Toggle Tutorial</a>
+<div id="WT" class="hidden documentation pipelineList"><div id="WT_arrow_left"></div><div id="WT_close_left">Walkthrough</div><div id="WT_copy">
+<p>Here is a list of available pipelines available to 
+every user.  The only pipeline currently available 
+is the Prokaryotic Annotation Pipeline.  Please 
+click on the <span class="highlight">View Details</span> 
+Button to view the pipeline in greater detail and begin 
+customizing it.</p>
+</div></div>
+

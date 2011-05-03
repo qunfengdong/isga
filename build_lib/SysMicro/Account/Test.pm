@@ -1,10 +1,10 @@
-package ISGA::Account::Test;
+package SysMicro::Account::Test;
 #------------------------------------------------------------------------
 =pod
 
 =head1 NAME
 
-ISGA::Account::Test - test methods for the account class.
+SysMicro::Account::Test - test methods for the account class.
 
 =head1 METHODS
 
@@ -29,14 +29,14 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA;
-#use ISGA::Objects;
+use SysMicro;
+#use SysMicro::Objects;
 
-use ISGA::Test::Transactions;
+use SysMicro::Test::Transactions;
 
-use base qw(Test::Class ISGA::Test::Transactions);
+use base qw(Test::Class SysMicro::Test::Transactions);
 
-my $class = 'ISGA::Account';
+my $class = 'SysMicro::Account';
 
 #========================================================================
 
@@ -63,7 +63,7 @@ sub create : Test(2) Transaction {
   lives_ok { $new_account = $class->create( Email => 'test@test.edu', Name => 'Test 123',
                                             Password => 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
                                             Institution => 'AB School', IsPrivate => 'TRUE',
-                                            Status => ISGA::PartyStatus->new('Active') ) };
+                                            Status => SysMicro::PartyStatus->new('Active') ) };
 
   # required parameters are checked
   throws_ok { $class->create( Email => 'test@test.edu' ) } 'X::API::Parameter::Missing';
@@ -158,7 +158,6 @@ sub _2_attributes : Test(17) {
   is( $class->_table('Institution'), 'party' );
   is( $class->_table('IsPrivate'), 'party' );
   is( $class->_table('IsWalkthroughDisabled'), 'party' );
-  is( $class->_table('IsWalkthroughHidden'), 'party' );
 
   is( $class->_column('Id'), 'party_id' );
   is( $class->_column('PartyPartition'), 'partypartition_id' );
@@ -167,7 +166,7 @@ sub _2_attributes : Test(17) {
   is( $class->_column('Institution'), 'party_institution' );
   is( $class->_column('IsPrivate'), 'party_isprivate' );
   is( $class->_column('IsWalkthroughDisabled,'), 'party_iswalkthroughdisabled' );
-  is( $class->_column('IsWalkthroughHidden,'), 'party_iswalkthroughhidden' );
+
 
   is( $class->_table('Email'), 'account' );
   is( $class->_table('Password'), 'account' );

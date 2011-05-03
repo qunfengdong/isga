@@ -10,7 +10,7 @@ $(document).ready(JT_init);
 
 function JT_init(){
 	       $("a.jTip")
-//	   .hover(function(){JT_show(this.href,this.id,this.name)},function(){$('#JT').remove()})
+		   .hover(function(){JT_show(this.href,this.id,this.name)},function(){$('#JT').remove()})
            .click(function(){return false});	   
 }
 

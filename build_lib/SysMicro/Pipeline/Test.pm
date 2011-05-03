@@ -1,10 +1,10 @@
-package ISGA::Pipeline::Test;
+package SysMicro::Pipeline::Test;
 #------------------------------------------------------------------------
 =pod
 
 =head1 NAME
 
-ISGA::Pipeline::Test - test methods for the pipeline class.
+SysMicro::Pipeline::Test - test methods for the pipeline class.
 
 =head1 METHODS
 
@@ -24,10 +24,10 @@ use Test::Deep qw(cmp_deeply bag);
 use Test::Exception;
 use Test::More;
 
-use ISGA;
-use ISGA::Objects;
+use SysMicro;
+use SysMicro::Objects;
 
-use ISGA::Test::Transactions;
+use SysMicro::Test::Transactions;
 
 use base 'Test::Class';
 
@@ -50,7 +50,7 @@ Test object methods and attribute to column mappings.
 #------------------------------------------------------------------------
 sub _0_base : Test( 43 ) {
 
-  my $class = 'ISGA::Pipeline';
+  my $class = 'SysMicro::Pipeline';
 
   use_ok( $class );  # a gimme
 
@@ -95,6 +95,7 @@ sub _0_base : Test( 43 ) {
   # methods defined in .method  
   can_ok( $class, 'stage' );
   can_ok( $class, 'writeLayoutXML' );
+  can_ok( $class, 'filterInputs' );
 
   # test attributes
   is( $class->_table(), 'pipeline' );

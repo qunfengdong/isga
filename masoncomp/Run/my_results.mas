@@ -3,16 +3,23 @@
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
 <sys:style type="text/css" media="screen">
   @import "/include/css/jtip.css";
 </sys:style>
 
-<sys:style type="text/css" media="all">
- @import "/include/css/jquery.treeTable.css";
-</sys:style>
-<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
+
+<sys:script type="text/javascript">
+  $(document).ready(function(){
+% foreach (@runs) {
+   updateOutput(<% $_ %>,0);
+% }
+  });
+
+  function updateOutput(id,all) {
+    $("#r"+id+"").empty();
+    $("#r"+id+"").load("/Run/GetOutputs?run="+id+"&all="+all+"",JT_init);
+  }
+</sys:script>
 
 
 <h1>My Results</h1>
@@ -20,19 +27,6 @@
 <p>Browse and download your results organized by the run that produced them.</p>
 
 
-<div class="list">
-
-
 % foreach my $run ( @runs ) {
-
-<sys:script type="text/javascript">
-$(document).ready(function()  {
-  $("#run-results-1").treeTable();
-});
-</sys:script>
-
-
-<& /RunOutput/print_table.mas, run => $run, embed => 0 &>
+<div id="r<% $run %>" class="list"></div>
 % }
-
-</div>

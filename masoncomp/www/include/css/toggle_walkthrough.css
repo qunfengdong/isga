@@ -3,11 +3,11 @@
 	background-repeat: no-repeat;
 	background-position: left top;
 	position: absolute;
-	z-index:1;
-	left:-17px;
-	height:27px;
-	width:13px;
-        top:-4px;
+	z-index:1601;
+	left:-14px;
+	height:23px;
+	width:10px;
+        top:-5px;
 }
 
 #WT_arrow_right{
@@ -15,7 +15,7 @@
 	background-repeat: no-repeat;
 	background-position: left top;
 	position: absolute;
-	z-index:1;
+	z-index:1601;
 	height:23px;
 	width:11px;
         top:-5px;
@@ -26,7 +26,7 @@
         background-repeat: no-repeat;
         background-position: left top;
         position: absolute;
-        z-index:1;
+        z-index:1601;
         height:23px;
         width:11px;
         top:-2px;
@@ -34,16 +34,9 @@
 
 #WT {
 	position: absolute;
-	z-index:2;
+	z-index:2601;
 	border: 4px solid #D8E47E;
 	background-color: #fff;
-}
-
-#WT_confirmed {
-        position: relative;
-        z-index:2000;
-        border: 4px solid #D8E47E;
-        background-color: #fff;
 }
 
 #WT_copy{
@@ -68,7 +61,6 @@
 	padding-top: 2px;
 	font-weight:bold;
         font-size: 15px;
-        height: 18px;
 }
 
 #WT_close_right{
@@ -79,17 +71,6 @@
 	padding-top: 2px;
 	font-weight:bold;
         font-size: 15px;
-        height: 18px;
-}
-
-#WT_close_left span,
-#WT_close_right span{
-        float: left;
-}
-
-#WT_close_left .btn-hide,
-#WT_close_right .btn-hide{
-        float: right;
 }
 
 #WT_close_right_clickme{
@@ -103,7 +84,6 @@
 
 #WT_copy p{
         margin: 10px 0;
-	text-align: justify;
 }
 
 #WT_copy img{
@@ -112,25 +92,27 @@
 }
 
 span.highlight{
-        color: #CC9900;
-       /*font-size: 17px;*/
+        color: #2EA7C2;
+        font-size: 17px;
 }
 
 /* Individual Pages */
 div.index{
-   top: -140px;
-   left: 165px;
-   width: 55%;
+   top: -37px;
+   left: 155px;
 }
 div.pipelineList{
-   top: 190px;
-   left: 410px;
-   width: 500px;
+   top: 305px;
+   left: 310px;
+   width: 690px;
 }
 div.pipelineView{
-   position: relative;
-   background-color: #FFFFFF;
-   border: 4px solid #D8E47E;
+   top: 5px;
+   right: 13px;
+   width: 250px;
+}
+.pipelineView div#WT_arrow_right{
+   right: -15px;
 }
 
 div.pipelineViewClickMe{
@@ -139,15 +121,8 @@ div.pipelineViewClickMe{
   top: 385px;
   right: 13px;
 }
-
 .pipelineViewClickMe div#WT_arrow_right_clickme{
    right: -13px;
-}
-
-div.builderView{
-   position: relative;
-   border: 4px solid #D8E47E;
-   background-color: #fff;
 }
 
 div.runPipelineClickMe{
@@ -162,45 +137,41 @@ div.runPipelineClickMe{
 
 
 div.createPipeline{
-   top: 225px;
+   top: 270px;
    left: 650px;
-   width: 340px;
+   width: 350px;
 }
 
 div.createRun{
-   top: 225px;
+   top: 240px;
    left: 650px;
    width: 350px;
 }
 
 
 div.editWorkflow{
-/*   top: 525px; */
-   position: relative;
-   top: 10px;
+   top: 525px;
    width: 93%;
-   border: 4px solid #D8E47E;
-   background-color: #fff;
 }
 
 div.editWorkflowClickMe{
   position: absolute;
   border: 4px solid #D8E47E; 
-  top: 350px;
-  left: 615px;
+  top: 280px;
+  left: 428px;
   border-bottom-width: 0;
 }
 
 div.editWorkflowClickMe2{
   position: absolute;
   border: 4px solid #D8E47E;  
-  top: 310px;
-  left: 125px;
+  top: 355px;
+  left: 320px;
   border-bottom-width: 0;
 }
 div.viewClusters{
-   top: 202px;
-   left: 320px;
+   top: 115px;
+   left: 270px;
 /*   width: 350px;*/
 }
 div.editCluster{
@@ -214,8 +185,8 @@ div.editComponent{
    background-color: #fff;
 }
 div.success{
-   top: 100px;
-   left: 275px;
+   top: 230px;
+   left: 325px;
    width: 690px;
 }
 div.runView{

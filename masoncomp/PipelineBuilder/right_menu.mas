@@ -1,10 +1,11 @@
 <%args>
  $pipeline_builder
 </%args>
+% use SysMicro::Site;
 <sys:script type="text/javascript">
   $(document).ready(confirm);
   function confirm() {
-  $(".finalize")
+  $("a.finalize")
    .click(
      function(){
       $.ajax({
@@ -15,7 +16,7 @@
       });
       return false;
      });
-  $(".cancel")
+  $("a.cancel")
    .click(
      function(){
       $.ajax({
@@ -42,6 +43,9 @@ $(document).ready(sectionHighlight);
 function sectionHighlight() {
   var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
   var url = window.location.href;
+  if (url.match(/PipelineBuilder\/EditCluster/) || url.match(/PipelineBuilder\/EditComponent/)){
+      url = "<% SysMicro::Site->getBaseURI  %>PipelineBuilder/ViewClusters?pipeline_builder=<% $pipeline_builder %>";
+  }
   for(var i = 0; i < menuLinks.length; i++){
     if(url == menuLinks[i].href)
     {
@@ -64,26 +68,34 @@ function sectionHighlight() {
 
 <sys:rightmenu>
 <ul>
-<li class="title">Pipeline Customization Tools</li>
+<li class="title">Pipeline Builder Tools</li>
 
-<li class="rmbutton pointer"><a href="Overview?pipeline_builder=<% $pipeline_builder %>">Overview</a></li>
-<li class="pointer" onclick="window.location='Overview?pipeline_builder=<% $pipeline_builder %>'"><p>Return to the pipeline overview page, where you can view details and your current workflow.</p></li>
+<li class="rmbutton"><a href="Overview?pipeline_builder=<% $pipeline_builder %>">Overview</a></li>
+<li><p>Return to the pipeline overview page, where you can view details and your current workflow.</p></li>
 
-<li class="rmbutton pointer"><a href="EditDetails?pipeline_builder=<% $pipeline_builder %>">Edit Pipeline Name and Description</a></li>
-<li class="pointer" onclick="window.location='EditDetails?pipeline_builder=<% $pipeline_builder %>'"><p>Edit the name or description for the pipeline</p></li>
+<li class="rmbutton"><a href="EditDetails?pipeline_builder=<% $pipeline_builder %>">Edit Details</a></li>
+<li><p>Edit the name or description for the pipeline</p></li>
 
-<li class="rmbutton pointer"><a href="ViewInputsOutputs?pipeline_builder=<% $pipeline_builder %>">View Inputs and Outputs</a></li>
-<li class="pointer" onclick="window.location='ViewInputsOutputs?pipeline_builder=<% $pipeline_builder %>'"><p>The files you will need to upload for your pipeline depend on the programs you have chosen to run. This Tool will allow you to view those inputs.  Also view the files that your currently configuration will generate as output.</p></li>
+<li class="rmbutton"><a href="ViewInputs?pipeline_builder=<% $pipeline_builder %>">View Input Requirements</a></li>
+<li><p>The files you will need to upload for your pipeline depend on the programs you have chosen to run. This Tool will allow you to view those inputs.</p></li>
 
-<span class="finalize modal" rel="confirm_div">
+<li class="rmbutton"><a  href="ViewOutputs?pipeline_builder=<% $pipeline_builder %>">View Pipeline Outputs</a></li>
+<li><p>View the files that your currently configuration will generate as output.</p></li>
+
+<li class="rmbutton"><a href="EditWorkflow?pipeline_builder=<% $pipeline_builder %>">Select Programs To Run</a></li>
+<li><p>Choose the programs you want to run from a graphic representing the pipline.</p></li>
+
+<li class="rmbutton"><a href="ViewClusters?pipeline_builder=<% $pipeline_builder %>">Edit Program Parameters</a></li>
+<li><p>View and change required and optional programs for the programs part of your pipeline.</p></li>
+
 <li class="rmbutton"><a class="finalize modal" rel="confirm_div" href="#">Finalize Pipeline</a></li>
 <li><p>Create a pipeline with the settings you have selected.</p></li>
-</span>
 
-<span class="cancel modal" rel="confirm_div">
 <li class="rmbutton"><a class="cancel modal" rel="confirm_div" href="#">Cancel Pipeline</a></li>
-<li><p>Cancel pipeline customization and remove from your Pipeline.</p></li>
-</span>
+<li><p>Cancel pipeline configuration and remove from your Pipeline Builders.</p></li>
+
+<li class="rmbutton disableWalkthrough"><a class="btn-slide" href="#">Toggle Tutorial</a></li>
+<li class="disableWalkthrough"><p>Toggle the walkthrough guide for building a custom pipeline.</p></li>
 
 </ul>
 </sys:rightmenu>

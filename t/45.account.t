@@ -5,6 +5,6 @@ use strict;
 
 use lib 'build_lib';
 
-use ISGA::Account::Test;
+use SysMicro::Account::Test;
 
 Test::Class->runtests;

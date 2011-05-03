@@ -1,96 +1,11 @@
 <%args>
  $run_builder
 </%args>
-
-% my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
-% my $account = ISGA::Login->getAccount;
-% my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', UserClass => $account->getUserClass);
-% my $runs = ISGA::Run->getCurrentRunCount($account);
-
-% my $has_run_parameters = $run_builder->hasRunParameters();                    
-<sys:rightmenu>
-% my $missing_inputs = $run_builder->getMissingRequiredInputs;
-% my $missing_params = $run_builder->hasUnconfiguredParameters;
-
-%# things custom to this pipeline.
-
-% my $run_parameter_name = 'Organism Information';
-
-
-<ul>
-<li class="title">Provide <% $run_parameter_name %></li>
-<li class="rmbutton pointer"><a href="View?run_builder=<% $run_builder %>">View Summary</a></li>
-<li class="pointer" onclick="window.location='View?run_builder=<% $run_builder %>'">\
-<p>View a summary of the details, parameters, and inputs for this run builder.</p></li>
-
-% if ( $has_run_parameters ) {
-
-
-%   if ( $missing_params ) {
-<li class="rmbutton pointer"><a href="EditParameters?run_builder=<% $run_builder %>">Provide <% $run_parameter_name %></a></li>
-%   }else{
-<li class="rmbutton pointer"><a href="EditParameters?run_builder=<% $run_builder %>">Edit <% $run_parameter_name %></a></li>
-%   }
-<li class="pointer" onclick="window.location='EditParameters?run_builder=<% $run_builder %>'"><p>Set parameters specific to the data you have uploaded.</p></li>
-% }
-
-<span class="selectInputs modal" rel="modal_div">
-% if ( $missing_inputs ) {
-<li class="rmbutton"><a class="modal selectInputs" rel="modal_div" href="#">Provide Input Data</a></li>
-% }else{
-<li class="rmbutton"><a class="modal selectInputs" rel="modal_div" href="#">Edit Input Data</a></li>
-%}
-<li><p>Upload or select input data for the submission.</p></li>
-</span>
-
-<li class="rmbutton pointer"><a href="EditDetails?run_builder=<% $run_builder %>">Edit Run Name or Description</a></li>
-<li class="pointer" onclick="window.location='EditDetails?run_builder=<% $run_builder %>'"><p>Edit the name or description for the run.</p></li>
-
-<li class="title">Submission Tools</li>
-
-%
-
-% if ( $missing_inputs or $missing_params or ! $accepting_jobs or ($runs >= $quota) ) {
-<li class="rmbutton disabled">Submit Run</li>
-<li class="disabled">\
-%   if ( ! $accepting_jobs ) {
- <p>ISGA is currently not accepting new jobs.  Please see the latest news for more information.</p>
-%   }elsif( $runs >= $quota ){
-<p>You are currently at your quota for the allowable number of simultaneous pipeline runs.</p>
-%   } else {
-%   if ( $missing_params ) {
- <p>You have not provided the organism information for this submission.</p>
-%   }
-%   if ( $missing_inputs ) {
- <p>You are missing <% $missing_inputs %> required input file<% $missing_inputs > 1 ? 's' : '' %>.</p>
-%   }
-%   }
-</li>
-% } else {
-<span class="submit modal" rel="modal_div">
-<li class="rmbutton"><a class="modal submit" rel="modal_div" href="#">Submit Run</a></li>
-<li><p>Submit the run for execution.</p></li>
-</span>
-% }
-
-<span class="cancel modal" rel="modal_div">
-<li class="rmbutton"><a class="cancel modal" rel="modal_div" href="#">Cancel Run</a></li>
-<li><p>By canceling this run, you will lose your file selections, but any uploaded files will remain in the system.</p></li>
-</span>
-
-</ul>
-</sys:rightmenu>
-
-<div href="#" class="modal" id="modal_div" class="hidden">
-</div>
-
-%# javascript
-
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
 <sys:script type="text/javascript">
   $(document).ready(confirm);
   function confirm() {
-  $(".cancel")
+  $("a.cancel")
    .click(
      function(){
       $.ajax({
@@ -101,19 +16,18 @@
       });
       return false;
      });
-  $(".selectInputs")
+  $("a.selectInputs")
    .click(
      function(){
       $.ajax({
         url: "ViewInputs?run_builder=<% $run_builder %>",
         success: function(html){
-          $('#modal_content').css({ width:"575px" });
           $('#modal_content').append(html);
         }
       });
       return false;
      });
-  $(".submit")
+  $("a.submit")
    .click(
      function(){
       $.ajax({
@@ -138,6 +52,7 @@ $(document).ready(function() {
   });
 });
 </sys:script>
+
 
 <sys:script type="text/javascript">
 $(document).ready(modalUpdate);
@@ -173,3 +88,53 @@ function sectionHighlight() {
   }
 }
 </sys:script>
+
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<li class="rmbutton"><a href="View?run_builder=<% $run_builder %>">View Summary</a></li>
+<li><p>View a summary of the details, parameters, and inputs for this run builder.</p></li>
+
+<li class="rmbutton"><a href="EditDetails?run_builder=<% $run_builder %>">Edit Details</a></li>
+<li><p>Edit the name or description for the run.</p></li>
+
+<li class="rmbutton"><a href="EditParameters?run_builder=<% $run_builder %>">Edit Parameters</a></li>
+<li><p>Set parameters specific to the data you have uploaded.</p></li>
+
+<li class="rmbutton"><a class="modal selectInputs" rel="modal_div" href="#">Select Inputs</a></li>
+<li><p>Return to the run overview page, where you can view and edit input selections for the run.</p></li>
+
+<li class="rmbutton"><a href="UploadFile?run_builder=<% $run_builder %>">Upload File</a></li>
+<li><p>Upload a file for this run.</p></li>
+
+% my $missing_inputs = $run_builder->getMissingRequiredInputs;
+% my $missing_params = $run_builder->hasUnconfiguredParameters;
+
+% if ( $missing_inputs or $missing_params ) {
+<li class="rmbutton disabled">Submit Run</li>
+<li class="disabled">\
+%   if ( $missing_inputs ) {
+ <p>You are missing <% $missing_inputs %> required input file<% $missing_inputs > 1 ? 's' : '' %>.</p>
+%   }
+%   if ( $missing_params ) {
+ <p>You have not configured the parameters for this run.</p>
+%   }
+</li>
+% } else {
+<li class="rmbutton"><a class="modal submit" rel="modal_div" href="#">Submit Run</a></li>
+<li><p>Submit the run for execution.</p></li>
+% }
+
+<li class="rmbutton"><a class="cancel modal" rel="modal_div" href="#">Cancel Run</a></li>
+<li><p>By canceling this run, you will lose your file selections, but any uploaded files will remain in the system.</p></li>
+
+<li class="rmbutton disableWalkthrough"><a class="btn-slide" href="#">Toggle Tutorial</a></li>
+<li class="disableWalkthrough"><p>Toggle the walkthrough guide for running a pipeline.</p></li>
+
+</ul>
+</sys:rightmenu>
+
+<div id="modal_div" class="hidden">
+</div>

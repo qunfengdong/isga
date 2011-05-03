@@ -7,52 +7,47 @@ $(document).ready(sectionHighlight);
 function sectionHighlight() {
   var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
   var url = window.location.href;
-  
   for(var i = 0; i < menuLinks.length; i++){
-    if(url == menuLinks[i].href){
+    if(url == menuLinks[i].href)
+    {
       var link = menuLinks[i];
       var li = link.parentNode;
       li.style.backgroundColor = "#D8E47C";
+  if($.browser.msie)
+  {
+      var nextLi = li.nextSibling;
+      nextLi.style.backgroundColor = "#D8E47C";
+  }else{
+      var nextLi = li.nextSibling.nextSibling;
+      nextLi.style.backgroundColor = "#D8E47C";
+  }
     }
   }
 }
 </sys:script>
-<sys:script type="text/javascript" src="/include/js/menu.js"></sys:script>
-
-% my $exists = ISGA::Login->exists;
-% my $available = $pipeline->getGlobalTemplate->getStatus->isAvailable();
-
-% my @pipelines = @{ISGA::UserPipeline->query( CreatedBy => ISGA::Login->getAccount, Template => $pipeline )};
-% my @runs = @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $pipeline )};
-% my @versions = @{ISGA::GlobalPipeline->query( Status => ISGA::PipelineStatus->new( Name => 'Available' ), Name => $pipeline->getName )};
 
 <sys:rightmenu>
 <ul>
 <li class="title">Pipeline Tools</li>
 
-% if ( $exists && $available ) {
-<li class="rmbutton pointer"><a href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>">Run Pipeline</a></li>
-<li class="pointer" onclick="window.location='/submit/RunBuilder/Create?pipeline=<% $pipeline %>'">
-% } else {
-<li class="rmbutton disabled">Run Pipeline</li>
-<li class="disabled">
-% }
-<p>Run this pipeline with \
-% if ( $pipeline->isa( 'ISGA::GlobalPipeline' ) ) {
-default parameters. \
-% } else {
-your customized settings.\
-% }
-</p>
+% my $exists = SysMicro::Login->exists;
 
-% if ( ! $exists ) {
-<p> You must <a href="#" rel='modal_hidden' class="modal">Login</a> to run this pipeline.</p>
-% }
-</li>
+<li class="rmbutton"><a href="View?pipeline=<% $pipeline %>">View Pipeline</a></li>
+<li><p>View the name, description and graphical representation of the pipeline.</p></li>
 
-% if ( $exists && $available ) {
-<li class="rmbutton pointer"><a href="/submit/PipelineBuilder/Create?pipeline=<% $pipeline %>">Customize Pipeline</a> </li>
-<li  class="pointer" onclick="window.location='/submit/PipelineBuilder/Create?pipeline=<% $pipeline %>'">
+<li class="rmbutton"><a href="ViewInputs?pipeline=<% $pipeline %>">View Pipeline Inputs</a></li>
+<li><p>View the required and any optional inputs for this pipeline.</p></li>
+
+<li class="rmbutton"><a  href="ViewOutputs?pipeline=<% $pipeline %>">View Pipeline Outputs</a></li>
+<li><p>View the files that this pipeline generates as output.</p></li>
+
+<li class="rmbutton"><a href="ViewClusters?pipeline=<% $pipeline %>">View Parameters</a></li>
+<li><p>View details of programs that will be executed and what
+parameters they will be called with.</p></li>
+
+% if ( $exists ) {
+<li class="rmbutton"><a href="/PipelineBuilder/Create?pipeline=<% $pipeline %>">Customize Pipeline</a> </li>
+<li>
 % } else {
 <li class="rmbutton disabled">Customize Pipeline</li>
 <li class="disabled">
@@ -60,52 +55,38 @@ your customized settings.\
 <p>Customize the programs and parameters used in this pipeline.</p>
 
 % if ( ! $exists ) {
-<p> You must <a href="#" rel='modal_hidden' class="modal">Login</a> to customize this pipeline.</p>
+<p> You must <a href="#" class="btn-slide">login</a> to customize this pipeline.</p>
 % }
 
 </li>
-<li class="title">Pipeline Documentation</li>
-<li class="rmbutton"><a href="View?pipeline=<% $pipeline %>">View Pipeline</a></li>
-<li class="rmbutton"><a href="ViewInputsOutputs?pipeline=<% $pipeline %>">View Pipeline Inputs and Outputs</a></li>
-  <ul id="menu_<% $_ %>" class="menu collapsible rmbutton">
-%  if(scalar @versions > 0){
-    <li class="rmbutton">
-      <a href="#">> View Old Versions</a>
-      <ul>
-%    foreach my $ver (@versions){
-        <li class="rmbutton"><a href="/Pipeline/View?pipeline=<% $ver %>"><% $ver->getLabel %></a></li>
-%    }
-      </ul>
-    </li>
-%  }
-%  if ( $exists ) {
-    <li class="rmbutton">
-%    if (scalar @pipelines < 1) {
-        <a href="#">You Have Not Customized This Pipeline</a>
-%    }else{
-      <a href="#">> You Have <% scalar @pipelines %> Customized Pipeline(s)</a>
-      <ul>
-%      foreach my $userpipeline (@pipelines){
-        <li class="rmbutton"><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %></a></li>
-%        push(@runs, @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $userpipeline )});
-%      }
-      </ul>
-%    }
-    </li>
-    <li class="rmbutton">
-%    if (scalar @runs < 1) {
-        <a href="#">You Have Not Run This Pipeline</a>
-%    }else{
-      <a href="#">> Your <% scalar @runs %> Pipeline Run(s)</a>
-      <ul>
-%      foreach my $userrun (@runs){
-        <li class="rmbutton"><a href="/Run/View?run=<% $userrun %>"><% $userrun->getName %></a></li>
-%      }
-      </ul>
-%    }
-    </li>
-%  }
-    <li class="rmbutton pointer"><a href="/Pipeline/List">View All ISGA Pipelines</a></li>
-  </ul>
+
+
+% if ( $exists) {
+<li class="rmbutton"><a href="/RunBuilder/Create?pipeline=<% $pipeline %>">Run Pipeline</a></li>
+<li>
+% } else {
+<li class="rmbutton disabled">Run Pipeline</li>
+<li class="disabled">
+% }
+<p>Run this pipeline with \
+% if ( $pipeline->isa( 'SysMicro::GlobalPipeline' ) ) {
+default parameters. \
+% } else {
+your customized settings.\
+% }
+</p>
+
+% if ( ! $exists ) {
+<p> You must <a href="#" class="btn-slide">login</a> to run this pipeline.</p>
+% }
+
+</li>
+
+% if ( $exists ) {
+ <li class="rmbutton disableWalkthrough"><a class="btn-slide" href="#">Toggle Tutorial</a></li>
+ <li class="disableWalkthrough"><p>Toggle the walkthrough guide for building a custom pipeline.</p></li>
+% }
+
+
 </ul>
 </sys:rightmenu> 

@@ -1,10 +1,10 @@
-package ISGA::Test::Transactions;
+package SysMicro::Test::Transactions;
 #------------------------------------------------------------------------
 =pod
 
 =head1 NAME
 
-ISGA::Test::Transactions - provides Transaction attribute for test
+SysMicro::Test::Transactions - provides Transaction attribute for test
 methods so that tests are performed in a database transaction that is
 aborted after completion.
 
@@ -36,8 +36,8 @@ sub Transaction :ATTR {
 
   # rewrite the original subroutine to be performed in a transaction that is rolled back
   *{$subname} = sub {
-    eval { ISGA::DB->begin_work(); $referent->(@_); };
-    ISGA::DB->rollback();
+    eval { SysMicro::DB->begin_work(); $referent->(@_); };
+    SysMicro::DB->rollback();
   }
 }
 

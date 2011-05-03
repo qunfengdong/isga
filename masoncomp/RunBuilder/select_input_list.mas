@@ -2,16 +2,18 @@
  $run_builder
  $form
 </%args>
-<sys:style type="text/css" media="screen">
-  @import "/include/css/extra-wide-modal.css";
-</sys:style>
-<h1>Submission Builder: Provide Input Data</h1>
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $run_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-select-input-list.mas");
-}
-</%perl>
+
+<h1>Run Builder: Select Input List</h1>
+
+<div class="hidden documentation editRunParameters"><div id="WT_close_right">Walkthrough</div><div id="WT_copy">
+In this section, you choose what input(s) you would like to use 
+for this specific File Type and File Format.  To select a file, 
+highlight it by clicking on the file in the selection box.  It 
+is possible to use multiple files as input for this File Type.  
+To do so, hold down the "ctrl" key and click on your files to 
+select them.
+</div></div>
 
 <% $form->get %>
+
 <& right_menu.mas, run_builder => $run_builder &>

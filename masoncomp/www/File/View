@@ -4,21 +4,10 @@
 
 <%perl>
 
-# permissions are a bit complicated, let someone view this file if any of the following is true
-
-# they are an admin
-#
-# they own the file
-#
-# the file has been shared with them
-#
-# the file is output of a run that has been shared with them
-ISGA::Login->getAccount->mayReadFileResource($file) or X::User::Denied->throw();
+# make sure this is my file.
+$file->getCreatedBy == SysMicro::Login->getAccount 
+  or X::User::Denied->throw();
 
 </%perl>
 
 <& /File/view.mas, file => $file &>
-
-<%once>
-my $admin = ISGA::Group->new(Name => 'Run Administrators');
-</%once>

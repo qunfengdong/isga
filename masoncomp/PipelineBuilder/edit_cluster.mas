@@ -1,47 +1,31 @@
 <%args>
  $components
  $pipeline_builder
- $cluster
 </%args>
 
-<%perl>
-my $noParams;
-my $wf_mask = $pipeline_builder->getWorkflowMask();
-foreach ( @{$components}){
-  if ( my $builder = ISGA::ComponentBuilder->new($_) ){
-    if ( $builder->{PipelineBuilder} ){
-</%perl>
-
+<h1>Pipeline Builder: Cluster Components</h1>
+<h4>The following components have parameters available to be changed.  
+Please choose a component and proceed.</h4>
+% my $disabled_components = $pipeline_builder->getWorkflowMask->getDisabledComponents;
+%foreach ( @{$components}){
+%  if ( SysMicro::ComponentBuilder->new($_)){
+% my $builder = SysMicro::ComponentBuilder->new($_);
 <p><a href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>"><% $_->getName %></a><br>
-
-%     if ( ! $wf_mask->isActive($_) ) {
-<em class="red">You have disabled this analysis.</em><br>
-%     }
+%if(defined ${$disabled_components}{$_->getErgatisName}){
+<em class="red">You have disabled this component.</em><br>
+%}
 <% $builder->getComponentDescription  %>
 </p>
-<%perl>
-    } else {
-      push(@{$noParams}, $_);
-    }
-  }
-}
-
-foreach ( @{$noParams}){
-  my $builder = ISGA::ComponentBuilder->new($_);
-</%perl>
-<p><% $_->getName %><br>
-<em class="red">Has no parameters to be set.</em><br>
-<% $builder->getComponentDescription  %>
-</p>
-
+%}
 %}
 
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $pipeline_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-edit-cluster.mas");
-}
-</%perl>
+<div id="WT" class="hidden documentation editCluster"><div id="WT_close_right">Walkthrough</div><div id="WT_copy">
+<p>If you are following along with the walkthrough, 
+this is the page for the Gene Prediction cluster.  
+Here you can choose to edit parameters for Glimmer3 
+First Pass or Glimmer3 Refinement Pass.  Click on 
+<span class="highlight">Glimmer3 First Pass</span> 
+to continue this walkthrough.</p>
+</div></div>
 
-</div>
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>

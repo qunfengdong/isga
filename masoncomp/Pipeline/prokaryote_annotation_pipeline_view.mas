@@ -1,0 +1,22 @@
+<%args>
+ $pipeline
+</%args>
+
+<h1><% $pipeline->getName %></h1>
+
+<p>Lots of pipeline details. It does all this stuff:</p>
+<img src="<% $pipeline->getImage %>">
+
+<div id="WT" class="hidden documentation pipelineView"><div id="WT_arrow_right"></div><div id="WT_close_right">Walkthrough</div><div id="WT_copy">
+<p>Here is the overview page for this pipeline.  You will 
+notice several tools allowing you to view the current 
+parameters, view the required inputs, view the produced 
+outputs, run the pipeline, or customize the pipeline.  
+Feel free to view the paramenters, inputs and outputs now.  </p>
+<p>To proceed with this walkthrough, click on the <span class="highlight">
+Customize Pipeline</span> option now.</p>
+</div></div>
+<div class="documentation pipelineViewClickMe"><div id="WT_arrow_right_clickme"></div><div id="WT_close_right_clickme">Click Me To Continue</div></div>
+
+
+<& right_menu.mas, pipeline => $pipeline &>
