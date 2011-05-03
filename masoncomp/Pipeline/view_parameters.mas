@@ -19,7 +19,7 @@
 % my $note;
 
 <h1><% $component->getName %> Parameters</h1>
-<p><% $component_builder->getComponentDescription %></p>
+
 % if ( $hide_unset ) {
 
 <p>Displaying only parameters that are being used.</p>

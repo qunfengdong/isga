@@ -21,6 +21,7 @@ to contain files associated with the job.
     exists $args{CreatedAt} or X::API::Parameter::Missing->throw(parameter => 'CreatedAt');
     exists $args{NotifyUser} and $args{NotifyUser} = ( $args{NotifyUser} ? 'TRUE' : 'FALSE');
     
+    
     # create a file collection and add it to the system
     my $collection = ISGA::FileCollection->create
       ( CreatedBy => ISGA::Login->getAccount,
@@ -43,6 +44,6 @@ to contain files associated with the job.
     my $name = "$type Job $self";
     $collection->edit( UserName => $name, Description => "Files associated with $name" );
 
+
     return $self;
   } 
-

@@ -2,4 +2,4 @@
 table: usergroupmembership
 attributes:
   - { name: UserGroup, column: usergroup_id, type: UserGroup }
-  - { name: Member, column: member_id, type: Account }
+  - { name: Account, column: account_id, type: Account }

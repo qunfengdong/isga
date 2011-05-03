@@ -194,66 +194,6 @@ sub valuesAreEqual {
   return '';
 }
 
-#------------------------------------------------------------------------
-
-=item public string isTaggedTagDependency(string value, string value, Form form);
-
-Enforces the dependency of Tags being blank if tagged is false.
-
-=cut
-#------------------------------------------------------------------------
-sub isTaggedTagDependency {
-
-  my ($value, $form) = @_;
-  my $tagged = $form->get_input('tagged');
-
-  if ( $tagged eq 'Y' and  $value eq '' ) {
-    return "You must provide a value for Forward Tag and Reverse Tag if Tagged Input Reads is true.<br>A default for Forward Tag is TCTGT<br>A default for Reverse Tag is TCCAT";
-  }elsif($tagged eq 'N' and  $value ne '' ){
-    return "Forward Tag and Reverse Tag should not have values it Tagged Input Reads is false.  Please remove values from these input fields.";
-  }
-
-  return '';
-}
-
-#------------------------------------------------------------------------
-
-=item public string isDNA(string value, Form form);
-
-String should only match A, T, C, and G.
-
-=cut
-#------------------------------------------------------------------------
-sub isDNA {
-
-  my ($value, $form) = @_;
-
-  if ( $value =~ /[^ACTG]/g ) {
-    return "The value provided must be only nucleotide sequence.  Please use only A, T, C, and G.";
-  }
-
-  return '';
-}
-
-#------------------------------------------------------------------------
-
-=item public string methylationExclusiveDependency(string value, string value, Form form);
-
-Enforces certain combination of methylation type being exclusive with one another.
-
-=cut
-#------------------------------------------------------------------------
-sub methylationExclusiveDependency {
-  my ($data, $form) = @_;
-
-  ref($data) eq 'ARRAY' or $data = [ $data ];
-  my %filter = map { $_ => 1 } @{$data};
-  if ( $filter{'H'} and $filter{'G'} ) {
-    return "CpH may only be used with CpHpG and CpHpH";
-  }
-
-  return '';
-}
 
 ISGA::FormEngine::SkinUniform->_register_check('Cluster::extendOrfsOffEndDependency');
 ISGA::FormEngine::SkinUniform->_register_check('Cluster::codonCheck');
@@ -262,9 +202,6 @@ ISGA::FormEngine::SkinUniform->_register_check('Cluster::linkerInsertSizeDepende
 ISGA::FormEngine::SkinUniform->_register_check('Cluster::linkerRequired');
 ISGA::FormEngine::SkinUniform->_register_check('Cluster::insertSizeAvgStdDependency');
 ISGA::FormEngine::SkinUniform->_register_check('Cluster::valuesAreEqual');
-ISGA::FormEngine::SkinUniform->_register_check('Cluster::isTaggedTagDependency');
-ISGA::FormEngine::SkinUniform->_register_check('Cluster::isDNA');
-ISGA::FormEngine::SkinUniform->_register_check('Cluster::methylationExclusiveDependency');
 1;
 __END__
 

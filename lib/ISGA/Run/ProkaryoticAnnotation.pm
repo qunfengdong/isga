@@ -1,36 +1,37 @@
 package ISGA::Run::ProkaryoticAnnotation;
 #------------------------------------------------------------------------
-=pod
 
 =head1 NAME
 
-ISGA::Run::ProkaryoticAnnotation provides functionality shared
-across versions of the prokaryotic annotation pipeline.
+<ISGA::Run::ProkaryoticAnnotation> manages runs of the prokaryotic annotation pipeline.
 
 =head1 SYNOPSIS
 
-=head1 DESCRIPTION
-
-ISGA::Run::ProkaryoticAnnotation provides functionality shared
-across versions of the prokaryotic annotation pipeline. This class
-does not provide full pipeline functionality and should only be used
-by a release of the prokaryotic annotation pipeline.
+=head1 DESRIPTION
 
 =head1 METHODS
 
+=over
+
 =cut
 #------------------------------------------------------------------------
-use warnings;
+
 use strict;
+use warnings;
 
+use File::Copy;
 use base 'ISGA::Run';
-
+use File::Path;
 use Digest::MD5  qw(md5_hex);
 use Bio::Tools::GFF;
 
+use List::Util qw(sum max min);
+
 {
 
-  my $gbrowse_dir = ISGA::SiteConfiguration->value('gbrowse_directory');
+  my $gff_output = 
+    ISGA::ClusterOutput->new( FileLocation => 'bsml2gff3/___id____default/bsml2gff3.gff3.list');
+
 
   my %feature_name_map =
     (
@@ -41,7 +42,6 @@ use Bio::Tools::GFF;
      'gene' => ISGA::GenomeFeaturePartition->new(Name => 'Gene'),
      'trna' => ISGA::GenomeFeaturePartition->new(Name => 'tRNA'),
     );
-
    
 #------------------------------------------------------------------------
 
@@ -61,7 +61,6 @@ Writes the entry to the genomefeature table and returns the database id for the 
     
     return $id;
   }
-
 
 #------------------------------------------------------------------------
 
@@ -198,108 +197,101 @@ Writes the entry to the CDS table and returns the database id for the object.
 
 =item public hashref parseGFF();
 
-
 Parse the GFF version of the pipeline summary returns a reference to a
 hash containing the genome features.
 
 =cut
 #------------------------------------------------------------------------
-  sub parseGFF {
+sub parseGFF {
 
-    my $self = shift;
-    
-    my $gff_file = ISGA::RunOutput->new( ClusterOutput => $self->getClusterOutput, 
-					 Run => $self )->getFileResource; 
-    
-    my $files = $gff_file->isa('ISGA::File') ? [$gff_file] : $gff_file->getFlattenedContents ;
-   
-    my %features;
-    
-    foreach ( @$files ) {
+  my $self = shift;
 
-      my $gff_in = Bio::Tools::GFF->new(-file => $_->getPath, -gff_version => 3);
-      
-      
-      while ( my $feature = $gff_in->next_feature()) {
-      
-	# exons are useless for microbial genomes
-	my $feature_type = lc($feature->primary_tag());
-	next if $feature_type eq 'exon';
-	
-	my ($name) = $feature->get_tag_values('ID');
-	
-	my %attr = ( start => $feature->start, end => $feature->end, name => $name,
-		     strand => ($feature->strand == 1 ? '+' : '-'), feature => $feature  );
-	
-	if ( $feature_type eq 'contig' ) {
-	  $features{contig}{$name} = \%attr;
-	  next;
-	}
-	
-	# identify the contig for this feature
-	my $contig = $feature->seq_id();
-	
-	# create a string to identify this feature's position on the contig
-	my $pos = $attr{start} . '..' . $attr{end};
-	
-	if ( $feature_type eq 'gene' ) {    
-	  
-	  # save the custom locus name
-	  my ($dbxref) = $feature->get_tag_values('Dbxref');
-	  $dbxref =~ s/TIGR_moore\://o;
-	  $attr{locus} = $dbxref;
-	  
-	  $features{gene}{$contig}{$pos} = \%attr;
-	  
-	} elsif ( $feature_type eq 'cds' ) {
-	  
-	  ($attr{top_cog_hit}) = $feature->get_tag_values('top_cog_hit') if $feature->has_tag('top_cog_hit');
-	  
-	  $features{cds}{$contig}{$pos} = \%attr;
-	  
-	} elsif ( $feature_type eq 'trna' ) {
-	  
-	  ($attr{score}) = $feature->get_tag_values('score');
-	  ($attr{tac}) = $feature->get_tag_values('tRNA_anti-codon');
-	  ($attr{note}) = $feature->get_tag_values('Note');
-	  
-	  $features{trna}{$contig}{$pos} = \%attr;
-	  
-	} elsif ( $feature_type eq 'rrna' ) {
-	  
-	  ($attr{score}) = $feature->get_tag_values('score');
-	  ($attr{note}) = $feature->get_tag_values('Note');   
-	  
-	  $features{rrna}{$contig}{$pos} = \%attr;
-	  
-	} elsif ( $feature_type eq 'mrna' ) {
-	  
-	  ($attr{note}) = $feature->has_tag('Note') ? $feature->get_tag_values('Note') : '';
-	  ($attr{gpns}) = $feature->has_tag('gene_product_name_source') ? $feature->get_tag_values('gene_product_name_source') : '';
-	  ($attr{tigr_role}) = $feature->get_tag_values('TIGR_role') if $feature->has_tag('TIGR_role');
-	  ($attr{ec}) = $feature->get_tag_values('EC') if $feature->has_tag('EC');
-	  $attr{go} = [$feature->get_tag_values('GO')] if $feature->has_tag('GO');
-	  if ( $feature->has_tag('gene_symbol') ) {
-	    ($attr{gene_symbol}) = $feature->get_tag_values('gene_symbol');
-	    ($attr{gene_symbol_source}) =  $feature->get_tag_values('gene_symbol_source');
-	  }
-	  
-	  $features{mrna}{$contig}{$pos} = \%attr;
-	}
-      }
-      
-      foreach ( $gff_in->get_seqs ) {
-	
-	my $name = $_->display_id();
-	
-	# save the sequence if this is a contig
-	$features{contig}{$name}{seq} = $_->seq if exists $features{contig}{$name}; 
-      }
+  my $gff_file = ISGA::RunOutput->new( ClusterOutput => $gff_output, 
+					   Run => $self )->getFileResource; 
+  
+  my $gff_in = Bio::Tools::GFF->new(-file => $gff_file->getPath, -gff_version => 3);
+
+  my %features;
+
+  while ( my $feature = $gff_in->next_feature()) {
+
+    # exons are useless for microbial genomes
+    my $feature_type = lc($feature->primary_tag());
+    next if $feature_type eq 'exon';
+    
+    my ($name) = $feature->get_tag_values('ID');
+    
+    my %attr = ( start => $feature->start, end => $feature->end, name => $name,
+		 strand => ($feature->strand == 1 ? '+' : '-'), feature => $feature  );
+    
+    if ( $feature_type eq 'contig' ) {
+      $features{contig}{$name} = \%attr;
+      next;
     }
     
-    return \%features;
+    # identify the contig for this feature
+    my $contig = $feature->seq_id();
+    
+    # create a string to identify this feature's position on the contig
+    my $pos = $attr{start} . '..' . $attr{end};
+    
+    if ( $feature_type eq 'gene' ) {    
+      
+      # save the custom locus name
+      my ($dbxref) = $feature->get_tag_values('Dbxref');
+      $dbxref =~ s/TIGR_moore\://o;
+      $attr{locus} = $dbxref;
+      
+      $features{gene}{$contig}{$pos} = \%attr;
+      
+    } elsif ( $feature_type eq 'cds' ) {
+      
+      ($attr{top_cog_hit}) = $feature->get_tag_values('top_cog_hit') if $feature->has_tag('top_cog_hit');
+      
+      $features{cds}{$contig}{$pos} = \%attr;
+      
+    } elsif ( $feature_type eq 'trna' ) {
+      
+      ($attr{score}) = $feature->get_tag_values('score');
+      ($attr{tac}) = $feature->get_tag_values('tRNA_anti-codon');
+      ($attr{note}) = $feature->get_tag_values('Note');
+      
+      $features{trna}{$contig}{$pos} = \%attr;
+      
+    } elsif ( $feature_type eq 'rrna' ) {
+      
+      ($attr{score}) = $feature->get_tag_values('score');
+      ($attr{note}) = $feature->get_tag_values('Note');   
+      
+      $features{rrna}{$contig}{$pos} = \%attr;
+      
+    } elsif ( $feature_type eq 'mrna' ) {
+      
+      ($attr{note}) = $feature->get_tag_values('Note');
+      ($attr{gpns}) = $feature->get_tag_values('gene_product_name_source');
+      ($attr{tigr_role}) = $feature->get_tag_values('TIGR_role') if $feature->has_tag('TIGR_role');
+      ($attr{ec}) = $feature->get_tag_values('EC') if $feature->has_tag('EC');
+      $attr{go} = [$feature->get_tag_values('GO')] if $feature->has_tag('GO');
+      if ( $feature->has_tag('gene_symbol') ) {
+	($attr{gene_symbol}) = $feature->get_tag_values('gene_symbol');
+	($attr{gene_symbol_source}) =  $feature->get_tag_values('gene_symbol_source');
+      }
+      
+      $features{mrna}{$contig}{$pos} = \%attr;
+    }
   }
- 
+  
+  foreach ( $gff_in->get_seqs ) {
+    
+    my $name = $_->display_id();
+    
+    # save the sequence if this is a contig
+    $features{contig}{$name}{seq} = $_->seq if exists $features{contig}{$name}; 
+  }
+
+  return \%features;
+}
+
 #------------------------------------------------------------------------
 
 =item public void processFeatures(hashref $features);
@@ -308,102 +300,250 @@ Processes addition of features to database.
 
 =cut
 #------------------------------------------------------------------------
-  sub processFeatures {
+sub processFeatures {
+
+  my ($self, $features) = @_;
+
+  my $dir = "___gbrowse_directory___databases/$self";
+  mkdir( $dir ) or X::File->throw( error => "Error creating directory $dir: $!" );
+  open my $out_fh, '>', "$dir/$self.gff3";
+  my $gff_out = Bio::Tools::GFF->new(-fh => $out_fh, -gff_version => 3);
+
+  # cycle through contigs
+  for my $contig ( values %{$features->{contig}} ) {
     
-    my ($self, $features) = @_;
+    # process contig
+    my $c_id = $self->insertContig($contig);
+    $contig->{feature}->add_tag_value('db_id', $c_id);
+    $gff_out->write_feature($contig->{feature});
     
-    my $dir = "$gbrowse_dir/databases/$self";
-    mkdir( $dir ) or X::File->throw( error => "Error creating directory $dir: $!" );
-    open my $out_fh, '>', "$dir/$self.gff3";
-    my $gff_out = Bio::Tools::GFF->new(-fh => $out_fh, -gff_version => 3);
-    
-    # cycle through contigs
-    for my $contig ( values %{$features->{contig}} ) {
+    # process all tRNA
+    while ( my ($pos, $trna) = each %{$features->{trna}{ $contig->{name} }} ) {
       
-      # process contig
-      my $c_id = $self->insertContig($contig);
-      $contig->{feature}->add_tag_value('db_id', $c_id);
-      $gff_out->write_feature($contig->{feature});
+      # add the gene first
+      my $gene = $features->{gene}{ $contig->{name} }{$pos} or X::API->throw();
+      $gene->{contig} = $c_id;
+      $gene->{note} = $trna->{note};
+      $gene->{type} = 'tRNA';
+      my $g_id = $self->insertGene($gene);
+      $gene->{feature}->add_tag_value('db_id', $g_id);
+      $gene->{feature}->add_tag_value('Name', $gene->{locus});
+      $gene->{feature}->add_tag_value('Note', $trna->{note});
+      $gff_out->write_feature($gene->{feature});
       
-      # process all tRNA
-      while ( my ($pos, $trna) = each %{$features->{trna}{ $contig->{name} }} ) {
-	
-	# add the gene first
-	my $gene = $features->{gene}{ $contig->{name} }{$pos} or X::API->throw();
-	$gene->{contig} = $c_id;
-	$gene->{note} = $trna->{note};
-	$gene->{type} = 'tRNA';
-	my $g_id = $self->insertGene($gene);
-	$gene->{feature}->add_tag_value('db_id', $g_id);
-	$gene->{feature}->add_tag_value('Name', $gene->{locus});
-	$gene->{feature}->add_tag_value('Note', $trna->{note});
-	$gff_out->write_feature($gene->{feature});
-      
-	# add the tRNA
-	$trna->{gene} = $g_id;
-	my $id = $self->insertTRNA($trna);
-	$gene->{id} = $g_id;
-	$trna->{feature}->add_tag_value('db_id', $id);
-	$gff_out->write_feature($trna->{feature});      
-      }
-      
-      # process all rRNA
-      while ( my ($pos, $rrna) = each %{$features->{rrna}{ $contig->{name} }} ) {
-	
-	# add the gene first
-	my $gene = $features->{gene}{ $contig->{name} }{$pos} or X::API->throw();
-	$gene->{contig} = $c_id;
-	$gene->{note} = $rrna->{note};
-	$gene->{type} = 'rRNA';
-	my $g_id = $self->insertGene($gene);
-	$gene->{id} = $g_id;
-	$gene->{feature}->add_tag_value('db_id', $g_id);
-	$gene->{feature}->add_tag_value('Name', $gene->{locus});
-	$gene->{feature}->add_tag_value('Note', $rrna->{note});
-	$gff_out->write_feature($gene->{feature});
-	
-	# add the rRNA
-	$rrna->{gene} = $g_id;
-	my $id = $self->insertRRNA($rrna);
-	$rrna->{feature}->add_tag_value('db_id', $id);
-	$gff_out->write_feature($rrna->{feature});
-      }
-      
-      # process all mRNA
-      while ( my ($pos, $mrna) = each %{$features->{mrna}{ $contig->{name} }} ) {
-	
-	# add the gene first
-	my $gene = $features->{gene}{ $contig->{name} }{$pos} or X::API->throw();
-	$gene->{contig} = $c_id;
-	$gene->{note} = $mrna->{note};
-	$gene->{type} = 'mRNA';
-	my $g_id = $self->insertGene($gene);
-	$gene->{id} = $g_id;
-	$gene->{feature}->add_tag_value('db_id', $g_id);
-	$gene->{feature}->add_tag_value('Name', $gene->{locus});
-	$gene->{feature}->add_tag_value('Note', $mrna->{note});
-	$gff_out->write_feature($gene->{feature});
-	
-	# add the mrna
-	$mrna->{gene} = $g_id;
-	my $id = $self->insertMRNA($mrna);
-	$mrna->{feature}->add_tag_value('db_id', $id);
-	$gff_out->write_feature($mrna->{feature});
-	
-	# add the CDS
-	my $cds = $features->{cds}{ $contig->{name} }{$pos} or X::API->throw();
-	$cds->{mrna} = $id;
-	my $cds_id = $self->insertCDS($cds);
-	$cds->{feature}->add_tag_value('db_id', $cds_id);
-	$gff_out->write_feature($cds->{feature});
-	
-      }
+      # add the tRNA
+      $trna->{gene} = $g_id;
+      my $id = $self->insertTRNA($trna);
+      $gene->{id} = $g_id;
+      $trna->{feature}->add_tag_value('db_id', $id);
+      $gff_out->write_feature($trna->{feature});      
     }
     
-    close $out_fh;
-  }  
+    # process all rRNA
+    while ( my ($pos, $rrna) = each %{$features->{rrna}{ $contig->{name} }} ) {
+
+      # add the gene first
+      my $gene = $features->{gene}{ $contig->{name} }{$pos} or X::API->throw();
+      $gene->{contig} = $c_id;
+      $gene->{note} = $rrna->{note};
+      $gene->{type} = 'rRNA';
+      my $g_id = $self->insertGene($gene);
+      $gene->{id} = $g_id;
+      $gene->{feature}->add_tag_value('db_id', $g_id);
+      $gene->{feature}->add_tag_value('Name', $gene->{locus});
+      $gene->{feature}->add_tag_value('Note', $rrna->{note});
+      $gff_out->write_feature($gene->{feature});
+      
+      # add the rRNA
+      $rrna->{gene} = $g_id;
+      my $id = $self->insertRRNA($rrna);
+      $rrna->{feature}->add_tag_value('db_id', $id);
+      $gff_out->write_feature($rrna->{feature});
+    }
+    
+    # process all mRNA
+    while ( my ($pos, $mrna) = each %{$features->{mrna}{ $contig->{name} }} ) {
+      
+      # add the gene first
+      my $gene = $features->{gene}{ $contig->{name} }{$pos} or X::API->throw();
+      $gene->{contig} = $c_id;
+      $gene->{note} = $mrna->{note};
+      $gene->{type} = 'mRNA';
+      my $g_id = $self->insertGene($gene);
+      $gene->{id} = $g_id;
+      $gene->{feature}->add_tag_value('db_id', $g_id);
+      $gene->{feature}->add_tag_value('Name', $gene->{locus});
+      $gene->{feature}->add_tag_value('Note', $mrna->{note});
+      $gff_out->write_feature($gene->{feature});
+      
+      # add the mrna
+      $mrna->{gene} = $g_id;
+      my $id = $self->insertMRNA($mrna);
+      $mrna->{feature}->add_tag_value('db_id', $id);
+      $gff_out->write_feature($mrna->{feature});
+      
+      # add the CDS
+      my $cds = $features->{cds}{ $contig->{name} }{$pos} or X::API->throw();
+      $cds->{mrna} = $id;
+      my $cds_id = $self->insertCDS($cds);
+      $cds->{feature}->add_tag_value('db_id', $cds_id);
+      $gff_out->write_feature($cds->{feature});
+   
+    }
+  }
+
+  close $out_fh;
+}  
+
+#------------------------------------------------------------------------
+
+=item public void writeCGViewConfig();
+
+Write a configuration file for CGView.
+
+=cut
+#------------------------------------------------------------------------
+sub writeCGViewConfig {
+
+  my $self = shift;
+
+  my @contigs = @{ISGA::Contig->query( Run => $self )};
+
+  # calcute size of assembled genome
+  my $total_length = sum map { $_->getEnd } @contigs;
+  my $zoom = max(1, int($total_length / 50000));
+
+  my @cgview_scripts;
+
+  # use this string for all the genes
+  my $template = <<'END';
+<feature %s label="%s" hyperlink="/GenomeFeature/View?genome_feature=%d" mouseover="%s">
+<featureRange start="%d" stop="%d" /></feature>
+END
+
+  for my $contig ( @contigs ) {
+    
+    my $cgv_plus = '';
+    my $cgv_minus = '';
+    
+    # process all genes
+    for my $gene ( @{ISGA::Gene->query(Contig => $contig)} ) {
+      
+      # correct for genes that run off the end of a contig
+      my $end = min($gene->getEnd, $total_length);
+      
+      my $type = $gene->getType();
+      
+      my $colorstring = $gene->getCGViewColorAndDecoration();
+      
+      my $cgv = sprintf($template, $colorstring, $gene->getLocus, $gene, $gene->getNote,
+			$gene->getStart, $gene->getEnd);
+      
+      # save the gene to the correct strand
+      $gene->getStrand eq '+' ? $cgv_plus .= $cgv : $cgv_minus .= $cgv;
+    }
+    
+    my $cg_conf = "___tmp_file_directory___cgview-$contig.xml";
+
+    open my $cgview, '>', $cg_conf or X::File::Open->throw( "Unable to open $cg_conf: $!" );
+    
+    print $cgview <<"END";
+<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>
+<cgview backboneRadius=\"200\" sequenceLength=\"$total_length\" height=\"500\" width=\"500\" titleFont=\"SansSerif, plain, 18\" title=\"Strain K12, MG1655\" globalLabel=\"true\" moveInnerLabelsToOuter=\"false\" featureThickness=\"xx-large\" tickLength=\"small\" shortTickColor=\"black\" longTickColor=\"black\" zeroTickColor=\"black\" showBorder=\"false\">
+<legend position=\"upper-right\" font=\"SanSerif, plain, 10\" backgroundOpacity=\"0.8\">
+<legendItem text=\"Features\" font=\"SanSerif, plain, 12\"/>
+<legendItem text=\"+ Strand\" drawSwatch=\"true\" swatchColor=\"red\"/>
+<legendItem text=\"- Strand\" drawSwatch=\"true\" swatchColor=\"blue\"/>
+<legendItem text=\"tRNA\" drawSwatch=\"true\" swatchColor=\"orange\"/>
+<legendItem text=\"rRNA\" drawSwatch=\"true\" swatchColor=\"green\"/>
+</legend>
+<featureSlot strand=\"direct\">
+$cgv_plus
+</featureSlot>
+<featureSlot strand=\"reverse\">
+$cgv_minus
+</featureSlot>
+</cgview>
+END
+    close $cgview;    
+  }
   
+  return $zoom;
+}
+
+
+#------------------------------------------------------------------------
+
+=item public void runCGView();
+
+Launch CGview over SGE>
+
+=cut
+#------------------------------------------------------------------------
+sub runCGView {
+
+  my ($self, $zoom, @genes) = @_;
+
+  my $id = time.$$;
   
+  # build
+  my $command = '';
+
+  # open command file
+  open my $fh, '>', $command or X::File::Open->throw(message => "Unable to open $command: $!");
+  print $fh "#! ___sh_executable___";
+  
+  foreach ( @genes ) {
+    
+    my ($contig, $gene) = @$_;
+
+    my $config = "___tmp_file_directory___cgview-$contig.xml";
+    
+    my $center = int((($gene->{start} + $gene->{end})/2) + 0.5);
+    my $locus = $gene->{locus};
+    my $png =  "___cgview_directory___$gene->{id}.png";
+    my $html = "___cgview_directory___$gene->{id}.html";
+    
+    print $fh "java -jar ___scripts_bin___/cgview.jar -i $config -o $png -f png -c $center -z $zoom -h $html -q $locus\n";
+    
+  }
+  
+  close $fh;
+  
+  my $sge = 
+    ISGA::SGEScheduler->new(
+				-executable  => { qsub => '/cluster/sge/bin/sol-amd64/qsub -q seq', 
+						  qstat=>'/cluster/sge/bin/sol-amd64/qstat'},
+				-output_file => '___tmp_file_directory___'."cgview/$id.sgeout",
+				-error_file => '___tmp_file_directory__'."cgview/$id.sgeerror",
+			       );
+    
+  $sge->command($command);
+  
+  # return the pid
+  return $sge->execute();
+
+}
+
+
+sub extractImageMap {
+
+  my ($self, $gene) = @_;
+
+  local( $/ ) ;
+  open my $in_fh, '<', "___cgview_directory___$gene.html" 
+    or X::File::Open->throw( "Unable to open ___cgview_directory___$gene.html : $!" );
+  my $text = <$in_fh>;
+  close $in_fh;
+
+  $text =~  m/<map id=\"cgviewmap\" name=\"cgviewmap\">(.+)<\/map>/;
+  my $map = $1;
+
+  open my $out_fh, '>', "___cgview_directory___$gene.html" 
+    or X::File::Open->throw( "Unable to open ___cgview_directory___$gene.html : $!" );
+  print $out_fh $map;
+}
+
 #------------------------------------------------------------------------
 
 =item public string parseAndLoadGFF();
@@ -411,32 +551,32 @@ Processes addition of features to database.
 =cut
 #------------------------------------------------------------------------
   sub parseAndLoadGFF {
-    
+
     my $self = shift;
+
     my $features = $self->parseGFF();
 
     $self->processFeatures($features);
 
     # return the name of the first contig
     my @contigs = keys %{$features->{contig}};
-
     return $contigs[0];
   }
 
 #------------------------------------------------------------------------
 
-=item public bool hasGBrowseInstallation();
+=item public bool hasGbrowseInstallation();
 
 Returns true if a gbrowse configuration has been created for this run.
 
 =cut
 #------------------------------------------------------------------------
-  sub hasGBrowseInstallation {
+  sub hasGbrowseInstallation {
     
     my $self = shift;
     
-    -f "$gbrowse_dir/conf/$self.conf" and
-       -f "$gbrowse_dir/databases/$self/$self.gff3" and 
+    -f "___gbrowse_directory___conf/$self.conf" and
+       -f "___gbrowse_directory___databases/$self/$self.gff3" and 
        ISGA::Contig->exists( Run => $self ) and
        return 1;
     
@@ -445,13 +585,13 @@ Returns true if a gbrowse configuration has been created for this run.
   
 #------------------------------------------------------------------------
 
-=item public void installGBrowseData();
+=item public void installGbrowseData();
 
 Install Gbrowse config file and gff file.
 
 =cut
 #------------------------------------------------------------------------
-  sub installGBrowseData {
+  sub installGbrowseData {
   
     my $self = shift;
     
@@ -459,65 +599,63 @@ Install Gbrowse config file and gff file.
     $self->getStatus eq 'Complete' or X::Error->throw();
     
     # must not have installation
-    $self->hasGBrowseInstallation and return;
+    $self->hasGbrowseInstallation and return;
 
     # clean up incomplete installations
-    $self->deleteGBrowseConfigurationFile();
-    $self->deleteGBrowseDatabase();
+    $self->deleteGbrowseConfigurationFile();
+    $self->deleteGbrowseDatabase();
 
     # install gene details
     my $contig = $self->parseAndLoadGFF();
 
     # create config file
-    $self->writeGBrowseConfigurationFile($contig);
+    $self->writeGbrowseConfigurationFile($contig);
   }
   
 #------------------------------------------------------------------------
 
-=item public void deleteGBrowseConfigurationFile();
+=item public void deleteGbrowseConfigurationFile();
 
 =cut
 #------------------------------------------------------------------------
-  sub deleteGBrowseConfigurationFile {
-  
-    my $self = shift;
-    my $id = $self->getId;
-    
-    my $file = "$gbrowse_dir/conf/$id.conf";
-    -f $file and unlink($file);
-  }
-  
+sub deleteGbrowseConfigurationFile {
+
+  my $self = shift;
+  my $id = $self->getId;
+
+  my $file = "___gbrowse_directory___conf/$id.conf";
+  -f $file and unlink($file);
+}
+
 #------------------------------------------------------------------------
 
-=item public void deleteGBrowseDatabase();
+=item public void deleteGbrowseDatabase();
 
 =cut
 #------------------------------------------------------------------------
-  sub deleteGBrowseDatabase {
+sub deleteGbrowseDatabase {
 
-    my $self = shift;
-    my $id = $self->getId;
-    
-    my $dir = "$gbrowse_dir/databases/$id";
-    
-    -d $dir and rmtree($dir);
-  }
-  
+  my $self = shift;
+  my $id = $self->getId;
+
+  my $dir = "___gbrowse_directory___databases/$id";
+
+  -d $dir and rmtree($dir);
+}
+
 #------------------------------------------------------------------------
 
-=item public void writeGBrowseConfigurationFile();
+=item public void writeGbrowseConfigurationFile();
 
 =cut
 #------------------------------------------------------------------------
-  sub writeGBrowseConfigurationFile {
+  sub writeGbrowseConfigurationFile {
 
     my ($self, $contig) = @_;
 
-    my $include = ISGA::Site->getIncludePath();
-
     # read the template for the config file
-    open my $fh, '<', "$include/gbrowse.conf-template"
-      or X::File->throw( error => "$include/gbrowse.conf-template : $!" );
+    open my $fh, '<', "___package_include___/gbrowse.conf-template"
+      or X::File->throw( error => "___package_include___/gbrowse.conf-template : $!" );
     my $conf = do { local $/; <$fh> };
     close $fh;     
     
@@ -525,39 +663,14 @@ Install Gbrowse config file and gff file.
     my $name = $self->getName;
     
     # customize the template
-    $conf =~ s{___DATABASE_DIR___}{$gbrowse_dir/databases/$id};
+    $conf =~ s{___DATABASE_DIR___}{___gbrowse_directory___databases/$id};
     $conf =~ s{___LANDMARK___}{$contig};
     $conf =~ s{___DESCRIPTION___}{$name};
     
-    ISGA::Utility->writeFile("$gbrowse_dir/conf/$id.conf", $conf);
+    ISGA::Utility->writeFile("___gbrowse_directory___conf/$id.conf", $conf);
   }
   
-#------------------------------------------------------------------------
-
-=item public ($database_names, $database_values) getBlastDatabases();
-
-Returns two array refs, the first containing a list of database names
-provided by this run, and the second a corresponding list of database
-paths.
-
-=cut
-#------------------------------------------------------------------------
-  sub getBlastDatabases {
-
-    my $run = shift;
-
-    my $name = $run->getName();
-    my $pipeline = $run->getGlobalPipeline();
-
-    my $names = [ "Run $name: predicted gene", "Run $name: predicted protein"];
-    my $paths = [ join( '/', $pipeline->getErgatisOutputRepository(), 'asn2all', $run->getErgatisKey."_default", 'cgb_annotation.cds.fna'),
-		  join( '/', $pipeline->getErgatisOutputRepository(), 'asn2all', $run->getErgatisKey."_default", 'cgb_annotation.aa.fsa')];
-    
-    return ( $names, $paths );
-  }
-
 }
-
 
 1;
 
@@ -576,3 +689,5 @@ __END__
 Center for Genomics and Bioinformatics, biohelp@cgb.indiana.edu
 
 =cut
+
+  

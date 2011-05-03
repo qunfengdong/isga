@@ -5,20 +5,6 @@ use File::Basename;
 
 #------------------------------------------------------------------------
 
-=item public string getErgatisPipelineXML();
-
-Returns the path to the Ergatis pipeline.xml file for this run.
-
-=cut
-#------------------------------------------------------------------------
-  sub getErgatisPipelineXML {
-
-    my $self = shift;
-    return join( '/', $self->getType->getErgatisRuntimeDirectory(), $self->getErgatisKey, 'pipeline.xml');
-  }
-
-#------------------------------------------------------------------------
-
 =item public [RunCluster] getClusters();
 
 Retrieves the RunClusters for this Run.
@@ -55,18 +41,6 @@ sub getGlobalPipeline {
 
   return $pipeline->getGlobalTemplate();
 }
-
-#------------------------------------------------------------------------
-
-=item public string getWebPluginDirectory();
-
-Returns the directory for storing global-pipeline specific mason components.
-
-=cut
-#------------------------------------------------------------------------
-  sub getWebPluginDirectory {
-    return shift->getGlobalPipeline->getWebPluginDirectory;
-  }
 
 #------------------------------------------------------------------------
 
@@ -148,29 +122,8 @@ sub getErgatisURI {
 
   my $self = shift;
 
-  my $uri = "___ergatis_base_uri___view_pipeline.cgi?instance=";
-  $uri .= join( '/', $self->getType->getErgatisRuntimeDirectory(), $self->getErgatisKey, 'pipeline.xml');
+  my $uri = "___ergatis_base_uri___view_pipeline.cgi?instance=___ergatis_runtime_directory___";
+  $uri .=  $self->getErgatisKey . '/pipeline.xml';
   
   return $uri;
 }
-
-#------------------------------------------------------------------------
-
-=item public boolean hasGBrowseData();
-
-Returns true if the pipeline generates data for display in GBrowse
-
-=cut
-#------------------------------------------------------------------------
-  sub hasGBrowseData { return shift->getGlobalPipeline->hasGBrowseData; }
-
-
-#------------------------------------------------------------------------
-
-=item public boolean hasGBrowseInstallation();
-
-Returns true if the pipeline has a GBrowse installation
-
-=cut
-#------------------------------------------------------------------------
-  sub hasGBrowseInstallation { return 0; }

@@ -1,0 +1,19 @@
+<%args> # -*- cperl -*-
+	$job
+</%args>
+
+<%perl>
+
+$job->getCreatedBy == ISGA::Login->getAccount
+       or X::User::Denied->throw;
+my $status = $job->getStatus;
+
+if($status eq "Finished"){
+	return $m->comp('/WorkBench/Results/newblertohawkeye.mas', job => $job);
+} elsif ($status eq "Running" || $status eq "Pending"){
+	return $m->comp('/WorkBench/Results/running.mas', job => $job);
+} elsif ($status eq "Error"){
+        return $m->comp('/WorkBench/Results/error.mas', job => $job);
+}
+
+</%perl>

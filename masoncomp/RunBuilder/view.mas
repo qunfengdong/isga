@@ -1,0 +1,121 @@
+<%args>
+ $run_builder
+</%args>
+
+<%perl>
+use List::Util qw(min);
+</%perl>
+
+<sys:style type="text/css" media="screen"> 
+  @import "/include/css/uni-form.css"; 
+</sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(OutageNotification);
+function OutageNotification() {
+
+  $(".notify").click(function(){
+        $.ajax({
+          dataType: "html",
+          type: "POST",
+          url: "/submit/Account/OutageNotification"
+        });
+        return false;
+  });
+}
+</sys:script>
+
+
+
+% my $account = ISGA::Login->getAccount;
+% my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', UserClass => $account->getUserClass);
+% my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
+
+% my $has_run_parameters = $run_builder->hasRunParameters();
+
+% my $runs = ISGA::Run->getCurrentRunCount($account);
+
+
+<h1>Submission Builder</h1>
+% unless($accepting_jobs){
+<div class="downtime"><p>ISGA is currently not accepting new jobs.  Please see the latest news for more information.  Please use this <a class="notify" href="#">Link</a> 
+to receive an email notification when the service is returned.</p></div>
+% }
+
+% if( $runs >= $quota ){
+<div class="downtime"><p>You are currently at your quota for the allowable number of simultaneous pipeline runs.  
+ISGA currenlty only allows users to run <% $quota %> pipelines at the same time.  We apologize for 
+any inconvenience this may cause you.</p></div>
+% }
+
+<p>Before submitting your run, you must select the data files the submission
+will process. Additionally, you may need to set organism information specific to
+the file being submitted.</p>
+
+<div class="data">
+<table width="100%">
+ <tbody>
+  <tr>
+   <th width="15%">Name</th><td width="35%"><% $run_builder->getName %></td>
+% my $pipeline = $run_builder->getPipeline;
+   <th width="15%">Pipeline</th>
+   <td width="35%">
+    <a href="/Pipeline/View?pipeline=<% $pipeline %>"><% $pipeline->getName %></a>
+   </td>
+  </tr>
+  <tr>
+   <th>Description</th>
+   <td colspan="3"><% $run_builder->getDescription %></td>
+  </tr> 
+ </tbody>
+</table>
+
+</div>
+
+<div class="hidden documentation runView"><div id="WT_arrow_right"></div><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>This is the central page for preparing a pipeline for submission.  From here
+you can quickly view any organism specific information that need to be set
+as well as your required inputs.  Using the toolbox, you can edit
+the necessary organism information, provide an input file, or cancel your run.</p>
+
+<p>The ability to Submit Run will be disabled until all necessary
+actions are taken.  This typically means setting the organism
+information and providing the required inputs.  Information about
+any action needed is displayed in the Submit Run section of the
+toolbox.</p>
+
+<p>To continue with this walkthrough.  Please select <span class="highlight">Provide 
+Organism Information</span> and edit the values as necessary.  Next, choose 
+<span class="highlight">Provide Input Data</span>.  A prompt box should pop up and 
+from there choose Genome Sequence.  On the screen that follows, choose an appropriate 
+FASTA file to use as input.  After all these steps, Submit Run should become active.  
+Click on <span class="highlight">Submit Run</span>.  Your pipeline will be built and run.</p>
+</div></div>
+
+% if ( $has_run_parameters ) {
+
+<h2>Organism Information</h2>
+
+<p>The following parameters will be used for this run. You may set or edit
+these parameters by clicking the link <span class="highlight">Provide Organism 
+Information</span> in the right Toolbox.</p>
+
+<div class="list">
+
+<table width="100%">
+<thead>
+ <tr><th width="30%">Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+% foreach ( @{$run_builder->getParameterDetails} ) {
+ <tr><td><% $_->[1] %></td><td><% $_->[2] %></td></tr>
+% }
+</tbody>
+</table>
+</div>
+
+% }
+
+<& view_inputs.mas, run_builder => $run_builder &>
+
+<& right_menu.mas, run_builder => $run_builder &>

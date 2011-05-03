@@ -81,7 +81,7 @@
 </ul>
 </sys:rightmenu>
 
-<div href="#" class="modal" id="modal_div" class="hidden">
+<div id="modal_div" class="hidden">
 </div>
 
 %# javascript
