@@ -31,7 +31,7 @@
       <a href="#">> You Have <% scalar @pipelines %> Customized Pipeline(s)</a>
       <ul>
 %      foreach my $userpipeline (@pipelines){
-        <li style="overflow: hidden;"><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %></a></li>
+        <li><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %></a></li>
 %        push(@runs, @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $userpipeline )});
 %      }
       </ul>

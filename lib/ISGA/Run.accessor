@@ -163,14 +163,3 @@ Returns true if the pipeline generates data for display in GBrowse
 =cut
 #------------------------------------------------------------------------
   sub hasGBrowseData { return shift->getGlobalPipeline->hasGBrowseData; }
-
-
-#------------------------------------------------------------------------
-
-=item public boolean hasGBrowseInstallation();
-
-Returns true if the pipeline has a GBrowse installation
-
-=cut
-#------------------------------------------------------------------------
-  sub hasGBrowseInstallation { return 0; }

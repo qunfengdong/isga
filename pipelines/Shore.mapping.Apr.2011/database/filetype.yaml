@@ -1,7 +1,0 @@
----
- - Name: 'Illumina Sequencer Output'
-   Help: 'Output from an Illumina sequencing run.'
- - Name: 'Illumina Sequencer Output Pair'
-   Help: 'Output from an Illumina sequencing run.'
- - Name: 'SNP Analysis Output'
-   Help: 'Output containing SNP analysis information.'

@@ -1,20 +1,7 @@
 Revision history for ISGA
 
-1.3.2   Apr 4 2011
 
-	FIXES
-
-	* Now able to edit gbrowse installation directory through web interface
-	* Catch malformed email addresses at account request in form validation
-	* File Collections are now tarred to a temp file rather than in-memory
-	* Synchronised 'path' method for File and FileCollection to always return a string
-	* Fixed bug in loading multiple contigs into GBrowse
-	* Fixed bug in form check for selecting runs
-	* Fixed broken links to BLAST tool from pipeline results
-	* Change pipeline installation script to only update flat files if it is already installed
-	
-
-1.3.1   Mar 2 2011
+1.3.0   Mar 2 2011
 
 	PIPELINE CHANGES
 

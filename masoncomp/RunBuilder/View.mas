@@ -31,7 +31,7 @@ will process. Additionally, you may need to set information specific to
 the file being submitted.</p>
 
 <div class="data">
-<table width="100%" class="fixed">
+<table width="100%">
  <tbody>
   <tr>
    <th width="15%">Name</th><td width="35%"><% $run_builder->getName %></td>

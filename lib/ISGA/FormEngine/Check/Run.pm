@@ -43,7 +43,7 @@ sub isErgatisPipeline {
 
   my $run = $form->get_input('run');
 
-  -d join( '/', $run->getType->getErgatisRuntimeDirectory(), $data )
+  -d join( '/', $run->getErgatisRuntimeDirectory, $data )
     or return "$data is not a valid Ergatis Pipeline";
 
   return '';

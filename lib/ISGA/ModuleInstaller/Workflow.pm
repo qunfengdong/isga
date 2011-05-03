@@ -77,9 +77,7 @@ sub insert {
 	      IsRequired => $t->{IsRequired},
 	      Customization => $t->{Customization},
 	     );
-  if ( exists $t->{AlternateCluster} ){
-    $args{AltCluster} = ISGA::Cluster->new( Name => $t->{AlternateCluster}, ErgatisInstall => $ml->getErgatisInstall());
-  }
+
   if ( exists $t->{Coordinates} ) {
     $args{Coordinates} = $t->{Coordinates};
   }

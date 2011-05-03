@@ -1,5 +1,6 @@
 --- !perl/MasonX::Foundation::Class::Indexed
 class: Run
+options: [ SUBCLASS ]
 attributes:
   - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
   - { name: Status, type: RunStatus, options: [ REQUIRED ] }

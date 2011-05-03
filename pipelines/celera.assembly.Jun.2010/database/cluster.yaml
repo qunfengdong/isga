@@ -1,7 +1,8 @@
 ---
  - Name: 'SFF Preperation'
    Description: 'The SFF Preperation cluster prepares SFF files for the assembler by converting them to FRG files.'
-   LayoutXML: '___sff_to_CA.default___'
+   LayoutXML: |
+     ___sff_to_CA.default___
    SubClass: SFFPreparation
    IteratesOn: Celera_Input
  - Name: 'Assembly Step'

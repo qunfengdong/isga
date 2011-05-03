@@ -106,15 +106,6 @@ sub buildForm {
 #        ERROR => 'not_null',
         HIDEDIV => 1
        },
-       {
-        'TITLE' => 'Email me when job completes',
-        'NAME' => 'notify_user',
-        'templ' => 'check',
-        'VALUE' => 0,
-        'OPT_VAL' => 1,
-        'OPTION' => '',
-        'HINT' => 'Check this box to receive email notification when your job completes.'
-       },
       ]
       },
     );

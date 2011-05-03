@@ -36,7 +36,7 @@
   #nav_main {  }
   */
 
-  #main { margin: 10px 0; background: #fff; word-wrap: break-word; }
+  #main { margin: 10px 0; background: #fff; }
   #footer { padding: 10px 20px; color:#666; background: #fff; border-top: 5px #efefef solid; text-align: center;  }
 
   /* (en) navigation: horizontal adjustment | (de) horizontale Ausrichtung  */
@@ -420,15 +420,6 @@ ul.listmenu{
   width 180px;
   margin: 0;
   padding: 0;
-}
-
-#col3_content {
-  word-wrap: break-word;
-  overflow: hidden;
-}
-
-table.fixed {
-  table-layout:fixed;
 }
 
 /* END SECTION */

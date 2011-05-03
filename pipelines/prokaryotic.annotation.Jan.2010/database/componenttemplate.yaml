@@ -37,4 +37,3 @@
 - Name: parse_evidence
 - Name: start_site_curation
 - Name: split_multifasta
-- Name: geneprediction2bsml

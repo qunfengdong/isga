@@ -13,13 +13,6 @@
   Index: 40
   Name: Glimmer3 Refinement Pass
   Template: glimmer3
-- Cluster: Alternate Gene Prediction
-  ErgatisName: geneprediction2bsml.default
-  ClusterInput:
-    - Gene_Coords
-    - Genome_Contigs
-  Index: 10
-  Template: geneprediction2bsml
 - Cluster: Protein Domain Search
   ClusterInput:
     - HMM_Search_Input

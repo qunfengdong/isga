@@ -99,7 +99,7 @@ your customized settings.\
       <a href="#">> Your <% scalar @runs %> Pipeline Run(s)</a>
       <ul>
 %      foreach my $userrun (@runs){
-        <li class="rmbutton"><a href="/Run/View?run=<% $userrun %>"><% $userrun->getName %></a></li>
+        <li class="rmbutton"><a href="/Run/View?run=<% $userrun %>">$userrun->getName</a></li>
 %      }
       </ul>
 %    }

@@ -13,7 +13,7 @@ push @$runs, @{$account->getSharedRuns()};
 my %searchableRuns = ();
 if (@$runs) {
 	foreach (@$runs) {
-		if ( $_->hasGBrowseInstallation ) {
+		if ( $_->hasGbrowseInstallation ) {
 			$searchableRuns{$_} = $_->getName;
 		}
 	}

@@ -30,7 +30,7 @@ Returns the filesystem path for the Ergatis output repository this pipeline will
 =cut
 #------------------------------------------------------------------------
   sub getErgatisOutputRepository {
-    return shift->getErgatisProjectDirectory . '/output_repository';
+    return shift->getErgatisProjectDirectory . 'output_repository';
   }
 
 #------------------------------------------------------------------------

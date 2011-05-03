@@ -53,8 +53,7 @@ foreach ( grep { ! $_->getDependsOn } @$components ) {
 </%perl>
   <tr class="odd">
 %#    <td align="right"><% $_->getName %></td>
-%#    <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $description  %></p></td>
-    <td><em class="clustermodal"><% $_->getName %></em></td>
+    <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $description  %></p></td>
     <td class="centertext" align="center"><% $link %></td>
     <td class="centertext" align="right"><% $on_off_switch %></td>
   </tr>

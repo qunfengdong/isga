@@ -19,7 +19,6 @@ use warnings;
 
 use HTML::Scrubber;
 use URI;
-use Email::Valid;
 
 #========================================================================
 
@@ -47,23 +46,6 @@ sub checkHTML {
   my $error = 'Must not contain HTML code.';
 
   return $scrubbed eq $value ? '' : $error;
-}
-
-#------------------------------------------------------------------------
-
-=item public String checkEmail(string value);
-
-Returns an error if the supplied text isn't an email address. Weak validation.
-
-=cut 
-#------------------------------------------------------------------------
-sub checkEmail {
-  
-  my $value = shift;
-
-  my ($address, $object) = Email::Valid->address($value);
-  
-  return ($address ? '' : "$value is not a valid email address");  
 }
 
 #------------------------------------------------------------------------

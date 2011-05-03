@@ -169,6 +169,7 @@ sub UploadInput {
       TITLE => 'Upload File',
       sub => 
       [
+
        {
 	templ => 'print',
 	TITLE => 'File Type',
@@ -212,17 +213,14 @@ sub UploadInput {
        },
       ],
      },
-
      {
       templ => 'hidden',
       NAME => 'run_builder',
-#      ERROR => 'not_null',
       VALUE => $run_builder,
      },
      {
       templ => 'hidden',
       NAME => 'pipeline_input',
-#      ERROR => 'not_null',
       VALUE => $pipeline_input,
      },
 
@@ -375,7 +373,6 @@ sub EditDetails {
 	TITLE => 'Run Name',
 	REQUIRED => 1,
 	LABEL => 'name',
-	MAXLEN => '39',
 	ERROR => ['not_null', 'Text::checkHTML', 'Text::checkUnixFileName',
 		  'RunBuilder::isUniqueName'],
 	VALUE => $rBuilder->getName,

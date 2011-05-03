@@ -4,7 +4,7 @@
 
 <li class="title">Analysis Tools</li>
 
-% if ( $run->hasGBrowseInstallation ) {
+% if ( $run->hasGbrowseInstallation ) {
 
 <li class="rmbutton"><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></li>
 <li><p>Visualize the results of this run in the Generic Genome Browser.</p></li>

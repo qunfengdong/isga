@@ -8,10 +8,10 @@ mail_config: localhost
 log_file: /data/web/isga.cgb/log
 minimum_log_level: warning
 error_notification_email: [ 'chemmeri@islay.cgb.indiana.edu' ]
-server_name: ISGA Laptop Test
+server_name: ISGA Aaron Test
 custom_parameters:
 # Email address to send notification mail from
-  mail_sender: 'ISGA Chris Laptop System <biohelp@cgb.indiana.edu>'
+  mail_sender: 'ISGA Aaron System <biohelp@cgb.indiana.edu>'
 # Temporary file directory to use for ISGA.  Please use full path.
   tmp_file_directory: /tmp/ISGA
 # The URL for the cgi directory of the Ergatis installation that ISGA will use.

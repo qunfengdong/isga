@@ -107,3 +107,31 @@ INSERT INTO userclassconfiguration (configurationvariable_id, userclass_id, user
 UPDATE siteconfiguration SET siteconfiguration_value = 'biohelp@cgb.indiana.edu'
   FROM configurationvariable b 
   WHERE siteconfiguration.configurationvariable_id = b.configurationvariable_id AND b.configurationvariable_name = 'support_email';
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add User Classes
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE userclass SET userclass_name = 'External User', userclass_description =
+'Users that are not affiliates or customers of the Center for Genomics and Bioinformatics.' 
+  WHERE userclass_name = 'Default User';
+
+INSERT INTO groupmembership (accountgroup_id, party_id) VALUES (
+(SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'),
+(SELECT party_id FROM account WHERE account_email = 'chemmeri@indiana.edu'));
+
+INSERT INTO groupmembership (accountgroup_id, party_id) VALUES (
+(SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'),
+(SELECT party_id FROM account WHERE account_email = 'abuechle@indiana.edu'));
+
+SET SESSION client_min_messages TO 'warning';
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Edit CGB Contact Address
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE siteconfiguration SET siteconfiguration_value = 'biohelp@cgb.indiana.edu'
+  FROM configurationvariable b 
+  WHERE siteconfiguration.configurationvariable_id = b.configurationvariable_id AND b.configurationvariable_name = 'support_email';

@@ -68,13 +68,13 @@ sub RunBuilder::Create {
   # count runs
   my $runs = ISGA::Run->exists( CreatedBy => $account, Type => $pipeline );
   $runs++;
-  my $pipeline_name = $pipeline->getName;
-  my $default_name = length($pipeline_name) > (39 - length(" Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Run $runs")) . " Run $runs" : $pipeline_name . " Run $runs";
+
+  my $default_name = $pipeline->getName . " Run $runs";
 
   while( ISGA::Run->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount) ||
          ISGA::RunBuilder->exists( Name => $default_name, CreatedBy => ISGA::Login->getAccount)){
     $runs++;
-    $default_name = length($pipeline_name) > (39 - length(" Run $runs")) ? substr($pipeline_name, 0, 39 - length(" Run $runs")) . " Run $runs" : $pipeline_name . " Run $runs";
+    $default_name = $pipeline->getName . " Run $runs";
   }
 
   my %form_args =

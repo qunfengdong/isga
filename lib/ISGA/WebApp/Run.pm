@@ -42,13 +42,9 @@ sub Run::InstallGbrowseData {
   my $self = shift;
   my $run = $self->args->{run};
 
-  warn "class1 is ", ref($run), "\n";
-
   $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
 
-  warn "get things running\n";
-
-  $run->installGBrowseData();
+  $run->installGbrowseData();
   $self->redirect( uri => "/Browser/gbrowse/$run/" );
 }
 
@@ -57,13 +53,11 @@ sub Exception::Run::InstallGbrowseData {
   my $self = shift;
   my $run = $self->args->{run};
 
-  warn "class2 is ", ref($run), "\n";
-
   # remove conf
-  $run->deleteGBrowseConfigurationFile();
+  $run->deleteGbrowseConfigurationFile();
 
   # remove database dir
-  $run->deleteGBrowseDatabase();
+  $run->deleteGbrowseDatabase();
 }
 
 #------------------------------------------------------------------------

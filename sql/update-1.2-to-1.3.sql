@@ -99,16 +99,6 @@ INSERT INTO clustercustomization (clustercustomization_name) VALUES ('Modular');
 INSERT INTO clustercustomization (clustercustomization_name) VALUES ('Standard');
 
 ALTER TABLE workflow ADD COLUMN workflow_customization TEXT REFERENCES clustercustomization(clustercustomization_name);
-
-UPDATE workflow SET workflow_customization = 'IO' WHERE cluster_id = 
-  ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Output' );
-UPDATE workflow SET workflow_customization = 'IO' WHERE cluster_id = 
-  ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Process Annotation Input Files' );
-UPDATE workflow SET workflow_customization = 'Modular' WHERE cluster_id = 
-  ( SELECT cluster_id FROM cluster WHERE cluster_name = 'RNA Prediction' );
-UPDATE workflow SET workflow_customization = 'Modular' WHERE cluster_id = 
-  ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Additional Gene Analysis' );
-UPDATE workflow SEt workflow_customization = 'Standard' WHERE workflow_customization IS NULL;
 ALTER TABLE workflow ALTER COLUMN workflow_customization SET NOT NULL;
 
 -------------------------------------------------------------------
@@ -402,14 +392,14 @@ ERROR: ''File::isPath''
 );
 
 -- blank to start with needed for all pipelines
---INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
--- (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_directory'), 
--- (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation'), '');
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_directory'), 
+ (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation'), '');
 
 -- blank to start with needed for all pipelines
---INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
--- (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_directory'), 
--- (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly'), '');
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_directory'), 
+ (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly'), '');
 
 
 -------------------------------------------------------------------
@@ -432,14 +422,14 @@ ERROR: ''File::isPath''
 
 
 -- blank to start with needed for all pipelines
---INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
--- (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_submission_directory'), 
--- (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation'), '');
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_submission_directory'), 
+ (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation'), '');
 
 -- blank to start with needed for all pipelines
---INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
--- (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_submission_directory'), 
--- (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly'), '');
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_submission_directory'), 
+ (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly'), '');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -461,14 +451,14 @@ ERROR: ''not_null''
 
 
 -- blank to start with needed for all pipelines
---INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
--- (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_name'), 
--- (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation'), '');
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_name'), 
+ (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation'), '');
 
 -- blank to start with needed for all pipelines
---INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
--- (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_name'), 
--- (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly'), '');
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'ergatis_project_name'), 
+ (SELECT pipeline_id FROM globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly'), '');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -688,130 +678,3 @@ INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, 
   VALUES ('PTT', 'ptt', 'The PTT file format is a table of protein features. It is used mainly by NCBI who produce PTT files for all their published genomes found in <a href="ftp://ftp.ncbi.nih.gov/genomes/">ftp://ftp.ncbi.nih.gov/genomes/</a>.', FALSE);
 INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Protein Features', 'Contains the protein annonation for a genome.');
 INSERT INTO filetype (filetype_name, filetype_help) VALUES ('16s RNA', 'Contains 16s RNA sequence.');
-
-
--------------------------------------------------------------------
--------------------------------------------------------------------
--- Fix Component indices
--------------------------------------------------------------------
--------------------------------------------------------------------
-
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'glimmer3.iter1';
-UPDATE component SET component_index = 40 WHERE component_ergatisname = 'glimmer3.iter2';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'hmmpfam.pre_overlap_analysis';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'wu-blastp.pre_overlap_analysis';
-UPDATE component SET component_index = 40 WHERE component_ergatisname = 'ber.pre_overlap_analysis';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'RNAmmer.default';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'tRNAscan-SE.find_tRNA';
-UPDATE component SET component_index = 260 WHERE component_ergatisname = 'ncbi-blastx.blast_interevidence_regions';
-UPDATE component SET component_index = 100 WHERE component_ergatisname = 'priam_ec_assignment.default';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'signalp.default';
-UPDATE component SET component_index = 300 WHERE component_ergatisname = 'asgard_simple.default';
-UPDATE component SET component_index = 30 WHERE component_ergatisname = 'tmhmm.default';
-UPDATE component SET component_index = 50 WHERE component_ergatisname = 'ps_scan.default';
-UPDATE component SET component_index = 60 WHERE component_ergatisname = 'transterm.default';
-UPDATE component SET component_index = 70 WHERE component_ergatisname = 'lipop.default';
-UPDATE component SET component_index = 90 WHERE component_ergatisname = 'rpsblast.priam';
-UPDATE component SET component_index = 120 WHERE component_ergatisname = 'wu-blastp.COGS';
-UPDATE component SET component_index = 140 WHERE component_ergatisname = 'oligopicker.default';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'bsml2promoterregion.default';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'split_multifasta.default';
-UPDATE component SET component_index = 30 WHERE component_ergatisname = 'train_for_glimmer3_iteration.train_for_glimmer';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'bsml2fasta.pre_overlap_analysis';
-UPDATE component SET component_index = 30 WHERE component_ergatisname = 'xdformat.pre_overlap_analysis';
-UPDATE component SET component_index = 0 WHERE component_ergatisname = 'bsml2featurerelationships.pre_overlap_analysis';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'overlap_analysis.default';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'start_site_curation.default';
-UPDATE component SET component_index = 30 WHERE component_ergatisname = 'parse_evidence.hypothetical';
-UPDATE component SET component_index = 40 WHERE component_ergatisname = 'translate_sequence.translate_new_models';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'mast.default';
-UPDATE component SET component_index = 180 WHERE component_ergatisname = 'translate_sequence.final_polypeptides';
-UPDATE component SET component_index = 190 WHERE component_ergatisname = 'bsml2fasta.final_cds';
-UPDATE component SET component_index = 30 WHERE component_ergatisname = 'p_func.default';
-UPDATE component SET component_index = 40 WHERE component_ergatisname = 'pipeline_summary.default';
-UPDATE component SET component_index = 50 WHERE component_ergatisname = 'cgb_bsml2tbl.default';
-UPDATE component SET component_index = 60 WHERE component_ergatisname = 'tbl2asn.default';
-UPDATE component SET component_index = 70 WHERE component_ergatisname = 'bsml2gff3.default';
-UPDATE component SET component_index = 80 WHERE component_ergatisname = 'bsml2fasta.workbench';
-UPDATE component SET component_index = 100 WHERE component_ergatisname = 'translate_sequence.workbench';
-UPDATE component SET component_index = 110 WHERE component_ergatisname = 'join_multifasta.workbench';
-UPDATE component SET component_index = 130 WHERE component_ergatisname = 'cgb_format.workbench_nuc';
-UPDATE component SET component_index = 140 WHERE component_ergatisname = 'cgb_format.workbench_prot';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'translate_sequence.translate_prediction';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'bsml2fasta.prediction_CDS';
-UPDATE component SET component_index = 30 WHERE component_ergatisname = 'promote_gene_prediction.promote_prediction';
-UPDATE component SET component_index = 40 WHERE component_ergatisname = 'translate_sequence.translate';
-UPDATE component SET component_index = 50 WHERE component_ergatisname = 'join_multifasta.gene_predict_translated';
-UPDATE component SET component_index = 150 WHERE component_ergatisname = 'asn2all.default';
-UPDATE component SET component_index = 80 WHERE component_ergatisname = 'wu-blastp.post_overlap_analysis';
-UPDATE component SET component_index = 320 WHERE component_ergatisname = 'ncbi-blastp.asgard';
-UPDATE component SET component_index = 310 WHERE component_ergatisname = 'join_multifasta.asgard';
-UPDATE component SET component_index = 130 WHERE component_ergatisname = 'bsml2fasta.oligopicker';
-UPDATE component SET component_index = 100 WHERE component_ergatisname = 'priam_ec_assignment.default';
-UPDATE component SET component_index = 110 WHERE component_ergatisname = 'parse_evidence.priam_ec';
-UPDATE component SET component_index = 80 WHERE component_ergatisname = 'parse_evidence.lipoprotein';
-UPDATE component SET component_index = 40 WHERE component_ergatisname = 'parse_evidence.tmhmm';
-UPDATE component SET component_index = 270 WHERE component_ergatisname = 'bsml2interevidence_fasta.default';
-UPDATE component SET component_index = 280 WHERE component_ergatisname = 'split_multifasta.split_interevidence_regions';
-UPDATE component SET component_index = 110 WHERE component_ergatisname = 'bsml2fasta.post_overlap_analysis';
-UPDATE component SET component_index = 120 WHERE component_ergatisname = 'xdformat.post_overlap_analysis';
-UPDATE component SET component_index = 130 WHERE component_ergatisname = 'bsml2featurerelationships.post_overlap_analysis';
-UPDATE component SET component_index = 170 WHERE component_ergatisname = 'parse_evidence.ber_post';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'parse_evidence.ber_pre';
-UPDATE component SET component_index = 140 WHERE component_ergatisname = 'ber.post_overlap_analysis';
-UPDATE component SET component_index = 70 WHERE component_ergatisname = 'parse_evidence.hmmpfam_post';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'parse_evidence.hmmpfam_pre';
-UPDATE component SET component_index = 50 WHERE component_ergatisname = 'hmmpfam.post_overlap_analysis';
-
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'bsml2fasta.post_overlap_analysis';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'xdformat.post_overlap_analysis';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'bsml2featurerelationships.post_overlap_analysis';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'parse_evidence.ber_post';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'parse_evidence.ber_pre';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'ber.post_overlap_analysis';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'parse_evidence.hmmpfam_post';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'parse_evidence.hmmpfam_pre';
-UPDATE component SET component_dependson = NULL WHERE component_ergatisname = 'hmmpfam.post_overlap_analysis';
-
-UPDATE cluster SET cluster_layoutxml = '___sff_to_CA.default___' WHERE cluster_name = 'SFF Preperation';
-
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'sff_to_CA.default';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'create_spec_file.default';
-UPDATE component SET component_index = 20 WHERE component_ergatisname = 'celera-assembler.default';
-UPDATE component SET component_index = 10 WHERE component_ergatisname = 'celera2hawkeye.default';
-
--- update pipeline names
-UPDATE pipeline SET pipeline_name = 'Prokaryotic Annotation' 
-       WHERE pipeline_name = 'Prokaryotic Annotation Pipeline' AND pipelinepartition_id = 1;
-
-UPDATE pipeline SET pipeline_name = 'Celera Assembly' 
-       WHERE pipeline_name = 'Celera Assembly Pipeline' AND pipelinepartition_id = 1;
-
-UPDATE globalpipeline SET globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010' 
-       WHERE globalpipeline_subclass = 'ProkaryoticAnnotation';
-
-UPDATE globalpipeline SET globalpipeline_subclass = 'CeleraAssembly::Jun2010' 
-       WHERE globalpipeline_subclass = 'CeleraAssembly';
-
-UPDATE globalpipeline SET globalpipeline_image = '/include/img/prokaryote-annotation-Jan2010.png'
-       WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
-
-UPDATE pipeline SEt pipelinestatus_id = ( SELECT pipelinestatus_id FROM pipelinestatus 
-                                              WHERE pipelinestatus_name = 'Published' );
-
-UPDATE pipeline SET pipelinestatus_id = ( SELECT pipelinestatus_id FROM pipelinestatus 
-                                              WHERE pipelinestatus_name = 'Available' )
-       WHERE pipeline_id = ( SELECT pipeline_id FROM globalpipeline
-                             WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010' );
-
--- fix run subclasses
-
-UPDATE run SET run_subclass = 'ProkaryoticAnnotation::Jan2010' WHERE pipeline_id = 1;
-
--------------------------------------------------------------------
--------------------------------------------------------------------
--- Allow ClusterOptions to be seen while not logged in
--------------------------------------------------------------------
--------------------------------------------------------------------
-UPDATE usecase SET usecase_requireslogin = FALSE WHERE usecase_name = '/Pipeline/ClusterOptions';
-UPDATE usecase SET usecase_requireslogin = FALSE WHERE usecase_name = '/Pipeline/ViewParameters';
