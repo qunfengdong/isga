@@ -1,6 +1,0 @@
---- !perl/MasonX::Foundation::Class::Base
-class: ResourceShare
-partition: ResourceSharePartition
-attributes:
-  - { name: ResourceSharePartition, options: [ REQUIRED ] }
-  - { name: Party, type: Party, options: [ REQUIRED ] }

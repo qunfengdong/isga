@@ -1,18 +1,13 @@
 <%args>
  $show_canceled
- $show_hidden
- $show_shared
 </%args>
-
-% my $account = ISGA::Login->getAccount();
-% my $canceled = ISGA::Run->exists( CreatedBy => $account, Status => $canceled_status );
-% my $hidden = ISGA::Run->exists( CreatedBy => $account, IsHidden => 1 );
-% my $shared = $account->getSharedRunCount();
 
 <sys:rightmenu>
 
 <ul>
 <li class="title">Viewing Options</li>
+
+
 
 <span>
 <form action="/Run/Status" name="options">
@@ -23,39 +18,13 @@
 % if ( $show_canceled ) {
 checked="yes" \
 % }
-onChange="document.forms['options'].submit()"> Show canceled runs (<% $canceled %>)<br>
+onChange="document.forms['options'].submit()"> Show canceled runs<br>
 </p>
 </li>
-
-<li>
-<p>
-<input type="checkbox" name="show_hidden" value="1" \
-% if ( $show_hidden ) {
-checked="yes" \
-% }
-onChange="document.forms['options'].submit()"> Show hidden runs (<% $hidden %>)<br>
-</p>
-</li>
-
-<li>
-<p>
-% if ( $shared ) { 
-<input type="checkbox" name="show_shared" value="1" \
-%   if ( $show_shared ) {
-checked="yes" \
-%   }
-onChange="document.forms['options'].submit()"> Show runs shared with you (<% $shared %>)<br>
-% } else {
-No runs have been shared with you.
-% }
-</p>
-</li>
-
-
 </form>
 </span>
-</sys:rightmenu>
 
-<%once>
-my $canceled_status = ISGA::RunStatus->new( Name => 'Canceled' );
-</%once>
+</ul>
+
+
+</sys:rightmenu>

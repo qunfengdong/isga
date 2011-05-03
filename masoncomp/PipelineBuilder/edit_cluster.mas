@@ -4,31 +4,26 @@
  $cluster
 </%args>
 
-<%perl>
-my $noParams;
-my $wf_mask = $pipeline_builder->getWorkflowMask();
-foreach ( @{$components}){
-  if ( my $builder = ISGA::ComponentBuilder->new($_) ){
-    if ( $builder->{PipelineBuilder} ){
-</%perl>
-
+% my $noParams;
+% my $disabled_components = $pipeline_builder->getWorkflowMask->getDisabledComponents;
+%foreach ( @{$components}){
+%  if ( SysMicro::ComponentBuilder->new($_) ){
+%    if ( SysMicro::ComponentBuilder->new($_)->{PipelineBuilder} ){
+% my $builder = SysMicro::ComponentBuilder->new($_);
 <p><a href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>"><% $_->getName %></a><br>
-
-%     if ( ! $wf_mask->isActive($_) ) {
+%if(defined ${$disabled_components}{$_->getErgatisName} || defined ${$pipeline_builder->getWorkflowMask->getDisabledClusters}{$cluster->getName}){
 <em class="red">You have disabled this analysis.</em><br>
-%     }
+%}
 <% $builder->getComponentDescription  %>
 </p>
-<%perl>
-    } else {
-      push(@{$noParams}, $_);
-    }
-  }
-}
+%    } else {
+%      push(@{$noParams}, $_);
+%    }
+%  }
+%}
 
-foreach ( @{$noParams}){
-  my $builder = ISGA::ComponentBuilder->new($_);
-</%perl>
+%foreach ( @{$noParams}){
+%  my $builder = SysMicro::ComponentBuilder->new($_);
 <p><% $_->getName %><br>
 <em class="red">Has no parameters to be set.</em><br>
 <% $builder->getComponentDescription  %>
@@ -36,12 +31,19 @@ foreach ( @{$noParams}){
 
 %}
 
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $pipeline_builder->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-edit-cluster.mas");
-}
-</%perl>
-
-</div>
+<div id="WT" class="hidden documentation editCluster"><div id="WT_close_right"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+% if($cluster->getName eq 'Gene Prediction'){
+<p>If you are following along with the walkthrough, 
+this is the page for the Gene Prediction module.  
+Here you can choose to edit parameters for Glimmer3 
+First Pass or Glimmer3 Refinement Pass.  Click on 
+<span class="highlight">Glimmer3 First Pass</span> 
+to continue this walkthrough.</p>
+% } else {
+<p>Above you will see a list a programs that have parameters which 
+can be edited.  To edit a programs parameters, simply click on the 
+program name you wish to edit.  You will be taken to a form for that 
+particular program.</p>
+% }
+</div></div>
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>

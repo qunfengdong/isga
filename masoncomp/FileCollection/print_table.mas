@@ -24,7 +24,7 @@ $(document).ready(function()  {
 
 % foreach my $resource ( @{$file_collection->getContents()} ) {
 
-%   if ( $resource->isa('ISGA::FileCollection') ) {
+%   if ( $resource->isa('SysMicro::FileCollection') ) {
 <& /FileCollection/print_table.mas, file_collection => $resource, 
                                     embed => "collection-$file_collection" &>
 %   } else {
@@ -52,8 +52,8 @@ $(document).ready(function()  {
 
  <td><% $resource->getCreatedAt->brief %></td>
  <td>
-   <a href="/File/View?file=<% $resource %>">View File</a> | 
-   <a button"href="/Download/<% $resource->getUserName %>?file_resource=<% $resource %>">Download File</a>
+   <a class="button"href="/File/View?file=<% $resource %>">View File</a> | 
+   <a class="button"href="/Download/<% $resource->getUserName %>?file_resource=<% $resource %>">Download File</a>
  </td>
 </tr>
 %   }

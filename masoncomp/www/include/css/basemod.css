@@ -24,19 +24,14 @@
   #topnav a {
     text-decoration: none; color: #fff;
     position: relative;
-    font-weight: 400;
-    font-size: 11px;
   }
-
-  /* documentation div */
-  .documentation { background:  #f7f7d4;}
 
   /*
   #nav { overflow:hidden; }
   #nav_main {  }
   */
 
-  #main { margin: 10px 0; background: #fff; word-wrap: break-word; }
+  #main { margin: 10px 0; background: #fff; }
   #footer { padding: 10px 20px; color:#666; background: #fff; border-top: 5px #efefef solid; text-align: center;  }
 
   /* (en) navigation: horizontal adjustment | (de) horizontale Ausrichtung  */
@@ -75,14 +70,13 @@
   /* SECONDARY - 30a8c3 */
 
   a, a:link, a:visited 
-    { color: #30a8c3; cursor: pointer; }
+    { color: #30a8c3 }
 
 
   /* HIGHLIGHT - f7f7d4 */
 
-  .data th, .button, #col1_content ul li, .list th.parameter
+  .data th, .button, #col1_content ul li 
     { background-color: #f7f7d4; }
-
 
 
 
@@ -116,7 +110,7 @@
 
 /* *** BUTTONS *** */
   .button {
-	padding: .4em 1em;
+	padding: .2em 1em;
 	text-decoration: none;
 	font: bold 12px Arial, Geneva, sans-serif;
 	border-style:solid;
@@ -132,9 +126,6 @@
 	background: #fff;
 }
 
-  a.button.cancel {
-        padding: .5em 1em;
-  }
 /* *** LOGIN DROP DOWN *** */
   a:focus {
 	outline: none;
@@ -191,7 +182,7 @@
        background:  #eee;
        font-size: 95%;
        font-weight: normal;  
-       padding: 0pt; 
+       padding: 0pt;
        border-bottom: solid 1px #00184C;
   }
 
@@ -199,7 +190,7 @@
        background: #fff; /* #F8FAFC; */
        font-size: 95%;
        font-weight: normal;  
-       padding: 0pt; 
+       padding: 0pt;
        border-bottom: solid 1px #00184C;
   }
 
@@ -216,7 +207,6 @@
   .list {}
   .list table { 
     border-collapse: collapse; 
-    width: 100%;
     empty-cells: show;
     border-top: solid 1px #00184C;
     border-bottom: solid 1px #00184C;
@@ -225,12 +215,9 @@
   .list td {
     padding: 3px 10px 3px 5px; 
     margin: 0 0 0 0;
-    vertical-align: middle; 
+    vertical-align: top; 
     empty-cells: show; 
     text-align: left;
-  }
-  .list td.pad_button {
-    padding: 10px 10px 10px 5px;
   }
   .list th {
     color: #fff;
@@ -249,17 +236,6 @@
     padding: 3px 10px 3px 5px; margin: 0 0 0 0;
     border-bottom: solid 1px #00184C;
   }
- 
-  .list th.parameter {
-    text-align: right;
-    color: #000;
-    font-size: 100%;
-    padding: 3px 10px 3px 5px;
-    margin: 50px 50px 50px 50px;
-    border-bottom: none;
-    font-weight: normal;
-  }
-
 
 /* *** DATA TABLE *** */
 
@@ -277,59 +253,18 @@
   }
   .data td {
     padding: 5px; 
-    width: 35%;
     border-top: solid 1px #61832D;  
     border-bottom: solid 1px #61832D;
   }
   .data th { 
     border-top: solid 1px #61832D;  
-    width: 15%;
     border-bottom: solid 1px #61832D;
     padding: 5px;
     text-align:right;
     vertical-align: top; 
     font-weight: bold; 
   }
-
-/* *** LIST TABLE *** */
-
-  .modaltable {}
-  .modaltable table {
-    border-collapse: collapse;
-    width: 100%;
-    empty-cells: show;
-    border-top: solid 1px #00184C;
-/*    border-bottom: solid 1px #00184C; */
-    margin: 0 0 30px 0;
-  }
-  .modaltable tr.odd {
-     border-bottom: 0px;
-  }
-  .modaltable td {
-    padding: 5px 10px 5px 5px;
-    margin: 0 0 0 0;
-    vertical-align: middle;
-    empty-cells: show;
-    text-align: left;
-  }
-  .modaltable th {
-    color: #000;
-    font-size: 100%;
-    text-align:left;
-    vertical-align: middle;
-    font-weight: normal;
-    padding: 5px 20px 5px 5px; margin: 0 0 0 0;
-    border-bottom: solid 1px #00184C;
-  }
-  .modaltable th.subhead {
-    background: #ddd;
-    color: #000;
-    text-align:left;
-    vertical-align: top;
-    padding: 3px 10px 3px 5px; margin: 0 0 0 0;
-    border-bottom: solid 1px #00184C;
-  }
-
+  
   div.pipelineContainer{
 /*    border: 2px solid #61832D; */
     padding: 5px;
@@ -351,85 +286,6 @@
   li.pointer{
     cursor: pointer;
   }
-
- td.centertext{
-    text-align: center;
- }
-
- span.upstream {
-    background-color: #fedfbf;
- }
- 
-span.downstream {
-    background-color: #afcfef;
- }
- .preview {
-   overflow: auto;
-   height: 500px;
- }
- .overflow { overflow: auto; }
-
-div.downtime {
- background: #b0786d;
-  -moz-border-radius:10px;
-  -webkit-border-radius:10px;
-}
-.downtime p{
- color: #FFFFFF;
- font-weight: bold;
- padding: 10px;
-}
-#col1_content ul li.onclickLink {
-  color: #30A8C3;
-}
-
-.hide{display:none;}
-
-button#hide_runs{
-  float: right;
-  position: relative;
-/*  top: -27px; */
-}
-
-ul.unordered{
-  list-style-type: disc;
-}
-li.unordered{
-  line-height: 1em;
-  margin-bottom: 0.3em;
-}
-
-/* /Pipelines/List CSS */
-div.list-container{
-  clear: both;
-  height: 240px;
-}
-img.thumbnail{
-  width: 180px;
-  height: 180px;
-  float: left;
-  margin: 0;
-  padding 0;
-}
-p.description{
-  margin: 25px 200px;
-}
-
-ul.listmenu{
-  float: right;
-  width 180px;
-  margin: 0;
-  padding: 0;
-}
-
-#col3_content {
-  word-wrap: break-word;
-  overflow: hidden;
-}
-
-table.fixed {
-  table-layout:fixed;
-}
 
 /* END SECTION */
 

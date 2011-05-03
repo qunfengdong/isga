@@ -1,0 +1,32 @@
+<%args>
+	$infile
+</%args>
+
+<h1>Maximum Likelihood Results</h1>
+<%perl>
+my $outfile = $infile.'_protml_outfile';
+my $outtree = $infile.'_protml_outtree';
+my $output_content = `cat $outfile`;
+my $outtree_content = `cat $outtree`;
+</%perl>
+
+
+<div class="data">
+<table class="tablesorter list" width="100%">
+<tbody>
+<tr><td>
+<pre>
+<br />
+% print $output_content;
+</pre>
+<br />
+</td></tr><tr><td>
+<pre>
+<br />
+% print $outtree_content;
+</pre>
+<br />
+</td></tr>
+</tbody>
+</table>
+</div>

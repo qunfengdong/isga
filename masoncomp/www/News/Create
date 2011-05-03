@@ -1,9 +1,9 @@
 <%perl> # -*- cperl -*-
 
 # check that we have the correct form cached
-my $form = $ISGA::WebApp->saved_args->{'form'};
+my $form = $SysMicro::WebApp->saved_args->{'form'};
 $form and $form->get_formname() eq 'news_create'
-  or $form = ISGA::FormEngine::News->Create(\%ARGS);
+  or $form = SysMicro::FormEngine::News->Create(\%ARGS);
 
 return $m->comp('/News/create.mas', form => $form);
 

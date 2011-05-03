@@ -7,12 +7,12 @@
 warn "starting the parameter form\n";
 
 # check that we have the correct form cached
-my $form = $ISGA::WebApp->saved_args->{'form'};
+my $form = $SysMicro::WebApp->saved_args->{'form'};
 
 $form and warn "We found the old form - maybe\n";
 
 $form and $form->get_formname() eq 'run_builder_edit_parameters'
-  or $form = ISGA::FormEngine::RunBuilder->EditParameters(\%ARGS);
+  or $form = SysMicro::FormEngine::RunBuilder->EditParameters(\%ARGS);
 
 return $m->comp('/RunBuilder/edit_parameters.mas', 
 		run_builder => $run_builder, form => $form);

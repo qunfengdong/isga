@@ -1,57 +1,26 @@
 <%args>
  %active
- @news
+ %type_map
 </%args>
 
-<sys:style type="text/css">
-div.newsitem {
- color: black;
- padding: 5px 5px;
- background: #f7f7e7;
-}
 
-div.newsheader {
- padding: 5px 20px;
- font-weight: bold;
- color: #fff
-}
+<h1>Pipeline Service Recent News</h1>
 
-span.newstime {
- position: absolute;
- right: 30px;
-}
+% foreach ( @types ) {
 
-div.newsfooter {
- padding: 2px 20px;
- margin: 0 0 5px 0;
-}
+%   foreach ( @{$type_map{ $_ }} ) {
 
-div.outage {
- background: #b0786d;
-}
+<h3><% $_->getTitle %></h3>
 
-div.news {
- background: #61832d;
-}
+<p><% $_->getBody %></p>
 
-div.release {
- background: #61832d;
-}
+<p>Posted At:<% $_->getCreatedAt %></p>
 
-</sys:style>
+%   }
 
-<h1>ISGA Recent News</h1>
-
-% foreach ( @news ) {
-<& $type_map{ $_->getType->getName }, news => $_ &>
 % }
 
 <%once>
-
-my %type_map = ( 
-		'Pipeline Service News' => 'view_service_news.mas',
-		'Release Announcement' => 'view_release.mas',
-		'Service Outage Report' => 'view_outage.mas'
-	       );
+my @types = map { SysMicro::NewsType->new( Name => $_ ) } ( 'Pipeline Service News', 'Release Announcement', 'Service Outage Report' );
 </%once>
 

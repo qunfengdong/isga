@@ -5,9 +5,9 @@
 <%perl> 
 
 # check that we have a form cached and it is the correct type
-my $form = $ISGA::WebApp->saved_args->{'form'};
+my $form = $SysMicro::WebApp->saved_args->{'form'};
 $form and $form->get_formname() eq 'run_cancel'
-  or $form =  ISGA::FormEngine::Run->Cancel(\%ARGS);
+  or $form =  SysMicro::FormEngine::Run->Cancel(\%ARGS);
 
 return $m->comp('/Run/cancel.mas', form => $form, run => $run);
 

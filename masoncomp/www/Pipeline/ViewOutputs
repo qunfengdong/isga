@@ -5,9 +5,9 @@
 <%perl>
 
 # allow non-logged in users to view inputs for public pipeline
-if ( $pipeline->isa( 'ISGA::UserPipeline' ) ) {
+if ( $pipeline->isa( 'SysMicro::UserPipeline' ) ) {
 
-  my $account = ISGA::Login->getAccount;
+  my $account = SysMicro::Login->getAccount;
   $account or X::User::Denied->throw( "You do not have permission to view these outputs" );
   $pipeline->getCreatedBy == $account
     or X::User::Denied->throw( "You do not have permission to view these outputs" );
@@ -20,7 +20,7 @@ foreach my $cluster ( @{$pipeline->getClusters} ) {
 
   my $components = $pipeline->getComponents($cluster);
   
-  foreach my $output ( @{ISGA::ClusterOutput->query( Component => $components )} ) { 
+  foreach my $output ( @{SysMicro::ClusterOutput->query( Component => $components )} ) { 
     
     my $visibility = $output->getVisibility();
 

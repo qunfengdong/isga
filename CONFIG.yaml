@@ -1,56 +1,31 @@
 --- !perl/MasonX::Foundation::Config
 mason_data_directory: /data/web/isga.cgb/mason 
+mason_component_root: /data/web/isga.cgb/docs/masoncomp
 apache_session_directory: /data/web/isga.cgb/session
 apache_session_lock_directory: /data/web/isga.cgb/session
-database: { name: isga_dev, user: chemmeri, type: Pg }
-test_database: { name: isga, user: cgb, type: Pg }
-mail_config: localhost
+database: { name: sysmicro_dev, user: cgb, type: Pg }
+test_database: { name: sysmicro_test, user: cgb, type: Pg }
+mail_config: unshift @{$Mail::Sendmail::mailcfg{'smtp'}}, 'mail.cgb.indiana.edu';
+memcached_servers: [ "islay.cgb.indiana.edu:11211" ]
 log_file: /data/web/isga.cgb/log
 minimum_log_level: warning
-error_notification_email: [ 'chemmeri@islay.cgb.indiana.edu' ]
-server_name: ISGA Laptop Test
+error_notification_email: [ 'mnrusimh@cgb.indiana.edu', 'chemmeri@indiana.edu', 'krevanna@indiana.edu', 'abuechle@cgb.indiana.edu' ]
+server_name: ISGA Dev
 custom_parameters:
-# Email address to send notification mail from
-  mail_sender: 'ISGA Chris Laptop System <biohelp@cgb.indiana.edu>'
-# Temporary file directory to use for ISGA.  Please use full path.
-  tmp_file_directory: /tmp/ISGA
-# The URL for the cgi directory of the Ergatis installation that ISGA will use.
-  ergatis_base_uri: https://ergatis-dev.cgb.indiana.edu/cgi/
-# The time allowed between resetting a password and confirming the password change.  e.g., 24h
+  mail_sender: 'ISGA Dev System <biohelp@cgb.indiana.edu>'
+  file_repository: /data/web/isga.cgb/repository
+  tmp_file_directory: /research/projects/isga/dev/tmp/
+  include_root: /data/web/isga.cgb/docs/include
+  ergatis_submit_directory: /research/projects/isga/dev/tmp/pipelines_building
+  ergatis_submit_uri: http://ergatis-dev.cgb.indiana.edu/cgi/run_prepared_pipeline.cgi
   password_reset_cutoff: 24h
-# The base url for your local ISGA web server
-  base_uri: https://aaron1-dev.cgb.indiana.edu/
-# Path to your local copies of searchable databases, i.e., NCBI nr, PFAM, etc.  Please use full path.
-  database_path: /data/
-# Path to the bin directory containing scripts used in ISGA.  Please use full path.
+  ergatis_output_repository: /research/projects/isga/dev/project/output_repository/
+  ergatis_runtime_directory: /research/projects/isga/dev/project/workflow/runtime/pipeline/
+  support_email: biohelp@cgb.indiana.edu
+  base_uri: http://isga-dev.cgb.indiana.edu/
+  gbrowse_config: /research/projects/isga/dev/gbrowse/conf/
+  gbrowse_databases: /research/projects/isga/dev/gbrowse/databases/
+  bin_path: /data/web/isga.cgb/docs/bin/
+  database_path: /research/projects/isga/sw/db/
+  ergatis_project: isga-dev
   scripts_bin: /research/projects/isga/sw/bin/
-# Full path to your shell e.g., /bin/sh
-  sh_executable: /bin/sh
-# Full path to SGE executables.
-  sge_executables: /cluster/sge/bin/sol-amd64
-# Full path to blastall.
-  blast_executable: /bioportal/sw/bin/blastall
-# Full path to cdbfasta.
-  cdbfasta_executable: /bioportal/sw/bin/cdbfasta
-# Full path to formatdb.
-  formatdb_executable: /bioportal/sw/bin/formatdb
-# Name of you SGE cell
-  SGE_CELL: default
-# SGE execution port number
-  SGE_EXECD_PORT: 6445
-# SGE Qmaster Port number
-  SGE_QMASTER_PORT: 6444
-# SGE root path directory
-  SGE_ROOT: /cluster/sge
-# SGE Queue
-  SGE_QUEUE: workbench 
-# Full path to toAmos
-  toAmos_executable: /bioportal/sw/bin/toAmos
-# Full path to bank-transact
-  bank_transact_executable: /bioportal/sw/bin/bank-transact
-# Full path to SffToCa
-  sffToCA_executable: /bioportal/sw/bin/sffToCA
-# Full path to amos2sq
-  amos2sq_executable: /bioportal/sw/bin/amos2sq
-# Full path to clustalw2
-  clustalw_executable: /nfs/bio/sw/bin/clustalw2

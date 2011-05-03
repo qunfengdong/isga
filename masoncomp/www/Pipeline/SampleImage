@@ -1,0 +1,13 @@
+<%args> # -*- cperl -*-
+
+</%args>
+
+<%perl>
+
+
+  # retrieve the account to test credentials
+  my $account = SysMicro::Login->getAccount or X::User::Denied::RequiresLogin->throw();
+
+ 
+  $m->comp( '/Pipeline/sample_image.mas' );
+</%perl>

@@ -1,15 +1,31 @@
-% my $account = ISGA::Login->getAccount;
+% my $account = SysMicro::Login->getAccount;
 
-<& view_header.mas, account => $account &>
+<h1><% $account->getName %></h1>
 
-% my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
-%                                  Status => { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) } );
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr> 
+   <th width="15%">Email</th><td width="35%"><% $account->getEmail %></td>
+   <th width="15%">Walkthroughs</th><td width="35%"><% $account->isWalkthroughDisabled ? 'off' : 'on' %></td>
+  </tr>
+  <tr>
+   <th>Institution</th><td colspan="3"><% $account->getInstitution %></td>
+  </tr>
+ </tbody>
+</table>
+
+</div> 
+
+% my $runs = SysMicro::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
+%                                  Status => { '!=' => SysMicro::RunStatus->new( Name => 'Canceled' ) } );
 % if ( @$runs ) {
 
-<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => 0, show_hidden => 0 &>
+<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => 0 &>
 % }
 
-% my $userpipes = ISGA::UserPipeline->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
+% my $userpipes = SysMicro::UserPipeline->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
 % if ( @$userpipes ) {
 <h2>Customized Pipelines</h2>
 <& /UserPipeline/list.mas, pipelines => $userpipes &>
@@ -27,7 +43,7 @@
 
 % if ( my @groups = @{$account->getUserGroups} ) {
 <div id="list">
-<table>
+<table width="100%">
  <tr>
   <th>Name</th>
   <th>Created By</th>

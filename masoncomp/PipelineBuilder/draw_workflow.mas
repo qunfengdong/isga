@@ -1,0 +1,27 @@
+<%args>
+ $pipeline_builder
+</%args>
+
+% my $pipeline = $pipeline_builder->getPipeline;
+
+<div id="workflow">
+
+<img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>">
+
+<map name="clusters" >
+
+% foreach ( @{SysMicro::Workflow->query( Pipeline => $pipeline )} ) {
+% next if (not defined $_->getCoordinates);
+<area \
+  shape="rect"  \
+  id="<% $_ %>" \
+  alt="<% $_->getCluster->getName %>" \
+  title="<% $_->getCluster->getName %>" \
+  class="noborder nofade cluster jTip" \
+  coords="<% $_->getCoordinates %>" \
+  href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
+ >
+% }
+</map>
+
+</div>

@@ -8,12 +8,16 @@
 my $active = {};
 $active->{$_} = 1 for @active;
 
-my $type_map = {};
+my $type_map;
 
 # query active news
 
-my $news = ISGA::News->query( IsArchived => 0, OrderBy => { DESC => 'CreatedAt' } );
+my $news = SysMicro::News->query( IsArchived => 0, OrderBy => 'CreatedAt' );
+
+while ( my $n = pop( @$news ) ) {
+  push @{$type_map->{ $n->getType }}, $n;
+}
 
 </%perl>
 
-<& /News/recent.mas, active => $active, news => $news &>
+<& /News/recent.mas, active => $active, type_map => $type_map &>

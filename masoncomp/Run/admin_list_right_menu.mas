@@ -3,8 +3,8 @@
  $show_complete
 </%args>
 
-% my $complete = ISGA::Run->exists( Status => $complete_status );
-% my $canceled = ISGA::Run->exists( Status => $canceled_status );
+% my $complete = SysMicro::Run->exists( Status => $complete );
+% my $canceled = SysMicro::Run->exists( Status => $canceled );
 
 
 <sys:rightmenu>
@@ -47,7 +47,7 @@ onChange="document.forms['options'].submit()"> Show complete runs (<% $complete 
 
 <%once>
 
-my $complete_status = ISGA::RunStatus->new( Name => 'Complete' );
-my $canceled_status = ISGA::RunStatus->new( Name => 'Canceled' );
+my $complete = SysMicro::RunStatus->new( Name => 'Complete' );
+my $canceled = SysMicro::RunStatus->new( Name => 'Canceled' );
 
 </%once>

@@ -6,7 +6,7 @@
 <div id="main">
   <div id="col1">
     <div id="col1_content" class="clearfix">
-<& /site/menu.mas, title => ISGA::Login->getUseCase->getMenu &>
+<& /site/menu.mas, title => SysMicro::Login->getUseCase->getMenu &>
     </div>
   </div>
   <div id="col2">

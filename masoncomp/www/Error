@@ -1,24 +1,12 @@
-<%perl>
-my @errors = $ISGA::WebApp->errors();
+% foreach ( $SysMicro::WebApp->errors() ) {
+<p><% $_ %></p>
+% }
 
-if ( @errors > 1 ) {
-  my $message = join ( "\n". map { $_->user_message() } @errors	);
+<p>The details of this error have been sent to the administrators.\
 
-  use Data::Dumper;
-  warn Dumper(\@errors);
-
-  ISGA::Log->alert("/Error received multiple error messages\n".$message);
-  $m->comp('/site/error/system_error.mas');	     	
-
-# if there aren't any errors, redirect them to the home page
-} elsif ( @errors == 0 ) {
-  $m->redirect('/Home');
-} elsif ( $errors[0]->isa('X::User::Denied::RequiresLogin') ) {
-  $m->comp('/site/error/denied-login.mas');
-} elsif ( $errors[0]->isa('X::User') ) {
-  $m->comp('/site/error/user_error.mas', error => $errors[0]);
-} else {
-  $m->comp('/site/error/system_error.mas');
-}
-
-</%perl>
+% if ( my $account = SysMicro::Login->getAccount ) {
+They will investigate the problem and contact you at <% $account->getEmail %> to either notify you of a resolution or request further information regarding the error.
+% } else {
+We will attempt to resolve this error promptly. If you wish to be notified when it is resolved, email us at biohelp@cgb.indiana.edu.
+% }
+</p>

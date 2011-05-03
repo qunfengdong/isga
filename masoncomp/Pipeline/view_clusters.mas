@@ -41,11 +41,11 @@ that module.  Click on a module to view it's parameters.</p>
   alt="<% $cluster->getName %>" \
   class="noborder nofade cluster jTip" \
   coords="<% $_->getCoordinates %>" \
-%if ($_->getCluster->getName eq 'Process Annotation Input Files' || $_->getCluster->getName eq 'Output'){
-  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>" \
-%    }else{
+%#   if (exists $cluster_builder->{NoParamsFlag}){
+%#  href="/Cluster/GetClusterDescription?cluster=<% $cluster %>" \
+%#    }else{
   href="/Cluster/GetClusterDescription?cluster=<% $cluster %>&link=<% "/Pipeline/ViewComponents?pipeline=$pipeline&cluster=$cluster" | u %>" \
-%    } 
+%#    } 
 > 
 % }
 </map>

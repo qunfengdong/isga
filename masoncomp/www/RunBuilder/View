@@ -2,17 +2,4 @@
  $run_builder
 </%args>
 
-
-<%perl>
-# make sure the we are serving the runbuilder owner or an administrator
-  if ( ! ISGA::Login->hasGroup( $admin ) ) {
-    $run_builder->getCreatedBy == ISGA::Login->getAccount
-      or X::User::Denied->throw;
-  }
-
-$m->comp( '/RunBuilder/View.mas', run_builder => $run_builder );
-</%perl>
-
-<%once>
-  my $admin = ISGA::Group->new( Name => 'Run Administrators' );
-</%once>
+<& /RunBuilder/view.mas, run_builder => $run_builder &>

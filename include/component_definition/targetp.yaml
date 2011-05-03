@@ -1,0 +1,8 @@
+--- !perl/SysMicro::ComponentBuilder
+Name: TargetP
+Description: '<a class="normal" href="http://www.ncbi.nlm.nih.gov/pubmed/10891285">TargetP</a> predicts the subcellular location of proteins. The location assignment is based on the predicted presence of any of the N-terminal presequences: chloroplast transit peptide (cTP), mitochondrial targeting peptide (mTP) or secretory pathway signal peptide (SP).'
+Params:
+  - { NAME: 'sect', TITLE: 'Secretory Pathway Prediction Cutoff', ERROR: [['Number::isBetween', 0, 1], 'Number::isNumber'], VALUE: '0.00', DESCRIPTION: 'secretory pathway prediction cutoff, default 0.00', CONFIGLINE: '___SECT___' }
+  - { NAME: 'mit', TITLE: 'Mitochondrial Prediction Cutoff', ERROR: [['Number::isBetween', 0, 1], 'Number::isNumber'], VALUE: '0.00', DESCRIPTION: 'mitochondrial prediction cutoff, default 0.00', CONFIGLINE: '___MIT___' }
+  - { NAME: 'other', TITLE: 'Other Location Prediction Cutoff', ERROR: [['Number::isBetween', 0, 1], 'Number::isNumber'], VALUE: '0.00', DESCRIPTION: 'other location prediction cutoff, default 0.00', CONFIGLINE: '___OTHER___' }
+

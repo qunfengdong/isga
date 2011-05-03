@@ -1,0 +1,11 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: mRNA
+partition_of: GenomeFeature
+attributes:
+  - { name: GeneSymbol, type: string }
+  - { name: GeneProductNameSource, type: string }
+  - { name: Parent, column: parent_id, type: Gene, options: [ REQUIRED ] }
+  - { name: GeneSymbolSource, column: mrna_genesymbolsource, type: ExRef }
+  - { name: TIGRRole, column: mrna_tigrrole, type: ExRef }
+  - { name: EC, column: mrna_ec, type: ExRef }
+  - { name: Note, type: string }

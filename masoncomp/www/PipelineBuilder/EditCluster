@@ -6,7 +6,7 @@
 <h1>Pipeline Building: Module Programs</h1>
 <h4>The following programs have parameters available to be edited.
 Please choose a program to view its parameters.</h4>
-% if ($cluster->getName eq 'ORF Prediction'){
+% if ($cluster->getName eq 'Gene Prediction'){
 <p>Glimmer3 is run iteratively to produce more accurate start-site predictions.
 We run Glimmer3 first without a PWM, generating a set of gene predictions. Then extracting
 regions upstream of those predictions as input to <a class="normal" href="http://cbcb.umd.edu/software/ELPH/">
@@ -18,7 +18,7 @@ article</a> for a more detailed description.</p>
 
 
 <%perl>
-my @components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' );
+my @components = SysMicro::Component->query( Cluster => $cluster, OrderBy => 'Index' );
 return $m->comp('/PipelineBuilder/edit_cluster.mas', pipeline_builder => $pipeline_builder, components => @components, cluster => $cluster);
 </%perl>
 

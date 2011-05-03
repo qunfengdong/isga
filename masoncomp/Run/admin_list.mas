@@ -37,7 +37,6 @@ $(document).ready(function() {
  </tr>
  <tr class="list_label">
   <th>Name</th>
-  <th>Id</th>
   <th>Account</th>
   <th>Started At</th>
   <th>Status</th>
@@ -56,7 +55,6 @@ $(document).ready(function() {
   <span class="sup">?</span>
   </a>
   </td>
-  <td><% $_->getErgatisKey %></td>
   <td><% $_->getCreatedBy->getEmail %></td>
 
        <td><% $_->getCreatedAt %></td>
@@ -83,7 +81,7 @@ $(document).ready(function() {
 </div>
 
 % } else {
-<p>No piplines are running.</p>
+<p>No piplines have been run.</p>
 % }
 
 <& admin_list_right_menu.mas, show_complete => $show_complete, show_canceled => $show_canceled &>

@@ -1,33 +1,46 @@
 <h4>Run Tutorial</h4>
 <p class="justify">Run building is the process of setting up a pipeline to run.  This 
-involves a few steps, naming your run, providing organism specific information, and selecting a 
+involves a few steps, naming your run, setting run-time parameters, and selecting a 
 file to use for your run.  Choosing to create a run will bring you to the form below.</p>
 
-<img class="tutorial" src="/include/img/tutorial/create_a_new_run.png" alt="Create Run Form" width="100%">
+<img class="tutorial" src="/include/img/tutorial/create_a_new_run.png" alt="Create Run Form">
 
 <p class="justify">In the form you will be required to enter a unique name for your run.  
 It is also recommended that you enter a description for your run to later help you 
 identify it.  After entering a name and description, you will be taken to the page below.</p>
 
-<img class="tutorial" src="/include/img/tutorial/view_runbuilder.png" alt="Run View" width="100%">
+<img class="tutorial" src="/include/img/tutorial/view_runbuilder.png" alt="Run View">
 
-<p class="justify">After arriving to the Submission Builder page, the following steps can be performed 
+<p class="justify">After arriving to the Run View page, the following steps can be performed 
 in any order.  There are two processes that need to be completed before submitting your run, 
-provide organism information and provide input data.  The <span class="tutorialHighlight">Submit Run</span> 
-link will be disabled until all required actions are taken.  To set organism information, click 
-<span class="tutorialHighlight">Provide Organism Information</span> in the toolbox on the right.  
-You will be taken to a page with a form to set parameters that are relevant to your input.  These 
-can include Genus and Species information, as well as Gram-type.  The form will change based on the 
-modules and software active in the pipeline.  After entering and saving the appropriate information, you 
-will be returned to the Submission Builder page.  The Organism Information section should now be updated with the 
+set Run Parameters and select Run Inputs.  The <span class="tutorialHighlight">Submit Run</span> 
+link will be disabled until all required actions are taken.  To set Run Parameters, click 
+<span class="tutorialHighlight">Edit Parameters</span> in the toolbox on the right.  You will be 
+taken to a page with a form set parameters that are relevant to your input.  These can include 
+Genus and Species information, as well as Gram-type.  The form will change based on the moduless 
+and software active in the pipeline.  After entering and saving the appropriate information, you 
+will be returned to the Run View page.  The Run Parameters section should now be updated with the 
 information just entered.</p>
 
 <p class="justify">The other step in the run building process requires you to select any input 
-files that are necessary.  The Input Data section of the Submission Builder page displays all input types 
+files that are necessary.  The Run Inputs section of the Run View page displays all input types 
 and formats required to run this pipeline.  You may either upload a new file to be used as input or 
-choose an existing file that you have previously uploaded.  To select a file to be used as a run input 
-click on <span class="tutorialHighlight">Provide Input Data</span> from the toolbox on the right.  A pop-up 
-similar to the one pictured below will appear on the screen.</p>
+choose an existing file that you have previously uploaded.  To upload a new file, click on the 
+<span class="tutorialHighlight">Upload File</span> link in the toolbox.  This will bring you to 
+the page below.</p>
+
+<img class="tutorial" src="/include/img/tutorial/file_upload.png" alt="File Upload">
+
+<p class="justify">From the drop down menu in the form, you need to select the file type that you 
+wish to upload.  The file type options will be limited to the file types of the required inputs 
+for this pipeline.  Click on the Browse button to navigate to and select a file from your local 
+machine.  You may also make any notes necessary about the file in the Description box.  Click 
+<span class="tutorialHighlight">Upload File</span> to upload your file to the service.  You will 
+be returned to the Run View page, and your file will now be available to be used.</p>
+
+<p class="justify">To select a file to be used as a run input click on <span class="tutorialHighlight">
+Select Input</span> from the toolbox on the right.  A pop-up similar to the one pictured below will 
+appear on the scree.</p>
 
 <img class="tutorial" src="/include/img/tutorial/select_input_popup.png" alt="Select Input Popup">
 
@@ -36,17 +49,16 @@ the file type you wish to choose.  This will bring you the page below.</p>
 
 <img class="tutorial" src="/include/img/tutorial/select_input_list.png" alt="Select Input Page">
 
-<p class="justify">If you wish upload a file, click the Browse button to select a file to upload from your 
-computer.  Alternatively, you can use a file you have previously uploaded.  In the Compatible Files selection 
-box, you will see a list of compatible files for the File Type you choose that have already been uploaded.  
-Highlight the file of your chose by clicking on it.  You can select multiple files by pressing the ctrl key on 
-your keyboard and clicking on several files.  When you have selected the file(s) of your chose, click the Save button.  
-You will be returned to the Submission Builder page.  The Input Data section will be updated displaying your current file.</p>
+<p class="justify">In the Compatible Files selection box, you will see a list of compatible files 
+for the File Type you choose.  Highlight the file of your chose by clicking on it.  You can select 
+multiple files by pressing the ctrl key on your keyboard and clicking on several files.  When you have 
+selected the file(s) of your chose, click the Save button.  You will be returned to the Run View page.  
+The Run Inputs section will be updated displaying your current file.</p>
 
 <p class="justify">Once all the steps are completed, the <span class="tutorialHighlight">Submit Run</span> 
 link will now become active.  To submit your run, click on the <span class="tutorialHighlight">Submit Run
 </span> link.  A confirmation pop-up will appear.  Click <span class="tutorialHighlight">Yes</span> and 
 your run will be submitted.  You will then be redirected to your Run View Status page.</p>
 
-<img class="tutorial" src="/include/img/tutorial/view_runbuilder_complete.png" alt="Run View Complete" width="100%">
+<img class="tutorial" src="/include/img/tutorial/view_runbuilder_complete.png" alt="Run View Complete">
 

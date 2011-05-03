@@ -1,0 +1,23 @@
+# -*- cperl -*-
+
+
+use Bio::Seq;
+use Bio::SeqIO;
+
+
+#------------------------------------------------------------------------
+
+=item public string getSequence();
+
+Retrieves the sequence for a gene.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getSequence {
+
+    my $self = shift;
+
+    my $sequence = $self->getParent->getParent->getSequence;
+
+    return Bio::Seq->new( -seq => $sequence )->translate->seq;
+  }

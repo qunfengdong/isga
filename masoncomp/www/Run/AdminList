@@ -9,8 +9,8 @@ my @statuses = ( 'Running', 'Error', 'Failed', 'Submitting', 'Interrupted' );
 $show_canceled and push @statuses, 'Canceled';
 $show_complete and push @statuses, 'Complete';
 
-my $runs = ISGA::Run->query( Status => 
-				 [ map { ISGA::RunStatus->new( Name => $_ )} @statuses]
+my $runs = SysMicro::Run->query( Status => 
+				 [ map { SysMicro::RunStatus->new( Name => $_ )} @statuses]
 			       );
 return $m->comp( '/Run/admin_list.mas', runs => $runs, show_canceled => $show_canceled,
 	       show_complete => $show_complete );
@@ -19,6 +19,7 @@ return $m->comp( '/Run/admin_list.mas', runs => $runs, show_canceled => $show_ca
 
 <%once>
 
-  my $canceled = ISGA::RunStatus->new( Name => 'Canceled' );				   
+  my $admin = SysMicro::Group->new( Name => 'Run Administrators' );
+  my $canceled = SysMicro::RunStatus->new( Name => 'Canceled' );				   
 
 </%once>

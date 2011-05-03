@@ -7,7 +7,7 @@
 
 my %results = ( Pipeline => {} );
 
-foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
+foreach ( @{SysMicro::RunOutput->query( Run => $run)} ) {
   
   my $coutput = $_->getClusterOutput;
   my $visibility = $coutput->getVisibility;
@@ -21,8 +21,6 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
 }
 
 </%perl>
-
-%# use subhead class table
 
 % my $parent = '';
 
@@ -76,7 +74,7 @@ $(document).ready(function()  {
 %       my $file = $run_output->getFileResource;
 %       if ( $file ) {
 <td>\
-%         if ( $file->isa('ISGA::File') ) {
+%         if ( $file->isa('SysMicro::File') ) {
 <a href="/File/View?file=<% $file %>">\
 %         } else {
 <a href="/FileCollection/View?file_collection=<% $file %>">\
@@ -124,5 +122,5 @@ $(document).ready(function()  {
 
 
 <%once>
-my $complete = ISGA::RunStatus->new( Name => 'Complete' );
+my $complete = SysMicro::RunStatus->new( Name => 'Complete' );
 </%once>

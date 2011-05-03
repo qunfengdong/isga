@@ -8,9 +8,9 @@ $ENV{MOD_PERL} = '2.0';
 
 use lib 'build_lib';
 
-use_ok( 'ISGA' );
+use_ok( 'SysMicro' );
 
-use_ok( 'ISGA::Objects' );
+use_ok( 'SysMicro::Objects' );
 }
 
-diag( "ISGA $ISGA::VERSION" );
+diag( "SysMicro $SysMicro::VERSION" );

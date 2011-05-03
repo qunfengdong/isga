@@ -18,7 +18,7 @@ link = AUTO
 initial landmark=___LANDMARK___
 description = ___DESCRIPTION___
 show sources = 0
-plugins = 
+plugins = GFFDumper
 hilite fill = yellow
 hilite outline = orange
 overview bgcolor = white
@@ -42,6 +42,23 @@ bump density  = 100
 overview label density = 160
 
 ### TRACK CONFIGURATION ####
+[CDS]
+feature  = CDS
+glyph = segments
+stranded     = 1
+translation  = 1frame
+bgcolor = palegoldenrod
+fgcolor = goldenrod
+label = 1
+key  = CDS
+citation     = Protein coding sequence 
+#category = Genomic
+link = sub {
+            my ($feature, $panel, $track) = @_;
+	    my ($id) = $feature->get_tag_values('db_id');
+	    return "https://sysmicro-dev.cgb.indiana.edu/GenomeFeature/View?genome_feature=$id";
+            }
+
 
 [gene]
 feature       = gene
@@ -57,36 +74,12 @@ label = 1
 link = sub {
             my ($feature, $panel, $track) = @_;
 	    my ($id) = $feature->get_tag_values('db_id');
-	    return "/GenomeFeature/View?genome_feature=$id";
+	    return "https://sysmicro-dev.cgb.indiana.edu/GenomeFeature/View?genome_feature=$id";
             }
 label density = 50
 key      = Gene Model
 #category = Genomic
-bump = 1
-bump density  = 100
-description = 1
 citation     = Gene and mRNA (transcript) features  
-
-
-[CDS]
-feature  = CDS
-glyph = segments
-stranded     = 1
-translation  = 1frame
-bgcolor = palegoldenrod
-fgcolor = goldenrod
-label = 1
-key  = CDS
-citation     = Protein coding sequence 
-#category = Genomic
-bump = 1
-bump density  = 100
-link = sub {
-            my ($feature, $panel, $track) = @_;
-	    my ($id) = $feature->get_tag_values('db_id');
-	    return "/GenomeFeature/View?genome_feature=$id";
-            }
-
 
 [tRNA]
 feature  = tRNA
@@ -102,7 +95,7 @@ key          = tRNA
 link = sub {
             my ($feature, $panel, $track) = @_;
 	    my ($id) = $feature->get_tag_values('db_id');
-	    return "/GenomeFeature/View?genome_feature=$id";
+	    return "https://sysmicro-dev.cgb.indiana.edu/GenomeFeature/View?genome_feature=$id";
             }
 
 [rRNA]
@@ -116,7 +109,7 @@ citation = rRNA
 link = sub {
             my ($feature, $panel, $track) = @_;
 	    my ($id) = $feature->get_tag_values('db_id');
-	    return "/GenomeFeature/View?genome_feature=$id";
+	    return "https://sysmicro-dev.cgb.indiana.edu/GenomeFeature/View?genome_feature=$id";
             }
 
 #[transcript]

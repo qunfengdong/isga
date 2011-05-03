@@ -1,0 +1,23 @@
+<%args>
+ $form
+</%args>
+
+<h1>Pipeline Customization</h1>
+
+<p>This tool allows you to customize an existing pipeline to meet your
+specific needs, removing unneccessary analysis or customizing parameter 
+options. Your pipeline will be saved and available to run on additional 
+data sets.</p>
+
+<p>Before you customize your pipeline, you must choose a name for your 
+pipeline. You may also provide an optional description to explain the 
+reasons behind the customization.</p>
+
+<% $form->get %>
+
+<div id="WT" class="hidden documentation createPipeline"><div id="WT_arrow_left"></div><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Please create a descriptive name for your pipeline.  Also, it is 
+encouraged to use the Description box to make any notes that may be 
+helpful to you in the future.  You will be able to edit these details 
+later on at any time during the customization process if necessary.</p>
+</div></div>

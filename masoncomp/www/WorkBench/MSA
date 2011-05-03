@@ -1,0 +1,15 @@
+<%args>
+	$select_sequence => undef
+	$job => undef
+</%args>
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $SysMicro::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_msa'
+  or $form =  SysMicro::FormEngine::WorkBench->MSA(\%ARGS);
+
+return $m->comp('/WorkBench/msa.mas', form => $form, select_sequence => $select_sequence, job => $job);
+
+</%perl>
+

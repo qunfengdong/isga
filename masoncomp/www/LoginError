@@ -1,4 +1,4 @@
 <h2>Login Error</h2>
-% foreach ( $ISGA::WebApp->errors() ) {
+% foreach ( $SysMicro::WebApp->errors() ) {
 <p><% $_ %></p>
 % }

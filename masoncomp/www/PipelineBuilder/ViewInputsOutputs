@@ -12,7 +12,7 @@ foreach my $cluster ( @{$pipeline_builder->getActiveClusters} ) {
 
   my $components = $pipeline_builder->getActiveComponents($cluster);
   
-  foreach my $output ( @{ISGA::ClusterOutput->query( Component => $components )} ) { 
+  foreach my $output ( @{SysMicro::ClusterOutput->query( Component => $components )} ) { 
     
     my $visibility = $output->getVisibility();
 

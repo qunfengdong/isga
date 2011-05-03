@@ -1,0 +1,4 @@
+--- !perl/SysMicro::ClusterBuilder
+Cluster: HMM Search
+Description: 'The HMM search cluster uses hmmpfam to perform similarity searches against an HMM database to identify protein family or domain matches.  Hmmpfam reads a sequence file and compares each sequence in it, one at a time, against all the HMMs in the HMM databse looking for significantly similar sequence matches.  Hmmpfam is run against a dataset which includes both Pfam and TIGRFAM HMM information.  The output of this cluster is the hmmpfam raw result.'
+
