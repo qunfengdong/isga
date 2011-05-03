@@ -59,11 +59,9 @@ sub Help::ContactUs {
 	"\n";
     }
     
-    my $support_email = ISGA::SiteConfiguration->value('support_email');
-
     my %mail = 
-      ( To => $support_email,
-	FROM => "ISGA Feedback<$support_email>",
+      ( To => '___support_email___',
+	FROM => 'ISGA Feedback<___support_email___>',
 	Subject => 'ISGA Feedback: ' . $form->get_input('subject'),
 	Message => $content . $form->get_input('message')
       );

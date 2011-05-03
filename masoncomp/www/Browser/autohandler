@@ -7,6 +7,9 @@ my $path = $r->path_info();
 my ($run) = $path =~ /^\/(\d+)/;
 $run = ISGA::Run->new(Id => $run);
 
+use Data::Dumper;
+warn Dumper(\%ARGS);
+
 my $html = $m->scomp( '/Browser/contig_select.mas', run => $run );
 
 $html .= $m->scomp( $m->fetch_next, %ARGS );

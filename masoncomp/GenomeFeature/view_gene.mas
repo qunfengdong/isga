@@ -75,7 +75,7 @@
 
 <b>CDS Sequence</b> 
 <br>&nbsp;<br>
-<a class="button" href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>&feature_id=<% $cds %>">BLAST the Sequence</a>
+<a class="button" href="/WorkBench/Blast?feature_id=<% $cds %>">BLAST the Sequence</a>
 <br>&nbsp;<br>
 <a class="button" href="/Download/<% $gene->getLocus %>.fasta?genome_feature=<% $cds %>">Download the Sequence</a>
 <br>&nbsp;<br>

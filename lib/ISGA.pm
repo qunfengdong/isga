@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use vars qw( $VERSION );
 
-use version; $VERSION = qv('1.3.1');
+use version; $VERSION = qv('1.1b1');
 
 use ISGA::X;
 
@@ -30,21 +30,20 @@ use ISGA::ParameterMask;
 use ISGA::ErgatisRunStatus;
 use ISGA::SGEScheduler;
 
-use ISGA::FileFormat::FASTA;
+use ISGA::GlobalPipeline::ProkaryoticAnnotation;
+
+use ISGA::RunBuilder::CeleraAssembly;
+
+use ISGA::Run::ProkaryoticAnnotation;
 
 use ISGA::Component::Iterated;
 
-use ISGA::JobType::BLAST;
-use ISGA::JobType::Consed;
-use ISGA::JobType::SffToFasta;
-use ISGA::JobType::CeleraToHawkeye;
-use ISGA::JobType::NewblerToHawkeye;
-use ISGA::JobType::MiraToHawkeye;
-use ISGA::JobType::PhyloEGGS;
-use ISGA::JobType::GridBlast;
+use ISGA::Job::BLAST;
+use ISGA::Job::MEME;
+use ISGA::Job::MSA;
+use ISGA::Job::Hawkeye;
+use ISGA::Job::Consed;
 
-use ISGA::Run::ProkaryoticAnnotation;
-use ISGA::GlobalPipeline::ProkaryoticAnnotation;
 
 1; 
 __END__

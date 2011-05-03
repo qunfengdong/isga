@@ -58,10 +58,6 @@ sub News::Create {
        CreatedAt => ISGA::Timestamp->new,
        IsArchived => 0);
     
-    if ( my $archive_on = $form->get_input('archive_on') ) {	
-      $form_args{ArchiveOn} = ISGA::Date->new($archive_on);
-    }
-
     my $news = ISGA::News->create(%form_args);
     $self->redirect( uri => "/News/Recent?active=$news" );
   } 

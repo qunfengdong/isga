@@ -41,14 +41,9 @@ sub Run::InstallGbrowseData {
 
   my $self = shift;
   my $run = $self->args->{run};
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
-  warn "class1 is ", ref($run), "\n";
-
-  $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
-
-  warn "get things running\n";
-
-  $run->installGBrowseData();
+  $run->installGbrowseData();
   $self->redirect( uri => "/Browser/gbrowse/$run/" );
 }
 
@@ -56,14 +51,13 @@ sub Exception::Run::InstallGbrowseData {
 
   my $self = shift;
   my $run = $self->args->{run};
-
-  warn "class2 is ", ref($run), "\n";
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
   # remove conf
-  $run->deleteGBrowseConfigurationFile();
+  $run->deleteGbrowseConfigurationFile();
 
   # remove database dir
-  $run->deleteGBrowseDatabase();
+  $run->deleteGbrowseDatabase();
 }
 
 #------------------------------------------------------------------------
@@ -227,9 +221,7 @@ sub Exception::Run::Submit {
 
   my $self = shift;
 
-  my $run_builder = $self->args->{run_builder};
-
-  my $old = join( '/', $run_builder->getPipeline->getErgatisSubmissionDirectory, $run_builder->getErgatisDirectory );
+  my $old = '___ergatis_submit_directory___/' . $self->args->{run_builder}->getErgatisDirectory;
   my $new = $old . '-save-' . time;
 
   # send email about error
@@ -292,6 +284,7 @@ sub Run::Test {
 
   my $self = shift;
   my $run = $self->args->{run};
+  bless $run, 'ISGA::Run::ProkaryoticAnnotation';
 
   $self->redirect( uri => "/Pipeline/View?pipeline=1" );
 }

@@ -58,32 +58,24 @@ sub PipelineConfiguration::Edit {
     
   } elsif ( $form->ok ) {
 
-    # process all the paths at once
-    foreach ( qw( ergatis_project_directory ergatis_submission_directory ) ) {
-      my $new_val = $form->get_input($_);
+    # pipeline_is_installed
+    my $pipeline_is_installed = $form->get_input('pipeline_is_installed');
+
+    if ( $pipeline_is_installed 
+	 != ISGA::PipelineConfiguration->value('pipeline_is_installed', %values) ) {
       
-      # strip trailing slash
-      $new_val =~ s{/$}{};
-      
-      if ( $new_val ne ISGA::PipelineConfiguration->value($_, %values) ) {
-	my $var = ISGA::ConfigurationVariable->new( Name => $_ );
-	ISGA::PipelineConfiguration->new( Variable => $var, %values )->edit( Value => $new_val );
-      }
+      my $var = ISGA::ConfigurationVariable->new( Name => 'pipeline_is_installed' );
+      my $pc = ISGA::PipelineConfiguration->new( Variable => $var, %values );
+
+      $pc->edit( Value => $pipeline_is_installed );
     }
 
-    # process ergatis_project_name
-    my $proj_name = $form->get_input('ergatis_project_name');
-    if ( $proj_name ne ISGA::PipelineConfiguration->value( 'ergatis_project_name', %values ) ) {
-      $values{Variable} = ISGA::ConfigurationVariable->new( Name => 'ergatis_project_name' );
-      ISGA::PipelineConfiguration->new(%values)->edit(Value => $proj_name);
-    }
-    
     $self->redirect( uri => "/PipelineConfiguration/View$varstring" );
   }
   
   # redirect if we need more from the user
   $self->_save_arg('form', $form);
-  
+
   $self->redirect( uri => "/PipelineConfiguration/Edit$varstring" );
 }
 

@@ -9,64 +9,66 @@ Assigns colors and draw pipline workflow.
 #------------------------------------------------------------------------
   sub draw {
     
-    my ($self, $wf_mask) = @_;
+    my ($self, $clusters, $wf_mask) = @_;
+
+    defined $clusters or $clusters = $self->getClusters;
+    my $workflow = ISGA::Workflow->query( Pipeline => $self, Cluster => $clusters );
 
     my $image = GD::Image->new( '___package_masoncomp___/www/' . $self->getImage );
+    
     my $green = $image->colorClosest(162,210,99);
     my $yellow = $image->colorClosest(223,210,91);
     my $red = $image->colorClosest(177,118,110);
 
-    # if we weren't passed clusters and a workflow mask from a pipeline, retrieve our own
     defined $wf_mask or $wf_mask = $self->getWorkflowMask;
 
-    # find any disabled components and then mark the owning cluster as partial
-    my %partial_cluster = map { $_->getCluster => undef } @{$wf_mask->getDisabledComponents};
+    my $disabled_components = $wf_mask->getDisabledComponents;
+    my $disabled = [];
+    while ( my ($key, $value) = each %{$disabled_components} ) {
+      my @components = ISGA::Component->query( ErgatisName => $key);
+      push(@{$disabled}, $components[0][0]) if $value eq 'disabled';
+    }
+    my %partial_cluster = map { $_->getCluster->getName => $_->getCluster } @{$disabled};
 
-    # loop through all clusters
-    foreach my $cluster ( @{$self->getClusters} ) {
-      
-      # retrieve workflow - it's a bit less efficient to retrieve it now, but more readable
-      my $wf = ISGA::Workflow->new( Pipeline => $self, Cluster => $cluster );
-      next if $wf->isHidden();
+    
+    foreach my $cluster ( @$clusters ) {
+      next if ($cluster->getName eq 'Alternate Gene Prediction'); 
+      my $wf = shift @$workflow;
+      next if($wf->isHidden);
+      next if($wf->getCoordinates eq '');
       my @coords = split ( /,/, $wf->getCoordinates );
 
-      # is it disabled?
-      if ( ! $wf_mask->isActive($cluster) ) {
+      if ( defined $partial_cluster{$cluster->getName} ){
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+          for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+            $image->setPixel($i,$j, $yellow) if ($image->getPixel($i,$j) == $red || $image->getPixel($i,$j) == $green);
+          }
+        }
+        next;
+      } else {
 
-	for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+        my $color = ( $wf->isRequired ? $yellow : $green );
+
+      
+        for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
 	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
-	    $image->setPixel($i,$j, $red) if ($image->getPixel($i,$j) == $green);
+            $image->setPixel($i,$j, $green) if ($image->getPixel($i,$j) == $red || $image->getPixel($i,$j) == $yellow);
 	  }
-	}
-
-      # is it partial
-      } elsif ( exists $partial_cluster{$cluster} ) {
-
-	for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
-	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
-	    $image->setPixel($i,$j, $yellow) if ($image->getPixel($i,$j) == $green);
-	  }
-	}	
+        }
       }
     }
 
+    foreach (keys %{$wf_mask->getDisabledClusters}){
+      my $disabled_workflow = ISGA::Workflow->new( Pipeline => $self, Cluster => ISGA::Cluster->new(Name => $_ ));
+      my @coords = split ( /,/, $disabled_workflow->getCoordinates );
+      next if($disabled_workflow->isHidden);
+      next if($disabled_workflow->getCoordinates eq '');
+      for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+        for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+         $image->setPixel($i,$j, $red) if ($image->getPixel($i,$j) == $green || $image->getPixel($i,$j) == $yellow);
+        }
+      }
+    }
+    
     print $image->png;
   }    
-
-
-#------------------------------------------------------------------------
-
-=item public void verifyUpload( string $name, PipelineInput $pi);
-
-This method generates a verification callback to be used on uploaded
-files. By default we do nothing.
-
-=cut 
-#------------------------------------------------------------------------
-sub verifyUpload {
-  
-  return [ sub {
-    my $fh = shift;
-    return $fh;
-  } ];
-}

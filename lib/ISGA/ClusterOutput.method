@@ -4,11 +4,11 @@ use File::Basename;
 
 #------------------------------------------------------------------------
 
-=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive);
+=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar $archive);
 
 Add the results for this cluster output to a cluster evidence archive.
 
-=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive, int iteration);
+=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar $archive, int iteration);
 
 Add the results for this cluster output to a cluster evidence archive - process an iteration.
 
@@ -20,7 +20,8 @@ Add the results for this cluster output to a cluster evidence archive - process 
 
     my $id = $run->getErgatisKey;
 
-    my $raw_output =  join( '/', $run->getType->getErgatisOutputRepository,$self->getFileLocation );
+
+    my $raw_output = '___ergatis_output_repository___' . $self->getFileLocation;
     $raw_output =~ s/___id___/$id/go;
     $iteration and $raw_output =~ s/___iteration___/$iteration/go;
 
@@ -52,8 +53,8 @@ Add the results for this cluster output to a cluster evidence archive - process 
     }
 
     foreach ( @files ) {
-      my $logical_path = $cluster_dir . "/" . basename($_);
-      my ( $file ) = $archive->add( $logical_path, $_ );
+      my ( $file ) = $archive->add_files( $_ );
+      $file->prefix( $cluster_dir );
     }
   }
     

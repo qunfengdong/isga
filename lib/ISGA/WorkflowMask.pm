@@ -51,25 +51,19 @@ sub new {
 
 #------------------------------------------------------------------------
 
-=item public [Cluster] getDisabledClusters();
+=item public { string => 'Disabled' } getDisabledClusters();
 
-Returns a reference to an array of disabled clusters in this workflow mask.
+Returns an hash reference mapping cluster names to disabled status.
 
 =cut
 #------------------------------------------------------------------------
-sub getDisabledClusters { 
-
-  my $self = shift;
-
-  return ISGA::Cluster->query( Name => [keys %{$self->{cluster}}] );
-}
-
+sub getDisabledClusters { return shift->{cluster}; }
 
 #------------------------------------------------------------------------
 
-=item public [Component] getDisabledComponents();
+=item public { string => 'Disabled' } getDisabledComponents();
 
-Returns reference to an array of disabled components in the workflow mask.
+Returns an hash reference mapping component names to disabled status.
 
 =cut
 #------------------------------------------------------------------------
@@ -77,45 +71,13 @@ sub getDisabledComponents {
 
   my $self = shift;
 
-  my @search;
-  
+  my $disabled = {};
+
   while ( my ($key, $value) = each %{$self->{component}} ) {
-    push @search, $key if $value eq 'disabled';
+    $disabled->{$key} = $value if $value eq 'disabled';    
   }
-
-  return ISGA::Component->query( ErgatisName => \@search);
-}
-
-#------------------------------------------------------------------------
-
-=item public bool isActive(Cluster $cluster);
-
-Returns true if the cluster is active in this workflow mask.
-
-=item public bool isActive(Component $component);
-
-Returns true if the component is active in this workflow mask.
-
-=cut
-#------------------------------------------------------------------------
-sub isActive {
-
-  my ($self, $obj) = @_;
-
-  # TODO: This should make sure the object is a cluster or component
-  # TODO: It should also throw an exception if the cluster or component 
-  #       isn't tied to the mask.
-
-  # process cluster 
-  if ( $obj->isa('ISGA::Cluster') ) {
-    return ! exists $self->{cluster}{$obj->getName};
-  }
-
-  # process component
-  if ( exists $self->{component}{$obj->getErgatisName} ) {
-    return 0;
-  }
-  return ! exists $self->{cluster}{$obj->getCluster->getName};  
+  
+  return $disabled;
 }
 
 #------------------------------------------------------------------------
@@ -155,27 +117,53 @@ sub recalculateOrphanedComponents {
   # remove existing orphaned components
   delete $self->{component}{$_} for keys %{$self->getOrphanedComponents};
 
-  my $disabled = {};
+  my $disabled = $self->getDisabledComponents;
 
-  foreach ( @{$self->getDisabledComponents} ) {
-    $disabled->{ $_->getErgatisName } = $_;
+  foreach ( keys %$disabled ) {
+    $disabled->{$_} = ISGA::Component->new( ErgatisName => $_ );
   }
 
-  # this may not be necessary if we limit dependent components to within a cluster
-  foreach my $cluster ( @{$self->getDisabledClusters} ) {
+  foreach ( keys %{$self->getDisabledClusters} ) {
+
+    my $cluster = ISGA::Cluster->new( Name => $_ );
+
     foreach ( @{$cluster->getComponents} ) {
       $disabled->{ $_->getErgatisName } = $_;
     }
   }
 
-  # if there are 
+  # now search on components 
   if ( my @values = values %$disabled ) {
     foreach ( @{ISGA::Component->query( DependsOn => \@values )} ) {
-      # use ||= so we don't overwrite any 'disabled' components
-      $self->{component}{ $_->getErgatisName } ||= 'orphaned';
+      $self->{component}{ $_->getErgatisName } = 'orphaned';
     }
   }
 }  
+
+#------------------------------------------------------------------------
+
+=item public void toggleCluster(Cluster $cluster);
+
+Edits the WorkflowMask so that the supplied cluster will disabled if
+it is currently active, and activated if it is currently disabled.
+
+=cut
+#------------------------------------------------------------------------
+sub toggleCluster {
+
+  my ($self, $cluster) = @_;
+
+  my $name = $cluster->getName;
+
+  if ( exists $self->{cluster}{$name} ) {
+    delete $self->{cluster}{$name};
+  } else {
+    $self->{cluster}{$name} = 'disabled';
+  }
+
+  $self->recalculateOrphanedComponents();
+
+}
 
 #------------------------------------------------------------------------
 
@@ -212,6 +200,31 @@ sub enableCluster {
   my $name = $cluster->getName;
 
   exists $self->{cluster}{$name} and delete $self->{cluster}{$name};
+
+  $self->recalculateOrphanedComponents();
+
+}
+
+#------------------------------------------------------------------------
+
+=item public void toggleComponent(Component $component);
+
+Edits the WorkflowMask so that the supplied component will disabled if
+it is currently active, and activated if it is currently disabled.
+
+=cut
+#------------------------------------------------------------------------
+sub toggleComponent {
+
+ my ($self, $component) = @_;
+
+ my $name = $component->getErgatisName;
+
+ if ( exists $self->{component}{$name} ) {
+   delete $self->{component}{$name};
+ } else {
+   $self->{component}{$name} = 'disabled';
+ }
 
   $self->recalculateOrphanedComponents();
 

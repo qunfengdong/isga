@@ -1,7 +1,6 @@
 # -*- cperl -*-
 
 use Digest::SHA;
-
 #------------------------------------------------------------------------
 
 =item public File upload(filehandle fh, Hash args);
@@ -20,8 +19,6 @@ The args hash may contain the following optional parameters:
  CreatedBy => Account (defaults to current acount)
  CreatedAt => Timestamp (defaults to current time)
  IsHidden => boolean ( defaults to FALSE)
- ExistsOutsideCollection => boolean (defaults to TRUE)
-
 
 =cut 
 #------------------------------------------------------------------------
@@ -29,68 +26,9 @@ The args hash may contain the following optional parameters:
 
     my ($class, $fh, %args) = @_;
 
-    # First we test to see if the file is compressed
-    # if it is, pass it through the gzip filter and update the name
-    my $username = $args{UserName};
-    if ( $username =~ /\.(gz|gzip)$/) {
-      binmode $fh, ':gzip';
-      $username =~ s/\.(gz|gzip)$//;
-      $args{UserName} = $username;
-    }     
-
-    # do we have verification callbacks
-    if ( exists $args{Filters} ) {      
-      $fh = $_->($fh) for @{$args{Filters}};
-      delete $args{Filters};
-    }
-    
-    # strip windows characters for text files
-    if ( ! $args{Format}->isBinary() ) {
-      $args{StripDosLineBreaks} = 1;
-    }
-
-    return $class->addToRepository($fh, %args);
-  }
-  
-
-#------------------------------------------------------------------------
-
-=item public File addToRepository(filehandle fh, Hash args);
-
-Adds a file to the repository. User input should be passed to upload
-to properly sanitize the file.
-
-The args hash contains the following required parameters:
-
- UserName => string
- Type => FileType
- Format => FileFormat
- Description => string
-
-The args hash may contain the following optional parameters:
-
- CreatedBy => Account (defaults to current acount)
- CreatedAt => Timestamp (defaults to current time)
- IsHidden => boolean ( defaults to FALSE)
- StripDosLineBreaks => boolean ( defaults to FALSE)
-
-=cut 
-#------------------------------------------------------------------------
-  sub addToRepository {
-    
-    my ($class, $fh, %args) = @_;
-    
     exists $args{IsHidden} or $args{IsHidden} = 0;
     exists $args{CreatedBy} or $args{CreatedBy} = ISGA::Login->getAccount;
     exists $args{CreatedAt} or $args{CreatedAt} = ISGA::Timestamp->new;
-    exists $args{ExistsOutsideCollection} or $args{ExistsOutsideCollection} = 1;
-
-    # process strip_line_breaks
-    my $strip_dos_line_breaks = 0;
-    if ( exists $args{StripDosLineBreaks} ) {
-      $strip_dos_line_breaks = $args{StripDosLineBreaks};
-      delete $args{StripDosLineBreaks};
-    }
 
     # retrieve a name for this file
     my $name = Digest::SHA->new(256)->addfile($fh)->b64digest;
@@ -107,17 +45,14 @@ The args hash may contain the following optional parameters:
     
     # the file doesn't exist, so we will create it in the filesystem
     if ( ! $file ) {
-      $class->_write($fh, $name, $strip_dos_line_breaks);
+      
+      $class->_write($fh, $name);
 
     # otherwise we have a file with this hash in the system
     } else {
 
-      # if the files aren't the same size, create a local copy to make
-      # sure we aren't reading through a compressed fh
-      if ( $args{Size} != $file->getSize ) { 
-	my $layerstring = join('', PerlIO::get_layers($fh));
-	$layerstring =~ /gzip/ or X::API->throw(error => 'File Hash Conflict');
-      }
+      # if the files aren't the same size, we have a problem
+      $args{Size} == $file->getSize or X::API->throw(error => 'File Hash Conflict');
       
       # if the files have the same name and owner, don't add a new file.
       if ( $file->getCreatedBy == $args{CreatedBy} and $args{UserName} eq $file->getUserName ) {
@@ -138,7 +73,7 @@ The args hash may contain the following optional parameters:
 
 #------------------------------------------------------------------------
 
-=item PRIVATE void _write( Filehandle fh, string name, boolean strip_dos_newlines );
+=item PRIVATE void _write( Filehandle fh, string name );
 
 Private method to write a file to the filesystem and returns the
 amount of data written. Used by FileResource constructors.
@@ -147,49 +82,26 @@ amount of data written. Used by FileResource constructors.
 #------------------------------------------------------------------------
   sub _write {
 
-    my ($class, $fh, $name, $strip_dos_newlines) = @_;
+    my ($class, $fh, $name) = @_;
 
     # hash directories on first two characters
     my $p1 = substr($name, 0, 1);
     my $p2 = substr($name, 1, 1); 
 
-    # make sure the repository is available
-    my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
-      or X::API::Configuration::Missing->throw( variable => 'file_repository' );
+    # write the file
+    open my $upload, ">", "___file_repository___/$p1/$p2/$name"
+      or X->throw( error => "$!:___file_repository___/$p1/$p2/$name" );
+    local ($/);
+    my $data = <$fh>;
 
-    # open filehandle for writing
-    open my $upload, ">", "$file_repository/$p1/$p2/$name"
-      or X->throw( error => "$!:$file_repository/$p1/$p2/$name" );
+    # remove windows crlf junk
+    $data =~ s/\cM//g unless( -B $fh );
 
-    # create buffer
-    my $buf;
-
-    # decide on how much to read in a go
-    my $max_buffer_size = 1024 * 1024 * 2;
-    my $size = (stat($fh))[7];
-    $size = $max_buffer_size if ( $size > $max_buffer_size );
-
-    # this idiom is copied from File::Copy
-    for (;;) {
-      my ($r, $w, $t);
-      
-      # use read rather than sysread to in case we are using gzip or another IO layer
-      defined($r = read($fh, $buf, $size)) or X::API->throw( message => "error reading file $name: $!" );
-      last unless $r;
-
-      # strip windows junk
-      if ( $strip_dos_newlines ) {
-	$buf =~ s/\r//g;
-	$r = length($buf);
-      }
-      
-      for ($w = 0; $w < $r; $w += $t) {
-	$t = syswrite($upload, $buf, $r - $w, $w) or X::API->throw( message => "error writing file $name: $!" );
-      }
-    }
-
+    print $upload $data;
     close $upload;
+
   }
+
 
 #------------------------------------------------------------------------
 

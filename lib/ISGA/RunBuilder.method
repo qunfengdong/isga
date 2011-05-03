@@ -114,6 +114,42 @@ sub _processInputs {
   $self->{_cached_inputs}{missing} = $missing;
 }
 
+#------------------------------------------------------------------------
+
+=item public void resolveUploadAndInputList(ApacheUpload $upload, ApacheArgs $args, PipelineInput $pi);
+
+This method handles a RunBuilder file upload and merges the resulting FileResource into other selected resources.
+
+=cut 
+#------------------------------------------------------------------------
+  sub resolveUploadAndInputList {
+
+    my ($self, $upload, $args, $pi) = @_;
+    
+    my $file = $args->{file};
+
+    my %args = (UserName => $args->{file_name}, 
+		Type => $pi->getType,
+		Format => $pi->getFormat, 
+		Description => $args->{description} );
+    
+    my $uploaded_file = ISGA::FileResource->upload( $upload->fh, %args );
+    
+    # if there is no file, then we proceed with upload
+    if (! defined $file){
+      $file = $uploaded_file;
+      
+      # if there are more than one files selected, add new file to the list
+    } elsif ( ref($file) eq 'ARRAY' ) {
+      push @$file, $uploaded_file;
+      
+      # if there is one file, we make a list of it and our upload
+    } else {	
+      $file = [ $file, $uploaded_file ];
+    }
+    
+    return $file;
+  }
 
 #------------------------------------------------------------------------
 
@@ -188,7 +224,7 @@ Replace the contents of the provided RunBuilderInput with the supplied FileColle
       
       # remove old filecollection if it was created for the run
       $old_fc->getDescription eq 'Collection Created for Run input' and $old_fc->delete();
-
+      
     } else {
       $arg3 = ISGA::RunBuilderInput->create( RunBuilder => $self,
 					     FileResource => $fc,
@@ -198,6 +234,7 @@ Replace the contents of the provided RunBuilderInput with the supplied FileColle
     # return $rbi
     return $arg3;
   }
+
 
 #------------------------------------------------------------------------
 
@@ -326,13 +363,3 @@ Returns the cluster name to use and the xml for the
 
     return $layout;
   }
-
-#------------------------------------------------------------------------
-
-=item public void verifyInputs(RunBuilderInput $rbi);
-
-This method verifies the selected input files.
-
-=cut 
-#------------------------------------------------------------------------
-sub verifyInputs{ undef; }

@@ -12,9 +12,11 @@ make further customizations.</p>
 <a class="button" href="/Pipeline/View?pipeline=<% $pipeline %>">View My Pipeline</a> | 
 <a class="button" href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>">Run Pipeline</a>
 
-<%perl>
-if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
-  my $plugin = $pipeline->getWebPluginDirectory;
-  $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-success.mas");
-}
-</%perl>
+<div id="WT" class="hidden documentation success"><div id="WT_arrow_left"></div><div id="WT_close_left"><span>Walkthrough</span><a class="btn-hide" href="#">Close</a></div><div id="WT_copy">
+<p>Congratulations!  You have created a customized pipeline.  
+This pipeline will now be accessible by viewing 
+<a class="normal" href="/Pipeline/List">All Available Pipelines.</a></p>
+
+<p>To view your pipeline, click the <span class="highlight">View My Pipeline</span> button now.  
+To begin the Run Building process, click the <span class="highlight">Run Pipeline</span> button now.</p>
+</div></div>

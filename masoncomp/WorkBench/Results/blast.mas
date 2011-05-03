@@ -1,0 +1,47 @@
+<%args>
+    $job
+</%args>
+
+<%perl>
+    my $collection = $job->getCollection;
+    my $contents = $collection->getContents;
+    my $list;
+    my $output_file;
+    my $tair9 = 0;
+    my $html_output_file;
+
+    foreach (@$contents){
+        if ($_->getType->getName eq 'BLAST Search Result'){
+            $output_file = $_;
+        } elsif ($_->getType->getName eq 'BLAST HTML Result'){
+            $html_output_file = $_;
+        } elsif ($_->getType->getName eq 'Toolbox Job Configuration'){
+            use YAML;
+            $list = YAML::LoadFile($_->getPath);
+            $tair9 = 1 if ($list->{databases}[0] =~ /Tair9_cdna$/ or $list->{databases}[0] =~ /Tair9_pep$/);
+        }
+    }
+
+    if($tair9){
+</%perl>
+
+%# <& cdna_blast.mas, output_file => $html_output_file &>
+<& cdna_blast.mas, job => $job &>
+<& right_menu_cdna_blast.mas, output_file => $output_file &>
+
+%    } else{
+<h1>WorkBench: Blast Output</h1>
+<div class="preview">
+<pre>
+<%perl>
+        open my $fh, '<', $output_file->getPath or X->throw(message => 'Error processing your BLAST job output.');
+        while ( <$fh> ) {
+            print $_;
+        }
+</%perl>
+</pre>
+</div>
+<& right_menu_blast.mas, output_file => $output_file &>
+%    }
+
+%# <& right_menu_blast.mas, output_file => $output_file &>

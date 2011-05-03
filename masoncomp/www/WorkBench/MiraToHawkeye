@@ -1,0 +1,15 @@
+<%args>
+</%args>
+
+<%perl> # -*- cperl -*-
+
+return $m->comp('/WorkBench/outage.mas') unless( ISGA::SiteConfiguration->value('allow_sge_requests') );
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'workbench_miratohawkeye'
+  or $form =  ISGA::FormEngine::WorkBench->MiraToHawkeye(\%ARGS);
+
+return $m->comp('/WorkBench/miratohawkeye.mas', form => $form );
+
+</%perl>

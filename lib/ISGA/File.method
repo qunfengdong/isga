@@ -63,8 +63,5 @@ actual file from the filesystem.
     my $p1 = substr($name, 0, 1);
     my $p2 = substr($name, 1, 1); 
 
-    # make sure the repository is set
-    my $file_repository = ISGA::SiteConfiguration->value('file_repository') or X::API::Configuration::Missing->throw( variable => 'file_repository' );
-
-    unlink( "$file_repository/$p1/$p2/$name" );
+    unlink( "___file_repository___/$p1/$p2/$name" );
   }

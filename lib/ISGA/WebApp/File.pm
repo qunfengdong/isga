@@ -67,6 +67,48 @@ sub File::EditDescription {
 
 #------------------------------------------------------------------------
 
+=item public void Upload();
+
+Method to upload a file.
+
+=cut
+#------------------------------------------------------------------------
+sub File::Upload {
+
+  my $self = shift;
+  my $web_args = $self->args;
+  my $form = ISGA::FormEngine::File->Upload($web_args);
+  
+  $form->canceled and $self->redirect( uri => '/File/BrowseMy' );
+
+  if ( $form->ok ) {
+    my $upload = $self->apache_req->upload('file_name');
+
+    my %args = ( UserName => $form->get_input('file_name'),
+		 Type => $form->get_input('file_type'),
+		 Format => $form->get_input('file_format'),
+		 Description => $form->get_input('description'),
+		 CreatedBy => ISGA::Login->getAccount,
+		 CreatedAt => ISGA::Timestamp->new,
+		 IsHidden => 0 );
+
+    my $file = ISGA::FileResource->upload( $upload->fh, %args );
+
+    if ( $file->isa( 'ISGA::File' ) ) {
+      $self->redirect( uri => "/File/View?file=$file" );
+    } else {
+      $self->redirect( uri => "/FileCollection/View?file_collection=$file" );
+    }
+   } 
+
+  # bounce!!!!!
+  $self->_save_arg( 'form', $form);
+  $self->redirect( uri => '/File/Upload' );
+}  
+
+
+#------------------------------------------------------------------------
+
 =item public void Hide();
 
 Method to mark a file as hidden.

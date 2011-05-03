@@ -1,12 +1,68 @@
 <%args> #! -*- cperl -*-
 $pipeline
+$class => undef
 $cluster
 </%args>
+% if( ! defined $class || $class eq 'clusterOption' ){
 
-% my $workflow = $pipeline->getWorkflow($cluster);
+<h1 class="component"><%  $cluster->getName %></h1>
+<p class="component"><%  $cluster->getName %> has the following components available.</p>
+<p class="component">Please check the components you wish to run or use the Edit Parameters link 
+to edit that components parameters.</p>
+%# loop through and print components on and link to params
+<div class="modaltable">
+<table>
+  <tbody>
+   <tr class="list_label">
+     <td align="left">Component</td>
+     <td align="left">Turned On/Off</td>
+     <td align="left">View Parameters</td>
+   </tr>
+<%perl>
+  my $components = ISGA::Component->query( Cluster => $cluster );
+  my $wf_mask = $pipeline->getWorkflowMask;
+  my $disabled = $wf_mask->getDisabledComponents;
+  foreach ( @{$components} ) {
+    unless( defined $_->getDependsOn ){
+      my $count = 0;
+      my $link = "No Parameters";
+      my @dependents = @{ISGA::Component->query( DependsOn => $_ )};
 
-% if ( $workflow->getCustomization() eq 'Modular' ) {
-<& /Pipeline/view-modular-cluster-modal.mas, pipeline => $pipeline, workflow => $workflow &>
-% } else {
-<& /Pipeline/view-cluster-modal.mas, pipeline => $pipeline, workflow => $workflow &>
+      foreach my $dep_components (@dependents){
+         if (my $builder = ISGA::ComponentBuilder->new($dep_components)){
+           if ( $builder->{PipelineBuilder} ){
+               $count++;
+               $link = "<a href=\"/Pipeline/ViewParameters?pipeline=$pipeline&component=$dep_components\">View Parameters</a>";
+           }
+         }
+      }
+      my $b = ISGA::ComponentBuilder->new($_);
+      $b->{PipelineBuilder} and $count == 0 and $link = "<a href=\"/Pipeline/ViewParameters?pipeline=$pipeline&component=$_\">View Parameters</a>";
+
+    my $on_off_switch = exists $$disabled{$_->getErgatisName} ? "off" : "on";
+</%perl>
+  <tr class="odd">
+    <td align="right"><% $_->getName %></td>
+    <td class="centertext" align="right"><% $on_off_switch %></td>
+    <td class="centertext" align="left"><% $link %></td>
+  </tr>
+%  }
 % }
+</tbody></table></div>
+% } elsif ( $class eq 'requiredCluster' ) {
+<h1 class="component"><%  $cluster->getName %></h1>
+<p class="component"><%  $cluster->getName %> is a required module and must be run.  Use the View Parameters button below to view its parameters.</p>
+<p class="component"><a class="button" href="/Pipeline/ViewComponents?pipeline=<% $pipeline %>&cluster=<% $cluster %>">View Parameters</a></p>
+
+%} elsif ( $class eq 'cluster' ) {
+
+<h1 class="component"><%  $cluster->getName %></h1>
+% my $disabled_cluster = $pipeline->getWorkflowMask->getDisabledClusters;
+% my $toggle_word = defined $$disabled_cluster{$cluster->getName} ? "On" : "Off";
+
+<p class="component"><%  $cluster->getName %> is currently turned <% $toggle_word eq "Off" ? "on" : "off" %>. 
+<p class="component">To view this modules parameters, click the View Parameters button.</p>
+
+<p class="component"><a class="button" href="/Pipeline/ViewComponents?pipeline=<% $pipeline %>&cluster=<% $cluster %>">View Parameters</a></p>
+%}
+
