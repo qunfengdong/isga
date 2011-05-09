@@ -1,4 +1,0 @@
-<h2>Login Error</h2>
-% foreach ( $ISGA::WebApp->errors() ) {
-<p><% $_ %></p>
-% }

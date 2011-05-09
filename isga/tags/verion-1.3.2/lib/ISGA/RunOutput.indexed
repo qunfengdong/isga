@@ -1,6 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: RunOutput
-attributes:
- - { name: FileResource, type: FileResource }
- - { name: Run, type: Run, options: [ REQUIRED ] }
- - { name: ClusterOutput, type: ClusterOutput, options: [ REQUIRED ] }

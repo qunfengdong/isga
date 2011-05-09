@@ -1,6 +1,0 @@
-<sys:script type="text/javascript" src="/include/js/menu.js"></sys:script>
-<sys:style type="text/css" media="screen">
-  @import "/include/css/accordion.css";
-</sys:style>
-
-<& /Pipeline/list.mas &>

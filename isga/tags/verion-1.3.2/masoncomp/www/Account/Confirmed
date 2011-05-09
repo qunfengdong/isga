@@ -1,5 +1,0 @@
-<%args> # -*- cperl -*-
- $account
-</%args>
-
-<& /Account/confirmed.mas &>

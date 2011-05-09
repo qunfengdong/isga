@@ -1,8 +1,0 @@
-<%args>
-  %siteTags
-  $html
-</%args>
-
-<div id="main">
-<% $html %>
-</div>

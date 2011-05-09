@@ -1,4 +1,0 @@
-<%args>
- $file_content
-</%args>
-<% $file_content->getHelp %>

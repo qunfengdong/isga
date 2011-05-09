@@ -1,7 +1,0 @@
-<%perl>
-
-$m->comp( '/WorkBench/overview.mas' );
-
-</%perl>
-
-
