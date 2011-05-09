@@ -1,0 +1,26 @@
+<h1>GBrowse Run Selection Home</h1>
+
+<%perl>
+my $account = ISGA::Login->getAccount;
+my @runs = grep { $_->hasGBrowseData() } @{ISGA::Run->query( CreatedBy => $account, Status => 'Complete', OrderBy => 'CreatedAt' )};
+</%perl>
+
+% if (@runs) {
+<div class=list>
+<table style="width: 100%;">
+<tr class="list_label"><td colspan="2">Run</td></tr>
+%   foreach my $run (@runs) {
+<tr>
+<td><% $run->getName %></td>
+%     if ( $run->hasGBrowseInstallation ) {
+<td><a href="/Browser/gbrowse/<% $run %>/">View in GBrowse</a></td>
+%     } else {
+<td><a href="/submit/Run/InstallGbrowseData?run=<% $run %>">Load results into GBrowse</a></td>
+%     } 
+</tr>
+%   }
+</table>
+</div>
+% } else {
+	<p>To use the GBrowse tool, you must run a pipeline that generates compatible data.</p>
+% }

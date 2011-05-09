@@ -1,0 +1,338 @@
+# -*- cperl -*-
+
+use Hash::Merge::Simple qw(merge);
+use Clone qw(clone);
+
+#------------------------------------------------------------------------
+
+=item public void stage([RunBuilderInput] $rbi);
+
+Stages pipeline files for an ergatis run. Builds pipeline.layout xml
+file and copies customized config files for components.
+
+=cut 
+#------------------------------------------------------------------------
+  sub stage {
+
+    my ($self) = @_;
+
+    my $pipeline = $self->getPipeline();
+    my $dir = $self->getFullErgatisPath();
+
+    my %inputs;
+    my %iterators;
+
+    # create the root directory
+    mkdir( $dir ) or X::File->throw( error => "Error creating directory $dir: $!" );
+
+    # write pipeline layout
+    $self->writeLayoutXML($dir);
+
+    my $mask = $self->getParameterMask();
+
+    # gather all the inputs
+    foreach my $rbi ( @{ISGA::RunBuilderInput->query(RunBuilder => $self)} ) {
+
+      # stage the file
+      $rbi->getFileResource->stage($dir);
+
+      my $ci = $rbi->getPipelineInput->getClusterInput;
+      if ( $ci->isIterator ) {
+	push @{$iterators{$ci}}, $rbi;
+      } else {
+	$inputs{$ci} = "$dir/" . $rbi->getFileResource->getName;
+	if ( my $rbi_mask = $rbi->getParameterMask ) {
+	  $mask = merge $mask, $rbi_mask;
+	}
+      }
+    }
+
+    foreach my $cluster ( @{$pipeline->getClusters} ) {
+
+      # if this is an iterator component we need to handle things differently
+      if ( my $ci = $cluster->getIteratesOn ) {
+
+	my $i_mask = $mask;
+	my $i = 1;
+	
+	for my $rbi ( @{$iterators{$ci}} ) {
+	  
+	  # if we have parameters we need to clone the hash to make sure each component has
+	  # the right parameters
+	  if ( my $rbi_mask = $rbi->getParameterMask ) {
+	    $i_mask = clone($mask);
+	    $i_mask = merge $i_mask, $rbi_mask;
+	  }
+	  
+	  # use this particular file
+	  $inputs{$ci} = "$dir/" . $rbi->getFileResource->getName;
+
+	  $_->writeConfigFile($self, $i_mask, \%inputs, $i) 
+	    for grep { $_->getIteration == $i } @{$self->getComponents($cluster)};
+	  $i++;
+	}
+
+      } else {
+
+	$_->writeConfigFile($self, $mask, \%inputs) for @{$self->getComponents($cluster)};
+      }
+    }
+  }
+  
+#------------------------------------------------------------------------
+
+=item public void _processInputs();
+
+Calculates and caches the current status of inputs.
+
+=cut 
+#------------------------------------------------------------------------
+sub _processInputs {
+  my $self = shift;
+
+  # make this method idempotent
+  exists $self->{_cached_inputs} and return;
+
+  my ( @required, @optional, %file_map );
+ 
+  for ( @{ISGA::PipelineInput->query( Pipeline => $self->getPipeline)} ) {
+
+    $_->getDependency eq 'Required' ? push @required, $_ : push @optional, $_;
+    $file_map{$_} = undef;
+  }
+  
+  # set uploaded files
+  for ( @{ISGA::RunBuilderInput->query( RunBuilder => $self )} ) {
+    $file_map{$_->getPipelineInput} = 1;
+  }
+  
+  # count missing files
+  my $missing = scalar grep { ! defined $file_map{$_} } @required;
+
+  $self->{_cached_inputs}{required} = \@required;
+  $self->{_cached_inputs}{optional} = \@optional;
+  $self->{_cached_inputs}{missing} = $missing;
+}
+
+
+#------------------------------------------------------------------------
+
+=item public void assembleInputList(FileResource $file);
+=item public void assembleInputList(FileResource $file, string $name);
+=item public void assembleInputList([File] $file);
+=item public void assembleInputList([File] $file, string $name);
+
+Assembles an input list into a file collection. A human readable name
+for the cluster may be supplied as an optional parameter.
+
+=cut 
+#------------------------------------------------------------------------  
+  sub assembleInputList {
+
+    my ($self, $file, $name) = @_;
+
+    $name ||= "Run Input";
+
+    my $collection;
+    
+    if ( UNIVERSAL::isa($file, 'ISGA::FileCollection') ) {
+      
+      $file->getCreatedBy == ISGA::Login->getAccount
+	or X::User::Denied->throw;
+      
+      $collection = $file;
+      
+    } else {
+      
+      # promote single file to array for consistency
+      ref($file) eq 'ARRAY' or $file = [ $file ];
+      
+      # build collection for files
+      $collection = 
+	ISGA::FileCollection->create( Type => ISGA::FileCollectionType->new('File List'),
+				      CreatedAt => ISGA::Timestamp->new(),
+				      CreatedBy => ISGA::Login->getAccount,
+				      Description => 'Collection Created for Run input',
+				      IsHidden => 1,
+				      ExistsOutsideCollection => 1,
+				      UserName => $name,
+				    );
+
+      $_->getCreatedBy == ISGA::Login->getAccount or X::User::Denied->throw for @$file;
+      $collection->addContents($file);
+    }
+
+    return $collection;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void setInputList(FileCollection $fc, PipelineInput $arg3);
+
+Adds a new RunBuilderInput for this pipeline input
+
+=item public void setInputList(FileCollection $fc, RunBuilderInput $arg3);
+
+Replace the contents of the provided RunBuilderInput with the supplied FileCollection.
+
+=cut 
+#------------------------------------------------------------------------  
+  sub setInputList {
+
+    my ($self, $fc, $arg3) = @_;
+
+    if ( $arg3->isa('ISGA::RunBuilderInput')) { 
+
+      my $old_fc = $arg3->getFileResource();
+      $arg3->edit( FileResource => $fc );
+      
+      # remove old filecollection if it was created for the run
+      $old_fc->getDescription eq 'Collection Created for Run input' and $old_fc->delete();
+
+    } else {
+      $arg3 = ISGA::RunBuilderInput->create( RunBuilder => $self,
+					     FileResource => $fc,
+					     PipelineInput => $arg3 );
+    }
+
+    # return $rbi
+    return $arg3;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void writeLayoutXML();
+
+Writes pipeline.layout XML file for this runbuilder.
+
+=cut
+#------------------------------------------------------------------------
+  sub writeLayoutXML {
+
+    my $self = shift;
+
+    my $p = $self->getPipeline();
+
+    my $pipeline_layout = $p->getLayout;
+
+    foreach my $cluster ( @{$p->getClusters} ) {
+      if ( my $ci = $cluster->getIteratesOn ) {
+	$pipeline_layout = $self->_writeIteratorClusterLayoutXML($pipeline_layout, $cluster, $ci);
+      } else {
+	$pipeline_layout = $self->_writeClusterLayoutXML($pipeline_layout, $cluster);
+      }
+    }
+
+    # remove unused place holders
+    $pipeline_layout =~ s{___[ A-za-z0-9]+___}{}g;
+    
+    my $dir = $self->getFullErgatisPath();
+    ISGA::Utility->writeFile( "$dir/pipeline.layout", $pipeline_layout );
+  }
+
+
+#------------------------------------------------------------------------
+
+=item PRIVATE string _writeIteratorClusterLayoutXML(string $layout, Cluster $cluster, ClusterInput $ci);
+
+Returns the cluster name to use and the xml for the 
+
+=cut
+#------------------------------------------------------------------------
+  sub _writeIteratorClusterLayoutXML {
+
+    my ($self, $layout, $cluster, $ci) = @_;
+    
+    my $p = $self->getPipeline();
+    my $t = $p->getGlobalTemplate();
+
+    ISGA::Workflow->exists(AltCluster => $cluster, Pipeline => $t)
+        and my $disabled = ISGA::Workflow->new(AltCluster => $cluster, Pipeline => $t)->getCluster;
+
+    my $name = defined $disabled ? $disabled->getName() : $cluster->getName();
+    my $xml_snippet = $cluster->getLayoutXML();
+      
+    my $pi = ISGA::PipelineInput->new( ClusterInput => $ci, Pipeline => $p );
+    my $iterations = ISGA::RunBuilderInput->exists( RunBuilder => $self, PipelineInput => $pi );
+
+    my $xml = '<commandSet type="parallel"><state>incomplete</state>';
+
+    # replace all components 
+    foreach my $i ( 1 .. $iterations ) {
+
+      my $ixml = $xml_snippet;
+
+      foreach ( @{$p->getComponents($cluster)} ) {
+
+	my $component = ISGA::Component::Iterated->new($_, $i);
+      
+	my $name = $component->getErgatisName();
+	my $bname = $component->getBaseErgatisName();
+
+	my $comp_xml = 
+	  "<commandSet type=\"serial\"><state>incomplete</state><name>$name</name></commandSet>";
+
+	$ixml =~ s{___${bname}___}{$comp_xml};
+      }
+
+      $xml .= $ixml;
+    }
+    
+    # remove unused components
+    $xml =~ s{___(\S+)___(\S*\n)?}{}g; 
+
+
+    # close off the iteration
+    $xml .= '</commandSet>';
+
+    $layout =~ s{___${name}___}{$xml};
+
+    return $layout;
+  }
+
+#------------------------------------------------------------------------
+
+=item PRIVATE string _writeClusterLayoutXML(string $layout, Cluster $cluster);
+
+Returns the cluster name to use and the xml for the 
+
+=cut
+#------------------------------------------------------------------------
+  sub _writeClusterLayoutXML {
+
+    my ($self, $layout, $cluster) = @_;
+    
+    my $p = $self->getPipeline();
+    my $t = $p->getGlobalTemplate();
+
+    ISGA::Workflow->exists(AltCluster => $cluster, Pipeline => $t)
+        and my $disabled = ISGA::Workflow->new(AltCluster => $cluster, Pipeline => $t)->getCluster;
+
+    my $name = defined $disabled ? $disabled->getName() : $cluster->getName();
+    my $xml = $cluster->getLayoutXML();
+      
+    # replace all components 
+    foreach my $component ( @{$p->getComponents($cluster)} ) {
+      
+      my $name = $component->getErgatisName();
+      my $comp_xml = 
+	"<commandSet type=\"serial\"><state>incomplete</state><name>$name</name></commandSet>";
+      $xml =~ s{___${name}___}{$comp_xml};
+    }
+    
+    # remove unused components
+    $xml =~ s{___(\S+)___(\S*\n)?}{}g; 
+    $layout =~ s{___${name}___}{$xml};
+
+    return $layout;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void verifyInputs(RunBuilderInput $rbi);
+
+This method verifies the selected input files.
+
+=cut 
+#------------------------------------------------------------------------
+sub verifyInputs{ undef; }

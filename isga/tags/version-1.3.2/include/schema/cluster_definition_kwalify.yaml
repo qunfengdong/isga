@@ -1,0 +1,73 @@
+---
+type:    map
+mapping:
+  "Cluster":
+    type:    str
+    required:    yes
+
+  "Description":
+    type:    str
+    required:    yes
+
+  "NoParamsFlag":
+    type:    int
+
+  "Components":
+    type:    seq
+    sequence:
+      - type:    map
+        mapping:
+
+          "name":
+            type:    str
+            required:    yes
+
+          "title":
+            type:    str
+
+          "params":
+            type:    seq
+            sequence:
+              - type:    map
+                mapping:
+
+                  "NAME":
+                    type:    text
+                    required:    yes
+
+                  "TITLE":
+                    type:    text
+                    required:    yes
+
+                  "DESCRIPTION":
+                    type:    text
+                    required:    yes
+
+                  "REQUIRED":
+                    type:    int
+                    range:    { max: 1, min: 1 }
+
+                  "VALUE":
+                    type:    any
+
+                  "templ":
+                    type:    str
+                    enum:    [text, textarea, radio, select, check, hidden, button, print]
+
+                  "OPTION":
+                    type:    any
+
+                  "OPT_VAL":
+                    type:    any
+
+                  "FLAG":
+                    type:    any
+
+                  "CONFIGLINE":
+                    type:    any
+
+                  "ERROR":
+                    type:    seq
+                    sequence:
+                      - type:    any
+

@@ -1,0 +1,50 @@
+<%args>
+ $run_builder
+</%args>
+
+<%perl>
+use List::Util qw(min);
+</%perl>
+
+<sys:style type="text/css" media="screen"> 
+  @import "/include/css/uni-form.css"; 
+</sys:style>
+
+% my $account = ISGA::Login->getAccount;
+
+<h2>Input Data</h2>
+
+<p>The following files will be used as input for this run. You can
+select new input files using the buttons below, or upload a new file
+using the tool to the left.</p>
+
+% my @required = @{$run_builder->getRequiredInputs};
+% my @optional = @{$run_builder->getOptionalInputs};
+
+<div class="list">
+
+<table width="100%">
+<thead>
+<tr><th width="30%">Input</th><th width="20%">Format</th><th colspan="2">File</th></tr>
+</thead>
+
+<tbody>
+% if ( @required ) {
+<tr><th class="subhead" colspan="4">Required</th></tr>
+%   foreach ( @required ) {
+%     my $comp = ( $_->isIterator ? 'view_iterator_input_line.mas' : 'view_input_line.mas' );
+<& $comp, pipeline_input => $_, run_builder => $run_builder &>
+%   }
+% }
+
+% if ( @optional ) {
+<tr><th class="subhead" colspan="4">Optional</th></tr>
+%   foreach ( @optional ) {
+%     my $comp = ( $_->isIterator ? 'view_iterator_input_line.mas' : 'view_input_line.mas' );
+<& $comp, pipeline_input => $_, run_builder => $run_builder &>
+%   }
+% }
+</tbody>
+</table>
+
+</div>

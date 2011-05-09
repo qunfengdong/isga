@@ -1,0 +1,29 @@
+% my $notified = ISGA::AccountNotification->exists( Type => $noti_type, Account => ISGA::Login->getAccount );
+
+<div class="downtime">
+<p>ISGA is currently not accepting new pipelines or jobs.  Please see the latest news for more information.
+% if ( $notified ) {
+You will be notified by email when service is restored.
+% } else {
+
+<%perl>
+
+# we want to return to this page after adding ourselves to the list.
+my $url = ISGA::Utility->url( Path => '/submit/Account/OutageNotification',
+			      Query => [ target => $r->uri, target_args => {$m->request_args} ]);
+</%perl>
+
+
+You can <a href="<% $url | n %>">request notification</a> by email when service is restored.
+% }
+</p>
+</div>
+
+
+
+
+<%once>
+
+my $noti_type = ISGA::NotificationType->new( Name => 'Service Outage Restored' );
+
+</%once>

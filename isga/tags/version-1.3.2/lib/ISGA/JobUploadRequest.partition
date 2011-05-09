@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: JobUploadRequest
+partition_of: UploadRequest
+attributes:
+  - { name: FileFormat, type: FileFormat, options: [ REQUIRED ] }
+  - { name: FileType, type: FileType, options: [ REQUIRED ] }
