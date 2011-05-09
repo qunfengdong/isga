@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: PipelineShare
+partition_of: ResourceShare
+options: [ SUBCLASS ]
+attributes:
+  - { name: Resource, type: UserPipeline, options: [ REQUIRED ] }

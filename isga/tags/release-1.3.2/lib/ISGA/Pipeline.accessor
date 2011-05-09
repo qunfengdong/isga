@@ -1,0 +1,156 @@
+# -*- cperl -*-
+
+use Graph::Directed;
+
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisProjectDirectory();
+
+Returns the filesystem path for the Ergatis project this pipeline is run under.
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisProjectDirectory {
+    
+    my $self = shift;
+
+    my $project_dir = ISGA::PipelineConfiguration->value( 'ergatis_project_directory', Pipeline => $self->getGlobalTemplate() )
+      or X::API::Configuration::Missing->throw( variable => 'ergatis_project_directory' );
+
+    return $project_dir;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisOutputRepository();
+
+Returns the filesystem path for the Ergatis output repository this pipeline will retrieve results from.
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisOutputRepository {
+    return shift->getErgatisProjectDirectory . '/output_repository';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisRuntimeDirectory();
+
+Returns the filesystem path for the Ergatis runtime directory this pipeline will reports status in.
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisRuntimeDirectory {
+    return shift->getErgatisProjectDirectory . '/workflow/runtime/pipeline';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisSubmissionDirectory();
+
+Returns the filesystem path for the directory this pipelie is submitted to Ergatis through.
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisSubmissionDirectory {
+    
+    my $self = shift;
+
+    my $submission_dir = ISGA::PipelineConfiguration->value( 'ergatis_submission_directory', 
+							     Pipeline => $self->getGlobalTemplate() )
+      or X::API::Configuration::Missing->throw( variable => 'ergatis_submission_directory' );
+
+    return $submission_dir;
+  }
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getWorkflowMask();
+
+Returns the workflow mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflowMask {
+    return ISGA::WorkflowMask->new($_[0]->{pipeline_workflowmask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public WorkflowMask getRawWorkflowMask();
+
+Returns the string for the workflow mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawWorkflowMask { return $_[0]->{pipeline_workflowmask}; }
+    
+#------------------------------------------------------------------------
+
+=item public [ClusterInput] getInputs();
+
+Returns the inputs for the pipeline after filtering out those produced
+by other components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getInputs { return ISGA::PipelineInput->query( Pipeline => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public [ClusterOutput] getOutputs();
+
+Returns the output files for this pipeline.
+
+=item public [ClusterOutput] getOutputs(%args);
+
+Returns the output files for this pipeline. The following args are available.
+
+  Visibility
+
+=cut
+#------------------------------------------------------------------------
+  sub getOutputs {
+
+    my ($self, %args) = @_;
+
+    $args{Component} = $self->getComponents;
+
+    return ISGA::ClusterOutput->query( %args );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [{ Cluster => $cluster, Output => [ClusterOutput]}] getOutputsByCluster();
+
+Returns the output files for this pipeline.
+
+=item public [{ Cluster => $cluster, Output => [ClusterOutput]}] getOutputsByCluster( %args );
+
+Returns the output files for this pipeline. The following args are available.
+
+   Visibility
+
+=cut
+#------------------------------------------------------------------------
+  sub getOutputsByCluster {
+
+    my ($self, %args) = @_;
+
+    my @results;
+    
+    foreach my $cluster ( @{$self->getClusters} ) {
+
+      my @outputs;
+      
+      foreach ( @{ISGA::Component->query( Cluster => $cluster )} ) {
+	push @outputs, @{ISGA::ClusterOutput->query( Component => $_, %args )};
+      }
+      
+      @outputs and push @results, { Cluster => $cluster, Output => \@outputs };
+    }
+
+    return \@results;
+  }
