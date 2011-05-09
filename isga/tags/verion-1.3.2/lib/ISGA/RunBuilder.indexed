@@ -1,0 +1,10 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: RunBuilder
+attributes:
+  - { name: Pipeline, type: Pipeline, options: [ REQUIRED ] }
+  - { name: CreatedBy, type: Account, options: [ REQUIRED ] }
+  - { name: StartedAt, type: Timestamp, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: ErgatisDirectory, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: Description, type: string, options: [ REQUIRED ] }
+  - { name: ParameterMask, type: string, options: [ REQUIRED, NOGET ] }

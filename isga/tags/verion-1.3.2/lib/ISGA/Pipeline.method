@@ -1,0 +1,32 @@
+
+#------------------------------------------------------------------------
+
+=item PRIVATE string uploadInputFile(FileHandle, %ARGS);
+
+Uploads an input file into the repository.
+
+Named Arguments:
+
+ PipelineInput => PipelineInput
+ UserName => string
+ Description => string
+
+=cut
+#------------------------------------------------------------------------
+  sub uploadInputFile {
+    
+    my ($self, $fh, %args) = @_;
+    
+    # extract Pipeline input
+    my $pi = $args{PipelineInput};
+    delete $args{PipelineInput};
+
+    # set format and type
+    $args{Format} = $pi->getFormat;
+    $args{Type} = $pi->getType;
+    
+    # call back for checking upload
+    $args{Filters} = $self->getGlobalTemplate->verifyUpload($args{UserName}, $pi);   
+
+    ISGA::File->upload( $fh, %args );
+  }
