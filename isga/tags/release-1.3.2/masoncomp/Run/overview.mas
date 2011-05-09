@@ -1,5 +1,0 @@
-<h1>Runs</h1>
-
-<p>A run is the execution of a pipeline on a particular set of
-inputs. A pipeline can be used for multiple runs, each with it's own
-set of inputs and results.</p>

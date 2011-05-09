@@ -1,4 +1,0 @@
-<%args>
- $file_format
-</%args>
-<% $file_format->getHelp %>

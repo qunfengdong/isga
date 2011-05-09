@@ -1,8 +1,0 @@
-<%args> # -*- cperl -*-
- $cluster
-</%args>
-<%perl>
-
-
-</%perl>
-<% $cluster->getDescription() %>

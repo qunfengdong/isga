@@ -1,5 +1,0 @@
-<%args> # -*- cperl -*-
- $pipeline_builder
-</%args>
-
-<& /PipelineBuilder/cancel.mas, pipeline_builder => $pipeline_builder &>
