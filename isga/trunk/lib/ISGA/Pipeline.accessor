@@ -100,15 +100,9 @@ by other components.
 
 #------------------------------------------------------------------------
 
-=item public [ClusterOutput] getOutputs();
-
-Returns the output files for this pipeline.
-
 =item public [ClusterOutput] getOutputs(%args);
 
 Returns the output files for this pipeline. The following args are available.
-
-  Visibility
 
 =cut
 #------------------------------------------------------------------------
@@ -123,15 +117,9 @@ Returns the output files for this pipeline. The following args are available.
 
 #------------------------------------------------------------------------
 
-=item public [{ Cluster => $cluster, Output => [ClusterOutput]}] getOutputsByCluster();
-
-Returns the output files for this pipeline.
-
 =item public [{ Cluster => $cluster, Output => [ClusterOutput]}] getOutputsByCluster( %args );
 
 Returns the output files for this pipeline. The following args are available.
-
-   Visibility
 
 =cut
 #------------------------------------------------------------------------
@@ -154,3 +142,28 @@ Returns the output files for this pipeline. The following args are available.
 
     return \@results;
   }
+
+#------------------------------------------------------------------------
+
+=item public hasPipelineBuilder( );
+
+Returns TRUE if a pipeline has pipelinebuilder parameters and false if 
+ it does not.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasPipelineBuilder {
+
+    my ($self) = @_;
+    foreach my $cluster ( @{$self->getClusters} ) {
+      return 1 if not $self->getWorkflow($cluster)->isRequired;
+      my $components = $self->getComponents;
+      foreach my $component ( @{$components}){
+        if ( ISGA::ComponentBuilder->new($component)->{PipelineBuilder} ){
+          return 1;
+        }
+      }
+    }
+    return 0;
+  }
+

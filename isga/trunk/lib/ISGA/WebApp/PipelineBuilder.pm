@@ -46,6 +46,10 @@ sub PipelineBuilder::Create {
   # get user
   my $account = ISGA::Login->getAccount;
 
+  $pipeline->hasPipelineBuilder or
+    X::User::Denied->throw( error => "This pipeline has no customizable features or parameters.  Please run this pipeline using default settings." );
+
+
   if (my @started_builder = @{ISGA::PipelineBuilder->query( Pipeline => $pipeline,
                                                             CreatedBy => $account,
                                                             OrderBy => 'StartedOn' )} ){

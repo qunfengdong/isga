@@ -50,7 +50,8 @@ your customized settings.\
 % }
 </li>
 
-% if ( $exists && $available ) {
+% if ($pipeline->hasPipelineBuilder) {
+% if ( $exists && $available) {
 <li class="rmbutton pointer"><a href="/submit/PipelineBuilder/Create?pipeline=<% $pipeline %>">Customize Pipeline</a> </li>
 <li  class="pointer" onclick="window.location='/submit/PipelineBuilder/Create?pipeline=<% $pipeline %>'">
 % } else {
@@ -62,7 +63,7 @@ your customized settings.\
 % if ( ! $exists ) {
 <p> You must <a href="#" rel='modal_hidden' class="modal">Login</a> to customize this pipeline.</p>
 % }
-
+%}
 </li>
 <li class="title">Pipeline Documentation</li>
 <li class="rmbutton"><a href="View?pipeline=<% $pipeline %>">View Pipeline</a></li>
