@@ -159,9 +159,11 @@ Returns TRUE if a pipeline has pipelinebuilder parameters and false if
       return 1 if not $self->getWorkflow($cluster)->isRequired;
       my $components = $self->getComponents;
       foreach my $component ( @{$components}){
-        if ( ISGA::ComponentBuilder->new($component)->{PipelineBuilder} ){
-          return 1;
-        }
+        if ( my $builder = ISGA::ComponentBuilder->new($component) ){
+          if ( $builder->{PipelineBuilder} ){
+            return 1;
+          }
+        } 
       }
     }
     return 0;
