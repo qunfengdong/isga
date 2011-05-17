@@ -177,7 +177,12 @@ the supplied component template.
 	  if (exists $$_{'REQUIRED'}){
 	    push(@{$$_{'ERROR'}}, 'not_null', 'Text::checkHTML');
 	  }
-	}
+	}elsif ($$_{'NAME'} eq 'referencedb'){
+          foreach my $refdb (@{ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ) )}){
+            push @{$$_{'OPTION'}}, $refdb->getName;
+            push @{$$_{'OPT_VAL'}}, $refdb->getPath;
+          }
+        }
 	
 	push @runbuilder, $_;
       }

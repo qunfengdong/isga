@@ -1,9 +1,7 @@
 --- !perl/MasonX::Foundation::Class::Indexed
 class: ReferenceDB
 attributes:
-  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
-  - { name: Available, type: boolean, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED ] }
   - { name: Path, type: string, options: [ REQUIRED ] }
-  - { name: FileType, type: FileType, options: [ REQUIRED ] }
-  - { name: FileFormat, type: FileFormat, options: [ REQUIRED ] }
   - { name: Description, type: string }
+  - { name: ReferenceType, type: ReferenceType, options: [ REQUIRED ] }
