@@ -102,7 +102,7 @@ INSERT INTO referencedb (referencetype_id, referencedb_name, referencedb_path, r
 INSERT INTO referencedb (referencetype_id, referencedb_name, referencedb_path, referencedb_description)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
-    'Arabidopsis thaliana', '/nfs/bio/db/Arabidopsis_thaliana/shore/',
+    'Arabidopsis thaliana', '/nfs/bio/db/Arabidopsis_thaliana/shore/arab10.fasta.shore',
     'Some description');
 
 INSERT INTO referencedb (referencetype_id, referencedb_name, referencedb_path, referencedb_description)
