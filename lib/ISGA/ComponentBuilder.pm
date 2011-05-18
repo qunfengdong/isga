@@ -177,8 +177,8 @@ the supplied component template.
 	  if (exists $$_{'REQUIRED'}){
 	    push(@{$$_{'ERROR'}}, 'not_null', 'Text::checkHTML');
 	  }
-	}elsif ($$_{'NAME'} eq 'referencedb'){
-          foreach my $refdb (@{ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ) )}){
+	}elsif ( exists $$_{'REFERENCEDB'}){
+          foreach my $refdb (@{ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => $$_{'REFERENCEDB'} ) )}){
             push @{$$_{'OPTION'}}, $refdb->getName;
             push @{$$_{'OPT_VAL'}}, $refdb->getPath;
           }
