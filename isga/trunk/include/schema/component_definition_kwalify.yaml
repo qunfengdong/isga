@@ -97,6 +97,9 @@ mapping:
           "FLAG":
             type:    any
 
+          "REFERENCEDB":
+            type:    str
+
           "CONFIGLINE":
             type:    any
 
