@@ -1,0 +1,9 @@
+<%args>
+ $run_builder
+</%args>
+
+<%perl>
+my @errors = grep { $_->isa('X::File') } $ISGA::WebApp->errors();
+</%perl>
+
+<& /RunBuilder/view_input_error.mas, run_builder => $run_builder, error => $errors[0] &>

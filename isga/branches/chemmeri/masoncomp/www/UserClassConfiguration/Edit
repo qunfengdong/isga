@@ -1,0 +1,16 @@
+<%args>
+ $user_class
+</%args>
+
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+
+$form and $form->get_formname() eq 'userclass_configuration_edit' 
+  or $form =  ISGA::FormEngine::UserClassConfiguration->Edit(\%ARGS);
+
+return $m->comp('/UserClassConfiguration/edit.mas', form => $form);
+
+$m->comp('/UserClassConfiguration/right_menu.mas', user_class => $user_class);
+</%perl>

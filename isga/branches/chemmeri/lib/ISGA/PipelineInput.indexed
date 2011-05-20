@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: PipelineInput
+attributes:
+  - { name: Pipeline, type: Pipeline, options: [ REQUIRED ] }
+  - { name: ClusterInput, type: ClusterInput, options: [ REQUIRED ] }
+  - { name: ParameterMask, type: string, }

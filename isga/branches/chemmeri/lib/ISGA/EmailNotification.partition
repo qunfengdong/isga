@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: EmailNotification
+partition_of: Notification
+attributes:
+  - { name: Email, type: string, options: [ REQUIRED ] }
