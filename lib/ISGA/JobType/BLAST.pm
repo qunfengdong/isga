@@ -42,25 +42,28 @@ sub buildForm {
 
   my @db_groups;
 
-  push @db_groups, 
-    {
-     LABEL => 'Global Databases',
-     templ => 'group',
-     OPTION => ['GenBank DNA: nt', 
-		'GenBank protein: nr', 
-		'Arabidopsis Tair9 cdna', 
-		'Arabidopsis Tair9 Pep' ],
-     OPT_VAL => ["${db_path}NCBI-nr/nr-09-20-2009/nt", 
-		 "${db_path}NCBI-nr/nr-11-19-2010/nr", 
-		 "${db_path}Tair9/Tair9_cdna_20090619/Tair9_cdna", 
-		 "${db_path}Tair9/TAIR9_pep_20090619/Tair9_pep"],
-    };
+  my $nuc_ref = ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ), OrderBy => 'Name' );
+  my $prot_ref = ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ), OrderBy => 'Name' );
 
+  push @db_groups,
+    (
+     {
+      LABEL => 'Global Nucleotide Databases',
+      templ => 'group',
+      OPTION => [map {$_->getName} @$nuc_ref],
+      OPT_VAL => $nuc_ref
+     },
+     {
+      LABEL => 'Global Protein Databases',
+      templ => 'group',
+      OPTION => [map {$_->getName} @$prot_ref],
+      OPT_VAL => $prot_ref
+     },
+    );
+  
   my $account = ISGA::Login->getAccount;
   my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', 
 			       OrderBy => 'CreatedAt', IsHidden => 0 );
-
-  use Data::Dumper;
 
   my %my_runs = ( LABEL => 'My Runs', OPTION => [], OPT_VAL => [], templ => 'group' );
 
