@@ -4,3 +4,6 @@
 
 <& view_header.mas, account => $account &>
 
+<%doc>
+ special right menu with admin tools
+</%doc>

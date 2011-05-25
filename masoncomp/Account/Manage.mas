@@ -20,10 +20,10 @@
 
 <li class="rmbutton pointer">Account Search</li>
 <span>
-<form action="/submit/Account/Search" name="account_search">
+<form action="/Account/Search" name="account_search">
 <li>
 <p>
-<input type="text" name="search_terms" onChange="document.forms['account_search'].submit()">
+<input type="text" name="search_term" onChange="document.forms['account_search'].submit()">
 </p>
 </li>
 </form>

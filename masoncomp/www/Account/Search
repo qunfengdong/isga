@@ -1,0 +1,16 @@
+<%args>
+ $search_term
+</%args>
+
+
+<%perl>
+
+# search name, email, institution
+
+my $accounts = ISGA::Account->query( [ Name => $search_term,
+   	       			       Email => $search_term,
+				       Institution => $search_term
+				     ] );
+
+
+</%perl>

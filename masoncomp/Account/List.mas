@@ -1,0 +1,7 @@
+<%args>
+ $accounts
+</%args>
+
+<h1>ISGA Account Listing</h1>
+
+<& list_accounts.mas, accounts => $accounts &>
