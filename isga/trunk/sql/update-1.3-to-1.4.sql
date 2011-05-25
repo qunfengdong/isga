@@ -29,7 +29,26 @@ CREATE TABLE referencedb (
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 
-INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet) VALUES ('/Account/Manage', 'Account Management', TRUE, '2columnright');
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/Account/Manage', 'Account Management', TRUE, '2columnright');
 INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
-  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), (SELECT usecase_id FROM usecase WHERE usecase_name = '/Account/Manage') );
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/Account/Manage') );
+
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/Account/List', 'Account Listing', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/Account/List') );
+
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/Account/Search', 'Account Search', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/Account/Search') );
+
+--INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) VALUES ('/submit/Account/Search', 'Account::Search', TRUE, 'none');
+--INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+--  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
+--           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Account/Search') );
 

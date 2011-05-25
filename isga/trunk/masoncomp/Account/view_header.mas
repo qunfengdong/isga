@@ -13,6 +13,9 @@
    <th>Walkthroughs</th><td><% $account->isWalkthroughDisabled ? 'off' : 'on' %></td>
   </tr>
   <tr>
+   <th>User Class</th><td colspan="3"><% $account->getUserClass->getName %></td>
+  </tr>
+  <tr>
    <th>Institution</th><td colspan="3"><% $account->getInstitution %></td>
   </tr>
  </tbody>
