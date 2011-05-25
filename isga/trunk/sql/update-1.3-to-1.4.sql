@@ -21,3 +21,15 @@ CREATE TABLE referencedb (
   referencedb_path TEXT NOT NULL,
   referencedb_description TEXT
 );
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Tools for Account Management
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet) VALUES ('/Account/Manage', 'Account Management', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), (SELECT usecase_id FROM usecase WHERE usecase_name = '/Account/Manage') );
+

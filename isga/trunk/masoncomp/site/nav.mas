@@ -71,6 +71,9 @@
 % if ( $exists ) {
   <li><a href="/Account/MyAccount">Account</a>
    <ul>
+%   if ( $account->hasGroup($account_admin) ) {
+    <li><a href="/Account/Manage">Manage Accounts</a></li>
+%   }
     <li><a href="/Account/MyAccount">Account Details</a></li>
     <li><a href="/Account/ChangeMyPassword">Change Password</a></li>
    </ul>
@@ -120,7 +123,8 @@
 my $policy_admin = ISGA::Group->new( Name => 'Policy Administrators' );
 my $news_admin = ISGA::Group->new( Name => 'News Administrators' );
 my $run_admin = ISGA::Group->new( Name => 'Run Administrators' ); 
-  
+my $account_admin = ISGA::Group->new( Name => 'Account Administrators' );  
+
 my $pipelines = ISGA::GlobalPipeline->published();
 
 </%once>
