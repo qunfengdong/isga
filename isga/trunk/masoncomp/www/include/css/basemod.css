@@ -31,6 +31,10 @@
   /* documentation div */
   .documentation { background:  #f7f7d4;}
 
+
+  /* editable spans */
+  span.editable { background: #ccffff; padding: 0px 5px 0px 5px; }
+
   /*
   #nav { overflow:hidden; }
   #nav_main {  }

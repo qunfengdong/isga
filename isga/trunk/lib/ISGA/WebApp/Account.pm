@@ -29,6 +29,31 @@ use Digest::MD5;
 
 =cut
 #========================================================================
+#------------------------------------------------------------------------
+
+=item public void EditUserClass();
+
+Edit a user's class.
+
+=cut
+#------------------------------------------------------------------------
+sub Account::EditUserClass {
+
+  my $self = shift;
+  my $web_args = $self->args;
+
+  # we need a user class
+  exists $web_args->{user_class} or X::API::Parameter::Missing->throw( parameter => 'UserClass' );
+  exists $web_args->{account} or X::API::Parameter::Missing->throw( parameter => 'Account' );
+  my $user_class = $web_args->{user_class};
+  my $account = $web_args->{account};
+
+  # edit the user class
+  $account->edit(UserClass => $user_class);
+
+  # redirec to what
+  $self->redirect( uri => '/Home' );
+}
 
 #------------------------------------------------------------------------
 

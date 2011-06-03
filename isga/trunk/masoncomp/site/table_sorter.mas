@@ -21,9 +21,11 @@
 $(document).ready(function() {
     // call the tablesorter plugin, the magic happens in the markup
     $("table")
-    .<% $table_class %>({widgets: ['zebra']});
+    .<% $table_class %>({widgets: ['zebra']})
 % if ( $show_pager ) {
     .tablesorterPager({container: $("#<% $pager_id %>")});
+% } else {
+  ;
 % }
 });
 </sys:script>
