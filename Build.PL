@@ -29,6 +29,7 @@ my $builder = MyBuild->new(
 		 'HTTP::Headers' => '> 5',
 		 'HTTP::Request' => 0,
 		 'IO::String' => 0,
+		 'JSON' => 0,
 		 'LWP::UserAgent' => 0,
 		 'PerlIO::gzip' => 0,
 		 'Pod::Simple::HTMLBatch' => 0,

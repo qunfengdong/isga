@@ -1,11 +1,3 @@
-<h1>Account Management Tools</h1>
-
-
-<p>Account Search Tool Here</p>
-
-% my $accounts = ISGA::Account->query( OrderBy => 'Name' );
-<& /Account/List.mas, accounts => $accounts &>
-
 <& /site/right_menu_js.mas &>
 
 <sys:rightmenu>

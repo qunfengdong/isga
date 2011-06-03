@@ -52,3 +52,7 @@ INSERT INTO grouppermission ( accountgroup_id, usecase_id )
 --  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
 --           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Account/Search') );
 
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) VALUES ('/submit/Account/EditUserClass', 'Account::EditUserClass', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Account/EditUserClass') );
