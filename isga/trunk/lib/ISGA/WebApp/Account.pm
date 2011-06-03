@@ -29,6 +29,7 @@ use Digest::MD5;
 
 =cut
 #========================================================================
+
 #------------------------------------------------------------------------
 
 =item public void EditUserClass();
@@ -51,8 +52,11 @@ sub Account::EditUserClass {
   # edit the user class
   $account->edit(UserClass => $user_class);
 
-  # redirec to what
-  $self->redirect( uri => '/Home' );
+  # save result
+  $self->_save_arg( echo => $user_class->getName );
+  
+  # redirect to what
+  $self->redirect( uri => '/Echo' );
 }
 
 #------------------------------------------------------------------------
