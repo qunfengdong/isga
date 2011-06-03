@@ -68,3 +68,7 @@ $m->abort();
 <%once>
 my $admin = ISGA::Group->new(Name => 'Run Administrators');
 </%once>
+
+<%init>
+$r->content_type('application/octet-stream');
+</%init>
