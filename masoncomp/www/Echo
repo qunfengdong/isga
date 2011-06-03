@@ -1,0 +1,4 @@
+<%perl> # -*- cperl -*-
+my $echo = $ISGA::WebApp->saved_args->('echo');
+</%perl>
+<% $echo %>
