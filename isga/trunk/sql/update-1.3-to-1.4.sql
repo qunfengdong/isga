@@ -5,21 +5,40 @@ SET SESSION client_min_messages TO 'warning';
 -- Create referencetype and referencedb tables
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+CREATE TABLE referencetag(
+  referencetag_id SERIAL PRIMARY KEY,
+  referencetag_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE reference(
+  reference_id SERIAL PRIMARY KEY,
+  reference_name TEXT NOT NULL UNIQUE,
+  reference_path TEXT NOT NULL UNIQUE,
+  reference_description TEXT NOT NULL,
+  referencetag_id INTEGER REFERENCES referencetag(referencetag_id) NOT NULL
+);
+
+CREATE TABLE referencerelease(
+  referencerelease_id SERIAL PRIMARY KEY,
+  reference_id INTEGER REFERENCES reference(reference_id) NOT NULL,
+  referencerelease_release TEXT NOT NULL UNIQUE,
+  referencerelease_version TEXT NOT NULL,
+  referencerelease_path TEXT NOT NULL UNIQUE
+);
 
 CREATE TABLE referencetype (
   referencetype_id SERIAL PRIMARY KEY,
   referencetype_name TEXT NOT NULL UNIQUE,
   filetype_id INTEGER REFERENCES filetype(filetype_id) NOT NULL,
-  fileformat_id INTEGER REFERENCES fileformat(fileformat_id)
+  fileformat_id INTEGER REFERENCES fileformat(fileformat_id) NOT NULL
 );
 
 CREATE TABLE referencedb (
   referencedb_id SERIAL PRIMARY KEY,
   referencetype_id INTEGER REFERENCES referencetype(referencetype_id) NOT NULL,
-  referencedb_name TEXT NOT NULL,
---  referencedb_available BOOLEAN NOT NULL,
-  referencedb_path TEXT NOT NULL,
-  referencedb_description TEXT
+  referencerelease_id INTEGER REFERENCES referencerelease(referencerelease_id) NOT NULL,
+  pipelinestatus_id INTEGER REFERENCES pipelinestatus(pipelinestatus_id)NOT NULL,
+  referencedb_path TEXT NOT NULL
 );
 
 -------------------------------------------------------------------
