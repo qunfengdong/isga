@@ -1,0 +1,18 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getFullPath();
+
+Returns the full path for a ReferenceDB.
+
+=cut
+#------------------------------------------------------------------------
+  sub getFullPath {
+
+    my $self = shift;
+    
+    my $full_path = $self->getRelease->getReference->getPath . '/'. $self->getRelease->getPath . '/' . $self->getPath;
+
+    return $full_path;
+  }

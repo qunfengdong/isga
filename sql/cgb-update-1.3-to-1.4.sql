@@ -59,27 +59,27 @@ INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('NCBI-nr', '/nfs/bio/NCBI-nr', 
+  VALUES('NCBI-nr', '/nfs/bio/db/NCBI-nr', 
          'Non-redundant GenBank CDS translations as well as, PDB, SwissProt, PIR, and PRF', 
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Collection'));
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('NCBI-nt', '/nfs/bio/NCBI-nt',
+  VALUES('NCBI-nt', '/nfs/bio/db/NCBI-nt',
          'Non-redundant GenBank CDS translations as well as, PDB, SwissProt, PIR, and PRF',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Collection'));
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('UniProt100', '/nfs/bio/UniProt100',
+  VALUES('UniProt100', '/nfs/bio/db/UniProt100',
          'UniRef100 contains all the records in the UniProt knowledgebase and selected UniParc records.',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Collection'));
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('Homo Sapien', '/nfs/bio/Homo_sapien',
+  VALUES('Homo Sapien', '/nfs/bio/db/Homo_sapien',
          'Reference information for Homo sapien.',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('Arabidopsis thaliana', '/nfs/bio/Arabidopsis_thaliana',
+  VALUES('Arabidopsis thaliana', '/nfs/bio/db/Arabidopsis_thaliana',
          'Reference information for Arabidopsis thaliana',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('Drosophila melanogaster', '/nfs/bio/Drosophila_melanogaster',
+  VALUES('Drosophila melanogaster', '/nfs/bio/db/Drosophila_melanogaster',
          'Reference information for Drosophila_melanogaster',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 
