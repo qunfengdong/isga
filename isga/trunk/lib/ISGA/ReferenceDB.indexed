@@ -1,7 +1,7 @@
 --- !perl/MasonX::Foundation::Class::Indexed
 class: ReferenceDB
 attributes:
-  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Release, type: ReferenceRelease, options: [ REQUIRED ] }
   - { name: Path, type: string, options: [ REQUIRED ] }
-  - { name: Description, type: string }
-  - { name: ReferenceType, type: ReferenceType, options: [ REQUIRED ] }
+  - { name: Status, type: PipelineStatus, options: [ REQUIRED ] }
+  - { name: Type, type: ReferenceType, options: [ REQUIRED ] }

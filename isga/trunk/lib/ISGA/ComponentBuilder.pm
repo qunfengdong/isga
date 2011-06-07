@@ -178,9 +178,9 @@ the supplied component template.
 	    push(@{$$_{'ERROR'}}, 'not_null', 'Text::checkHTML');
 	  }
 	}elsif ( exists $$_{'REFERENCEDB'}){
-          foreach my $refdb (@{ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => $$_{'REFERENCEDB'} ) )}){
-            push @{$$_{'OPTION'}}, $refdb->getName;
-            push @{$$_{'OPT_VAL'}}, $refdb->getPath;
+          foreach my $refdb (@{ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => $$_{'REFERENCEDB'} ) )}){
+            push @{$$_{'OPTION'}}, $refdb->getRelease->getReference->getName . ' ' . $refdb->getRelease->getRelease;
+            push @{$$_{'OPT_VAL'}}, $refdb->getFullPath;
           }
         }
 	
