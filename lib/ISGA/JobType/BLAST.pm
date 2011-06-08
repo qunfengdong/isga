@@ -42,21 +42,21 @@ sub buildForm {
 
   my @db_groups;
 
-  my $nuc_ref = ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ), OrderBy => 'Name' );
-  my $prot_ref = ISGA::ReferenceDB->query( ReferenceType => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ), OrderBy => 'Name' );
+  my $nuc_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ) );
+  my $prot_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ) );
 
   push @db_groups,
     (
      {
       LABEL => 'Global Nucleotide Databases',
       templ => 'group',
-      OPTION => [map {$_->getName} @$nuc_ref],
+      OPTION => [map {$_->getRelease->getReference->getName . ' ' . $_->getRelease->getRelease} @$nuc_ref],
       OPT_VAL => $nuc_ref
      },
      {
       LABEL => 'Global Protein Databases',
       templ => 'group',
-      OPTION => [map {$_->getName} @$prot_ref],
+      OPTION => [map {$_->getRelease->getReference->getName . ' ' . $_->getRelease->getRelease} @$prot_ref],
       OPT_VAL => $prot_ref
      },
     );
