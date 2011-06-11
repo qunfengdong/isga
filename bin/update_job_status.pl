@@ -46,13 +46,7 @@ foreach my $job ( @{ISGA::Job->query( Status => \@statuses )} ) {
 
       my $jobtype = $job->getType->getName;
       my $page = "/WorkBench/Result?job=$job";
-#      if ($job->getType->getName eq 'Blast'){
-#        $page = "WorkBench/Result?job=$job";
-#      }elsif ($job->getType->getName eq 'Hawkeye'){
-#        $page = "WorkBench/Result?job=$job";
-#      } else {
-#        $page = "Error";
-#      }
+
       my %mail =
 	( To => $account->getEmail,
 	  From => "ISGA <$support_email>",

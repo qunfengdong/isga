@@ -1,0 +1,10 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: SGEEnvironment
+partition_of: JobEnvironment
+attributes:
+  - { name: ExecutablePath, type: string, options: [ REQUIRED ] }
+  - { name: Cell, type: string, options: [ REQUIRED ] }
+  - { name: ExecdPort, type: number, options: [ REQUIRED ] }
+  - { name: QmasterPort, type: number, options: [ REQUIRED ] }
+  - { name: Root, type: string, options: [ REQUIRED ] }
+  - { name: Queue, type: string, options: [ REQUIRED ] }

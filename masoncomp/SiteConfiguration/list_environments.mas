@@ -1,0 +1,22 @@
+<%args>
+ @sorted
+</%args>
+
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th width="30%">Name</th><th>Type</th><th>Working Directory</th></tr>
+</thead>
+<tbody>
+
+% foreach ( @sorted ) {
+<tr>
+ <td><a href="/SiteConfiguration/ViewEnvironment?job_environment=<% $_ %>"><% $_->getName %></a></td>
+ <td><% $_->getJobEnvironmentPartition->getName %></td>
+ <td><% $_->getPath %></td>
+</tr>
+% }
+
+</tbody>
+</table>
+</div>

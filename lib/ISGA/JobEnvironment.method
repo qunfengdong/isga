@@ -1,0 +1,24 @@
+# -*- cperl -*-
+
+use File::Path;
+
+#------------------------------------------------------------------------
+
+=item public string getWorkingDirectory(Job $job);
+
+Creates the working directory for a job in this environment and
+returns the path to the working directory as a string.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkingDirectory {
+    
+    my ($self, $job) = @_;
+
+    my $wd = $self->getPath() . '/' . $job->getName;
+
+    make_path($wd);
+    umask(0);
+    return $wd;
+  }
+

@@ -87,6 +87,25 @@ sub checkUnixFileName {
 
 #------------------------------------------------------------------------
 
+=item public String checkUnixFilePath(string value);
+
+Returns an error if the supplied text contains code to break a unix file path.
+
+=cut 
+#------------------------------------------------------------------------
+sub checkUnixFilePath {
+
+  my $value = shift;
+
+  if ( $value !~ /^[-/A-Za-z0-9_ \.]+$/ ) {
+    return 'Must not contain special characters.';
+  }
+
+  return '';
+}
+
+#------------------------------------------------------------------------
+
 =item public String alphaNumeric(string value);
 
 Returns an error if the supplied text is not alphaNumeric.

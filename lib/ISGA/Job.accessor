@@ -1,0 +1,44 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getName();
+
+Returns a unique name for the job.
+
+=cut
+#------------------------------------------------------------------------
+  sub getName {
+    my $self = shift;
+    return $self->getType->getName . '_' . $self->getId;
+  }
+
+#------------------------------------------------------------------------
+
+=item public JobEnvironment getEnvironment()
+
+Returns the Environment under which this job will be executed.
+
+=cut
+#------------------------------------------------------------------------
+  sub getEnvironment {
+    my $self = shift;
+
+    # retrieve the execution environment for this job
+    my $env = ISGA::JobConfiguration->value( 'job_environment', JobType => $self->getType);
+    return ISGA::JobEnvironment->new( Id => $env );
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getWorkingDirectory();
+
+Creates the working directory for a job in this environment and
+returns the path to the working directory as a string.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkingDirectory {
+    my $self = shift;
+    return $self->getEnvironment->getWorkingDirectory($self);
+  }

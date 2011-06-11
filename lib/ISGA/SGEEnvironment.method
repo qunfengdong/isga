@@ -1,0 +1,131 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public void submitJob();
+
+Submit staged jobs.
+
+=cut
+#------------------------------------------------------------------------
+sub submitJob {
+  my $self = shift;
+
+  my $status = $self->getStatus;
+  my $pid = $self->getPid;
+
+  eval {
+
+    ISGA::DB->begin_work();
+    my $files_path = "___tmp_file_directory___/workbench/" . $self->getType->getName . "/";
+    my $log_name  = $self->getType->getName . "_" .  $self->getId;
+    my $out_directory = $files_path.$log_name;
+    my $command = "$out_directory/${log_name}_sge.sh";
+    $self->edit( Status => 'Pending' );
+
+    my $sge=ISGA::SGEScheduler->new(
+                                    -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
+                                    -output_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeout",
+                                    -error_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeerror",
+                                   );
+
+    $sge->command($command);
+    my $pid = $sge->execute();
+    X->throw(message => 'Error submitting job.') unless($pid);
+    $self->edit( Pid => $pid );
+
+    ISGA::DB->commit();
+  };
+
+  if ( $@ ) {
+    ISGA::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );
+    $e->rethrow();
+  }
+
+}
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus();
+
+Updates the job status by running qstat on sge. This will
+update the job status.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my $self = shift;
+
+  my $old_status = $self->getStatus;
+  return if $old_status eq 'Finished';
+  return if $old_status eq 'Error';
+  return if $old_status eq 'Failed';
+
+  my $pid = $self->getPid;
+
+  eval {
+
+    ISGA::DB->begin_work();
+
+    my $sge=ISGA::SGEScheduler->new(
+       -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
+    );
+
+    my $new_status = $sge->checkStatus( $pid );
+
+    $new_status eq $old_status or
+      $self->edit( Status => $new_status );
+
+    if ( $new_status eq 'Finished' ){
+        my $collection = $self->getCollection;
+        my $contents = $collection->getContents;
+        my $list;
+        foreach (@$contents){
+                if ($_->getType->getName eq 'Toolbox Job Configuration'){
+                        use YAML;
+                        $list = YAML::LoadFile($_->getPath);
+                }
+        }
+        
+        my $output_file = $list->{'output_file'};
+        if (-e $output_file) {
+          my $type = $list->{'output_type'};
+          my $format = $list->{'output_format'};
+          if (defined $type){
+            $self->addOutputToCollection($output_file, $type, $format);
+          }else{
+            $self->addOutputToCollection($output_file);
+          }
+        } else {
+          $new_status = 'Error';
+          $self->edit( Status => $new_status );
+        }
+
+        if (-e "$output_file.xls") {
+          my $html = "$output_file.xls";
+          $self->addHTMLOutputToCollection($html);
+        }
+        if (-e "$output_file.txt") {
+          my $html = "$output_file.txt";
+          $self->addHTMLOutputToCollection($html);
+        }
+    }
+
+    if ( $new_status eq 'Finished' || $new_status eq 'Error' ||  $new_status eq 'Failed' ) {
+      $self->edit( FinishedAt => ISGA::Timestamp->new() );
+    }
+    ISGA::DB->commit();
+  };
+
+  if ( $@ ) {
+    ISGA::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+    $e->rethrow();
+  }  
+ 
+}
+

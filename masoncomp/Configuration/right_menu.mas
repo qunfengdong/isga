@@ -1,4 +1,5 @@
-<li class="title">Configruation Settings</li>
+<li class="title">Configuration Settings</li>
 <li class="rmbutton"><a href="/SiteConfiguration/View">Site Configuration</a></li>
 <li class="rmbutton"><a href="/UserClassConfiguration/View">User Class Configuration</a></li>
 <li class="rmbutton"><a href="/PipelineConfiguration/View">Pipeline Configuration</a></li>
+<li class="rmbutton"><a href="/SiteConfiguration/ListEnvironments">Execution Environments</a></li>

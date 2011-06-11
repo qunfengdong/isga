@@ -35,11 +35,15 @@ on job type
 
 =cut
 #------------------------------------------------------------------------
-
 sub Build {
   my ($class, $args) = @_;
 
   my $job_type = $args->{job_type};
+
+  # instantiate the sequence db
+  if ( $args->{sequence_database} ) {
+    $args->{sequence_database} = ISGA::ReferenceDB->new( Id => $args->{sequence_database} );
+  }
 
   my $subclass = $job_type->getClass;
 
