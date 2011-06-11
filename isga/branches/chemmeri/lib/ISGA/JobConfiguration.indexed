@@ -1,0 +1,7 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: JobConfiguration
+attributes:
+  - { name: Variable, type: ConfigurationVariable, options: [ REQUIRED, UNIQUE ] }
+  - { name: JobType, type: JobType, options: [ REQUIRED ] }
+  - { name: UserClass, type: UserClass }
+  - { name: Value, type: string, options: [ REQUIRED ] }

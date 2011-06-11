@@ -181,9 +181,10 @@ sub submitJob {
 
 =item public File buildQueryFile( File => $file, Upload => $fh, String => $string);
 
-This method takes query sequences in any of three formats and combines
-them to create an input file for the Hawkeye conversion and saves them as an
-ISGA file.
+The methods takes the job input (either as a previously existing ISGA
+file, an uploaded file, or input to a form element) and creates an
+input file for the job. The input is saved in the ISGA file repository
+if it doesn't already exist.
 
 =cut
 #------------------------------------------------------------------------
@@ -215,6 +216,7 @@ sub buildQueryFile {
   # if we have a filehandle, lets create an object out of it
   if ( $fh ) {
 
+    # if we're given a FASTA file, we do some filtering
     $fh = ISGA::FileFormat::FASTA->format($fh) if($args{Format} eq 'FASTA');
 
     $input_file = ISGA::File->upload($fh,

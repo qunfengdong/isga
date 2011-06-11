@@ -1,0 +1,11 @@
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+
+$form and $form->get_formname() eq 'site_configuration_add_sge_environment' 
+  or $form =  ISGA::FormEngine::SiteConfiguration->AddSGEEnvironment(\%ARGS);
+
+return $m->comp('/SiteConfiguration/AddSGEEnvironment.mas', form => $form);
+
+</%perl>

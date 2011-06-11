@@ -1,0 +1,8 @@
+--- !perl/MasonX::Foundation::Class::Base
+class: JobEnvironment
+partition: JobEnvironmentPartition
+attributes:
+  - { name: JobEnvironmentPartition, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Path, type: string, options: [ REQUIRED ] }
+  - { name: Shell, type: string, options: [ REQUIRED ] }

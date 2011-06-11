@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: UnixEnvironment
+partition_of: JobEnvironment
+attributes:
+  - { name: Nice, type: number, options: [ REQUIRED ] }

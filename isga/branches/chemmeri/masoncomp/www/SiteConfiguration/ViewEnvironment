@@ -1,0 +1,5 @@
+<%args>
+ $job_environment
+</%args>
+
+<& /SiteConfiguration/ViewEnvironment.mas, job_environment => $job_environment &>

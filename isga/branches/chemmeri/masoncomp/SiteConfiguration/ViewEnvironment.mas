@@ -1,0 +1,48 @@
+<%args>
+ $job_environment
+</%args>
+
+% my $name = $job_environment->getName();
+
+<h1><% $name %> Execution Environment</h1>
+
+<div class="data">
+<table>
+ <tbody>
+  <tr> 
+   <th>Name</th><td><% $name %></td>
+   <th>Type</th><td><% $job_environment->getJobEnvironmentPartition->getName %></td>
+  </tr>
+  <tr>
+   <th>Path</th><td colspan="3"><% $job_environment->getPath %></td>
+  </tr>
+  <tr>
+   <th>Shell</th><td colspan="3"><% $job_environment->getShell %></td>
+  </tr>
+% if ( $job_environment->isa('ISGA::SGEEnvironment') ) {
+
+  <tr>
+   <th>Cell</th><td><% $job_environment->getCell %></td>
+   <th>Queue</th><td><% $job_environment->getQueue %></td>
+  </tr>
+
+  <tr>
+   <th>execd port</th><td><% $job_environment->getExecdPort %></td>
+   <th>qmaster port</th><td><% $job_environment->getQmasterPort %></td>
+  </tr>
+
+  <tr>
+   <th>Executable Path</th><td colspan="3"><% $job_environment->getExecutablePath %></td>
+  </tr>
+  <tr>
+   <th>SGE Root</th><td colspan="3"><% $job_environment->getRoot %></td>
+  </tr>
+
+% } else {
+  <tr>
+   <th>Nice Level</th><td colspan="3" ><% $job_environment->getNice %></td>
+  </tr>
+% }
+ </tbody>
+</table>
+</div>

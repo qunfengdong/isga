@@ -30,6 +30,79 @@ use warnings;
 
 #------------------------------------------------------------------------
 
+=item public void AddUnixEnvironment();
+
+Method to add new unix environments to ISGA.
+
+=cut
+#------------------------------------------------------------------------
+sub SiteConfiguration::AddUnixEnvironment {
+
+  my $self = shift;
+  my $args = $self->args;
+
+  my $form = ISGA::FormEngine::SiteConfiguration->AddUnixEnvironment($args);
+
+  if ( $form->canceled ) {
+    $self->redirect( uri => '/SiteConfiguration/ListEnvironments' );
+  }
+
+  if ($form->ok) {    
+    my $env = 
+      ISGA::UnixEnvironment->create( Name => $form->get_input('name'),
+				     Path => $form->get_input('path'),
+				     Shell => $form->get_input('shell'),
+				     Nice => $form->get_input('nice') );
+    
+    $self->redirect( uri => "/SiteConfiguration/ViewEnvironment?job_environment=$env" );
+  }
+
+  # bounce!!!!!
+  $self->_save_arg('form', $form);
+  $self->redirect( uri => '/SiteConfiguration/AddUnixEnvironment' );  
+}
+
+#------------------------------------------------------------------------
+
+=item public void AddSGEEnvironment();
+
+Method to add new SGE environments to ISGA.
+
+=cut
+#------------------------------------------------------------------------
+sub SiteConfiguration::AddSGEEnvironment {
+
+  my $self = shift;
+  my $args = $self->args;
+
+  my $form = ISGA::FormEngine::SiteConfiguration->AddSGEEnvironment($args);
+
+  if ( $form->canceled ) {
+    $self->redirect( uri => '/SiteConfiguration/ListEnvironments' );
+  }
+
+  if ($form->ok) {    
+    my $env = 
+      ISGA::SGEEnvironment->create( Name => $form->get_input('name'),
+				    Path => $form->get_input('path'),
+				    Shell => $form->get_input('shell'),
+				    ExecutablePath => $form->get_input('executable_path'),
+				    Cell => $form->get_input('cell'),
+				    ExecdPort => $form->get_input('execd'),
+				    QmasterPort => $form->get_input('qmaster'),
+				    Root => $form->get_input('root'),
+				    Queue => $form->get_input('queue') );
+
+    $self->redirect( uri => "/SiteConfiguration/ViewEnvironment?job_environment=$env" );
+  }
+
+  # bounce!!!!!
+  $self->_save_arg('form', $form);
+  $self->redirect( uri => '/SiteConfiguration/AddSGEEnvironment' );  
+}
+
+#------------------------------------------------------------------------
+
 =item public void Edit();
 
 Method to edit the site configuration.

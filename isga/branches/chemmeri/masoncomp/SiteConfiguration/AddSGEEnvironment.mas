@@ -1,0 +1,8 @@
+<%args>
+ $form
+</%args>
+
+
+<h1>New SGE Environment</h1>
+
+<% $form->get %>

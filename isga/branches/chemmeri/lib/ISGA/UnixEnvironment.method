@@ -1,0 +1,35 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public filehandle initializeScript();
+
+Initialize execution script for the job.
+
+=cut
+#------------------------------------------------------------------------
+sub initializeScript {
+
+  my ($self) = @_;
+
+  my $wd = $self->getWorkingDirectory();
+
+  # create bash file
+  open my $fh, '>', "$wd/run.sh" or X->throw(message => 'Error creating sge shell script');
+  print $fh "#!/bin/bash\n\n";
+
+  return $fh;
+}
+
+#------------------------------------------------------------------------
+
+=item public void finalizeScript($fh);
+
+Finish writing the script for the job
+
+=cut
+#------------------------------------------------------------------------
+sub finalizeScript {
+
+}
+  
