@@ -1,0 +1,18 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getScript();
+
+Returns path to this script.
+
+=cut
+#------------------------------------------------------------------------
+sub getScript {
+
+  my ($self) = @_;
+
+  my $wd = $self->getWorkingDirectory();
+
+  return "$wd/run.sh";
+}

@@ -259,9 +259,38 @@ Build the appropriate WebApp command for this Job.
     $input_file->stage($wd);   
     my $input_path = $wd . '/' . $input_file->getName();
 
+    # read the sequence database
+    my $sequence_database = $form->get_input('sequence_database');
+    ref($sequence_database) eq 'ARRAY' or $sequence_database = [ $sequence_database ];
+
     # start building the script that will execute the job
     my $fh = $environment->initializeScript(); 
-    
+
+    # glue all the databases together
+    my @database_array;
+
+    # if we're blasting apipeline genome, we need to format it
+    foreach (@$sequence_database) {
+      if ( 0 ) {
+	my $db_path = $wd . '/' . 'genome_sequence';
+	
+	# stage the file and write the command 
+	copy($_, $db_path);
+	print $fh ISGA::JobConfiguration->value( 'formatdb_executable', JobType => $self, UserClass => $user_class );
+	print $fh " -i $db_path -p F -o T\n";
+	
+	push @database_array, $db_path;
+      } else {
+	push @database_array, $_;
+      }
+    }
+
+    my $database = join(' ', @database_array);
+
+    # make a unique output name
+    my $blast_output = $wd . '/' . $job->getName . '_blast_output.blout';
+
+    # add BLAST command to the script
     print $fh ISGA::JobConfiguration->value( 'blast_executable', JobType => $self, UserClass => $user_class );
     print $fh " -p $web_args{blast_program} -i $input_path -p $blast_output -e $web_args{evalue}";
     print $fh " -d \"$database\" -F $web_args{blastfilter} -b $web_args{nummatches} -v $web_args{descriptions}";
@@ -271,37 +300,9 @@ Build the appropriate WebApp command for this Job.
     }
     print $fh "\n";
 
-    X->throw( message => "oops" );
-
-    # read parameters
-    my $sequence_database = $form->get_input('sequence_database');
-    ref($sequence_database) eq 'ARRAY' or $sequence_database = [ $sequence_database ];
-    
-    
-    my $blast_output = $out_directory."/${log_name}_blast_output.blout";
-
-    my @database_array;
-
-    foreach (@$sequence_database){      
-      if ($_ =~ /nr$/ or $_ =~ /nt$/ or $_ =~ /Tair9_pep$/ or $_ =~ /Tair9_cdna$/ or $_ =~ /cgb_annotation.cds.fna$/ or $_ =~ /cgb_annotation.aa.fsa$/ ){
-	push(@database_array, $_);
-      } else {
-	my $formatdbpath = $out_directory."/${log_name}_genome_sequence";
-	copy($_, $formatdbpath) or X->throw(message => 'Cannot copy file to tmp directory');
-	system("___formatdb_executable___ -i $formatdbpath -p F -o T") == 0 or X->throw(message => 'formatdb failed');
-	push(@database_array, $formatdbpath);
-      }
-    }
-    
-    my $database = join(' ', @database_array);
-    
-    my $sge_submit_script = "$out_directory/${log_name}_sge.sh";
-    
     close $fh;
-    
-    chmod(0755, $sge_submit_script);
-    my $command = "$sge_submit_script";
-    
+
+    # assemble the configuration
     my @params;
     foreach (keys %{$web_args}) {
       unless ($_ eq 'query_sequence' || $_ eq 'upload_file' || $_ eq 'sequence_database' || $_ eq 'workbench' || $_ eq 'progress_id' || $_ eq 'notify_user' || $_ eq 'job_type'){
@@ -319,7 +320,6 @@ Build the appropriate WebApp command for this Job.
     push @{$config->{params}}, @params;
     $job->buildConfigFile( $config );
     
-    return $command;
   }
   
 #------------------------------------------------------------------------
