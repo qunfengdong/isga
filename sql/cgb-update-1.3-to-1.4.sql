@@ -82,6 +82,18 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('Drosophila melanogaster', '/nfs/bio/db/Drosophila_melanogaster',
          'Reference information for Drosophila_melanogaster',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Caenorhabditis elegans', '/nfs/bio/db/Caenorhabditis_elegans',
+         'Reference information for Caenorhabditis elegans',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Daphnia pulex', '/nfs/bio/db/Daphnia_pulex',
+         'Reference information for Daphnia pulex',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Escherichia coli', '/nfs/bio/db/Escherichia_coli',
+         'Reference information for Escherichia coli',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -109,7 +121,15 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Drosophila melanogaster'),
          '5.31', '11-19-2010', '5.31');
-
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Caenorhabditis elegans'),
+         'WS225', '05-19-2011', 'WS225');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Daphnia pulex'),
+         'v1.0', '07-03-2007', 'v1.0');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Escherichia coli'),
+         'K-12 MG1655', '10-26-2010', 'K-12_MG1655');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -201,6 +221,77 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='5.31'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     '/some/fake/path');
+
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/cds/c_elegans.WS225.cds_transcripts.fa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/protein/c_elegans.WS225.protein.fa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'shore/c_elegans.WS225.genomic.fa.shore');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    '/some/fake/path');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/cds/FrozenGeneCatalog20110204.CDS.fasta');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/protein/FrozenGeneCatalog20110204.proteins.fasta');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    '/some/fake/path');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    '/some/fake/path');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='K-12 MG1655'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/cds/NC_000913.ffn');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='K-12 MG1655'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/protein/NC_000913.faa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
