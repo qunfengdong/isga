@@ -47,11 +47,12 @@ run.</p>
 
 % }
 
-<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.cluetip.min.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+
 <sys:style type="text/css" media="screen">
-  @import "/include/css/jtip.css";
+  @import "/include/css/jquery.cluetip.css";
 </sys:style>
 <sys:style type="text/css" media="screen">
   @import "/include/css/modal.css";
@@ -93,6 +94,20 @@ $(document).ready(function() {
 });
 </sys:script>
 
+<sys:script type="text/javascript">
+$(document).ready(function() {
+  $('a.title').cluetip({
+    splitTitle: '|',
+    cluetipClass: 'jtip',
+    arrows: true,
+    dropShadow: false,
+    hoverIntent: false,
+    sticky: true,
+    mouseOutClose: true,
+    closePosition: 'title'
+  });
+});
+</sys:script>
 
 <sys:script type="text/javascript">
 $(document).ready(function() {
