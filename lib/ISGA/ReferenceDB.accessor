@@ -16,3 +16,23 @@ Returns the full path for a ReferenceDB.
 
     return $full_path;
   }
+#------------------------------------------------------------------------
+
+=item public string getName();
+
+Returns the full name for a ReferenceDB.
+This is the Reference name and Release for Organisms and only Reference 
+name for collections.
+
+=cut
+#------------------------------------------------------------------------
+  sub getName {
+
+    my $self = shift;
+    if ($self->getRelease->getReference->getTag->getName eq 'Organism'){
+      return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease;
+    }else{
+      return $self->getRelease->getReference->getName;
+    }
+  }
+
