@@ -94,6 +94,10 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('Escherichia coli', '/nfs/bio/db/Escherichia_coli',
          'Reference information for Escherichia coli',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Bacillus subtilis', '/nfs/bio/db/Bacillus_subtilis',
+         'Reference information for Bacillus subtilis',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -130,6 +134,10 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Escherichia coli'),
          'K-12 MG1655', '10-26-2010', 'K-12_MG1655');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Bacillus subtilis'),
+         '168', '02-16-2011', '168');
+
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -296,6 +304,20 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='168'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/cds/NC_000964.ffn');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='168'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/protein/NC_000964.faa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nt-05-17-2011'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     'nt');
@@ -313,4 +335,14 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     'uniref100.fasta');
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add referencedb entries myself to Accound Admins
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+INSERT INTO groupmembership (accountgroup_id, party_id) VALUES (
+(SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'),
+(SELECT party_id FROM account WHERE account_email = 'abuechle@indiana.edu'));
 
