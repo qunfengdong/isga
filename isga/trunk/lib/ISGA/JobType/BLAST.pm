@@ -50,13 +50,13 @@ sub buildForm {
      {
       LABEL => 'Global Nucleotide Databases',
       templ => 'group',
-      OPTION => [map {$_->getRelease->getReference->getName . ' ' . $_->getRelease->getRelease} @$nuc_ref],
+      OPTION => [map {$_->getName} @$nuc_ref],
       OPT_VAL => $nuc_ref
      },
      {
       LABEL => 'Global Protein Databases',
       templ => 'group',
-      OPTION => [map {$_->getRelease->getReference->getName . ' ' . $_->getRelease->getRelease} @$prot_ref],
+      OPTION => [map {$_->getName} @$prot_ref],
       OPT_VAL => $prot_ref
      },
     );
