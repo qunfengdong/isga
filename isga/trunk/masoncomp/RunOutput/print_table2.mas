@@ -40,10 +40,7 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
 %   my $cname = $cluster->{Cluster}->getName;
 <tr class="list_label">
  <td colspan="4" style="font-weight: bold;"><% $cluster->{Cluster}->getName %>\
-<a class="jTip" id="c<% $cluster->{Cluster} %>r<% $run %>" name="<% $cname %>" \
-href="/Cluster/GetClusterDescription?cluster=<% $cluster->{Cluster} %>">
- <span class="sup">?</span>
- </a>
+<a class="title" href="#" title="<% $cname %>|<% $cluster->{Cluster}->getDescription() %>"><span class="sup">?</span></a>
  </td>
 </tr>
 
@@ -56,19 +53,14 @@ href="/Cluster/GetClusterDescription?cluster=<% $cluster->{Cluster} %>">
 %     my $tname = $type->getName;
 <tr class="<% $tr_class %>" >
  <td><% $tname %>\
-  <a class="jTip" id="a<% $type %>r<% $run %>r<% $run_output %>" name="<% $tname %>" \
-   href="/FileType/ViewHelp?file_type=<% $type %>">
-  <span class="sup">?</span>
- </a>
+  <a class="title" href="#" title="<% $tname %>|<% $type->getHelp %>"><span class="sup">?</span></a>
+
  </td>
 
 %     my $format = $output->getFormat;
 %     my $fname = $format->getName;
  <td><% $fname %>\
-  <a class="jTip" id="b<% $format %>r<% $run %>r<% $run_output %>" name="<% $fname %>" \
-   href="/FileFormat/ViewHelp?file_format=<% $format %>">
-  <span class="sup">?</span>
- </a>
+  <a class="title" href="#" title='<% $fname %>|<% $format->getHelp %>'><span class="sup">?</span></a>
  </td>
 %     my $file = $run_output->getFileResource;
 %     if ( $file ) {
