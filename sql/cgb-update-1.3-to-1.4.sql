@@ -98,6 +98,10 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('Bacillus subtilis', '/nfs/bio/db/Bacillus_subtilis',
          'Reference information for Bacillus subtilis',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Danio rerio', '/nfs/bio/db/Danio_rerio',
+         'Reference information for Danio rerio',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -137,7 +141,9 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Bacillus subtilis'),
          '168', '02-16-2011', '168');
-
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Danio rerio'),
+         'Zv9', '05-17-2011', 'Zv9');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -314,6 +320,20 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='168'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     'blast/protein/NC_000964.faa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Zv9'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/transcript/rna.fa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Zv9'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'blast/protein/protein.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
