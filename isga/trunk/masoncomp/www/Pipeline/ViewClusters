@@ -1,6 +1,0 @@
-<%args> #! -*- cperl -*-
- $pipeline
-</%args>
-
-<& /Pipeline/view_clusters.mas, pipeline => $pipeline &>
-
