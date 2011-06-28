@@ -47,12 +47,12 @@ run.</p>
 
 % }
 
-<sys:script type="text/javascript" src="/include/js/jquery.cluetip.min.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.qtip.min.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
 
 <sys:style type="text/css" media="screen">
-  @import "/include/css/jquery.cluetip.css";
+  @import "/include/css/jquery.qtip.css";
 </sys:style>
 <sys:style type="text/css" media="screen">
   @import "/include/css/modal.css";
@@ -60,7 +60,7 @@ run.</p>
 <sys:style type="text/css" media="all">
  @import "/include/css/jquery.treeTable.css";
 </sys:style>
-<sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
+
 <sys:script type="text/javascript">
 $(document).ready(function() {
     $('#show_run').click(function() {
@@ -96,16 +96,24 @@ $(document).ready(function() {
 
 <sys:script type="text/javascript">
 $(document).ready(function() {
-  $('a.title').cluetip({
-    splitTitle: '|',
-    cluetipClass: 'jtip',
-    arrows: true,
-    dropShadow: false,
-    hoverIntent: false,
-    sticky: true,
-    mouseOutClose: true,
-    closePosition: 'title'
-  });
+   $('a[title]').qtip({
+    hide: {
+      delay: 1000,
+      fixed: true
+    },
+    style: {
+        classes: 'ui-tooltip-tipped'
+    },
+    position: {
+        my: 'left bottom',
+        at: 'top right'
+    },
+    events: {
+      show: function(event, api){
+        $('.ui-tooltip').hide();
+      }
+    }
+   });
 });
 </sys:script>
 

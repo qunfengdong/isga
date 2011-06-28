@@ -5,12 +5,12 @@
 <& /PipelineBuilder/overview.mas, pipeline_builder => $pipeline_builder &>
 <sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
+<sys:script type="text/javascript" src="/include/js/jquery.qtip.min.js"></sys:script>
 <sys:style type="text/css" media="screen">
-  @import "/include/css/jtip.css";
+  @import "/include/css/jquery.qtip.css";
 </sys:style>
+
 <sys:style type="text/css" media="screen">
   @import "/include/css/uni-form.css";
 </sys:style>
@@ -57,8 +57,6 @@ $('a.toggleModule')
 }
 </sys:script>
 
-
-
 <sys:script type="text/javascript">
 $(document).ready(showActions);
 function showActions() {
@@ -79,3 +77,35 @@ function showActions() {
 }
 </sys:script>
 
+<sys:script type="text/javascript">
+$(document).ready(function() {
+ $('area').each(function(){
+   $(this).qtip({
+    content: {
+      text: 'Loading...',
+      ajax: {
+        url: $(this).attr('href'),
+        type: 'GET',
+        data: {}
+      }
+    },
+    hide: {
+      delay: 1000,
+      fixed: true
+    },
+    style: {
+        classes: 'ui-tooltip-tipped'
+    },
+    position: {
+        my: 'left center',
+        at: 'top right'
+    },
+    events: {
+      show: function(event, api){
+        $('.ui-tooltip').hide();
+      }
+    }
+   });
+ });
+});
+</sys:script>

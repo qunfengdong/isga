@@ -6,13 +6,43 @@
 <sys:script type="text/javascript" src="/include/js/jquery.tablesorter.min.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.metadata.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.tablesorter.pager.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jtip.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/popup_wrapper.js"></sys:script>
-
+<sys:script type="text/javascript" src="/include/js/jquery.qtip.min.js"></sys:script>
 <sys:style type="text/css" media="screen">
-  @import "/include/css/jtip.css";
+  @import "/include/css/jquery.qtip.css";
 </sys:style>
+
+<sys:script type="text/javascript">
+$(document).ready(function() {
+ $('a.jTip').each(function(){
+   $(this).qtip({
+    content: {
+      text: 'Loading...',
+      ajax: {
+        url: $(this).attr('href')
+      }
+    }, 
+    hide: {
+      delay: 1000,
+      fixed: true
+    },
+    style: {
+        classes: 'ui-tooltip-tipped'
+    },
+    position: {
+        my: 'left bottom',
+        at: 'top right'
+    },
+    events: {
+      show: function(event, api){
+        $('.ui-tooltip').hide();
+      }
+    }
+   });
+ })
+ .click(function(event) { event.preventDefault(); });
+}); 
+</sys:script>
 
 <sys:style type="text/css" media="screen">
   @import "/include/css/tablesorter.css";
