@@ -30,4 +30,3 @@ foreach my $cluster ( @{$pipeline_builder->getActiveClusters} ) {
 <& /PipelineBuilder/view_outputs.mas, 
   pipeline_builder => $pipeline_builder, results => \%results &>
 
-
