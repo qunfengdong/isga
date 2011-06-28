@@ -82,3 +82,11 @@ INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecas
 INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
   VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
            (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Account/EditUserClass') );
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- change login requierments for usecase
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE usecase SET usecase_requireslogin=FALSE WHERE usecase_name='/Pipeline/ClusterOptions';
+UPDATE usecase SET usecase_requireslogin=FALSE WHERE usecase_name='/Pipeline/ViewParameters';
