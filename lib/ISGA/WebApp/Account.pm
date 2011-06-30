@@ -61,6 +61,35 @@ sub Account::EditUserClass {
 
 #------------------------------------------------------------------------
 
+=item public void EditStatus();
+
+Edit a user's class.
+
+=cut
+#------------------------------------------------------------------------
+sub Account::EditStatus {
+
+  my $self = shift;
+  my $web_args = $self->args;
+
+  # we need a user class
+  exists $web_args->{party_status} or X::API::Parameter::Missing->throw( parameter => 'PartyStatus' );
+  exists $web_args->{account} or X::API::Parameter::Missing->throw( parameter => 'Account' );
+  my $party_status = $web_args->{party_status};
+  my $account = $web_args->{account};
+
+  # edit the user class
+  $account->edit(Status => $party_status);
+
+  # save result
+  $self->_save_arg( echo => $party_status->getName );
+  
+  # redirect to what
+  $self->redirect( uri => '/Echo' );
+}
+
+#------------------------------------------------------------------------
+
 =item public void EditMyDetails();
 
 Edit account details.

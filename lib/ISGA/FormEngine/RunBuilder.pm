@@ -147,6 +147,16 @@ sub UploadInput {
   my $form = ISGA::FormEngine->new($args);
   $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
 
+  # for forms with a file upload, we need to make sure the request is complete and valid before proceeding
+  # as upload problems can corrupt other parameters
+  if ( $ISGA::APR->method eq 'POST' and my $status = $ISGA::APR->parse() ) {
+    if ( $status eq 'Exceeds configured maximum limit' ) {
+      X::User::UploadTooLarge->throw( message => 'The file you are attempting to upload is too large' );
+    } else {
+      X->throw( message => "Unknown apache error $status" );
+    }
+  }
+
   my $run_builder = $args->{run_builder};
   my $pipeline_input = ( $args->{pipeline_input} );
   my $pipeline = $run_builder->getPipeline;

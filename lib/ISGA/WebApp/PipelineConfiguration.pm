@@ -67,15 +67,52 @@ sub PipelineConfiguration::Edit {
       
       if ( $new_val ne ISGA::PipelineConfiguration->value($_, %values) ) {
 	my $var = ISGA::ConfigurationVariable->new( Name => $_ );
-	ISGA::PipelineConfiguration->new( Variable => $var, %values )->edit( Value => $new_val );
+
+	if ( ISGA::PipelineConfiguration->exists( Variable => $var, %values) ) {
+	  ISGA::PipelineConfiguration->new(Variable => $var, %values)->edit(Value => $new_val);
+	} else {
+	  ISGA::PipelineConfiguration->create( %values, Variable => $var, Value => $new_val );
+	}
       }
     }
+
+    # process accessibility
+    my $access_permitted = $form->get_input('access_permitted');
+    
+    warn "got $access_permitted\n";
+
+    # first see if the value is different from either the global setting or override
+    if ( $access_permitted != ISGA::PipelineConfiguration->value('access_permitted', %values) ) {
+      my $var = ISGA::ConfigurationVariable->new( Name => 'access_permitted' );
+      
+      warn "it changed\n";
+      
+      # if this configuration exists for this user class, edit it directly
+      if ( ISGA::PipelineConfiguration->exists(Variable => $var, %values) ) {
+	ISGA::PipelineConfiguration->new( Variable => $var, %values )->edit( Value => $access_permitted );
+
+	warn "and here it is!\n";
+
+      # otherwise create it with the new value
+      } else {
+	ISGA::PipelineConfiguration->create( %values, Variable => $var, Value => $access_permitted );
+	
+	warn "we tried to create a new one\n";
+
+      }
+    }
+
 
     # process ergatis_project_name
     my $proj_name = $form->get_input('ergatis_project_name');
     if ( $proj_name ne ISGA::PipelineConfiguration->value( 'ergatis_project_name', %values ) ) {
-      $values{Variable} = ISGA::ConfigurationVariable->new( Name => 'ergatis_project_name' );
-      ISGA::PipelineConfiguration->new(%values)->edit(Value => $proj_name);
+      my $var = ISGA::ConfigurationVariable->new( Name => 'ergatis_project_name' );
+
+      if ( ISGA::PipelineConfiguration->exists( Variable => $var, %values) ) {
+	ISGA::PipelineConfiguration->new(Variable => $var, %values)->edit(Value => $proj_name);
+      } else {
+	ISGA::PipelineConfiguration->create( %values, Variable => $var, Value => $proj_name );
+      }
     }
     
     $self->redirect( uri => "/PipelineConfiguration/View$varstring" );

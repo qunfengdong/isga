@@ -83,6 +83,48 @@ INSERT INTO grouppermission ( accountgroup_id, usecase_id )
   VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
            (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Account/EditUserClass') );
 
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) VALUES ('/submit/Account/EditStatus', 'Account::EditStatus', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Account Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Account/EditStatus') );
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Tools for Pipeline Management
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) VALUES ('/submit/GlobalPipeline/EditStatus', 'GlobalPipeline::EditStatus', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/GlobalPipeline/EditStatus') );
+
+INSERT INTO configurationvariable
+ (configurationvariable_type, configurationvariable_datatype, configurationvariable_name, configurationvariable_form, configurationvariable_description) 
+ VALUES ( 'PipelineConfiguration', 'boolean', 'access_permitted',
+          '---
+templ: select
+NAME: access_permitted
+TITLE: Access Permitted
+REQUIRED: 1
+OPTION: [ TRUE, FALSE ]
+ERROR: [ [''Number::matches'', 0, 1] ]
+OPT_VAL: [ 1,0]
+', 
+          'Determines if users can access this pipeline. The setting for an individual class of users will override the global setting for users in that class.'
+);
+
+-- add for all existing pipelines
+INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipelineconfiguration_type, pipelineconfiguration_value ) 
+  SELECT configurationvariable_id, pipeline_id, 'PipelineConfiguration', 1 FROM configurationvariable, globalpipeline
+            WHERE configurationvariable_name = 'access_permitted' AND configurationvariable_type = 'PipelineConfiguration';
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Remove pipeline_is_installed config var
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+DELETE FROM configurationvariable WHERE configurationvariable_name = 'pipeline_is_installed';
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- change login requierments for usecase

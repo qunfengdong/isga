@@ -11,7 +11,7 @@ my $form = $ISGA::WebApp->saved_args->{'form'};
 $form and $form->get_formname() eq 'pipeline_configuration_edit' 
   or $form =  ISGA::FormEngine::PipelineConfiguration->Edit(\%ARGS);
 
-return $m->comp('/PipelineConfiguration/edit.mas', form => $form);
+$m->comp('/PipelineConfiguration/edit.mas', pipeline => $pipeline, form => $form);
 
 $m->comp('/PipelineConfiguration/right_menu.mas', pipeline => $pipeline, user_class => $user_class);
 </%perl>
