@@ -9,12 +9,16 @@
 <tbody>
 
 % foreach ( @sorted ) {
-%   my ($var, $config) = @$_;
+% use Data::Dumper;
+% warn Dumper($_);
+
+%   my $var = $_->getVariable();
+
 <tr>
  <td><strong><% $var->getName %></strong></td>
- <td><% $config->getValue %></td>
+ <td><% $_->getValue %></td>
 </tr>
-<tr><td colspan="2" ><div class="documentation"><% $var->getDescription %></div></td></tr>
+<tr><td colspan="2" class="document"><% $var->getDescription %></td></tr>
 % }
 
 </tbody>

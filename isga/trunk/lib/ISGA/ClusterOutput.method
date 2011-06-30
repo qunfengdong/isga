@@ -51,9 +51,6 @@ Add the results for this cluster output to a cluster evidence archive - process 
       push @files, $raw_output;
     }
 
-    foreach ( @files ) {
-      my $logical_path = $cluster_dir . "/" . basename($_);
-      my ( $file ) = $archive->add( $logical_path, $_ );
-    }
+    $archive->add( $cluster_dir . '/' . basename($_) , $_ ) for @files;
   }
     

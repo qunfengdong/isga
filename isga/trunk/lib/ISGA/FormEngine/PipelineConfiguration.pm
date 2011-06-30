@@ -44,32 +44,15 @@ sub Edit {
   my $pipeline = $args->{pipeline};
   my $user_class = ( exists $args->{user_class} ? $args->{user_class} : undef );
 
+  my $form_title = 'Global Pipeline Configuration';
+
+
   my @sub;
+  my @global;
 
-  # should be small enough for a slow sort
-  my @sorted = 
-    sort { $a->[0]->getName cmp $b->[0]->getName }
-      map { [ $_->getVariable, $_ ] } 
-	@{ISGA::PipelineConfiguration->query(Pipeline => $pipeline, UserClass => $user_class)};
-  
-  foreach ( @sorted ) {
-
-    my ($var, $config) = @$_;
-    
-    my $f = $var->getForm;
-    $f->{VALUE} = $config->getValue;
-    $f->{HINT} = $var->getDescription;
-
-    push @sub, $f;
-  }
-    
-  my @form =
+  # start from the bottom
+  my @form = 
     (
-     {
-      templ => 'fieldset',
-      TITLE => 'Pipeline Configuration',
-      sub => \@sub,
-     },
      {
       templ => 'hidden',
       NAME => 'pipeline',
@@ -77,14 +60,50 @@ sub Edit {
      }
     );
 
+  # should be small enough for a slow sort
+  my $sorted = $pipeline->getConfiguration($user_class);
+  
+  foreach ( @$sorted ) {
+    
+    my $var = $_->getVariable;
+    
+    my $f = $var->getForm;
+    $f->{VALUE} = $_->getValue;
+    $f->{HINT} = $var->getDescription;
+
+    if ( $user_class and ! $_->getUserClass ) {
+      push @global, $f;
+    } else {
+      push @sub, $f;
+    }
+  }
+    
+ 
   if ( $user_class ) {
+    $form_title = 'Pipeline Configuration for ' . $user_class->getName . ' Users';
+    unshift @form,
+      {
+       templ => 'fieldset',
+       TITLE => 'Inherited Global Configuration',
+       DESCRIPTION => 'Edit these values to override the global configuration for this user class only. To edit the settings for all users, change the User Class to \'Global Settings\'',
+       sub => \@global,
+	 };
     push @form,
       {
        templ => 'hidden',
        NAME => 'user_class',
        VALUE => $user_class
-      };
+      };    
   }
+
+  # push the main variables
+  unshift @form,
+     {
+      templ => 'fieldset',
+      TITLE => $form_title,
+      sub => \@sub,
+     };
+       
 
   $form->conf( { ACTION => '/submit/PipelineConfiguration/Edit',
 		 FORMNAME => 'pipeline_configuration_edit',

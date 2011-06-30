@@ -79,9 +79,6 @@ WebApp implementation before calling Mason.
     # recycle database connection
     ___APP___::DB->_connect;
 
-    # define session and login
-    local $___APP___::Session = undef;
-
     # this should be handled in WebApp::_init
     ___APP___::Login->blank();
 

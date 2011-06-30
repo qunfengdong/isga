@@ -1,5 +1,8 @@
 <%args>
  $form
+ $pipeline
 </%args>
+
+<h1><% $pipeline->getLabel %> Configuration</h1>
 
 <% $form->get %>

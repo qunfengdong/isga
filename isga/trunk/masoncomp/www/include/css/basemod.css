@@ -28,8 +28,8 @@
     font-size: 11px;
   }
 
-  /* documentation div */
-  .documentation { background:  #f7f7d4;}
+  /* documentation span td */
+  .document, .list td.document  { background:  #dddddd; padding: 5px 10px 5px 15px; font-size:.8em; }
 
 
   /* editable spans */

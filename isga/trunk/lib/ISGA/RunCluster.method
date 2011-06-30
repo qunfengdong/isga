@@ -2,6 +2,9 @@
 
 use List::Util qw( min reduce sum );
 
+use IPC::Run qw(run); 
+use Cwd;
+
 # initialize status rank.  Lower number is higher priority
 my %status_rank = ( "error" => 1,
 		    "failed" => 2,
@@ -150,16 +153,17 @@ sub hasEvidence {
 
 #------------------------------------------------------------------------
 
-=item public void downloadEvidence();
+=item public void downloadEvidence( coderef $callback);
 
-Tar and download the evidence output for this cluster.
+Tar and download the evidence output for this cluster using a callback
+parameter.
 
 =cut
 #------------------------------------------------------------------------
 sub downloadEvidence {
 
-  my $self = shift;
-
+  my ($self, $callback) = @_;
+  
   my $cluster = $self->getCluster;
 
   $self->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
@@ -190,10 +194,8 @@ sub downloadEvidence {
     }
   }
 
-  my $tmp = File::Temp->new();
-  $archive->write($tmp->filename, 1);
-
-  return $tmp;
+  # write compressed tar using the callback
+  $archive->write($callback,1);
 }
 
 

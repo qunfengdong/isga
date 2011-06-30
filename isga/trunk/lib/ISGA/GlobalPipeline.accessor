@@ -152,3 +152,40 @@ Returns true if the pipeline provides a Blast database.
 =cut
 #------------------------------------------------------------------------
   sub hasBlastDatabase { return 0; }
+
+#------------------------------------------------------------------------
+
+=item public [PipelineConfiguration] getConfiguration();
+
+Returns the global configuration settings for this pipeline.
+
+=item public [PipelineConfiguration] getConfiguration(UserClass user_class);
+
+Returns the configuration settings for this pipeline as they apply to
+the supplied user class.
+
+=cut
+#------------------------------------------------------------------------
+  sub getConfiguration { 
+
+    # user_class is either defined or unde, i.e. global
+    my ($self, $user_class) = @_;
+
+    # retrieve global configuration
+    my $global_config = ISGA::PipelineConfiguration->query( Pipeline => $self,
+							    UserClass => undef );
+    my %config = map { $_->getVariable->getName => $_ } @$global_config;
+    
+    
+    # if they supply a user class, look for overriding configuration 
+    if ( $user_class ) {
+
+      my $custom_config = ISGA::PipelineConfiguration->query( Pipeline => $self,
+							      UserClass => $user_class );
+
+      $config{ $_->getVariable->getName } = $_ for @$custom_config;
+    }
+
+    # return array ref ordered by variable name
+    return [map { $config{$_} } sort keys(%config)];
+  }

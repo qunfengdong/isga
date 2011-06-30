@@ -15,5 +15,16 @@ combination. Throws an exception if the name doesnt exist.
     
     $args{Variable} = ISGA::ConfigurationVariable->new( Name => $name );
 
+    if ( exists $args{UserClass} and $args{UserClass} ) {
+
+      if ( my @res = @{$class->query( %args )} ) {
+	return $res[0]->getValue;
+      }
+      
+      # otherwise check global setting
+      $args{UserClass} = undef;
+    }
+
+    # default behaviour is to query
     return $class->new( %args )->getValue;
   }

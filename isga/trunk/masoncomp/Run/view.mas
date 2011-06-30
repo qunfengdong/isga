@@ -9,19 +9,14 @@
 
 % if ( $running ) {
 
-% my $now = ISGA::Timestamp->new;
-% my $new = $now + '5m';
 % my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
 
-% if ( ! $accepting_jobs ) {
+%   if ( ! $accepting_jobs ) {
 <div class="downtime"><p>Your pipeline is waiting for assistance from an administrator. 
 ISGA is currently not accepting new jobs.  Please see the latest news for more information.  Please complete this <a href="#">Form</a> 
 to receive an email notification when the service is returned.</p></div>
-% }
+%   }
 
-<p>This page was refreshed at <% $now->brief %>. It will refresh next at <% $new->brief %>.
-
-<sys:meta http-equiv="refresh" content="300">
 % }
 
 <& view_header.mas, run => $run &>

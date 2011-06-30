@@ -19,10 +19,21 @@ if ( $file_resource ) {
   open $fh, '<', $file_resource->getPath();
 
 } elsif ( $run_cluster ) {
+
   my $run = $run_cluster->getRun;
   $account->mayRead($run) or X::User::Denied->throw();
 
-  $fh = $run_cluster->downloadEvidence();
+  $m->clear_buffer();
+
+  # dirty hack to close the session before we start the download to lessen the chance of session deadlock
+  $ISGA::WebApp->clean_session();
+  undef $ISGA::WebApp->{__wrapper__};
+  undef $ISGA::WebApp;
+
+  # build and stream the tar file
+  $run_cluster->downloadEvidence( sub { $m->print($_[0]) } );
+
+  $m->abort();
 
 } elsif ( $genome_feature ) {
 

@@ -4,12 +4,31 @@
 </%args>
 
 <%perl>
-my @sorted =
-  sort { $a->[0]->getName cmp $b->[0]->getName }
-    map { [ $_->getVariable, $_ ] } 
-      @{ISGA::PipelineConfiguration->query( Pipeline => $pipeline,
-					    UserClass => $user_class )};
+my $sorted = $pipeline->getConfiguration($user_class);
+
+use JSON;
+
+my $pipeline_status = $pipeline->getStatus;
+
+my $ps;
+$ps->{$_} = $_->getName for @{ISGA::PipelineStatus->query( OrderBy => 'Name' )};
+$ps->{selected} = $pipeline_status->getId;
 </%perl>
+
+<sys:script type="text/javascript" src="/include/js/jquery.jeditable.mini.js"></sys:script>
+
+<sys:script type="text/javascript">
+ $(document).ready(function() {
+     $('#editable_status').editable('/submit/GlobalPipeline/EditStatus', {
+        data : '<% encode_json($ps) %>',
+        name : 'pipeline_status',
+        type : 'select',
+        submitdata: { pipeline: "<% $pipeline %>"},
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+ });
+</sys:script>
 
 <h1>Pipeline Configuration</h1>
 
@@ -18,7 +37,7 @@ my @sorted =
 <table width="100%">
  <tbody>
   <tr>
-   <th>Pipeline</th><td><% $pipeline->getName %></td>
+   <th>Pipeline</th><td><% $pipeline->getLabel %></td>
    <th>User Class</th><td>\
 % if ( $user_class ) {
 <% $user_class->getName %>\
@@ -27,9 +46,12 @@ None (Global Settings)\
 % }
    </td>
   </tr>
+  <tr>
+   <th>Status</th><td colspan="3"><span class="editable" id="editable_status"><% $pipeline_status->getName %></span></td>
+  </tr> 
  </tbody>
 </table>
 
 </div>
 
-<& /Configuration/list.mas, sorted => \@sorted &>
+<& /Configuration/list.mas, sorted => $sorted &>

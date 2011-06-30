@@ -249,8 +249,6 @@ elsif ($plugin_action eq $CONFIG->tr('Go') &&
        $plugin_type eq 'dumper' 
        && $PLUGINS->plugin(param('plugin'))->verb eq ($CONFIG->tr('Import')||'Import') ) {
 
-  warn "bybyby\n";				  
-
     $m->clear_buffer();
     do_plugin_header(param('plugin'),
 		     $page_settings,

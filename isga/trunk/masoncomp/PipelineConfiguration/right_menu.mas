@@ -11,10 +11,14 @@
 
 % if ( $pipeline ) {
 
+%   my $request = $m->request_comp();
+
 %   my $uc = $user_class ? "&user_class=$user_class" : '';
  <li class="title">Configuration Tools</li>
+%   if ( $request->name eq 'View' ) {
  <li class="rmbutton pointer"><a href="/PipelineConfiguration/Edit?pipeline=<% $pipeline %><% $uc %>">Edit</a></li>
  <li class="pointer" onclick="window.location='/PipelineConfiguration/Edit?pipeline=<% $pipeline %><% $uc %>"><p>Edit the current configuration.</p></li>
+%   }
 % }
  <li class="title">Select Pipeline</li>
 

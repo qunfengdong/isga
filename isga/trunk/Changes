@@ -2,6 +2,33 @@ Revision history for ISGA
 
 1.4.1	Jun 1 2011
 
+	WEB CHANGES
+
+	* Added Account Management section and tool for user class and account status
+	* Added tool to set Pipeline status to PipelineConfiguration page
+	* Added jeditable javascript library for edit-in-place functionality
+	* Replaced jtip popup tool with qtip2 for finer control over how data is accessed
+	* Removed 5 minute autorefresh for job page
+
+	API CHANGES
+
+	* Modified pipeline configuration values so that if you ask
+          for a variable for a user class that is not defined, it will
+          fall back to the global configuration
+	* Added 'access_permitted' pipeline configuration to control
+          which user classes may access a pipeline
+	* Removed $ISGA::Session variable, can still be accessed through $ISGA::WebApp
+	* Added ISGA::Tar module for streaming tar files to the client without writing temp
+	  files in order to speed up download box popping up
+	* Now close Session before downloading evidence files to reduce chance of session
+	  deadlock during long downloads.
+
+
+	BUG FIXES
+
+	* Fixed CSS bug that hid description of configuration variables
+	* Fixed various spelling and gramatical errors in html
+
 1.3.2   May 9 2011
 
 	FIXES
