@@ -243,8 +243,6 @@ Build the appropriate WebApp command for this Job.
   
     my ($self, $webapp, $form, $job) = @_;
 
-    warn "in buildWebAppCommand\n";
-
     # grab necessary informationfrom request
     my $web_args = $webapp->args;  
     my $sequences = $form->get_input('query_sequence');
@@ -259,40 +257,26 @@ Build the appropriate WebApp command for this Job.
     $input_file->stage($wd);   
     my $input_path = $wd . '/' . $input_file->getName();
 
-    # read the sequence database
-    my $sequence_database = $form->get_input('sequence_database');
-    ref($sequence_database) eq 'ARRAY' or $sequence_database = [ $sequence_database ];
+    # read the database we are searching against
+    my $database = $form->get_input('sequence_database');
+
+    # set the path to the output file
+    my $blast_output = $wd . '/' . $job->getName . '_blast_output.blout';
 
     # start building the script that will execute the job
     my $fh = $environment->initializeScript(); 
 
-    # glue all the databases together
-    my @database_array;
-
-    # if we're blasting apipeline genome, we need to format it
-    foreach (@$sequence_database) {
-      if ( 0 ) {
-	my $db_path = $wd . '/' . 'genome_sequence';
-	
-	# stage the file and write the command 
-	copy($_, $db_path);
-	print $fh ISGA::JobConfiguration->value( 'formatdb_executable', JobType => $self, UserClass => $user_class );
-	print $fh " -i $db_path -p F -o T\n";
-	
-	push @database_array, $db_path;
-      } else {
-	push @database_array, $_;
-      }
+    # is this a raw fasta file we need to index (i.e. genome file)
+    if ( 0 == 1 ) {
+      my $db_path = $wd . '/' . 'blast_database';
+      copy($database,$db_path);
+      print $fh ISGA::JobConfiguration->value( 'formatdb_executable', JobType => $self, UserClass => $user_class );
+      print $fh "-i $db_path -p F -o T\n";
+      $database = $db_path;
     }
-
-    my $database = join(' ', @database_array);
-
-    # make a unique output name
-    my $blast_output = $wd . '/' . $job->getName . '_blast_output.blout';
-
-    # add BLAST command to the script
+    
     print $fh ISGA::JobConfiguration->value( 'blast_executable', JobType => $self, UserClass => $user_class );
-    print $fh " -p $web_args{blast_program} -i $input_path -p $blast_output -e $web_args{evalue}";
+    print $fh " -p $web_args{blast_program} -i $input_path -o $blast_output -e $web_args{evalue}";
     print $fh " -d \"$database\" -F $web_args{blastfilter} -b $web_args{nummatches} -v $web_args{descriptions}";
 
     if ( $web_args{outputformat} != 0 ) {
@@ -300,9 +284,10 @@ Build the appropriate WebApp command for this Job.
     }
     print $fh "\n";
 
-    close $fh;
+    $environment->finalizeScript($fh);
 
-    # assemble the configuration
+    X->throw( message => "oops" );
+    
     my @params;
     foreach (keys %{$web_args}) {
       unless ($_ eq 'query_sequence' || $_ eq 'upload_file' || $_ eq 'sequence_database' || $_ eq 'workbench' || $_ eq 'progress_id' || $_ eq 'notify_user' || $_ eq 'job_type'){
@@ -316,10 +301,9 @@ Build the appropriate WebApp command for this Job.
     $config->{input_file} = $input_file->getUserName;
     $config->{input_file_path} = $input_path;
     $config->{output_file} = $blast_output;
-    push @{$config->{databases}}, @database_array;
+    $config->{database} = $database;
     push @{$config->{params}}, @params;
     $job->buildConfigFile( $config );
-    
   }
   
 #------------------------------------------------------------------------

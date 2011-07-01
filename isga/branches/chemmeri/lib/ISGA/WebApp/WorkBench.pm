@@ -67,8 +67,7 @@ sub WorkBench::RunJob {
              );
 
         my $job = ISGA::Job->create(%job_args) or X->throw(message => 'Error submitting job.');
-
-        my $command = $job_type->getClass->buildWebAppCommand($self, $form, $job);
+        $job_type->getClass->buildWebAppCommand($self, $form, $job);
 
         $self->redirect( uri => "/WorkBench/Result?job=$job" );
     }

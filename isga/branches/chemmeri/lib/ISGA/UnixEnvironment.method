@@ -23,7 +23,7 @@ sub initializeScript {
 
 #------------------------------------------------------------------------
 
-=item public void finalizeScript($fh);
+=item public string finalizeScript($fh);
 
 Finish writing the script for the job
 
@@ -31,9 +31,14 @@ Finish writing the script for the job
 #------------------------------------------------------------------------
 sub finalizeScript {
 
-  my ($self) = @_;
+  my ($self, $fh) = @_;
 
-  
+  my $wd = $self->getWorkingDirectory();
 
+  # close the fh
+  close($fh);
+
+  # make the file executable
+  chmod(0755, "$wd/run.sh");
 }
   
