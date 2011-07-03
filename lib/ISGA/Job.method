@@ -3,6 +3,8 @@
 use File::Basename;
 use YAML;
 use IO::String;
+use List::MoreUtils qw(any);
+
 
 #------------------------------------------------------------------------
 
@@ -45,6 +47,8 @@ sub query {
   return [map { bless($_, $_->getType->getClass) } @$selves];
 }
 
+my @terminal_statuses = qw(Finished Error Failed);
+
 #------------------------------------------------------------------------
 
 =item public void updateStatus();
@@ -59,24 +63,19 @@ sub updateStatus {
   my $self = shift;
 
   my $old_status = $self->getStatus;
-  return if $old_status eq 'Finished';
-  return if $old_status eq 'Error';
-  return if $old_status eq 'Failed';
+  return if any { $_ eq $old_status } @terminal_statuses;
 
-  my $pid = $self->getPid;
+  my $env = $self->getEnvironment();
 
   eval {
 
     ISGA::DB->begin_work();
 
-    my $sge=ISGA::SGEScheduler->new(
-       -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
-    );
-
-    my $new_status = $sge->checkStatus( $pid );
-
-    $new_status eq $old_status or
-      $self->edit( Status => $new_status );
+    # call out to the environment to check the status
+    my $new_status = $env->checkJobStatus( $self );
+    
+    # update the status if it has changed
+    $self->edit( Status => $new_status ) unless $new_status eq $old_status;
 
     if ( $new_status eq 'Finished' ){
         my $collection = $self->getCollection;
@@ -113,9 +112,10 @@ sub updateStatus {
         }
     }
 
-    if ( $new_status eq 'Finished' || $new_status eq 'Error' ||  $new_status eq 'Failed' ) {
+    if ( any { $new_status eq $_ } @terminal_statuses ) {
       $self->edit( FinishedAt => ISGA::Timestamp->new() );
     }
+
     ISGA::DB->commit();
   };
 
@@ -127,55 +127,6 @@ sub updateStatus {
   }  
  
 }
-
-#------------------------------------------------------------------------
-
-=item public void submitJob();
-
-Submit staged jobs.
-
-=cut
-#------------------------------------------------------------------------
-sub submitJob {
-  my $self = shift;
-
-  my $status = $self->getStatus;
-  my $pid = $self->getPid;
-
-  eval {
-
-    ISGA::DB->begin_work();
-    my $files_path = "___tmp_file_directory___/workbench/" . $self->getType->getName . "/";
-    my $log_name  = $self->getType->getName . "_" .  $self->getId;
-    my $out_directory = $files_path.$log_name;
-    my $command = "$out_directory/${log_name}_sge.sh";
-    $self->edit( Status => 'Pending' );
-
-    my $sge=ISGA::SGEScheduler->new(
-                                    -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
-                                    -output_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeout",
-                                    -error_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeerror",
-                                   );
-
-    $sge->command($command);
-    my $pid = $sge->execute();
-    X->throw(message => 'Error submitting job.') unless($pid);
-    $self->edit( Pid => $pid );
-
-    ISGA::DB->commit();
-  };
-
-  if ( $@ ) {
-    ISGA::DB->rollback();
-
-    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );
-    $e->rethrow();
-  }
-
-}
-
-
-###################### New Classy Stuff ######################
 
 #------------------------------------------------------------------------
 
@@ -269,10 +220,9 @@ sub buildConfigFile{
   my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $self->getCollection );
 
   ISGA::FileCollectionContent->create( FileCollection => $self->getCollection,
-                                           FileResource => $file,
-                                           Index => $next_index++
-                                         );
-
+				       FileResource => $file,
+				       Index => $next_index++
+				     );
 
 }
 
@@ -293,7 +243,6 @@ sub addInputToCollection {
                                            FileResource => $input,
                                            Index => $next_index++
                                          );
-
 
 }
 

@@ -22,3 +22,13 @@ returns the path to the working directory as a string.
     return $wd;
   }
 
+#------------------------------------------------------------------------
+
+=item ABSTRACT public RunStatus checkJobStatus(Job $job);
+
+Checks the environment to determine the status of a running job and
+returns the new status.
+
+=cut
+#------------------------------------------------------------------------
+

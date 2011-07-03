@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------
 
-=item public filehandle initializeScript();
+=item public filehandle initializeScript(Job $job);
 
 Initialize execution script for the job.
 
@@ -10,12 +10,12 @@ Initialize execution script for the job.
 #------------------------------------------------------------------------
 sub initializeScript {
 
-  my ($self) = @_;
+  my ($self, $job) = @_;
 
-  my $wd = $self->getWorkingDirectory();
+  my $wd = $self->getWorkingDirectory($job);
 
   # create bash file
-  open my $fh, '>', "$wd/run.sh" or X->throw(message => 'Error creating sge shell script');
+  open my $fh, '>', "$wd/job.sh" or X->throw(message => 'Error creating sge shell script');
   print $fh "#!/bin/bash\n\n";
 
   return $fh;
@@ -23,7 +23,7 @@ sub initializeScript {
 
 #------------------------------------------------------------------------
 
-=item public string finalizeScript($fh);
+=item public string finalizeScript(Job $job, $fh);
 
 Finish writing the script for the job
 
@@ -31,14 +31,14 @@ Finish writing the script for the job
 #------------------------------------------------------------------------
 sub finalizeScript {
 
-  my ($self, $fh) = @_;
+  my ($self, $job, $fh) = @_;
 
-  my $wd = $self->getWorkingDirectory();
+  my $wd = $self->getWorkingDirectory($job);
 
   # close the fh
   close($fh);
 
   # make the file executable
-  chmod(0755, "$wd/run.sh");
+  chmod(0755, "$wd/job.sh");
 }
   
