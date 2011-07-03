@@ -230,7 +230,11 @@ Build the appropriate FormEngine data structure for this Job.
     return \@form_params;
     
   }
-  
+
+  my %webapp_params = 
+      ( query_sequence => undef, upload_file => undef, sequence_database => undef,
+	workbench => undef, progress_id = undef, notify_user => undef, job_type => undef );
+	  
 #------------------------------------------------------------------------
 
 =item public Form Job buildWebAppCommand( form=>$form, job=>$job );
@@ -264,7 +268,7 @@ Build the appropriate WebApp command for this Job.
     my $blast_output = $wd . '/' . $job->getName . '_blast_output.blout';
 
     # start building the script that will execute the job
-    my $fh = $environment->initializeScript(); 
+    my $fh = $environment->initializeScript($job); 
 
     # is this a raw fasta file we need to index (i.e. genome file)
     if ( 0 == 1 ) {
@@ -290,9 +294,7 @@ Build the appropriate WebApp command for this Job.
     
     my @params;
     foreach (keys %{$web_args}) {
-      unless ($_ eq 'query_sequence' || $_ eq 'upload_file' || $_ eq 'sequence_database' || $_ eq 'workbench' || $_ eq 'progress_id' || $_ eq 'notify_user' || $_ eq 'job_type'){
-	push(@params, {$_ => ${$web_args}{$_}});
-      }
+	exists $webapp_params{$_} or push(@params, {$_ => ${$web_args}{$_}});
     }
     
     # save configuration

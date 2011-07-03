@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------
 
-=item public string getScript();
+=item public string getScript(Job $job);
 
 Returns path to this script.
 
@@ -10,9 +10,9 @@ Returns path to this script.
 #------------------------------------------------------------------------
 sub getScript {
 
-  my ($self) = @_;
+  my ($self, $job) = @_;
 
   my $wd = $self->getWorkingDirectory();
 
-  return "$wd/run.sh";
+  return "$wd/job.sh";
 }
