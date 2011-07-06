@@ -150,10 +150,16 @@ sub UploadInput {
   # for forms with a file upload, we need to make sure the request is complete and valid before proceeding
   # as upload problems can corrupt other parameters
   if ( $ISGA::APR->method eq 'POST' and my $status = $ISGA::APR->parse() ) {
-    if ( $status eq 'Exceeds configured maximum limit' ) {
-      X::User::UploadTooLarge->throw( message => 'The file you are attempting to upload is too large' );
-    } else {
-      X->throw( message => "Unknown apache error $status" );
+
+    warn "body status is ", $ISGA::APR->body_status();
+    warn "args status is ", $ISGA::APR->args_status();
+
+    if ( $status ne 'Success' ) {
+      if ( $status eq 'Exceeds configured maximum limit' ) {
+	X::User::UploadTooLarge->throw( message => 'The file you are attempting to upload is too large' );
+      } else {
+	X->throw( message => "Unknown apache error $status" );
+      }
     }
   }
 
