@@ -152,7 +152,7 @@ sub UploadInput {
   # as upload problems can corrupt other parameters
   if ( $ISGA::APR->method eq 'POST' and my $status = $ISGA::APR->parse() ) {
 
-    if ( one { $status eq $_ } ('Success', 'Error 0') ) {
+    if ( none { $status eq $_ } ('Success', 'Error 0') ) {
       if ( $status eq 'Exceeds configured maximum limit' ) {
 	X::User::UploadTooLarge->throw( message => 'The file you are attempting to upload is too large' );
       } else {
