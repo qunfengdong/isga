@@ -156,84 +156,84 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/rna/rna.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)    
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/protein.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)    
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'shore/human.fasta.shore');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Tair10'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/cdna/TAIR10_cdna_20101214');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Tair10'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/TAIR10_pep_20101214');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Tair10'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'shore/arab10.fasta.shore');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Tair10'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='5.31'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/ncbi_cds/cds.ffn');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='5.31'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/ncbi_proteins/proteins.faa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='5.31'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'shore/drosophila.fasta.shore');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='5.31'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     '/some/fake/path');
 
 
@@ -241,126 +241,126 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/cds/c_elegans.WS225.cds_transcripts.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/c_elegans.WS225.protein.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'shore/c_elegans.WS225.genomic.fa.shore');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/cds/FrozenGeneCatalog20110204.CDS.fasta');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/FrozenGeneCatalog20110204.proteins.fasta');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='K-12 MG1655'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/cds/NC_000913.ffn');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='K-12 MG1655'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/NC_000913.faa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='168'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/cds/NC_000964.ffn');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='168'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/NC_000964.faa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Zv9'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/transcript/rna.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Zv9'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/protein.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nt-05-17-2011'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'nt');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-02-19-2011'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
-    'nr');
-
-INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
-  VALUES (
-    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-05-02-2010'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'nr');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-05-02-2010'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
+    'nr');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'uniref100.fasta');
 
 -------------------------------------------------------------------
