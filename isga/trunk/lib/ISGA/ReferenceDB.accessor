@@ -32,7 +32,7 @@ name for collections.
     if ($self->getRelease->getReference->getTag->getName eq 'Organism'){
       return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease;
     }else{
-      return $self->getRelease->getReference->getName;
+      return $self->getRelease->getReference->getName. ' ' . $self->getRelease->getVersion;
     }
   }
 
