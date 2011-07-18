@@ -352,6 +352,13 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-05-02-2010'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'nr');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     'uniref100.fasta');
