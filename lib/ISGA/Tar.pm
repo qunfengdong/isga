@@ -52,22 +52,21 @@ sub write {
   my ($self, $callback, $compress) = @_;
 
   my $cwd = getcwd();
-  chdir $self->{tardir} or LOGDIE "Can't chdir to $self->{tardir} ($!)";
+  chdir $self->{tardir} or X->throw( message => "Can't chdir to $self->{tardir} ($!)");
   
   my $compr_opt = "h";
   $compr_opt = "z" if $compress;
 
-  opendir DIR, "." or LOGDIE "Cannot open $self->{tardir}";
+  opendir DIR, "." or X->throw( message => "Cannot open $self->{tardir}" );
   my @top_entries = grep { $_ !~ /^\.\.?$/ } readdir DIR;
   closedir DIR;
 
-  my $rc = run( [ $self->{tar}, "${comp_opt}c", @top_entries] , '>', $callback );
+  my $rc = run( [ $self->{tar}, "${compr_opt}c", @top_entries] , '>', $callback );
   if(!$rc) {
-    ERROR "@$cmd failed: $err";
-    return undef;
+    X->throw( message => "$self->{tar} ${compr_opt}c failed." );
   }  
 
-  chdir $cwd or LOGDIE "Cannot chdir to $cwd";
+  chdir $cwd or X->throw( message => "Cannot chdir to $cwd" );
 }
 
 #------------------------------------------------------------------------
@@ -83,12 +82,12 @@ sub add {
   
   my ($self, $rel_path, $source) = @_;
 
-  my $target = File::Spec->catfile($archive->{tardir}, $rel_path);
+  my $target = File::Spec->catfile($self->{tardir}, $rel_path);
 
   my $target_dir = dirname($target);
   mkpath($target_dir, 0, 0755) unless -d $target_dir;
 
-  symlink($source,$target) or LOGDIE "unable to creat symlink $target to $source";
+  symlink($source,$target) or X->throw( message => "unable to creat symlink $target to $source" );
 
   perm_set($target, perm_get($source));
 }
