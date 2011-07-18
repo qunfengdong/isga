@@ -42,8 +42,8 @@ sub buildForm {
 
   my @db_groups;
 
-  my $nuc_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ) );
-  my $prot_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ) );
+  my $nuc_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ), Status => ISGA::PipelineStatus->new( Name => 'Published' ) );
+  my $prot_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ), Status => ISGA::PipelineStatus->new( Name => 'Published' ) );
 
   push @db_groups,
     (
