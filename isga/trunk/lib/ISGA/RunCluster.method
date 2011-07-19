@@ -168,7 +168,7 @@ sub downloadEvidence {
 
   $self->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
 
-  my $archive = Archive::Tar::Wrapper->new();
+  my $archive = ISGA::Tar->new();
 
   my $run = $self->getRun;
   my $run_dir = "Run-" . $run->getErgatisKey;
