@@ -28,6 +28,13 @@ use base 'Archive::Tar::Wrapper';
 use IPC::Run qw(run);
 use Cwd;
 use File::Path;
+use File::Temp qw(tempdir);
+use Log::Log4perl qw(:easy);
+use File::Spec::Functions;
+use File::Spec;
+use File::Copy;
+use File::Find;
+use File::Basename;
 
 #========================================================================
 
@@ -90,6 +97,38 @@ sub add {
   symlink($source,$target) or X->throw( message => "unable to creat symlink $target to $source" );
 
   perm_set($target, perm_get($source));
+}
+
+######################################
+sub perm_cp {
+######################################
+    # Lifted from Ben Okopnik's
+    # http://www.linuxgazette.com/issue87/misc/tips/cpmod.pl.txt
+
+    my $perms = perm_get($_[0]);
+    perm_set($_[1], $perms);
+}
+
+######################################
+sub perm_get {
+######################################
+    my($filename) = @_;
+
+    my @stats = (stat $filename)[2,4,5] or
+        LOGDIE "Cannot stat $filename ($!)";
+
+    return \@stats;
+}
+
+######################################
+sub perm_set {
+######################################
+    my($filename, $perms) = @_;
+
+    chown($perms->[1], $perms->[2], $filename) or
+        LOGDIE "Cannot chown $filename ($!)";
+    chmod($perms->[0] & 07777,    $filename) or
+        LOGDIE "Cannot chmod $filename ($!)";
 }
 
 1;
