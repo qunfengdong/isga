@@ -23,15 +23,13 @@ Returns the username portion of the email address for this account.
 
 =item public string mayReadFileResource(FileResource $file);
 
-Returns the username portion of the email address for this account.
+Returns true if the supplied account has permission to access this file and false otherwise.
 
 =cut
 #------------------------------------------------------------------------
   sub mayReadFileResource {
 
     my ($self, $file) = @_;
-
-    warn "checking for file resource $file\n";
 
     #the owner can read any file
     $self == $file->getCreatedBy() and return 1;
