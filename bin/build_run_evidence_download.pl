@@ -52,16 +52,49 @@ my $red = ISGA::RunEvidenceDownload->new( Id => $options{run_evidence_download} 
 # register this script
 my $running = ISGA::RunningScript->create( PID => $$, Command => "build_run_evidence_download.pl --run_evidence_download=$options{run_evidence_download}" );
 
-
 # make sure we're in the correct status
 any { $red->getStatus eq $_ } qw( Pending Failed )
   or X->throw( message => "Attempted to process  RunEvidenceDownload $red, but the status is not Pending or Failed");
 
 # register the download as working
-
+$red->edit(Status => 'Running');
 
 # start transaction
-# end happily or messily
+eval {
+  
+  ISGA::DB->begin_work();
+
+  # assmble all clusters into a download
+
+  # build the tar
+
+  # save it in the specified location
+
+  # send email
+
+  # mark it as complete
+  $red->edit(Status => 'Finished', CreatedAt => ISGA::Timestamp->new() );
+
+  # delete notification request
+  ISGA::DB->commit();
+
+};
+
+# if things failed
+if ( $@ ) {
+  ISGA::DB->rollback();
+  
+  my $e = $@;
+
+  # clean up
+  $red->edit(Status => 'Failed');
+  $running->delete();
+
+  X::Dropped->throw( error => $e);
+}
+
+# clean up
+$running->delete();
 
 sub check_parameters {
 
