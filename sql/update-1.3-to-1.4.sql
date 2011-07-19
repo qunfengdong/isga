@@ -2,6 +2,31 @@ SET SESSION client_min_messages TO 'warning';
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Create table for monitoring running scripts
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE runningscript (
+  runningscript_id SERIAL PRIMARY KEY,
+  runningscript_pid INTEGER NOT NULL UNIQUE,
+  runningscript_createdat TIMESTAMP NOT NULL DEFAULT now(),
+  runningscript_command TEXT NOT NULL
+);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Create table for downloading run evidence
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE runevidencedownload (
+  runevidencedownload_id SERIAL PRIMARY KEY,
+  run_id INTEGER REFERENCES run(run_id) NOT NULL UNIQUE,
+  runevidencedownload_requestedat TIMESTAMP NOT NULL DEFAULT now(),
+  runevidencedownload_createdat TIMESTAMP,
+  runevidencedownload_status TEXT REFERENCES jobstatus(jobstatus_name) NOT NULL
+);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- Create referencetype and referencedb tables
 -------------------------------------------------------------------
 -------------------------------------------------------------------
