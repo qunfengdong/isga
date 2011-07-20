@@ -1,0 +1,9 @@
+<%args>
+ $download_request
+</%args>
+
+ISGA has retrieved the file from your supplied url:
+
+<% $download_request->getURL %>
+
+and you may now use with ISGA.

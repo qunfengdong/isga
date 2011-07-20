@@ -1,0 +1,50 @@
+<%args>
+</%args>
+
+<sys:script type="text/javascript">
+$(document).ready(sectionHighlight);
+function sectionHighlight() {
+  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
+  var url = window.location.href;
+  for(var i = 0; i < menuLinks.length; i++){
+    if(url == menuLinks[i].href)
+    {
+      var link = menuLinks[i];
+      var li = link.parentNode;
+      li.style.backgroundColor = "#D8E47C";
+      if($.browser.msie)
+      {
+          var nextLi = li.nextSibling;
+          nextLi.style.backgroundColor = "#D8E47C";
+      }else{
+          var nextLi = li.nextSibling.nextSibling;
+          nextLi.style.backgroundColor = "#D8E47C";
+      }
+    }
+  }
+}
+</sys:script>
+
+<sys:rightmenu>
+
+<ul>
+ <li class="title">Help and Support</li>
+
+% if ( ! ISGA::Login->exists ) {
+
+ <li class="rmbutton pointer"><a href="/Account/Request">Request an Account</a></li>
+ <li class="pointer" onclick="window.location='/Account/Request'"><p> You first need to request an account before you can run or
+ customize our pipelines. If you have already created an account, log
+ in using the link at the top right of the window.</p><li>
+% } 
+
+ <li class="rmbutton pointer"><a href="/Help/Introduction">Learn More</a></li>
+ <li class="pointer" onclick="window.location='/Help/Introduction'"><p>Learn more about our pipeline service.  View tutorials and descriptions of the pipeline building process.</p></li>
+
+ <li class="rmbutton pointer"><a href="/Help/ContactUs">Contact Us</a></li>
+ <li class="pointer" onclick="window.location='/Help/ContactUs'"><p>Contact us with any suggestions or questions you may have.</p></li>
+
+</ul>
+
+</sys:rightmenu>
+

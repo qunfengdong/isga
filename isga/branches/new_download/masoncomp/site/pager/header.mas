@@ -1,0 +1,8 @@
+<%args>
+ $pager
+</%args>
+
+<ul class="pager">
+<li>Showing <% $pager->getFrom %> - <% $pager->getTo %> of <% $pager->getLimit %> results.</li>
+
+</ul>
