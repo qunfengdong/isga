@@ -2,6 +2,53 @@
 
 #------------------------------------------------------------------------
 
+=item void buildEvidenceFile();
+
+Generates a gzippef file containing the evidence output for the run.
+
+=cut 
+#------------------------------------------------------------------------
+sub buildEvidenceFile {
+
+  my $self = shift;
+
+  my $archive = ISGA::Tar->new();
+  my $run_dir = "Run-" . $self->getErgatisKey;
+
+  foreach my $rc ( { grep $_->hasEvidence() } @{$self->getClusters} ) {
+
+    my $cluster = $rc->getCluster;
+
+    $rc->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
+
+    my $cluster_dir = $run_dir . '/' . $cluster->getName;
+
+    my $iterations = $rc->getIterations;
+
+    # work through our components
+    foreach my $component ( grep { $_->getCluster == $cluster } @{$self->getType->getComponents} ) {
+      
+      foreach my $co ( @{ISGA::ClusterOutput->query( Component => $component,
+						     Visibility => 'Evidence' )} ){
+	
+	# add contents to file
+	if ( $iterations ) {
+	  for ( 1 .. $iterations ) {
+	    $co->buildEvidence( $self, $cluster_dir, $archive, $_);
+	  }
+	} else {
+	  $co->buildEvidence( $self, $cluster_dir, $archive);
+	}
+      }
+    }
+  }
+  
+  # write compressed tar to the download location
+  $archive->write();
+}
+
+#------------------------------------------------------------------------
+
 =item PRIVATE void _initializeOutputs(RunBuilder $rb);
 
 Creates placeholders for all expected pipeline outputs.

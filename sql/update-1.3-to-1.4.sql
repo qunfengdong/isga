@@ -14,7 +14,7 @@ CREATE TABLE runningscript (
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
--- Create table for downloading run evidence
+-- Create table for downloading run evidence and supporting table entries
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 CREATE TABLE runevidencedownload (
@@ -23,6 +23,15 @@ CREATE TABLE runevidencedownload (
   runevidencedownload_requestedat TIMESTAMP NOT NULL DEFAULT now(),
   runevidencedownload_createdat TIMESTAMP,
   runevidencedownload_status TEXT REFERENCES jobstatus(jobstatus_name) NOT NULL
+);
+
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) VALUES ('/submit/Run/BuildEvidenceDownload', 'Run::BuildEvidenceDownload', TRUE, 'none');
+
+INSERT INTO notificationtype ( notificationtype_name, notificationpartition_id, notificationtype_subject, notificationtype_template ) VALUES (
+  'Run Raw Data Download Ready', 
+  (SELECT notificationpartition_id FROM notificationpartition WHERE notificationpartition_name = 'RunNotification'),
+  'The Raw Data from your ISGA Run is ready',
+  'run_evidence_download.mas'
 );
 
 -------------------------------------------------------------------

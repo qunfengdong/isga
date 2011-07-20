@@ -31,6 +31,26 @@ use warnings;
 
 #------------------------------------------------------------------------
 
+=item public void BuildEvidenceDownload
+
+Method to setup gbrowse data.
+
+=cut
+#------------------------------------------------------------------------
+sub Run::BuildEvidenceDownload {
+
+    my $self = shift;
+    my $run = $self->args->{run};
+
+    # create RED object
+    my $red = ISGA::RunEvidenceDownload->create( Run => $run,
+						 Status => 'Pending' );
+
+    $self->redirect(uri => "/Run/View?run=$run");
+}
+
+#------------------------------------------------------------------------
+
 =item public void InstallGbrowseData();
 
 Method to setup gbrowse data.
