@@ -70,7 +70,7 @@ eval {
 
   # send email
   ISGA::RunNotification->create( 
-      Type => ISGA:NotificationType->new( Name => 'Run Raw Data Download Ready' ),
+      Type => ISGA::NotificationType->new( Name => 'Run Raw Data Download Ready' ),
       Run => $run,
       Party => $run->getCreatedBy );
   
