@@ -20,6 +20,8 @@ use ISGA::Date;
 use ISGA::Timestamp;
 use ISGA::Time;
 
+use ISGA::Tar;
+
 use ISGA::Objects;
 
 use ISGA::Utility;

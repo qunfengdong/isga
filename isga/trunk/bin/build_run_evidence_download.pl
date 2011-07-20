@@ -38,7 +38,7 @@ use List::MoreUtils qw(any);
 
 my %options = ();
 my $result = GetOptions (\%options,
-			 run=i,
+			 'run_evidence_download=i',
 			 'help|h') || pod2usage();
 
 ## display documentation
@@ -64,13 +64,15 @@ eval {
   
   ISGA::DB->begin_work();
 
-  $red->getRun->buildEvidenceFile();
+  my $run = $red->getRun();
+
+  $run->buildEvidenceFile();
 
   # send email
   ISGA::RunNotification->create( 
-      Type => ISGA:NotificationType->new( Name => 'Run Raw Data Download Ready' ),
+      Type => ISGA::NotificationType->new( Name => 'Run Raw Data Download Ready' ),
       Run => $run,
-      Party => $run->getCreatedBy );
+      Account => $run->getCreatedBy );
   
   # mark it as complete
   $red->edit(Status => 'Finished', CreatedAt => ISGA::Timestamp->new() );

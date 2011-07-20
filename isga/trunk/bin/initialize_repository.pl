@@ -38,3 +38,5 @@ foreach my $l1 ( @hash ) {
     File::Path::make_path( "$file_repository/$l1/$l2" );
   }
 }
+
+File::Path::make_path( "$file_repository/downloads" );
