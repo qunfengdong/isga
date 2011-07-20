@@ -41,6 +41,8 @@ use Exception::Class
  'X::File::FASTA::Binary' => { isa => 'X::File::FASTA' },
  'X::File::FASTA::Header' => { isa => 'X::File::FASTA', fields => ['line'] },
  'X::File::FASTA::Header::BeginningSpace' => { isa => 'X::File::FASTA::Header' },
+ 'X::File::FASTA::Header::BeginningNumber' => { isa => 'X::File::FASTA::Header' },
+ 'X::File::FASTA::Header::Duplicate' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::MissingSymbol' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Sequence::IllegalCharacter' => { isa => 'X::File::FASTA',
 						   fields => [ 'line', 'character', 'alphabet' ] },
@@ -120,6 +122,22 @@ sub X::File::FASTA::Header::BeginningSpace::message {
   my $name = $e->name;
 
   return "Fasta header does not allow whitespace between '>' and name at line $line in $name.";
+}
+
+sub X::File::FASTA::Header::BeginningNumber::message {
+  my $e = shift;
+  my $line = $e->line;
+  my $name = $e->name;
+
+  return "Fasta header should not begin with a number after '>' at line $line in $name.";
+}
+
+sub X::File::FASTA::Header::Duplicate::message {
+  my $e = shift;
+  my $line = $e->line;
+  my $name = $e->name;
+
+  return "Fasta headers should be unique at line $line in $name.";
 }
 
 sub X::File::FASTA::Header::MissingSymbol::message {

@@ -149,6 +149,9 @@ sub verify {
   # set alphabet if we have one
   my $alphabet = ( exists $named{Alphabet} ? $named{Alphabet} : '' );
 
+  # hash to store seen headers
+  my %headers;
+
   while (<$fh>) {
 
     # always increment line number
@@ -156,7 +159,13 @@ sub verify {
 
     # good sequence header
     if ( /^>\S/ ) {
-      
+
+      # headers cannot start with numbers
+      X::File::FASTA::Header::BeginningNumber->throw( name => $name, line => $line ) if ( /^>\d/ ); 
+
+      # is this a duplicate header
+      exists $headers{$_} ? X::File::FASTA::Header::Duplicate->throw( name => $name, line => $line ) : $headers{$_} = 1;
+
       $fasta{seq_count}++;
       
       # form now on sequence characters are valid
