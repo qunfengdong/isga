@@ -102,6 +102,10 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('Danio rerio', '/nfs/bio/db/Danio_rerio',
          'Reference information for Danio rerio',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Anopheles gambiae', '/nfs/bio/db/Anopheles_gambiae',
+         'Reference information for Anopheles gambiae',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -144,6 +148,9 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Danio rerio'),
          'Zv9', '05-17-2011', 'Zv9');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Anopheles gambiae'),
+         'AgamP3.6', '07-13-2011', 'AgamP3.6');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -334,6 +341,20 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Zv9'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/protein.fa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='AgamP3.6'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/transcripts/agambiae.TRANSCRIPTS-AgamP3.6.fa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='AgamP3.6'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/peptides/agambiae.PEPTIDES-AgamP3.6.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
