@@ -39,6 +39,23 @@ sub getOutput { ISGA::RunOutput->query( Run => shift ); }
 
 #------------------------------------------------------------------------
 
+=item public string getEvidenceOutputFileName();
+
+Returns the filename for this run's EvidenceOutput tarball. This
+method only calculates the filename, it does not test for existence of
+the file.
+
+=cut
+#------------------------------------------------------------------------
+sub getEvidenceOutputFileName {
+
+  my $self = shift;
+
+  return ISGA::SiteConfiguration->value('file_repository') . "/downloads/Run.$self.RawData.tar.gz"; 
+}
+
+#------------------------------------------------------------------------
+
 =item public GlobalPipeline getGlobalPipeline
 
 Retrieves the GlobalPipeline for this run.

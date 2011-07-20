@@ -56,21 +56,24 @@ evaluates to true, the tarball will be gzipped.
 #------------------------------------------------------------------------
 sub write {
 
-  my ($self, $callback, $compress) = @_;
+  my ($self, $tarfile, $compress) = @_;
 
   my $cwd = getcwd();
   chdir $self->{tardir} or X->throw( message => "Can't chdir to $self->{tardir} ($!)");
   
   my $compr_opt = "h";
-  $compr_opt = "z" if $compress;
+  $compr_opt .= "z" if $compress;
 
   opendir DIR, "." or X->throw( message => "Cannot open $self->{tardir}" );
   my @top_entries = grep { $_ !~ /^\.\.?$/ } readdir DIR;
   closedir DIR;
 
-  my $rc = run( [ $self->{tar}, "${compr_opt}c", @top_entries] , '>', $callback );
+  my $cmd = [$self->{tar}, "${compr_opt}cf$self->{tar_write_options}", 
+	     $tarfile, @top_entries];
+
+  my $rc = run($cmd, \my($in, $out, $err));
   if(!$rc) {
-    X->throw( message => "$self->{tar} ${compr_opt}c failed." );
+    X->throw( message => "$self->{tar} ${compr_opt}c failed. $err" );
   }  
 
   chdir $cwd or X->throw( message => "Cannot chdir to $cwd" );
