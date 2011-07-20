@@ -153,64 +153,6 @@ sub hasEvidence {
 
 #------------------------------------------------------------------------
 
-=item public void downloadEvidence( coderef $callback);
-
-Tar and download the evidence output for this cluster using a callback
-parameter.
-
-=cut
-#------------------------------------------------------------------------
-sub downloadEvidence {
-
-  my ($self, $callback) = @_;
-  
-  my $cluster = $self->getCluster;
-
-  $self->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
-
-  my $archive = ISGA::Tar->new();
-
-  my $run = $self->getRun;
-  my $run_dir = "Run-" . $run->getErgatisKey;
-
-  my $cluster_dir = $run_dir . '/' . $self->getCluster->getName;
-
-  my $iterations = $self->getIterations;
-
-  # work through our components
-  foreach my $component ( grep { $_->getCluster == $cluster } @{$run->getType->getComponents} ) {
-
-    foreach my $co ( @{ISGA::ClusterOutput->query( Component => $component,
-						   Visibility => 'Evidence' )} ){
-      
-      # add contents to file
-      if ( $iterations ) {
-	for ( 1 .. $iterations ) {
-	  $co->downloadEvidence( $run, $cluster_dir, $archive, $_);
-	}
-      } else {
-	$co->downloadEvidence( $run, $cluster_dir, $archive);
-      }
-    }
-  }
-
-  # write compressed tar using the callback
-  $archive->write($callback,1);
-}
-
-
-#------------------------------------------------------------------------
-
-=item public string getPath();
-
-Calculate the name for the evidence download for this RunCluster.
-
-=cut
-#------------------------------------------------------------------------
-sub getPath { return shift->downloadEvidence; }
-
-#------------------------------------------------------------------------
-
 =item public string getEvidenceDownloadName();
 
 Calculate the name for the evidence download for this RunCluster.

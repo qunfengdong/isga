@@ -40,40 +40,28 @@ $('.downloadRemove').livequery('click', function(){
 
 %   }
 
-<div class="list">
+%   my $red = ISGA::RunEvidenceDownload->query( Run => $run );
+%   if ( $red and $red->getStatus eq 'Finished' ) { # The file is available to download
 
-%   my $row_counter = 0;
+<p>You can download it. Let's make a link.</p>
 
-<table width="100%">
- <thead>
-  <tr><th>Cluster</th><th>Download</th></tr>
- </thead>
- <tbody>
-%   foreach my $run_cluster ( @{$run->getClusters} ) {
+%   } elsif ( $red ) {
 
-%     next unless $run_cluster->hasEvidence();
+<p>Your download is being assembled. You will receive notification via email when it is ready.</p>
 
-%     my $tr_class = ++$row_counter % 2 ? "even" : "odd";
-%     my $cluster = $run_cluster->getCluster;
-%     my $cluster_node = "c-$cluster-node-$run-evidence";
-%     my $cname = $cluster->getName;
-  <tr class="<% $tr_class %>">
-   <td><% $cname %></td>
-<td>\
-%     if ( $run_cluster->getStatus == $complete ) {
-%       my $download = $run_cluster->getEvidenceDownloadName();
-<a class="downloadRemove" href="/Download/<% $download %>?run_cluster=<% $run_cluster %>"> <% $download %></a>\
-%     } else {
-Not Available Yet\
-%     }
-   </td>
-  </tr>
+%   } elsif ( $run->getStatus eq $complete ) {
+
+<a href="/submit/Run/BuildEvidenceDownload?run=<% $run %>">Prepare raw output for download.</a> 
+
+<p>This process can be quite slow, so we buid the file on the server and send you notification via email when it is available for download.</p>
+
+%   } else {
+
+<p>Raw Data will be available for download once the run completes.</p>
+
 %   }
+
 % }
-
-</table>
-
-</div>
 
 <%once>
 my $complete = ISGA::RunStatus->new( Name => 'Complete' );

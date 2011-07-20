@@ -4,17 +4,17 @@ use File::Basename;
 
 #------------------------------------------------------------------------
 
-=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive);
+=item public void buildEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive);
 
 Add the results for this cluster output to a cluster evidence archive.
 
-=item public void downloadEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive, int iteration);
+=item public void buildEvidence(Run $run, string $cluster_dir, Archive::Tar::Wrapper $archive, int iteration);
 
 Add the results for this cluster output to a cluster evidence archive - process an iteration.
 
 =cut
 #------------------------------------------------------------------------
-  sub downloadEvidence {
+  sub buildEvidence {
 
     my ($self, $run, $cluster_dir, $archive, $iteration) = @_;
 

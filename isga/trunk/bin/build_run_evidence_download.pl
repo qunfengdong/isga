@@ -64,14 +64,14 @@ eval {
   
   ISGA::DB->begin_work();
 
-  # assmble all clusters into a download
-
-  # build the tar
-
-  # save it in the specified location
+  $red->getRun->buildEvidenceFile();
 
   # send email
-
+  ISGA::RunNotification->create( 
+      Type => ISGA:NotificationType->new( Name => 'Run Raw Data Download Ready' ),
+      Run => $run,
+      Party => $run->getCreatedBy );
+  
   # mark it as complete
   $red->edit(Status => 'Finished', CreatedAt => ISGA::Timestamp->new() );
 
