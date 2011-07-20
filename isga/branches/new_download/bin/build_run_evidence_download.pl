@@ -38,7 +38,7 @@ use List::MoreUtils qw(any);
 
 my %options = ();
 my $result = GetOptions (\%options,
-			 run=i,
+			 'run=i',
 			 'help|h') || pod2usage();
 
 ## display documentation
