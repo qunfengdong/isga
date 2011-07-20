@@ -72,7 +72,7 @@ eval {
   ISGA::RunNotification->create( 
       Type => ISGA::NotificationType->new( Name => 'Run Raw Data Download Ready' ),
       Run => $run,
-      Party => $run->getCreatedBy );
+      Account => $run->getCreatedBy );
   
   # mark it as complete
   $red->edit(Status => 'Finished', CreatedAt => ISGA::Timestamp->new() );
