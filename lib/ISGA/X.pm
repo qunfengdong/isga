@@ -43,6 +43,7 @@ use Exception::Class
  'X::File::FASTA::Header::BeginningSpace' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::BeginningNumber' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::Duplicate' => { isa => 'X::File::FASTA::Header' },
+ 'X::File::FASTA::Header::EmptySequence' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::MissingSymbol' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Sequence::IllegalCharacter' => { isa => 'X::File::FASTA',
 						   fields => [ 'line', 'character', 'alphabet' ] },
@@ -138,6 +139,14 @@ sub X::File::FASTA::Header::Duplicate::message {
   my $name = $e->name;
 
   return "Fasta headers should be unique at line $line in $name.";
+}
+
+sub X::File::FASTA::Header::EmptySequence::message {
+  my $e = shift;
+  my $line = $e->line;
+  my $name = $e->name;
+
+  return "Fasta headers must be followed by a sequence at line $line in $name.";
 }
 
 sub X::File::FASTA::Header::MissingSymbol::message {

@@ -152,6 +152,8 @@ sub verify {
   # hash to store seen headers
   my %headers;
 
+  my $seq_length = 0;
+
   while (<$fh>) {
 
     # always increment line number
@@ -165,12 +167,15 @@ sub verify {
 
       # is this a duplicate header
       exists $headers{$_} ? X::File::FASTA::Header::Duplicate->throw( name => $name, line => $line ) : $headers{$_} = 1;
+      
+      X::File::FASTA::Header::EmptySequence->throw( name => $name, line => $line-1 ) if $in_seq and $seq_length == 0;
 
       $fasta{seq_count}++;
       
       # form now on sequence characters are valid
-      $in_seq = 1;    
+      $in_seq = 1;
 
+      $seq_length = 0;
     # illegal space in sequence header
     } elsif ( /^>\s/ ) {
       X::File::FASTA::Header::BeginningSpace->throw( name => $name, line => $line );
@@ -185,6 +190,8 @@ sub verify {
       # increment the base counter
       my $l = length($_);
       $fasta{base_count} += $l;
+
+      $seq_length += $l;
       
       # skip empty lines
       next unless $l > 0;
