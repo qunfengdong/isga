@@ -52,6 +52,8 @@ foreach my $run ( @{ISGA::Run->query( Status => \@statuses )} ) {
     # send mail if run is complete
     if ( $status eq 'Complete' ) {
 
+      $run->downloadBlastDatabases() if $run->getGlobalPipeline->hasBlastDatabase();
+
       my $rname = $run->getName;
 
       my %mail =

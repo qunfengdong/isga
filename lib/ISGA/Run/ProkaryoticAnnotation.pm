@@ -27,6 +27,8 @@ use base 'ISGA::Run';
 
 use Digest::MD5  qw(md5_hex);
 use Bio::Tools::GFF;
+use File::Copy;
+use File::Path qw(mkpath);
 
 {
 
@@ -545,19 +547,52 @@ paths.
   sub getBlastDatabases {
 
     my $run = shift;
+    my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
+      or X::API::Configuration::Missing->throw( variable => 'file_repository' );
 
     my $name = $run->getName();
     my $pipeline = $run->getGlobalPipeline();
 
     my $names = [ "Run $name: predicted gene", "Run $name: predicted protein"];
-    my $paths = [ join( '/', $pipeline->getErgatisOutputRepository(), 'asn2all', $run->getErgatisKey."_default", 'cgb_annotation.cds.fna'),
-		  join( '/', $pipeline->getErgatisOutputRepository(), 'asn2all', $run->getErgatisKey."_default", 'cgb_annotation.aa.fsa')];
+    my $paths = [ "$file_repository/databases/" . $run->getErgatisKey."/cgb_annotation.cds.fna",
+		  "$file_repository/databases/" . $run->getErgatisKey."/cgb_annotation.aa.fsa"];
     
     return ( $names, $paths );
   }
 
-}
+#------------------------------------------------------------------------
 
+=item public ($database_names, $database_values) downloadBlastDatabases();
+
+Downloads the blast databases to the file repository 
+so we ensure to keep them around permanently.
+
+=cut
+#------------------------------------------------------------------------
+  sub downloadBlastDatabases {
+
+    my $run = shift;
+
+    my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
+      or X::API::Configuration::Missing->throw( variable => 'file_repository' );
+
+    my $name = $run->getName();
+    my $pipeline = $run->getGlobalPipeline();
+    my $destination = "$file_repository/databases/".$run->getErgatisKey."/";
+
+    mkpath $destination;
+    my $filename = join( '/', $pipeline->getErgatisOutputRepository(), 'asn2all', $run->getErgatisKey."_default", 'cgb_annotation.cds.fna');
+    for my $file (<$filename*>){
+      copy("$file", "$destination") or die "Can't copy files: $!\n";
+    }
+
+    $filename = join( '/', $pipeline->getErgatisOutputRepository(), 'asn2all', $run->getErgatisKey."_default", 'cgb_annotation.aa.fsa');
+    for my $file (<$filename*>){
+      copy("$file", "$destination") or die "Can't copy files: $!\n";
+    }
+  }
+
+}
 
 1;
 
