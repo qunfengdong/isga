@@ -278,7 +278,7 @@ sub buildWebAppCommand {
         foreach (@$sequence_database){
           my $db = $_;
           if ($db =~ /^\d+$/o){
-            my $refdb = SGA::ReferenceDB->new( Id => $db );
+            my $refdb = ISGA::ReferenceDB->new( Id => $db );
             $db = $refdb->getFullPath;
           }
             
