@@ -22,8 +22,8 @@ Revision history for ISGA
 	  files in order to speed up download box popping up
 	* Now close Session before downloading evidence files to reduce chance of session
 	  deadlock during long downloads.
-	* Added additional FASTA header checks.  We now check for duplicate headers and 
-	  headers which begin with numbers.
+	* Added additional FASTA header checks.  We now check for duplicate headers, 
+	  headers which begin with numbers and empty fasta sequences.
 
 
 	BUG FIXES
