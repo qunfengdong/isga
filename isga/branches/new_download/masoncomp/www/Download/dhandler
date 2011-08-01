@@ -25,9 +25,9 @@ if ( $file_resource ) {
   my $path = $run_evidence_download->getFilePath;
   my $name = $run_evidence_download->getFileName;
 
-  $r->headers_out->set("X-Sendfile: $path");
-  $r->headers_out->set('Content-Type: application/octent-stream');
-  $r->headers_out->set("Content-Disposition: attachment; filename=\"$name\"");
+  $r->headers_out->set('X-Sendfile' => $path);
+  $r->headers_out->set('Content-Type' => 'application/octent-stream');
+  $r->headers_out->set('Content-Disposition' => "attachment; filename=\"$name\"");
   $m->return();
 
 } elsif ( $run_cluster ) {
