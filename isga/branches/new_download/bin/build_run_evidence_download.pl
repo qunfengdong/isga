@@ -66,7 +66,7 @@ eval {
 
   my $run = $red->getRun();
 
-  $run->buildEvidenceFile();
+  $red->buildEvidenceFile();
 
   # send email
   ISGA::RunNotification->create( 
