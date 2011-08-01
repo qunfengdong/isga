@@ -246,7 +246,6 @@ Build the appropriate WebApp command for this Job.
 sub buildWebAppCommand {
   my ($self, $webapp, $form, $job) = @_;
         use File::Path;
-
         my $web_args = $webapp->args;
 
         my $sequences = $form->get_input('query_sequence');
@@ -275,14 +274,16 @@ sub buildWebAppCommand {
         my $blast_output = $out_directory."/${log_name}_blast_output.blout";
 
         my @database_array;
+        my $refdb_flag = 0;
         foreach (@$sequence_database){
           my $db = $_;
           if ($db =~ /^\d+$/o){
             my $refdb = ISGA::ReferenceDB->new( Id => $db );
             $db = $refdb->getFullPath;
+            $refdb_flag = 1;
           }
             
-          if ($db =~ /nr$/ or $db =~ /nt$/ or $db =~ /Tair9_pep$/ or $db =~ /Tair9_cdna$/ or $db =~ /cgb_annotation.cds.fna$/ or $db =~ /cgb_annotation.aa.fsa$/ ){
+          if ($refdb_flag or $db =~ /cgb_annotation.cds.fna$/ or $db =~ /cgb_annotation.aa.fsa$/ ){
             push(@database_array, $db);
           } else {
             my $formatdbpath = $out_directory."/${log_name}_genome_sequence";

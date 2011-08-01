@@ -120,17 +120,22 @@ sub compatibleBlastProgramAndDB {
                  'tblastn' => 'nucleotide',
                  'tblastx' => 'nucleotide',);
   my $flag = 0;
+  my $type = '';
+  if ($db =~ /^\d+$/o){
+    my $refdb = ISGA::ReferenceDB->new( Id => $db );
+    $type = $refdb->getType->getName;
+  }
+
   if($program eq 'blastn'){
-      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) or ($type eq 'BLAST Amino Acid Database') );
   }elsif($program eq 'blastp'){
-#      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*run_result_prot_db$/) );
-      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) );
+      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) and ($type ne 'BLAST Amino Acid Database') );
   }elsif($program eq 'blastx'){
-      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) );
+      $flag = 1 if( ($db !~ /nr$/) and ($db !~ /Tair9_pep$/) and ($db !~ /.*cgb_annotation.aa.fsa$/) and ($type ne 'BLAST Amino Acid Database') );
   }elsif($program eq 'tblastn'){
-      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db =~ /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) or ($type eq 'BLAST Amino Acid Database') );
   }elsif($program eq 'tblastx'){
-      $flag = 1 if( ($db =! /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) );
+      $flag = 1 if( ($db =! /nr$/) or ($db =~ /.*run_result_prot_db$/) or ($db =~ /Tair9_pep$/) or ($type eq 'BLAST Amino Acid Database') );
   }
   if( $flag ){
     return '<br>The BLAST program you have selected is not compatible with your database type.  '.ucfirst($program).' needs to be used with a '.$dbtype{$program}.' database.';
