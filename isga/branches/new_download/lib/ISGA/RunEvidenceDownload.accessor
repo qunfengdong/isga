@@ -13,9 +13,9 @@ the file.
 sub getFileName {
 
   my $self = shift;
-  my $run = $self->getRun;
+  my $key = $self->getRun->getErgatisKey;
 
-  return "Run.$run.RawData.tar.gz";
+  return "Run.$key.RawData.tar.gz";
 }
 
 #------------------------------------------------------------------------
