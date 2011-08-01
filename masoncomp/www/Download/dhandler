@@ -28,7 +28,7 @@ if ( $file_resource ) {
   $r->headers_out->set('X-Sendfile' => $path);
   $r->headers_out->set('Content-Type' => 'application/octent-stream');
   $r->headers_out->set('Content-Disposition' => "attachment; filename=\"$name\"");
-  $m->return();
+  return();
 
 } elsif ( $run_cluster ) {
 
