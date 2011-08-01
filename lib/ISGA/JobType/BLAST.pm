@@ -51,13 +51,13 @@ sub buildForm {
       LABEL => 'Global Nucleotide Databases',
       templ => 'group',
       OPTION => [map {$_->getName} @$nuc_ref],
-      OPT_VAL => $nuc_ref
+      OPT_VAL => [map {$_->getId} @$nuc_ref]
      },
      {
       LABEL => 'Global Protein Databases',
       templ => 'group',
       OPTION => [map {$_->getName} @$prot_ref],
-      OPT_VAL => $prot_ref
+      OPT_VAL => [map {$_->getId} @$prot_ref]
      },
     );
   
@@ -275,14 +275,18 @@ sub buildWebAppCommand {
         my $blast_output = $out_directory."/${log_name}_blast_output.blout";
 
         my @database_array;
-
         foreach (@$sequence_database){
-#          if ($_ =~ /nr$/ or $_ =~ /nt$/ or $_ =~ /Tair9_pep$/ or $_ =~ /Tair9_cdna$/ or $_ =~ /run_result_prot_db$/ or $_ =~ /run_result_nuc_db$/ ){  
-          if ($_ =~ /nr$/ or $_ =~ /nt$/ or $_ =~ /Tair9_pep$/ or $_ =~ /Tair9_cdna$/ or $_ =~ /cgb_annotation.cds.fna$/ or $_ =~ /cgb_annotation.aa.fsa$/ ){
-            push(@database_array, $_);
+          my $db = $_;
+          if ($db =~ /^\d+$/o){
+            my $refdb = ISGA::ReferenceDB->new( Id => $db );
+            $db = $refdb->getFullPath;
+          }
+            
+          if ($db =~ /nr$/ or $db =~ /nt$/ or $db =~ /Tair9_pep$/ or $db =~ /Tair9_cdna$/ or $db =~ /cgb_annotation.cds.fna$/ or $db =~ /cgb_annotation.aa.fsa$/ ){
+            push(@database_array, $db);
           } else {
             my $formatdbpath = $out_directory."/${log_name}_genome_sequence";
-            copy($_, $formatdbpath) or X->throw(message => 'Cannot copy file to tmp directory');
+            copy($db, $formatdbpath) or X->throw(message => 'Cannot copy file to tmp directory');
             system("___formatdb_executable___ -i $formatdbpath -p F -o T") == 0 or X->throw(message => 'formatdb failed');
             push(@database_array, $formatdbpath);
           }
