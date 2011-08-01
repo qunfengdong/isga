@@ -1,0 +1,36 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getFileName();
+
+Returns the filename for this run's EvidenceOutput tarball. This
+method only calculates the filename, it does not test for existence of
+the file.
+
+=cut
+#------------------------------------------------------------------------
+sub getFileName {
+
+  my $self = shift;
+  my $run = $self->getRun;
+
+  return "Run.$run.RawData.tar.gz";
+}
+
+#------------------------------------------------------------------------
+
+=item public string getFilePath();
+
+Returns the filename for this run's EvidenceOutput tarball with the
+full path. This method only calculates the filename, it does not test
+for existence of the file.
+
+=cut
+#------------------------------------------------------------------------
+sub getFilePath {
+
+  my $self = shift;
+
+  return ISGA::SiteConfiguration->value('file_repository') . '/downloads/' . $self->getFileName;
+}
