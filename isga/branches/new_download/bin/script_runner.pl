@@ -70,7 +70,7 @@ foreach ( @{ISGA::RunningScript->query()} ) {
 # look for available run_evidence_downloads
 foreach ( @{ISGA::RunEvidenceDownload->query( Status => [ 'Pending', 'Failed' ] )} ) {
     
-    my $script = "build_run_evidence_download.pl --run_evidence_download=$_";
+    my $script = "./build_run_evidence_download.pl --run_evidence_download=$_";
 
     # don't run the script if it died oddly last time
     next if exists $skip{$script};
