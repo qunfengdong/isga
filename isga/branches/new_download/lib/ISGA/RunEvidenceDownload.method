@@ -45,5 +45,5 @@ sub buildEvidenceFile {
   }
   
   # write compressed tar to the download location
-  $archive->write($run->getFilePath, 1);
+  $archive->write($self->getFilePath, 1);
 }
