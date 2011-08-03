@@ -6,7 +6,7 @@ download_file_to_repository.pl - Downloads a file from a supplied URL and adds i
 
 =head1 SYNOPSIS
 
-USAGE: download_file_to_repository.pl
+USAGE: download_file_to_repository.pl  --upload_request=id
        [ --help
        ]
 
@@ -56,9 +56,8 @@ eval {
     pod2usage( {-exitval=> 0, -verbose => 2, -output => \*STDERR} );
   }
   
-  # grab the first pending request or we're done
-  my ($request) = @{ISGA::UploadRequest->query( Status => 'Pending' )};
-  $request or exit(0);
+  &check_parameters(\%options);
+  my $request = ISGA::UploadRequest->new( Id => $options{upload_request} );
   
   # mark this request as being processed
   $request->edit( Status => 'Running' );
@@ -170,3 +169,13 @@ if ( $@ ) {
 
 
 
+sub check_parameters {
+
+  my ($options) = @_;
+  
+  if ( ! exists $options->{upload_request} ) {
+    print "--upload_request is a required parameter\n";
+    exit(1);
+  }
+
+}
