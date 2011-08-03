@@ -52,7 +52,9 @@ if( $options{help} ) {
 # jobs to skip
 my %skip;
 
-# check currently running scripts
+my $script_dir = ISGA::Site->getBinPath();
+
+# currently running scripts
 foreach ( @{ISGA::RunningScript->query()} ) {
 
     my $pid = $_->getPID;
@@ -70,7 +72,7 @@ foreach ( @{ISGA::RunningScript->query()} ) {
 # look for available run_evidence_downloads
 foreach ( @{ISGA::RunEvidenceDownload->query( Status => [ 'Pending', 'Failed' ] )} ) {
     
-    my $script = "./build_run_evidence_download.pl --run_evidence_download=$_";
+    my $script = "$script_dir/build_run_evidence_download.pl --run_evidence_download=$_";
 
     # don't run the script if it died oddly last time
     next if exists $skip{$script};
