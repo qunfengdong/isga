@@ -82,7 +82,7 @@ foreach ( @{ISGA::RunEvidenceDownload->query( Status => [ 'Pending', 'Failed' ] 
 }
 
 # look for available file downloads
-foreach ( @{ISGA::UploadRequest->query( Status => ['Pending', 'Failed'] )} ) {
+foreach ( @{ISGA::UploadRequest->query( Status => ['Pending'] )} ) {
 
   # build script
   my $script = "$script_dir/download_file_to_repository.pl --upload_request=$_";
