@@ -53,7 +53,7 @@ sub isValidUploadURL {
 
   # make a head request to the link
   my $ua = LWP::UserAgent->new();
-  my $r = $ua->head($value);
+  my $r = $ua->head($uri);
 
   # make sure file is available
   $r->is_success() or return "Unable to follow the supplied link";
