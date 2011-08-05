@@ -1,7 +1,7 @@
 <%args> # -*- cperl -*-
  $file_resource => undef
- $run_cluster => undef
  $genome_feature => undef
+ $run_evidence_download => undef
  $upstream => 0
  $downstream => 0
 </%args>
@@ -15,25 +15,29 @@ my $account = ISGA::Login->getAccount or X::User::Denied::RequiresLogin->throw()
 my $fh;
 
 if ( $file_resource ) {
-  ISGA::Login->getAccount->mayReadFileResource($file_resource) or X::User::Denied->throw();
-  open $fh, '<', $file_resource->getPath();
 
-} elsif ( $run_cluster ) {
+  # permission check
+  $account->mayReadFileResource($file_resource) or X::User::Denied->throw();
 
-  my $run = $run_cluster->getRun;
-  $account->mayRead($run) or X::User::Denied->throw();
+  my $name = $file_resource->getName;
 
-  $m->clear_buffer();
+  $r->headers_out->set('X-Sendfile' => $file_resource->getPath());
+  $r->headers_out->set('Content-Type' => 'application/octent-stream');
+  $r->headers_out->set('Content-Disposition' => "attachment; filename=\"$name\"");
+  return();
 
-  # dirty hack to close the session before we start the download to lessen the chance of session deadlock
-  $ISGA::WebApp->clean_session();
-  undef $ISGA::WebApp->{__wrapper__};
-  undef $ISGA::WebApp;
+# take on the new evidence thingy
+} elsif ( $run_evidence_download ) {
 
-  # build and stream the tar file
-  $run_cluster->downloadEvidence( sub { $m->print($_[0]) } );
+  # permission check
+  $account->mayRead($run_evidence_download->getRun) or X::User::Denied->throw();
 
-  $m->abort();
+  my $name = $run_evidence_download->getFileName;
+
+  $r->headers_out->set('X-Sendfile' => $run_evidence_download->getFilePath);
+  $r->headers_out->set('Content-Type' => 'application/octent-stream');
+  $r->headers_out->set('Content-Disposition' => "attachment; filename=\"$name\"");
+  return();
 
 } elsif ( $genome_feature ) {
 
@@ -46,29 +50,14 @@ if ( $file_resource ) {
 	  $locus = $genome_feature->getmRNA->getGene->getLocus;
 	  $residues = $genome_feature->getResidues;
   }
-  my $contents = ">$locus\n$residues";
 
-  open $fh, "<", \$contents;
+  $m->clear_buffer();
+
+  $m->print(">$locus\n$residues");
+  $m->flush_buffer();
+  $m->abort();
 
 } else { X::User->throw( message => 'You have not supplied a resource to download'); }
-
-$m->clear_buffer();
-
-# decide on how much to read in a go
-my $size = 1024 * 1024 * 4;
-my $buf;
-
-# this idiom is copied from File::Copy
-for (;;) {
-  
-  my $r;
-  defined($r = read($fh, $buf, $size)) or X::API->throw( message => "error reading filehandler: $!" );
-  last unless $r;
-  
-  $m->print($buf);
-  $m->flush_buffer();
-}
-$m->abort();
 
 </%perl>
 

@@ -51,9 +51,12 @@ sub isValidUploadURL {
   (defined $scheme and exists $valid_schemes{$scheme}) or
   return "URL is not a valid web or ftp link.";
 
+  # check for FTP
+  $scheme eq 'ftp' and $ENV{FTP_PASSIVE} = 1;
+
   # make a head request to the link
   my $ua = LWP::UserAgent->new();
-  my $r = $ua->head($value);
+  my $r = $ua->head($uri);
 
   # make sure file is available
   $r->is_success() or return "Unable to follow the supplied link";

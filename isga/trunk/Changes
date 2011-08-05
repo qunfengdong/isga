@@ -9,6 +9,7 @@ Revision history for ISGA
 	* Added jeditable javascript library for edit-in-place functionality
 	* Replaced jtip popup tool with qtip2 for finer control over how data is accessed
 	* Removed 5 minute autorefresh for job page
+	* Changed evidence results download to not resolve issue with tied up apache processes
 
 	API CHANGES
 
@@ -24,6 +25,11 @@ Revision history for ISGA
 	  deadlock during long downloads.
 	* Added additional FASTA header checks.  We now check for duplicate headers, 
 	  headers which begin with numbers and empty fasta sequences.
+
+	SCRIPT CHANGES
+	
+	* Added script_runner.pl to execute long running tasks that 
+	* Added script for assembling evidence result tarball
 
 
 	BUG FIXES

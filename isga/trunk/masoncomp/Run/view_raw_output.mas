@@ -43,7 +43,7 @@ $('.downloadRemove').livequery('click', function(){
 %   my ($red) = @{ISGA::RunEvidenceDownload->query( Run => $run )};
 %   if ( $red and $red->getStatus eq 'Finished' ) { # The file is available to download
 
-<p>You can download it. Let's make a link.</p>
+<p><a href="/Download/<% $red->getFileName %>?run_evidence_download=<% $red %>">Download Raw Output</a>.</p>
 
 %   } elsif ( $red ) {
 

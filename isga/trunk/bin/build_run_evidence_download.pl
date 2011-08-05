@@ -66,7 +66,7 @@ eval {
 
   my $run = $red->getRun();
 
-  $run->buildEvidenceFile();
+  $red->buildEvidenceFile();
 
   # send email
   ISGA::RunNotification->create( 
@@ -102,7 +102,7 @@ sub check_parameters {
 
   my ($options) = @_;
   
-  if ( ! exists $options{run_evidence_download} ) {
+  if ( ! exists $options->{run_evidence_download} ) {
     print "--run_evidence_download is a required parameter\n";
     exit(1);
   }
