@@ -42,6 +42,10 @@ Returns the error
 
 Returns the path to the ISGA include directory.
 
+=item public string getBinPath();
+
+Returns the path to the ISGA csripts.
+
 =item public string getMasonComponentRoot();
 
 Returns the path to the mason component root.
@@ -54,6 +58,7 @@ Returns the string to be used as the from header in email sent by the system.
 
 Returns the name of this ISGA server. Used in communication.
 
+
 =cut
 #------------------------------------------------------------------------
 sub getBaseURI { return "___base_uri___"; }
@@ -61,6 +66,8 @@ sub getBaseURI { return "___base_uri___"; }
 sub getErrorNotificationEmail { return ___ERRORNOTIFICATIONEMAIL___; }
 
 sub getIncludePath { return '___package_include___'; }
+
+sub getBinPath { return '___package_bin___'; }
 
 sub getMasonComponentRoot { return '___package_masoncomp___'; }
 
