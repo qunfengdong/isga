@@ -74,12 +74,15 @@ my $account = $request->getAccount();
 eval {
   
   ISGA::DB->begin_work();
-  
-  # retrieve the file
+
+  my $uri = URI->new($request->getURL());
+  $uri->scheme eq 'ftp' and $ENV{FTP_PASSIVE} = 1;
+
+  # make a head request to the link
   my $ua = LWP::UserAgent->new();
-  my $req = HTTP::Request->new( GET => $request->getURL() );
+  my $r = $ua->head($uri);
   my $bytes_received = 0;
-    
+
   # create temporary file name
   my $tmp_fh = File::Temp::tempfile();
   
@@ -90,9 +93,9 @@ eval {
     
     print $tmp_fh $chunk;
   }
-  
-  my $res = $ua->request($req, \&callback, 1024 * 16);
-  
+
+  my $res = $ua->get($uri, ':content_cb' => \&callback, ':read_size_hint' => 1024 & 16 ); 
+
   my $file_name = $request->getUserName();
   
   if ( $res->is_success ) {
