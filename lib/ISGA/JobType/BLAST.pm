@@ -45,22 +45,38 @@ sub buildForm {
   my $nuc_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ), Status => ISGA::PipelineStatus->new( Name => 'Published' ) );
   my $prot_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ), Status => ISGA::PipelineStatus->new( Name => 'Published' ) );
 
+
   push @db_groups,
     (
      {
-      LABEL => 'Global Nucleotide Databases',
+      LABEL => 'General Nucleotide Databases',
       templ => 'group',
-      OPTION => [map {$_->getName} @$nuc_ref],
-      OPT_VAL => [map {$_->getId} @$nuc_ref]
+      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getName : () } @$nuc_ref],
+      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getId : () } @$nuc_ref]
      },
      {
-      LABEL => 'Global Protein Databases',
+      LABEL => 'General Protein Databases',
       templ => 'group',
-      OPTION => [map {$_->getName} @$prot_ref],
-      OPT_VAL => [map {$_->getId} @$prot_ref]
+      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getName : () } @$prot_ref],
+      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getId : () } @$prot_ref]
      },
     );
-  
+
+  push @db_groups,
+    (
+     {
+      LABEL => 'Organism Nucleotide Databases',
+      templ => 'group',
+      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getName : () } @$nuc_ref],
+      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getId : () } @$nuc_ref]
+     },
+     {
+      LABEL => 'Organism Protein Databases',
+      templ => 'group',
+      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getName : () } @$prot_ref],
+      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getId : () } @$prot_ref]
+     },
+    );
   my $account = ISGA::Login->getAccount;
   my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', 
 			       OrderBy => 'CreatedAt', IsHidden => 0 );
