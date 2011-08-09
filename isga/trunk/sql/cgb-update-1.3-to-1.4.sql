@@ -107,6 +107,10 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
          'Reference information for Anopheles gambiae',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Taeniopygia guttata', '/nfs/bio/db/Taeniopygia_guttata',
+         'Reference information for Taeniopygia guttata',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencereleases for referencedb
@@ -151,6 +155,9 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Anopheles gambiae'),
          'AgamP3.6', '07-13-2011', 'AgamP3.6');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Taeniopygia guttata'),
+         '3.2.4', '03-02-2009', '3.2.4');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -185,7 +192,7 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
-    '/some/fake/path');
+    'bsseeker/reference_genome/');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
@@ -213,7 +220,7 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='Tair10'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
-    '/some/fake/path');
+    'bsseeker/reference_genome/');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
@@ -241,7 +248,7 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='5.31'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
-    '/some/fake/path');
+    'bsseeker/reference_genome/');
 
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
@@ -270,7 +277,7 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='WS225'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
-    '/some/fake/path');
+    'bsseeker/reference_genome/');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
@@ -286,19 +293,19 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/FrozenGeneCatalog20110204.proteins.fasta');
 
-INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
-  VALUES (
-    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
-    '/some/fake/path');
+-- INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+--   VALUES (
+--     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
+--     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
+--     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+--     '/some/fake/path');
 
-INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
-  VALUES (
-    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
-    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
-    '/some/fake/path');
+-- INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+--   VALUES (
+--     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
+--     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
+--     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+--     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
@@ -355,6 +362,13 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='AgamP3.6'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/peptides/agambiae.PEPTIDES-AgamP3.6.fa');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='3.2.4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/rna/rna.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
