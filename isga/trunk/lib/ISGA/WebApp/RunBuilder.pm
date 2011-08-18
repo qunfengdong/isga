@@ -56,9 +56,13 @@ sub RunBuilder::Create {
       X::User::Denied->throw( error => 'You do not have permission to execute this pipeline.' );
   }
 
-
+  # make sure pipeline status is something we can run
   $pipeline->getStatus->isAvailable or
     X::User::Denied->throw( error => "This pipeline is no longer available to be run. A newer version of the pipeline may be available." );
+
+  # confirm availability
+  ISGA::PipelineConfiguration->value('access_permitted', Pipeline => $pipeline->getGlobalTemplate, UserClass => $account->getUserClass) or
+      X::User::Denied->throw( error => 'Your user class is not able to run this pipeline.' );
 
   if (my ($started_builder) = @{ISGA::RunBuilder->query( Pipeline => $pipeline, 
                                                          CreatedBy => $account )} ){

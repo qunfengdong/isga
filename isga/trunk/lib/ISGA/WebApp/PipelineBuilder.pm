@@ -49,6 +49,14 @@ sub PipelineBuilder::Create {
   $pipeline->hasPipelineBuilder or
     X::User::Denied->throw( error => "This pipeline has no customizable features or parameters.  Please run this pipeline using default settings." );
 
+  # make sure pipeline status is something we can run
+  $pipeline->getStatus->isAvailable or
+    X::User::Denied->throw( error => "This pipeline is no longer available to be configured. A newer version of the pipeline may be available." );
+
+  # confirm availability
+  ISGA::PipelineConfiguration->value('access_permitted', Pipeline => $pipeline->getGlobalTemplate, UserClass => $account->getUserClass) or
+      X::User::Denied->throw( error => 'Your user class is not able to configure this pipeline.' );
+
 
   if (my @started_builder = @{ISGA::PipelineBuilder->query( Pipeline => $pipeline,
                                                             CreatedBy => $account,
