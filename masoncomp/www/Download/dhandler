@@ -20,6 +20,7 @@ if ( $file_resource ) {
   $account->mayReadFileResource($file_resource) or X::User::Denied->throw();
 
   my $name = $file_resource->getUserName;
+  $file_resource->isa('ISGA::FileCollection') and $name .= '.tar.gz';
 
   $r->headers_out->set('X-Sendfile' => $file_resource->getPath());
   $r->headers_out->set('Content-Type' => 'application/octet-stream');
