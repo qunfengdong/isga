@@ -119,6 +119,10 @@ sub initializePipelineConfiguration {
   ISGA::PipelineConfiguration->create( 
 				      Pipeline => $o, Value => '',
 				      Variable => ISGA::ConfigurationVariable->new( Name => 'ergatis_project_name' ));
+
+  ISGA::PipelineConfiguration->create( 
+				      Pipeline => $o, Value => 1,
+				      Variable => ISGA::ConfigurationVariable->new( Name => 'access_permitted' ));
   
 }
 

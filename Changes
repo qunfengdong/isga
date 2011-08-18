@@ -30,6 +30,7 @@ Revision history for ISGA
 	
 	* Added script_runner.pl to execute long running tasks that 
 	* Added script for assembling evidence result tarball
+	* Added support for retrieving files to ISGA from external FTP sites
 
 
 	BUG FIXES
