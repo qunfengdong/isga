@@ -1,6 +1,6 @@
 Revision history for ISGA
 
-1.4.1	Jun 1 2011
+1.4.1	Sep 10 2011
 
 	WEB CHANGES
 
@@ -31,7 +31,6 @@ Revision history for ISGA
 	* Added script_runner.pl to execute long running tasks that 
 	* Added script for assembling evidence result tarball
 	* Added support for retrieving files to ISGA from external FTP sites
-
 
 	BUG FIXES
 
