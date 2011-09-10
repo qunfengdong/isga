@@ -1,0 +1,17 @@
+<%args>
+ $run_builder
+ $form
+</%args>
+<sys:style type="text/css" media="screen">
+  @import "/include/css/extra-wide-modal.css";
+</sys:style>
+<h1>Submission Builder: Provide Input Data</h1>
+<%perl>
+if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
+  my $plugin = $run_builder->getWebPluginDirectory;
+  $m->comp("/plugin/$plugin/walkthrough-select-input-list.mas");
+}
+</%perl>
+
+<% $form->get %>
+<& right_menu.mas, run_builder => $run_builder &>

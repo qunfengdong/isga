@@ -1,0 +1,86 @@
+<%args>
+ $pipeline => undef
+ $user_class => undef
+</%args>
+
+<& /site/right_menu_js.mas &>
+
+
+<sys:rightmenu>
+<ul>
+
+% if ( $pipeline ) {
+
+%   my $request = $m->request_comp();
+
+%   my $uc = $user_class ? "&user_class=$user_class" : '';
+ <li class="title">Configuration Tools</li>
+%   if ( $request->name eq 'View' ) {
+ <li class="rmbutton pointer"><a href="/PipelineConfiguration/Edit?pipeline=<% $pipeline %><% $uc %>">Edit</a></li>
+ <li class="pointer" onclick="window.location='/PipelineConfiguration/Edit?pipeline=<% $pipeline %><% $uc %>"><p>Edit the current configuration.</p></li>
+%   }
+% }
+ <li class="title">Select Pipeline</li>
+
+ <span>
+ <form action="/PipelineConfiguration/View" name="pipeline">
+% if ( $user_class ) {
+  <input type="hidden" name="user_class" value="<% $user_class %>"></input>
+% }
+% my @pipes = @{ISGA::GlobalPipeline->query( OrderBy => 'Name' )};
+
+ <li>
+ <p>
+ <select name="pipeline" onChange="document.forms['pipeline'].submit()">
+% foreach ( @pipes ) {
+  <option \
+%   if ( $pipeline and ref($pipeline) eq ref($_) and $pipeline == $_ ) {
+  selected="selected" \
+%   }
+  value="<% $_ %>"><% $_->getLabel %></option>
+% }
+% if ( ! $pipeline ) {
+ <option value="0" selected="selected">Select a Pipeline</option>
+% }
+ </select>
+ </p>
+ </li>
+ </form>
+ </span>
+
+ <li class="title">Select User Class</li>
+
+
+ <span>
+ <form action="/PipelineConfiguration/View" name="userclass">
+  <input type="hidden" name="pipeline" value="<% $pipeline %>"></input>
+  
+% my @uc = @{ISGA::UserClass->query( OrderBy => 'Name' )};
+
+ <li>
+ <p>
+ <select name="user_class" onChange="document.forms['userclass'].submit()">
+% foreach ( @uc ) {
+  <option \
+%   if ( $user_class and $user_class == $_ ) {
+  selected="selected" \
+%   }
+  value="<% $_ %>"><% $_->getName %></option>
+% }
+  <option \
+% if ( ! $user_class ) {
+  selected="selected" \
+% }
+  value="0">None (Global Settings)</option>
+ </select>
+ </p>
+ </li>
+ </form>
+ </span>
+
+<& /Configuration/right_menu.mas &>
+
+
+</ul>
+
+</sys:rightmenu>
