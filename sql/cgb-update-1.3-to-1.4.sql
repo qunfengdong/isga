@@ -106,11 +106,19 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('Anopheles gambiae', '/nfs/bio/db/Anopheles_gambiae',
          'Reference information for Anopheles gambiae',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
-
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
   VALUES('Taeniopygia guttata', '/nfs/bio/db/Taeniopygia_guttata',
          'Reference information for Taeniopygia guttata',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Vitis vinifera', '/nfs/bio/db/Vitis_vinifera',
+         'Reference information for Vitis vinifera',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('Populus trichocarpa', '/nfs/bio/db/Populus_trichocarpa',
+         'Reference information for Populus trichocarpa',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencereleases for referencedb
@@ -158,6 +166,12 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Taeniopygia guttata'),
          '3.2.4', '03-02-2009', '3.2.4');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Vitis vinifera'),
+         'v7.0_145', '03-31-2011', 'v7.0_145');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Populus trichocarpa'),
+         'v7.0_156', '03-31-2011', 'v7.0_156');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -369,6 +383,44 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='3.2.4'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/rna/rna.fa');
+
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v7.0_145'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/protein/Vvinifera_145_peptide.fa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v7.0_145'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/cds/Vvinifera_145_cds.fa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v7.0_145'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/genome/Vvinifera_145.fa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v7.0_156'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/protein/Ptrichocarpa_156_peptide.fa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v7.0_156'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/cds/Ptrichocarpa_156_cds.fa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v7.0_156'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'blast/genome/Ptrichocarpa_156.fa');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
