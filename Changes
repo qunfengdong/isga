@@ -2,6 +2,11 @@ Revision history for ISGA
 
 1.4.2	Sep 11 2011
 
+	WEB CHANGES
+
+	* Now print "No descripion provided." in tooltip if a run does not have a
+	  user supplied description.
+
 	BUG FIXES
 
 	* Removed some housekeeping files from distribution
