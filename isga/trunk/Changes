@@ -33,6 +33,8 @@ Revision history for ISGA
 	  deadlock during long downloads.
 	* Added additional FASTA header checks.  We now check for duplicate headers, 
 	  headers which begin with numbers and empty fasta sequences.
+	* Added ReferenceDB to store our reference databases in a standard fashion 
+	  eliminating the need for hard-coded paths.
 
 	SCRIPT CHANGES
 	
