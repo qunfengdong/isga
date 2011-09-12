@@ -53,7 +53,7 @@ $('.downloadRemove').livequery('click', function(){
 
 <a href="/submit/Run/BuildEvidenceDownload?run=<% $run %>">Prepare raw output for download.</a> 
 
-<p>This process can be quite slow, so we buid the file on the server and send you notification via email when it is available for download.</p>
+<p>This process can be quite slow, so we build the file on the server and send you notification via email when it is available for download.</p>
 
 %   } else {
 
