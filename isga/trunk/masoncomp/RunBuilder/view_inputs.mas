@@ -16,7 +16,7 @@ use List::Util qw(min);
 
 <p>The following files will be used as input for this run. You can
 select new input files using the buttons below, or upload a new file
-using the tool to the left.</p>
+using the tool to the right.</p>
 
 % my @required = @{$run_builder->getRequiredInputs};
 % my @optional = @{$run_builder->getOptionalInputs};
