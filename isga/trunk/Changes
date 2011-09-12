@@ -1,5 +1,13 @@
 Revision history for ISGA
 
+1.4.2	Sep 11 2011
+
+	BUG FIXES
+
+	* Removed some housekeeping files from distribution
+ 	* Added databases subdir to repository initialisation script.
+	* Added SQL constraint to prevent duplicate pipeline configuration entries.
+
 1.4.1	Sep 10 2011
 
 	WEB CHANGES

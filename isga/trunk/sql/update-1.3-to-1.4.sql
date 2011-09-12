@@ -152,6 +152,10 @@ INSERT INTO pipelineconfiguration ( configurationvariable_id, pipeline_id, pipel
   SELECT configurationvariable_id, pipeline_id, 'PipelineConfiguration', 1 FROM configurationvariable, globalpipeline
             WHERE configurationvariable_name = 'access_permitted' AND configurationvariable_type = 'PipelineConfiguration';
 
+
+-- make sure ocnfigurations are unique
+ALTER TABLE pipelineconfiguration ADD CONSTRAINT pipelineconfiguration_key2 UNIQUE ( configurationvariable_id, pipeline_id, userclass_id );
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Remove pipeline_is_installed config var
