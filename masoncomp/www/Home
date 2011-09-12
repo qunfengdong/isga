@@ -5,8 +5,8 @@
 <h1>Integrative Services for Genomic Analysis</h1>
 <p>
 Welcome to the Integrative Services for Genomic Analysis. You can either
-begin <a class="normal" href="/Pipeline/View?pipeline=1">performing your analysis</a> 
-or look at <a class="normal" href="/Help/Tutorial">our tutorial</a>.
+choose a pipeline and begin <a class="normal" href="/Pipeline/List">performing 
+your analysis</a> or look at <a class="normal" href="/Help/Tutorial">our tutorial</a>.
 Please send any feedback to <a class="normal" href="mailto:<% $support_email %>"><% $support_email %></a>
 </p>
 

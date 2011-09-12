@@ -30,6 +30,7 @@ name for collections.
 
     my $self = shift;
     if ($self->getRelease->getReference->getTag->getName eq 'Organism'){
+      return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease . ' (Assembled Genome)' if ($self->getPath =~ /genome/o);
       return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease;
     }else{
       return $self->getRelease->getReference->getName. ' ' . $self->getRelease->getVersion;
