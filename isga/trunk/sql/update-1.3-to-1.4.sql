@@ -170,3 +170,11 @@ DELETE FROM configurationvariable WHERE configurationvariable_name = 'pipeline_i
 -------------------------------------------------------------------
 UPDATE usecase SET usecase_requireslogin=FALSE WHERE usecase_name='/Pipeline/ClusterOptions';
 UPDATE usecase SET usecase_requireslogin=FALSE WHERE usecase_name='/Pipeline/ViewParameters';
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- add AboutPipeline page
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/Pipeline/AboutPipeline', 'About Pipeline', FALSE, '2columnright');
