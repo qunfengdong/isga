@@ -80,6 +80,7 @@ Your user class <strong><% $account->getUserClass->getName %></strong> is not al
 <span>
 
 <li class="rmbutton"><a href="View?pipeline=<% $pipeline %>">View Pipeline</a></li>
+<li class="rmbutton"><a href="AboutPipeline?pipeline=<% $pipeline %>">About Pipeline</a></li>
 <li class="rmbutton"><a href="ViewInputsOutputs?pipeline=<% $pipeline %>">View Pipeline Inputs and Outputs</a></li>
 
 % my @versions = @{ISGA::GlobalPipeline->query( Status => ISGA::PipelineStatus->new( Name => 'Available' ), Name => $pipeline->getName )};
