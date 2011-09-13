@@ -145,16 +145,16 @@ isn't tagged to be stored indefinitely.
 
     my $self = shift;
 
-    my $id = $run->getErgatisKey;
+    my $id = $self->getErgatisKey;
 
     foreach ( @{ISGA::RunCluster->query( Run => $self )} ) {
       $_->purge();
     }
 
     # remove the pipeline entry in the Ergatis runtime
-    remove_tree( $run->getErgatisRuntimeDirectory . "/$id" );
+    remove_tree( $self->getErgatisRuntimeDirectory . "/$id" );
     
     # nuke raw evidence download if it exists
-    my ($red) = @{ISGA::RunEvidenceDownload->query( Run => $run )};
+    my ($red) = @{ISGA::RunEvidenceDownload->query( Run => $self )};
     $red and $red->delete();
   }
