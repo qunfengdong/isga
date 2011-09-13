@@ -2,6 +2,26 @@
 
 #------------------------------------------------------------------------
 
+=item void delete();
+
+Wrapper around delete button to make sure that if a file has been
+created that it is removed.
+
+=cut 
+#------------------------------------------------------------------------
+sub delete {
+
+  my $self = shift;
+
+  my $path = $self->getFilePath();
+
+  -f $path and unlink($path);
+
+  $self->NEXT::delete();
+}
+
+#------------------------------------------------------------------------
+
 =item void buildEvidenceFile();
 
 Generates a gzippef file containing the evidence output for the run.
