@@ -131,3 +131,30 @@ outputs.
       $e->rethrow();
     }  
   }
+
+#------------------------------------------------------------------------
+
+=item public void purge();
+
+This method will remove the evidence level results and other data that
+isn't tagged to be stored indefinitely.
+
+=cut
+#------------------------------------------------------------------------
+  sub purge {
+
+    my $self = shift;
+
+    my $id = $run->getErgatisKey;
+
+    foreach ( @{ISGA::RunCluster->query( Run => $self )} ) {
+      $_->purge();
+    }
+
+    # remove the pipeline entry in the Ergatis runtime
+    remove_tree( $run->getErgatisRuntimeDirectory . "/$id" );
+    
+    # nuke raw evidence download if it exists
+    my ($red) = @{ISGA::RunEvidenceDownload->query( Run => $run )};
+    $red and $red->delete();
+  }

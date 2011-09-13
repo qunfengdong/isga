@@ -41,6 +41,25 @@ Returns the name of this components config file.
 
 #------------------------------------------------------------------------
 
+=item public string getErgatisLabel();
+
+Returns the label portion of the Ergatis component.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getErgatisLabel {
+
+     my $self = shift;
+
+     my $e_name = $self->getErgatisName;
+
+     $e_name =~ /\.(\w+)$/ or X::API->throw( message => "Can't extract component label from $e_name" );
+
+     return $1;
+   }
+
+#------------------------------------------------------------------------
+
 =item public string getDecoratedInputValue(ClusterInput, string);
 
 Returns the specified cluster input value modified to meet any
