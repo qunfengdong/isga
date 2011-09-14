@@ -49,6 +49,7 @@ use ISGA;
 use Getopt::Long qw(:config no_ignore_case no_auto_abbrev pass_through);
 use Pod::Usage;
 
+use List::Util qw(max);
 use List::MoreUtils qw(any);
 
 my %options = ();
@@ -70,39 +71,55 @@ my $purge_count = 0;
 my $purge_limit = undef;
 my $purge_cutoff = 0;
 
+my $today = ISGA::Date->new();
+
 &check_parameters(\%options);
 
 foreach my $run ( @{ISGA::Run->query( RawDataStatus => 'Available', OrderBy => 'FinishedAt' )} ) {
-
+  
   # stop if we're over our limit
   last if defined($purge_limit) and $purge_count >= $purge_limit;
 
+  # check to see if we'll purge this one based on supplied cutoff or user_class cutoff 
+  my $user_class = $run->getCreatedBy->getUserClass;
+  my $run_date = $run->getFinishedAt || $run->getCreatedAt;
+  my $duration = max( $purge_cutoff, $user_class_cutoff{ $user_class } );
+  my $expire_date = $run_date->getDate + "${duration}D";
+  
+  # skip this run 
+  next if $expire_date > $today;
 
+  
+  # start transaction
+  eval {
+    
+    ISGA::DB->begin_work();
+        
+    $run->purge();
+    
+    # delete notification request
+    ISGA::DB->commit();
+    
+  };
+  
+  
+  # if things failed
+  if ( $@ ) {
+    ISGA::DB->rollback();
+    
+    my $e = $@;
+    
+    # clean up
+    
+    X::Dropped->throw( error => $e);
+  }
+  
+  
   # count purged
   $purge_count++;
 
 }
 
-# start transaction
-eval {
-  
-  ISGA::DB->begin_work();
-
-  # delete notification request
-  ISGA::DB->commit();
-
-};
-
-# if things failed
-if ( $@ ) {
-  ISGA::DB->rollback();
-  
-  my $e = $@;
-
-  # clean up
-
-  X::Dropped->throw( error => $e);
-}
 
 sub check_parameters {
 
