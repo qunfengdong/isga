@@ -20,6 +20,7 @@ package ISGA::JobType::BLAST;
 use base 'ISGA::Job';
 use File::Basename;
 use File::Copy;
+use List::Util qw(min);
 
 {
 
@@ -153,6 +154,11 @@ sub buildForm {
   }
 
   my @blast_program = ( 'blastn', 'blastp', 'blastx', 'tblastn');
+  my @files =(['--- Not Selected ---', '']);
+  push @files,
+    sort { $a->[0] cmp $b->[0] }
+      map { [ $_->getUserName, $_ ] }
+        @{ISGA::File->query( CreatedBy => $account, Format => 'FASTA', IsHidden => 0 )};
 
   my @form_params =
   (
@@ -233,6 +239,16 @@ sub buildForm {
                     'templ' => 'upload'
                   },
                   {
+                   templ => 'select',
+                   NAME => 'associated_file',
+                   TITLE => 'Or select a previously associated file',
+                   SIZE  => min( scalar(@files), 8),
+                   OPTION => [map { $_->[0] } @files ],
+                   OPT_VAL => [map { $_->[1] } @files ],
+                   HINT => 'Do not highlight a file if you are uploading a file or pasting a sequnece in the text box',
+                   ERROR => ['Blast::checkUploadFile', 'Blast::sanityFastaChecks'],
+                  },
+                  {
                     'TITLE' => 'Email me when job completes',
                     'NAME' => 'notify_user',
                     'templ' => 'check',
@@ -266,6 +282,7 @@ sub buildWebAppCommand {
 
         my $sequences = $form->get_input('query_sequence');
         my $upload = $webapp->apache_req->upload('upload_file');
+        my $file =  ISGA::FileResource->new( Id => $form->get_input('associated_file') ) if ($form->get_input('associated_file') and $form->get_input('associated_file') ne '');
 
         ## Hardcoded paths.
         my $files_path = "___tmp_file_directory___/workbench/" . $job->getType->getName . "/";
@@ -312,6 +329,7 @@ sub buildWebAppCommand {
         my $database = join(' ', @database_array);
 
         my %args = ( );
+        $file and $args{File} = $file;
         $upload and $args{Upload} = $upload->fh;
         $sequences and $args{String} = $sequences;
         $args{Type} = $blast_program =~ /(^blastp$|^tblastn$)/ ? "Amino Acid Sequence" : "Nucleotide Sequence";

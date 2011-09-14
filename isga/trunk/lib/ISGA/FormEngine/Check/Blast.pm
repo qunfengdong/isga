@@ -37,10 +37,10 @@ Checks to see if an input sequence was supplied.
 #------------------------------------------------------------------------
 sub checkUploadFile {
   my ($value, $form) = @_;
-  my $sequence = $form->get_input('query_sequence') || $form->get_input('upload_file');
+  my $sequence = $form->get_input('query_sequence') || $form->get_input('upload_file') || $form->get_input('associated_file');
 
   return 'Query sequence required.' if($sequence eq '');
-
+  return 'Do not select a previously associated file  if you are uploading a file or pasting a sequence in the text box.' if ($form->get_input('associated_file') and ($form->get_input('query_sequence') || $form->get_input('upload_file')));
   return '';
 }
 
@@ -189,8 +189,19 @@ sub sanityFastaChecks {
   my ($value, $form) = @_;
   my $blast_program = $form->get_input('blast_program');
   my $sequence = $form->get_input('query_sequence');
-  if(not $sequence){
 
+  if ($form->get_input('associated_file') and $form->get_input('associated_file') ne ''){
+    my $file =  ISGA::FileResource->new( Id => $form->get_input('associated_file') );
+    my $type = $file->getType->getName;
+    if($type eq 'Amino Acid Sequence' or $type eq 'Translated ORF Sequence' or $type eq 'Translated CDS'){
+       return '<br>'.ucfirst($blast_program).' is not compatible with the provided input sequence type.  '.ucfirst($blast_program).' needs a nucleotide sequence as input.' if($blast_program ne 'blastp' && $blast_program ne 'tblastn');
+    } else {
+       return '<br>'.ucfirst($blast_program).' is not compatible with the provided input sequence type.  '.ucfirst($blast_program).' needs an amino acid sequence as input.' if($blast_program ne 'blastn' && $blast_program ne 'blastx' && $blast_program ne 'tblastx');
+    }
+    return '';
+  }
+
+  if(not $sequence){
     my $upload = $ISGA::APR->upload('upload_file');
     return '' if( $upload eq '' );
     my $fh = $upload->fh;
