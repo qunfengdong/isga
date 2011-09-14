@@ -6,6 +6,8 @@ Revision history for ISGA
 
 	* Now print "No descripion provided." in tooltip if a run does not have a
 	  user supplied description.
+	* Minor text corrections and updates
+	* Updated raw output display to use new availability scheme.
 
 	BUG FIXES
 
@@ -16,6 +18,13 @@ Revision history for ISGA
 	API CHANGES
 
 	* Now allow users to select a previously associated file for BLAST workbench.
+	* Removed 'Tagged for Deletion' as a raw data status.
+
+	SCRIPT CHANGES
+
+	* Added purge_run_evidence.pl script for removing expired run results in Ergatis
+	  and ISGA.
+	* Removed update_raw_output_status.pl as it is no longer needed
 
 1.4.1	Sep 10 2011
 

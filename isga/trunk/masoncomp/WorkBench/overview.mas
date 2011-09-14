@@ -41,17 +41,18 @@
 <p>You must log in to use the ISGA Toolbox.</p>
 %}
 
-<h2>Other Useful Tools at The Center for Genomics and Bioinformatics</h2>
+<h3>Other Tools Developed at The Center for Genomics and Bioinformatics</h3>
 <ul>
-<li><a href="http://cgcv.cgb.indiana.edu/cgi-bin/index.cgi">Comparative Gene Cluster Visualization Tool</a></li>
-<li><a href="http://bioportal.cgb.indiana.edu/bov">BLAST Output Visualization Tool</a></li>
+<li><a href="http://cas-bioinfo.cas.unt.edu/cgi-bin/cgcv/index.cgi">Comparative Gene Cluster Visualization Tool</a></li>
+<li><a href="http://cas-bioinfo.cas.unt.edu/cgi-bin/BOV/index.cgi">BLAST Output Visualization Tool</a></li>
 <li><a href="http://richest.cgb.indiana.edu">RICHEST</a></li>
 <li><a href="http://webgbrowse.cgb.indiana.edu">WebGBrowse</a></li>
 </ul>
 
-<h2>External Resources</h2>
+<h3>External Resources</h3>
 <ul>
 <li><a href="http://ergatis.sourceforge.net/">Ergatis</a></li>
+<li><a href="http://clovr.org/">CloVR</a></li>
 <li><a href="http://www.jcvi.org/cms/research/projects/annotation-service/overview/">JCVI Annotation Service</a></li>
 <li><a href="http://cmr.jcvi.org/cgi-bin/CMR/CmrHomePage.cgi">Comprehensive Microbial Resource</a></li>
 <li><a href="http://img.jgi.doe.gov/">IMG</a></li>

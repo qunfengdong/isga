@@ -5,6 +5,24 @@ use File::Basename;
 
 #------------------------------------------------------------------------
 
+=item public Date getEvidenceExpirationDate()
+
+Returns the day on which the evidence portion of the run output will expire.
+
+=cut
+#------------------------------------------------------------------------
+  sub getEvidenceExpirationDate {
+
+    my $self = shift;
+
+    my $uc = $self->getCreatedBy->getUserClass();
+    my $raw_data_persist = ISGA::UserClassConfiguration->value('raw_data_retention', UserClass => $uc);
+    my $cutoff_date = $self->getFinishedAt || $self->getCreatedAt;
+    return $cutoff_date->getDate + "${raw_data_persist}D";
+  }
+
+#------------------------------------------------------------------------
+
 =item public string getErgatisPipelineXML();
 
 Returns the path to the Ergatis pipeline.xml file for this run.
