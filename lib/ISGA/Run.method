@@ -1,5 +1,8 @@
 # -*- cperl -*-
 
+use File::Path qw( remove_tree );
+
+
 #------------------------------------------------------------------------
 
 =item PRIVATE void _initializeOutputs(RunBuilder $rb);
@@ -152,7 +155,7 @@ isn't tagged to be stored indefinitely.
     }
 
     # remove the pipeline entry in the Ergatis runtime
-    remove_tree( $self->getErgatisRuntimeDirectory . "/$id" );
+    remove_tree( $self->getType->getErgatisRuntimeDirectory . "/$id" );
     
     # nuke raw evidence download if it exists
     my ($red) = @{ISGA::RunEvidenceDownload->query( Run => $self )};

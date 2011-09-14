@@ -56,8 +56,8 @@ my %options = ();
 
 my $result = GetOptions (\%options,
 			 'all',
-			 'count?i',
-			 'cutoff?i',
+			 'count:i',
+			 'cutoff:i',
 			 'help|h') || pod2usage();
 
 ## display documentation
@@ -139,7 +139,7 @@ sub check_parameters {
     $purge_cutoff = $options->{cutoff};
   }
 
-  print "You must supply exactly one parameter." if $opt_count != 1;
+  die "You must supply exactly one parameter.\n" if $opt_count != 1;
 }
 
 
