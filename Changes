@@ -13,6 +13,10 @@ Revision history for ISGA
  	* Added databases subdir to repository initialisation script.
 	* Added SQL constraint to prevent duplicate pipeline configuration entries.
 
+	API CHANGES
+
+	* Now allow users to select a previously associated file for BLAST workbench.
+
 1.4.1	Sep 10 2011
 
 	WEB CHANGES
