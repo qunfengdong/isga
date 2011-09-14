@@ -25,18 +25,15 @@ $('.downloadRemove').livequery('click', function(){
 
 % } else {
 
-%   if ( $raw_status eq 'Tagged for Deletion' ) {
+%   my $expires_on = $run->getEvidenceExpirationDate();
+
+%   if ( $expires_on <= ISGA::Date->new() ) {
 
 <p class="alert">As per our <a href="#">data retention policy</a>, your raw output may now be deleted at any time. If this data is important to you and you have not done so yet, please download the files immediately.</p>
 
 %   } else { # we are in the safe period
 
-% my $uc = $run->getCreatedBy->getUserClass();
-% my $raw_data_persist = ISGA::UserClassConfiguration->value('raw_data_retention', UserClass => $uc);
-% my $cutoff_date = $run->getFinishedAt || $run->getCreatedAt;
-% my $deadline = $cutoff_date->getDate + "${raw_data_persist}D";
-
-<p>As per our <a href="/Help/Policies#DataRetention">data retention policy</a>, your raw output may be deleted on or after <% $deadline->letter() %>. If this data is important to you, download these files before that date.</p>
+<p>As per our <a href="/Help/Policies#DataRetention">data retention policy</a>, your raw output may be deleted on or after <% $expires_on->letter() %>. If this data is important to you, download these files before that date.</p>
 
 %   }
 

@@ -35,7 +35,7 @@ function sectionHighlight() {
  <li class="rmbutton pointer"><a href="/Account/Request">Request an Account</a></li>
  <li class="pointer" onclick="window.location='/Account/Request'"><p> You first need to request an account before you can run or
  customize our pipelines. If you have already created an account, log
- in using the link at the top right of the window.</p><li>
+ in using the link at the top right of the window.</p></li>
 % } 
 
  <li class="rmbutton pointer"><a href="/Help/Introduction">Learn More</a></li>
