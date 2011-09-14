@@ -66,11 +66,22 @@ if( $options{help} ) {
 
 my %user_class_cutoff = &build_cutoff_lookup();
 
+my $purge_count = 0;
+my $purge_limit = undef;
+my $purge_cutoff = 0;
+
 &check_parameters(\%options);
 
+foreach my $run ( @{ISGA::Run->query( RawDataStatus => 'Available', OrderBy => 'FinishedAt' )} ) {
+
+  # stop if we're over our limit
+  last if defined($purge_limit) and $purge_count >= $purge_limit;
 
 
+  # count purged
+  $purge_count++;
 
+}
 
 # start transaction
 eval {
@@ -101,10 +112,15 @@ sub check_parameters {
   
   exists $options->{all} and $opt_count++;
 
-  exists $options->{count} and $opt_count++;
+  if ( exists $options->{count} ) {
+    $opt_count++;
+    $purge_limit = $options->{count};
+  }
 
-  # expand this check to make sure the cutoff isn't below all cutoffs
-  exists $options->{cutoff} and $opt_count++;
+  if ( exists $options->{cutoff} ) {
+    $opt_count++;
+    $purge_cutoff = $options->{cutoff};
+  }
 
   print "You must supply exactly one parameter." if $opt_count != 1;
 }
