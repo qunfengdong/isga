@@ -2,7 +2,7 @@
 
 use List::Util qw( min reduce sum );
 
-use File::Path;
+use File::Path qw( remove_tree );
 
 use IPC::Run qw(run); 
 use Cwd;
@@ -43,16 +43,16 @@ sub purge {
   foreach my $component ( @{$self->getComponents()} ) {
 
     # grab ergatis name
-    my $e_name = $_->getErgatisName;
-    my $e_label = $_->getErgatisLabel;
+    my $e_name = $component->getTemplate->getName;
+    my $e_label = $component->getErgatisLabel;
 
     # nuke output
-    my $out_dir = join( '/', $run->getType->getOutputRepository, $e_name, "${id}_${e_label}"); 
+    my $out_dir = join( '/', $run->getType->getErgatisOutputRepository, $e_name, "${id}_${e_label}"); 
 
     remove_tree($out_dir);
 
     # nuke working dir
-    my $work_dir = join( '/', $run->getErgatisProjectDirectory, 'workflow/runtime', $e_name, "${id}_${e_label}");
+    my $work_dir = join( '/', $run->getType->getErgatisProjectDirectory, 'workflow/runtime', $e_name, "${id}_${e_label}");
     
     remove_tree($work_dir);
   }
