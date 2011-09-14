@@ -157,4 +157,7 @@ isn't tagged to be stored indefinitely.
     # nuke raw evidence download if it exists
     my ($red) = @{ISGA::RunEvidenceDownload->query( Run => $self )};
     $red and $red->delete();
+
+    # update raw data status
+    $self->edit( RawDataStatus => 'Deleted' );
   }
