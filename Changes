@@ -14,6 +14,7 @@ Revision history for ISGA
 	* Removed some housekeeping files from distribution
  	* Added databases subdir to repository initialisation script.
 	* Added SQL constraint to prevent duplicate pipeline configuration entries.
+	* Updated requirements for version of File::Path module
 
 	API CHANGES
 
