@@ -1,0 +1,73 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getConfigFile();
+
+Returns a string containing this components config file.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getConfigFile {
+
+    my $self = shift;
+    
+    my $name = $self->getConfigFileName;
+
+    my $path = (join '/', '___package_include___', $self->getErgatisInstall->getName, $name);
+
+    # read the template for the config file
+    open my $fh, '<', $path or X::File->throw( error => "$path: $!" );
+    my $file = do { local $/; <$fh> };
+    close $fh;  
+
+    return $file;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getConfigFileName();
+
+Returns the name of this components config file.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getConfigFileName {
+
+     my $self = shift;
+
+     return $self->getErgatisName . '.config';
+   }
+
+#------------------------------------------------------------------------
+
+=item public string getErgatisLabel();
+
+Returns the label portion of the Ergatis component.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getErgatisLabel {
+
+     my $self = shift;
+
+     my $e_name = $self->getErgatisName;
+
+     $e_name =~ /\.(\w+)$/ or X::API->throw( message => "Can't extract component label from $e_name" );
+
+     return $1;
+   }
+
+#------------------------------------------------------------------------
+
+=item public string getDecoratedInputValue(ClusterInput, string);
+
+Returns the specified cluster input value modified to meet any
+specific formatting needs of this component.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getDecoratedInputValue {
+     my ($self, $ci, $string) = @_;
+     return $string;
+   }

@@ -1,0 +1,14 @@
+/*modal*/
+#modal_content {
+  width:600px; 
+}
+#modal_content em.clustermodal {
+  font-weight: bold;
+}
+#modal_content p.clustermodal {
+  font-size: 7pt;
+  line-height: 1em;
+  margin: 0;
+  padding: 0 0 0 10px;
+  width: 320px;
+}

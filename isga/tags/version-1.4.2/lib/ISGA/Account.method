@@ -1,0 +1,68 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string mayRead(ShareableResource $resource);
+
+Returns the username portion of the email address for this account.
+
+=cut
+#------------------------------------------------------------------------
+  sub mayRead {
+
+    my ($self, $resource) = @_;
+    
+    return 1 if $resource->getCreatedBy() == $self;
+
+    my $class = $self->_getShareableResourceClass($resource);
+    return $class->exists( Resource => $resource, Party => $self->getParties() );
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public string mayReadFileResource(FileResource $file);
+
+Returns true if the supplied account has permission to access this file and false otherwise.
+
+=cut
+#------------------------------------------------------------------------
+  sub mayReadFileResource {
+
+    my ($self, $file) = @_;
+
+    #the owner can read any file
+    $self == $file->getCreatedBy() and return 1;
+
+    # admins can read any file
+    my $run_admin = ISGA::Group->new(Name => 'Run Administrators');
+    ISGA::Login->hasGroup($run_admin) and return 1;
+
+    # we will need our list of parties from here on out.
+    my $parties = $self->getParties();
+
+    # find all the collections containing this resource
+    my $containers = $file->getContainers();
+    push @$containers, $file;
+    
+    # we can read files shared with us
+    ISGA::FileResourceShare->exists( Resource => $containers, Party => $parties ) and return 1;
+
+    # maybe the file is associated with a shared run
+    my $runs = $self->getSharedRuns();
+
+    # if they don't have any shared runs
+    @$runs or return 0;
+
+    # we can read files that are the output of runs shared with us
+    my ($ro) = @{ISGA::RunOutput->query( FileResource => $containers )};
+    $ro and $self->mayRead($ro->getRun) and return 1;
+
+    # last chance is to see if the file is input to a run
+    foreach my $ri ( @{ISGA::RunInput->query( FileResource => $containers )} ) {
+      $self->mayRead($ri->getRun) and return 1;
+    }
+
+    # out of chances
+    return 0;
+  }

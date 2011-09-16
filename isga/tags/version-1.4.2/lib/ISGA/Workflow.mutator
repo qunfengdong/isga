@@ -1,0 +1,78 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public null setIsStart()
+
+Set whether or not this node is a start node.
+
+=cut
+#------------------------------------------------------------------------
+sub setIsStart {
+    
+  my ($self, $start) = @_;
+
+  if ( $start ) {
+    $self->{start} = 1;
+  } else {
+    exists $self->{start} and delete $self->{start};
+  }
+}
+
+#------------------------------------------------------------------------
+
+=item public null setIsStop()
+
+Set whether or not this node is a stop node.
+
+=cut
+#------------------------------------------------------------------------
+sub setIsStop {
+    
+  my ($self, $stop) = @_;
+
+  if ( $stop ) {
+    $self->{stop} = 1;
+  } else {
+    exists $self->{stop} and delete $self->{stop};
+  }
+}
+
+#------------------------------------------------------------------------
+
+=item public null setIsOn()
+
+Set whether or not this node is a on node.
+
+=cut
+#------------------------------------------------------------------------
+sub setIsOn {
+    
+  my ($self, $on) = @_;
+
+  if ( $on ) {
+    $self->{on} = 1;
+  } else {
+    exists $self->{on} and delete $self->{on};
+  }
+}
+  
+#------------------------------------------------------------------------
+
+=item public null toggleIsOn()
+
+Toggles whether or not this node is on.
+
+=cut
+#------------------------------------------------------------------------
+sub toggleIsOn {
+
+  my $self = shift;
+
+  if ( exists $self->{on} ) {
+    delete $self->{on};
+  } else {
+    $self->{on} = 1;
+  }
+}
+    
