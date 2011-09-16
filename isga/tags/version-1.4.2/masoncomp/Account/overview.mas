@@ -1,9 +1,0 @@
-<%init>
-  return if $m->cache_self;
-</%init>
-
-<h1>Why do we have accounts?</h1>
-
-<p>We require accounts so we can store your results securely, and make them easy to access.</a>
-
-<a href="/Account/Create">Sign me up!</a>

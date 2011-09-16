@@ -1,6 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: RunningScript
-attributes:
-  - { name: PID, type: number, options: [ REQUIRED, UNIQUE ] }
-  - { name: CreatedAt, type: Timestamp }
-  - { name: Command, type: string, options: [ REQUIRED ] }

@@ -1,7 +1,0 @@
-<%perl> # -*- cperl -*-
-
-  my $runs = ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, 
-				   OrderBy => 'CreatedAt' );
-</%perl>
-
-<& /Run/my_results.mas, runs => $runs &>

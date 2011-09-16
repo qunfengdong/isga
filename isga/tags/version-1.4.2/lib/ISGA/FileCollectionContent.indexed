@@ -1,6 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: FileCollectionContent
-attributes:
- - { name: FileCollection, type: FileCollection, options: [ REQUIRED ] }
- - { name: FileResource, column: filecollectioncontent_child, type: FileResource, options: [ REQUIRED ] }
- - { name: Index, type: number, options: [ REQUIRED ] }

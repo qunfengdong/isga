@@ -1,5 +1,0 @@
-<%args>
- $pipeline
-</%args>
-
-<& /PipelineBuilder/success.mas, pipeline => $pipeline &>

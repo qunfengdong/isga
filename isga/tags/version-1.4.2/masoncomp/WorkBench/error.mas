@@ -1,9 +1,0 @@
-<%args>
-  $job
-</%args>
-<h1>Job Failed</h1>
-<p>
-Your <% $job->getType->getName %> job has failed.  The administrators have been 
-contacted and will work to resolve the issue.  If you wish to contact us about this 
-issue, email us at biohelp@cgb.indiana.edu.  We apologize for the inconvenience.
-</p>

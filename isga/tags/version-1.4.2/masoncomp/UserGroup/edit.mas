@@ -1,9 +1,0 @@
-<%args>
- $form
-</%args>
-
-<h1><% $form->get_input('user_group')->getName %> Management Form</h1>
-
-<p>Use this form to invite new members to a group or remove existing members.</p>
-
-<% $form->get %>

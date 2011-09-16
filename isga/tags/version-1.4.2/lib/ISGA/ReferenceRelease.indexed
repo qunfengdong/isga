@@ -1,7 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: ReferenceRelease
-attributes:
-  - { name: Reference, type: Reference, options: [ REQUIRED ] }
-  - { name: Path, type: string, options: [ REQUIRED ] }
-  - { name: Release, type: string, options: [ REQUIRED ] }
-  - { name: Version, type: string, options: [ REQUIRED ] }

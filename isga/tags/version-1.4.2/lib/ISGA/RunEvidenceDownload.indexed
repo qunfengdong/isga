@@ -1,7 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: RunEvidenceDownload
-attributes:
-  - { name: Run, type: Run, options: [ REQUIRED, UNIQUE ] }
-  - { name: RequestedAt, type: Timestamp }
-  - { name: CreatedAt, type: Timestamp }
-  - { name: Status, type: string, options: [ REQUIRED ] }

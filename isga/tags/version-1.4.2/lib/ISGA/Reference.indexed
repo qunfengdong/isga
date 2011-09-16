@@ -1,7 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: Reference
-attributes:
-  - { name: Name, type: string, options: [ REQUIRED ] }
-  - { name: Path, type: string, options: [ REQUIRED ] }
-  - { name: Description, type: string, options: [ REQUIRED ] }
-  - { name: Tag, type: ReferenceTag, options: [ REQUIRED ] }

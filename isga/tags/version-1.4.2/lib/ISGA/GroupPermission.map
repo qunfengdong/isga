@@ -1,5 +1,0 @@
---- !perl/MasonX::Foundation::Class::Map
-table: grouppermission
-attributes:
-  - { name: Group, type: Group }
-  - { name: UseCase, type: UseCase }

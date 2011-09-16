@@ -1,5 +1,0 @@
---- !perl/MasonX::Foundation::Class::Map
-table: mrnaexref
-attributes:
-  - { name: mRNA, type: mRNA }
-  - { name: ExRef, type: ExRef }

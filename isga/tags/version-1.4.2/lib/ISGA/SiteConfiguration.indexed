@@ -1,5 +1,0 @@
---- !perl/MasonX::Foundation::Class::Indexed
-class: SiteConfiguration
-attributes:
-  - { name: Variable, type: ConfigurationVariable, options: [ REQUIRED, UNIQUE ] }
-  - { name: Value, type: string, options: [ REQUIRED ] }

@@ -1,9 +1,0 @@
---- !perl/MasonX::Foundation::Class::Dictionary
-class: UseCase
-attributes:
-  - { name: Action, type: string }
-  - { name: RequiresLogin, type: boolean }
-  - { name: Menu, type: string }
-  - { name: Title, type: string }
-  - { name: Style, column: usecase_stylesheet, type: string }
-  - { name: HasDocumentation, type: boolean }

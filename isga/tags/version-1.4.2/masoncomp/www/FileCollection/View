@@ -1,9 +1,0 @@
-<%args> # -*- cperl -*-
- $file_collection
-</%args>
-
-<%perl>
-ISGA::Login->getAccount->mayReadFileResource($file_collection) or X::User::Denied->throw();
-</%perl>
-
-<& /FileCollection/view.mas, file_collection => $file_collection &>
