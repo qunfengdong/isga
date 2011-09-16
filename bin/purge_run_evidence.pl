@@ -76,6 +76,9 @@ my $today = ISGA::Date->new();
 &check_parameters(\%options);
 
 foreach my $run ( @{ISGA::Run->query( RawDataStatus => 'Available', OrderBy => 'FinishedAt' )} ) {
+
+  # only process runs that ISGA is finished with
+  next unless $run->isFinished();
   
   # stop if we're over our limit
   last if defined($purge_limit) and $purge_count >= $purge_limit;

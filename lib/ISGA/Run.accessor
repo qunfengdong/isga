@@ -2,6 +2,7 @@
 
 use Archive::Tar;
 use File::Basename;
+use List::MoreUtiles qw(any);
 
 #------------------------------------------------------------------------
 
@@ -54,6 +55,23 @@ Retrieves the RunOutputs for this Run.
 =cut
 #------------------------------------------------------------------------
 sub getOutput { ISGA::RunOutput->query( Run => shift ); }
+
+#------------------------------------------------------------------------
+
+=item public bool isFinished();
+
+Returns true if the run has completed or been canceled and false otherwise.
+
+=cut
+#------------------------------------------------------------------------
+sub isFinished {
+
+  my $self = shift;
+
+  my $status = $self->getStatus;
+
+  return any { $status eq $_ } qw( Complete Canceled );
+}
 
 #------------------------------------------------------------------------
 
