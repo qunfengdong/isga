@@ -1,0 +1,8 @@
+<%perl>
+my $rbs = ISGA::RunBuilder->query();
+
+$m->comp( '/RunBuilder/AdminList.mas', run_builders => $rbs );
+</%perl>
+
+
+

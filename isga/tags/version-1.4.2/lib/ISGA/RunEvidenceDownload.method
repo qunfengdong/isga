@@ -1,0 +1,69 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item void delete();
+
+Wrapper around delete button to make sure that if a file has been
+created that it is removed.
+
+=cut 
+#------------------------------------------------------------------------
+sub delete {
+
+  my $self = shift;
+
+  my $path = $self->getFilePath();
+
+  -f $path and unlink($path);
+
+  $self->NEXT::delete();
+}
+
+#------------------------------------------------------------------------
+
+=item void buildEvidenceFile();
+
+Generates a gzippef file containing the evidence output for the run.
+
+=cut 
+#------------------------------------------------------------------------
+sub buildEvidenceFile {
+
+  my $self = shift;
+  my $run = $self->getRun;
+
+  my $archive = ISGA::Tar->new();
+  my $run_dir = "Run-" . $run->getErgatisKey;
+
+  foreach my $rc ( grep { $_->hasEvidence() } @{$run->getClusters} ) {
+
+    my $cluster = $rc->getCluster;
+
+    $rc->getStatus eq 'Complete' or X::API->throw( message => 'Invalid RunCluster Status' );
+
+    my $cluster_dir = $run_dir . '/' . $cluster->getName;
+
+    my $iterations = $rc->getIterations;
+
+    # work through our components
+    foreach my $component ( grep { $_->getCluster == $cluster } @{$run->getType->getComponents} ) {
+      
+      foreach my $co ( @{ISGA::ClusterOutput->query( Component => $component,
+						     Visibility => 'Evidence' )} ){
+	
+	# add contents to file
+	if ( $iterations ) {
+	  for ( 1 .. $iterations ) {
+	    $co->buildEvidence( $run, $cluster_dir, $archive, $_);
+	  }
+	} else {
+	  $co->buildEvidence( $run, $cluster_dir, $archive);
+	}
+      }
+    }
+  }
+  
+  # write compressed tar to the download location
+  $archive->write($self->getFilePath, 1);
+}

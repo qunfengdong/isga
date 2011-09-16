@@ -1,0 +1,4 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ReferenceTag
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED ] }

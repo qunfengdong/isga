@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ExRef
+attributes:
+  - { name: Value, type: string, options: [ REQUIRED ] }
+  - { name: ExDB, type: ExDB, options: [ REQUIRED ] }

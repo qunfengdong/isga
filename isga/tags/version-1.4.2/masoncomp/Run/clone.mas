@@ -1,0 +1,10 @@
+<%args>
+ $form
+ $run
+</%args>
+
+<h1>Run Clone Form</h1>
+
+<p>Fill in the details below to clone the run. This process can not be reversed, all output files will be deleted (the raw ergatis files will not be affected).</p>
+
+<% $form->get %>

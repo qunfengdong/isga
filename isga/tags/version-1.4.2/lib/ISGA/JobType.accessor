@@ -1,0 +1,14 @@
+# -*- cperl -*-
+
+#-----------------------------------------------------------------------
+
+=item public string getWebPluginDirectory();
+
+Returns the directory for storing global-pipeline specific mason components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWebPluginDirectory {
+    return shift->getName;
+  }
+

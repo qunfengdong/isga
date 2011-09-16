@@ -1,0 +1,19 @@
+<%args>
+ $output_file
+</%args>
+
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<!-- <li class="rmbutton pointer onclickLink" onclick="window.location='<% $output_file %>'">Download</li> -->
+<li class="rmbutton pointer"><a href="/Download/<% $output_file->getUserName %>?file_resource=<% $output_file %>">Download</a></li>
+<li class="pointer" onclick="window.location='/WorkBench/Blast'"><p>Right click on Download button and select 'Save Link As ...' to save the file.</p></li>
+
+
+<li class="rmbutton pointer"><a href="/File/BrowseMy">Browse Files</a></li>
+<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>Go back to the list of your files.</p></li>
+
+</ul>
+</sys:rightmenu>

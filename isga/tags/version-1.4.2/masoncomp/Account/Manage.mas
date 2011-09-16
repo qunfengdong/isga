@@ -1,0 +1,30 @@
+<h1>Account Management Tools</h1>
+
+
+<p>Account Search Tool Here</p>
+
+% my $accounts = ISGA::Account->query( OrderBy => 'Name' );
+<& /Account/List.mas, accounts => $accounts &>
+
+<& /site/right_menu_js.mas &>
+
+<sys:rightmenu>
+<ul>
+ <li class="title">Account Management Tools</li>
+
+ <li class="rmbutton pointer"><a href="/Account/List">List Accounts</a></li>
+ <li class="pointer" onclick="window.location='/Account/List'"><p>View a list of all ISGA accounts.</p></li>
+
+<li class="rmbutton pointer">Account Search</li>
+<span>
+<form action="/Account/Search" name="account_search">
+<li>
+<p>
+<input type="text" name="search_term" onChange="document.forms['account_search'].submit()">
+</p>
+</li>
+</form>
+</span>
+
+</ul>
+</sys:rightmenu>

@@ -1,0 +1,45 @@
+<%args>
+ $pipeline_input
+ $run_builder
+</%args>
+
+<%perl>
+my $cluster_input = $pipeline_input->getClusterInput;
+my $type = $cluster_input->getType;
+my $format = $cluster_input->getFormat;
+my $rbis = ISGA::RunBuilderInput->query( PipelineInput => $pipeline_input, RunBuilder => $run_builder);
+
+my $action = 
+  ( $cluster_input->getErgatisFormat eq 'File List' ? 'InputList' : 'Input' );
+</%perl>
+% foreach my $rbi ( @$rbis ) {
+%   my $current_file = $rbi->getFileResource();
+<tr>
+ <td><% $type->getName %></td>
+ <td><% $format->getName %></td>
+ <td>\
+%   if ( $cluster_input->getErgatisFormat eq 'File List' ) {
+<% join "<br>", map { $_->getUserName } @{$current_file->getFlattenedContents} %>
+%   } else {
+<% $current_file->getUserName %>\
+%   }
+ </td>
+ <td width="25%">
+<a href="/RunBuilder/Select<% $action %>?run_builder=<% $run_builder %>&run_builder_input=<% $rbi %>">Edit</a> |<a href="/submit/RunBuilder/Remove<% $action %>?run_builder=<% $run_builder %>&run_builder_input=<% $rbi %>">Remove</a>
+ </td>
+</tr>
+%   if ( $cluster_input->hasParameters ) {
+%     foreach ( @{$rbi->getParameters} ) {
+<tr><td></td><th class="parameter"><% $_->{TITLE} %></th><td colspan="2"><% $_->{VALUE} %></td></tr>
+%     }
+%   }
+% }
+
+<tr>
+ <td><% $type->getName %></td>
+ <td><% $format->getName %></td>
+ <td></td>
+ <td width="25%">
+<a href="/RunBuilder/Select<% $action %>?run_builder=<% $run_builder %>&pipeline_input=<% $pipeline_input %>">Add New File</a>
+ </td>
+</tr>

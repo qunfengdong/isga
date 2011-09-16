@@ -1,0 +1,73 @@
+<%args>
+ $account
+</%args>
+
+
+<%doc>
+<& view_header.mas, account => $account &>
+ special right menu with admin tools
+</%doc>
+
+<h1><% $account->getName %></h1>
+
+<div class="data">
+
+<%perl>
+
+use JSON;
+
+my $user_class = $account->getUserClass;
+my $party_status = $account->getStatus;
+
+my $uc;
+
+$uc->{$_} = $_->getName for @{ISGA::UserClass->query( OrderBy => 'Name' )};
+$uc->{selected} = "$user_class";
+
+my $ps;
+$ps->{$_} = $_->getName for @{ISGA::PartyStatus->query( OrderBy => 'Name' )};
+$ps->{selected} = "$party_status";
+
+</%perl>
+
+<sys:script type="text/javascript" src="/include/js/jquery.jeditable.mini.js"></sys:script>
+
+<sys:script type="text/javascript">
+ $(document).ready(function() {
+     $('#editable_uc').editable('/submit/Account/EditUserClass', {
+        data : '<% encode_json($uc) %>',
+        name : 'user_class',
+        type : 'select',
+        submitdata: { account: "<% "$account" %>"},
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+     $('#editable_ps').editable('/submit/Account/EditStatus', {
+        data : '<% encode_json($ps) %>',
+        name : 'party_status',
+        type : 'select',
+        submitdata: { account: "<% "$account" %>"},
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+
+ });
+</sys:script>
+
+<table>
+ <tbody>
+  <tr> 
+   <th>Email</th><td><% $account->getEmail %></td>
+   <th>Walkthroughs</th><td><% $account->isWalkthroughDisabled ? 'off' : 'on' %></td>
+  </tr>
+  <tr>
+   <th>User Class</th><td><span class="editable" id="editable_uc"><% $user_class->getName %></span></td>
+   <th>Status</th><td><span class="editable" id="editable_ps"><% $party_status->getName %></span></td>
+  </tr>
+  <tr>
+   <th>Institution</th><td colspan="3"><% $account->getInstitution %></td>
+  </tr>
+ </tbody>
+</table>
+
+</div> 
