@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use vars qw( $VERSION );
 
-use version; $VERSION = qv('1.4.1');
+use version; $VERSION = qv('1.4.2');
 
 use ISGA::X;
 

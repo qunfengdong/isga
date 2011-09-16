@@ -2495,7 +2495,7 @@ CREATE SEQUENCE usecase_usecase_id_seq
 -- Name: usecase_usecase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('usecase_usecase_id_seq', 233, true);
+SELECT pg_catalog.setval('usecase_usecase_id_seq', 234, true);
 
 
 --
@@ -3566,7 +3566,6 @@ COPY pipelinestatus (pipelinestatus_id, pipelinestatus_name, pipelinestatus_isav
 
 COPY rawdatastatus (rawdatastatus_name) FROM stdin;
 Available
-Tagged for Deletion
 Deleted
 \.
 
@@ -4010,6 +4009,7 @@ COPY usecase (usecase_id, usecase_name, usecase_action, usecase_requireslogin, u
 233	/submit/GlobalPipeline/EditStatus	GlobalPipeline::EditStatus	t	\N	\N	none	f
 176	/Pipeline/ClusterOptions	\N	f	\N	\N	none	f
 65	/Pipeline/ViewParameters	\N	f	\N	View Program Parameters	2columnright	f
+234	/Pipeline/AboutPipeline	\N	f	\N	About Pipeline	2columnright	f
 \.
 
 
@@ -4750,6 +4750,14 @@ ALTER TABLE ONLY pipelinebuilder
 
 ALTER TABLE ONLY pipelineconfiguration
     ADD CONSTRAINT pipelineconfiguration_k UNIQUE (configurationvariable_id, pipeline_id, userclass_id);
+
+
+--
+-- Name: pipelineconfiguration_key2; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY pipelineconfiguration
+    ADD CONSTRAINT pipelineconfiguration_key2 UNIQUE (configurationvariable_id, pipeline_id, userclass_id);
 
 
 --
