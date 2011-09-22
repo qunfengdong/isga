@@ -26,25 +26,33 @@ use YAML;
 use overload
   q{""}  => sub { return YAML::Dump($_[0]); };
 
-
-# need to override string method to save
-
 #------------------------------------------------------------------------
 
 =item public WorkflowMask new(string $yaml);
 
 Creates a new mask object based on the YAML string provided.
 
+=item public WorkflowMask new(string $yaml, ErgatisInstall $install);
+
+Creates a new mask object based on the YAML string provided, using the provided ErgatisInstall
+
 =cut
 #------------------------------------------------------------------------
 sub new {
 
-  my ($class, $yaml) = @_;
+  my ($class, $yaml, $ergatis_install) = @_;
 
   my $self = ( defined $yaml ? YAML::Load($yaml) : bless({}, $class) );
 
   exists $self->{cluster} or $self->{cluster} = {};
   exists $self->{component} or $self->{component} = {};
+
+  if ( ! exists $self->{ergatis_install} ) {
+    
+    $ergatis_install or X::API->throw( message => "You must supply an Ergatis install for a WorkflowMask" );
+    
+    $self->{ergatis_install} = $ergatis_install->getName();
+  }
 
   return $self;
 }
@@ -61,7 +69,22 @@ sub getDisabledClusters {
 
   my $self = shift;
 
-  return ISGA::Cluster->query( Name => [keys %{$self->{cluster}}] );
+  return ISGA::Cluster->query( Name => [keys %{$self->{cluster}}], ErgatisInstall => $self->getErgatisInstall);
+}
+
+#------------------------------------------------------------------------
+
+=item public ErgatisInstall getErgatisInstall();
+
+Returns the Ergatis isntallation this workflow mask is tied to.
+
+=cut
+#------------------------------------------------------------------------
+sub getErgatisInstall { 
+
+  my $self = shift;
+  
+  return ISGA::ErgatisInstall->new( Name => $self->{ergatis_install} );
 }
 
 
@@ -83,7 +106,7 @@ sub getDisabledComponents {
     push @search, $key if $value eq 'disabled';
   }
 
-  return ISGA::Component->query( ErgatisName => \@search);
+  return ISGA::Component->query( ErgatisName => \@search, ErgatisInstall => $self->getErgatisInstall);
 }
 
 #------------------------------------------------------------------------

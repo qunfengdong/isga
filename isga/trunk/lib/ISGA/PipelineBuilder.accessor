@@ -8,7 +8,9 @@ Returns the workflow mask for this pipeline.
 =cut
 #------------------------------------------------------------------------
   sub getWorkflowMask {
-    return ISGA::WorkflowMask->new($_[0]->{pipelinebuilder_workflowmask});
+    
+    my $self = shift;
+    return ISGA::WorkflowMask->new($_[0]->{pipelinebuilder_workflowmask}, $self->getPipeline->getErgatisInstall);
   }
 
 #------------------------------------------------------------------------

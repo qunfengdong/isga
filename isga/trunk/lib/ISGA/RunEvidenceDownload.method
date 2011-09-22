@@ -24,7 +24,7 @@ sub delete {
 
 =item void buildEvidenceFile();
 
-Generates a gzippef file containing the evidence output for the run.
+Generates a gzipped file containing the evidence output for the run.
 
 =cut 
 #------------------------------------------------------------------------

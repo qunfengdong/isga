@@ -35,6 +35,16 @@ templated on.
 
 #------------------------------------------------------------------------
 
+=item public ErgatisInstall getErgatisInstall();
+
+Returns the ErgatisInstall for this pipelines template.
+
+=cut
+#------------------------------------------------------------------------
+  sub getErgatisInstall { return shift->getGlobalTemplate->getErgatisInstall; }
+
+#------------------------------------------------------------------------
+
 =item public string getLabel();
 
 Returns the name and release of the pipeline.

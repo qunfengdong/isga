@@ -1,5 +1,13 @@
 Revision history for ISGA
 
+1.4.3   Sep 21 2011
+	
+	BUG FIXES
+
+	* Fix invocation of tar to use ISGA::Tar subclass
+	* Fix WorkflowMask library to use ErgatisInstall information to retrieve correct
+	  component and cluster information from the database
+
 1.4.2	Sep 15 2011
 
 	WEB CHANGES
