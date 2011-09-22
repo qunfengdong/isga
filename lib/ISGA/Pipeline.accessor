@@ -75,7 +75,7 @@ Returns the workflow mask for this pipeline.
     
     my $self = shift;
 
-    return ISGA::WorkflowMask->new($_[0]->{pipeline_workflowmask}, $self->getErgatisInstall);
+    return ISGA::WorkflowMask->new($self->{pipeline_workflowmask}, $self->getErgatisInstall);
   }
 
 #------------------------------------------------------------------------
