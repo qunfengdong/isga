@@ -1,9 +1,6 @@
 # -*- cperl -*-
 
-#use Archive::Tar;
-use Archive::Tar::Wrapper;
 use File::Basename;
-
 use File::Temp;
 
 
@@ -57,9 +54,9 @@ collection and in any child collections.
 
 #------------------------------------------------------------------------
 
-=item public Archive::Tar::Wrapper getTar();
+=item public ISGA::Tar getTar();
 
-Builds and returns an Archive::Tar::Wrapper object containing the
+Builds and returns an ISGA::Tar object containing the
 contents of this file collection.
 
 =cut 
@@ -71,7 +68,7 @@ contents of this file collection.
     my $contents = $self->getContents;
 
     # create the archive
-    my $archive = Archive::Tar::Wrapper->new();
+    my $archive = ISGA::Tar->new();
 
     my $prefix = $self->getUserName;
 
