@@ -28,11 +28,9 @@ use base 'Archive::Tar::Wrapper';
 use IPC::Run qw(run);
 use Cwd;
 use File::Path;
-use File::Temp qw(tempdir);
 use Log::Log4perl qw(:easy);
 use File::Spec::Functions;
 use File::Spec;
-use File::Copy;
 use File::Find;
 use File::Basename;
 

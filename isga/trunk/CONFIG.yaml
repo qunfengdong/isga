@@ -1,13 +1,13 @@
 --- !perl/MasonX::Foundation::Config
-mason_data_directory: /data/web/isga.cgb/mason 
-apache_session_directory: /data/web/isga.cgb/session
-apache_session_lock_directory: /data/web/isga.cgb/session
-database: { name: isga_dev, user: isga, type: Pg }
+mason_data_directory: /data/web/isga/mason 
+apache_session_directory: /data/web/isga/session
+apache_session_lock_directory: /data/web/isga/session
+database: { name: isga, user: chemmeri, type: Pg }
 test_database: { name: isga, user: cgb, type: Pg }
 mail_config: mail.cgb.indiana.edu
-log_file: /data/web/isga.cgb/log
+log_file: /data/web/isga/log
 minimum_log_level: warning
-error_notification_email: [ 'abuechle@cgb.indiana.edu' ]
+error_notification_email: [ 'chemmeri@cgb.indiana.edu' ]
 server_name: ISGA Aaron
 custom_parameters:
 # Email address to send notification mail from

@@ -96,22 +96,37 @@ The args hash may contain the following optional parameters:
     my $name = Digest::SHA->new(256)->addfile($fh)->b64digest;
     $name =~ s/\+/-/go;
     $name =~ s/\//_/go;
+    $args{Name} = $name;
 
     seek($fh,0,0);
 
     # grab the size of the file
     $args{Size} = (stat($fh))[7];
 
+    # short circuit zero length files
+    if ( $args{Size} == 0 ) {
+      
+      my ($file) = @{$class->query( Name => $name, UserName => $file->getUserName, CreatedBy => $args{CreatedBy} )};
+
+      if ( $file ) {
+	#if we add a single file, and previous copies are in collections make the file visible
+	$args{ExistsOutsideCollection} and $file->edit(ExistsOutsideCollection => 1);	
+	return $file;
+      } else {
+	return $class->create(%args);
+      }
+    }
+    
     # check to see if the file is already in the system
     my ($file) = @{$class->query(Name => $name)};
     
     # the file doesn't exist, so we will create it in the filesystem
     if ( ! $file ) {
       $class->_write($fh, $name, $strip_dos_line_breaks);
-
-    # otherwise we have a file with this hash in the system
+      
+      # otherwise we have a file with this hash in the system
     } else {
-
+      
       # if the files aren't the same size, create a local copy to make
       # sure we aren't reading through a compressed fh
       if ( $args{Size} != $file->getSize ) { 
@@ -121,7 +136,7 @@ The args hash may contain the following optional parameters:
       
       # if the files have the same name and owner, don't add a new file.
       if ( $file->getCreatedBy == $args{CreatedBy} and $args{UserName} eq $file->getUserName ) {
-
+	
 	#if we add a single file, and previous copies are in collections make the file visible
 	$args{ExistsOutsideCollection} and $file->edit(ExistsOutsideCollection => 1);
 	
@@ -129,9 +144,6 @@ The args hash may contain the following optional parameters:
       }
     }
     
-    # save vars
-    $args{Name} = $name;
-
     # create the file
     return $class->create(%args);
   }

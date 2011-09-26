@@ -7,6 +7,10 @@ Revision history for ISGA
 	* Fix invocation of tar to use ISGA::Tar subclass
 	* Fix WorkflowMask library to use ErgatisInstall information to retrieve correct
 	  component and cluster information from the database
+	* Add key for file_name column on file to speed up key query
+	* Modify addToRepository method of File to increase performance for large number
+	  of zero-byte files.
+	* Removed unecessary use statements from ISGA::Tar
 
 1.4.2	Sep 15 2011
 
