@@ -1,0 +1,15 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public Object getResource();
+
+Returns the resource being shared.
+
+=cut
+#------------------------------------------------------------------------
+  sub getResource {
+    
+    my $self = shift;
+    return $self->getResourceClass( $self->{resourceshare_resource} );
+  }

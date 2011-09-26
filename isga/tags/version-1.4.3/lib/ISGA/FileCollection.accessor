@@ -1,0 +1,127 @@
+# -*- cperl -*-
+
+use File::Basename;
+use File::Temp;
+
+
+#------------------------------------------------------------------------
+
+=item public [FileResource] getContents();
+
+Returns a reference to an array of the resources contained in this collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getContents {
+
+    my $self = shift;
+
+    my $content = ISGA::FileCollectionContent->query( FileCollection => $self,
+							  OrderBy => 'Index' );
+
+    # Foundation efficiency breaks down here, we have a bunch of db queries
+    return [map { $_->getFileResource } @$content];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [File] getFlattenedContents();
+
+Returns a reference to an array of the files contained in this
+collection and in any child collections.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getFlattenedContents {
+
+    my $self = shift;
+
+    my $content = $self->getContents;
+
+    my @return;
+
+    foreach ( @$content ) {
+      
+      if ( $_->isa('ISGA::File') ) {
+	push @return, $_;
+      } else {
+	push @return, @{$_->getFlattenedContents};
+      }
+    }
+
+    return \@return;
+  }
+
+#------------------------------------------------------------------------
+
+=item public ISGA::Tar getTar();
+
+Builds and returns an ISGA::Tar object containing the
+contents of this file collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getTar {
+
+    my $self = shift;
+
+    my $contents = $self->getContents;
+
+    # create the archive
+    my $archive = ISGA::Tar->new();
+
+    my $prefix = $self->getUserName;
+
+    foreach ( @$contents ) {
+
+      if ( $_->isa('ISGA::File') ) {
+	my $logical_path = $prefix . "/" . $_->getUserName;
+	my ( $file ) = $archive->add( $logical_path, $_->getPath );
+
+      } else {
+	$_->addToTar( $archive, $prefix );
+      }
+    }
+	
+    return $archive;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getPath();
+
+Returns the filesystem path to a temporary tar file for this collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getPath {
+
+    my $self = shift;
+    
+    # see if we've cached the path
+    exists $self->{cached_file_path} and return $self->{cached_file_path};
+    
+    # retrieve the wrapped tar contents
+    my $archive = $self->getTar();
+
+    # open a "temporary" file, but we'll let it hang around
+    my $tmp = File::Temp->new();
+    $tmp->unlink_on_destroy(0);
+
+    # cache the name of this file for the lifetime of the object
+    $self->{cached_file_path} = $tmp->filename();
+
+    # write the tarball to the temporary file
+    $archive->write($self->{cached_file_path}, 1);
+    return $self->{cached_file_path};
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getName();
+
+Returns a name for the FileCollection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getName { my $self = shift; return "FileCollection$self"; }

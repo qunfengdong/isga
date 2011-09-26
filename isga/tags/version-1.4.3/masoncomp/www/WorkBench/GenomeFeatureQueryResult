@@ -1,0 +1,92 @@
+<%args>
+  $term => ''
+  $scope => undef
+</%args>
+<sys:style type="text/css" media="screen">
+   @import "/include/css/basemod.css";
+</sys:style>
+
+<%perl> # -*- cperl -*-
+unless ($term) {
+	return $m->comp('/WorkBench/genomefeaturequery.mas', term=>$term, scope=>$scope, error=>1);
+	exit(0);
+}
+
+my @arr_scope = ();
+my $account = ISGA::Login->getAccount;
+my $runs = ISGA::Run->query( CreatedBy => $account );
+push @$runs, @{$account->getSharedRuns()};
+my %searchableRuns = ();
+if (@$runs) {
+	foreach (@$runs) {
+		if ( $_->hasGBrowseInstallation ) {
+			$searchableRuns{$_} = $_->getName;
+		}
+	}
+}
+
+if (%searchableRuns) {
+	if ($scope) {
+		if (ref($scope) eq 'ARRAY') {
+			@arr_scope = @$scope;
+		} else {
+			@arr_scope = ($scope);
+		}
+	} else {
+		@arr_scope = sort keys %searchableRuns;
+	}
+	my $contigs = ISGA::Contig->query( Run => \@arr_scope );
+	my $genes = ISGA::Gene->query( Contig => $contigs, Note => { LIKE => "%$term%" }, OrderBy => 'Contig' );
+</%perl>
+<div class="data">
+<table wdith="100%">
+	<tbody>
+		<tr>
+			<th>Search Term</th><td><i><% $term %></i></td>
+		</tr>
+		<tr>
+			<th>Runs Searched</th><td><ul><li><% join('</li><li>', map ($searchableRuns{$_}, @arr_scope)) %></li></ul></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+<div class="list">
+
+<%perl>
+my $evenOdd = 'even';
+my $curRun = '';
+
+unless ((scalar @$genes) > 0) {
+</%perl>
+	<p> No matches for the term "<% $term %>" found.</p>
+<%perl>
+}
+
+
+foreach (@$genes) {
+	unless ($curRun eq $searchableRuns{$_->getContig->getRun}) {
+		print '</table>' if ($curRun);
+		$curRun = $searchableRuns{$_->getContig->getRun};
+		$evenOdd = 'even';
+</%perl>
+<table width="100">
+	<tr>
+		<td colspan="2"> <b>Search results from the Run <a href="/Run/View?run=<% $_->getContig->getRun %>"><i><% $curRun %></i></a></b> </td>
+	</tr>
+	<tr>
+		<th>Locus</th><th>Description</th>
+	</tr>
+%	}
+%	$evenOdd = $evenOdd eq 'even' ? 'odd' : 'even';
+	<tr class="<% $evenOdd %>">
+		<td><a href="/GenomeFeature/View?genome_feature=<% $_ %>"><% $_->getLocus %></a></td>
+		<td><% $_->getNote %></td>
+	</tr>
+%}
+</table>
+</div>
+
+% } else {
+	<p> You must have at least a run with data loaded into the database to be able to use Genome Feature Query.</p>
+% }
+

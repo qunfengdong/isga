@@ -1,0 +1,10 @@
+<%perl> # -*- cperl -*-
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'user_group_create'
+  or $form =  ISGA::FormEngine::UserGroup->Create(\%ARGS);
+
+return $m->comp('/UserGroup/create.mas', form => $form);
+
+</%perl>
