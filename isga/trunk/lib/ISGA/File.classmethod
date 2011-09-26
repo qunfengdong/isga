@@ -106,7 +106,7 @@ The args hash may contain the following optional parameters:
     # short circuit zero length files
     if ( $args{Size} == 0 ) {
       
-      my ($file) = @{$class->query( Name => $name, UserName => $file->getUserName, CreatedBy => $args{CreatedBy} )};
+      my ($file) = @{$class->query( Name => $name, UserName => $args{UserName}, CreatedBy => $args{CreatedBy} )};
 
       if ( $file ) {
 	#if we add a single file, and previous copies are in collections make the file visible

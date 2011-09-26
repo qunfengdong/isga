@@ -5257,6 +5257,13 @@ ALTER TABLE ONLY workflow
 
 
 --
+-- Name: file_name_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX file_name_idx ON file USING btree (file_name);
+
+
+--
 -- Name: account_party_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
