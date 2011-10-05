@@ -70,10 +70,12 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
    <a href="/File/View?file=<% $file %>">View</a> |\
    <a  href="/Download/<% $file->getUserName %>?file_resource=<% $file %>">Download</a>
 
+%       } elsif ( $file->getArchive ) {
+   <a href="/Download/<% $file->getUserName %>?file_resource=<% $file %>">Download</a>
+
 %       } else {
    <a href="/FileCollection/View?file_collection=<% $file %>">View</a> |\
    <a  class="downloadRemove" href="/Download/<% $file->getUserName %>.tar.gz?file_resource=<% $file %>">Download</a>
-
 %       } 
  </td>
 %     } else {

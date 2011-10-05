@@ -30,6 +30,11 @@
 
 <h2>Contents</h2>
 
+% if ( $file_collection->getArchive ) {
+
+<p>This collection has been archived and can not be viewed online. You can <a href="/Download/<% $file_collection->getUserName %>.tar.gz?file_resource=<% $file_collection %>">download</a> the tar archive and view the files on your local computer.</p>
+
+% } else {
 
 <& /FileCollection/print_table.mas, file_collection => $file_collection, embed => 0 &>
 
@@ -77,5 +82,6 @@ $(document).ready(function() {
 </sys:style>
 <sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
 
+% }
 
 <& right_menu.mas, file_collection => $file_collection &>

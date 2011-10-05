@@ -5,11 +5,15 @@ use warnings;
 
 use ISGA;
 
-my $file_collection = File::Collection->new( Id => $ARGV[0] );
+my $file_collection = ISGA::FileCollection->new( Id => $ARGV[0] );
 
 eval { 
 
   ISGA::DB->begin_work();
+
+  # set login
+  my $account = $file_collection->getCreatedBy;    
+  ISGA::Login->switchAccount( $account );
 
   $file_collection->archive();
   $file_collection->deleteContents();
