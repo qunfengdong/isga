@@ -62,11 +62,7 @@ sub Run::InstallGbrowseData {
   my $self = shift;
   my $run = $self->args->{run};
 
-  warn "class1 is ", ref($run), "\n";
-
   $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
-
-  warn "get things running\n";
 
   $run->installGBrowseData();
   $self->redirect( uri => "/Browser/gbrowse/$run/" );
@@ -76,8 +72,6 @@ sub Exception::Run::InstallGbrowseData {
 
   my $self = shift;
   my $run = $self->args->{run};
-
-  warn "class2 is ", ref($run), "\n";
 
   # remove conf
   $run->deleteGBrowseConfigurationFile();
@@ -121,7 +115,7 @@ sub Run::Cancel {
     $run->edit( Status => ISGA::RunStatus->new( Name => 'Canceled' ) );
 
     # delete contents of run output collection and hide it
-    my ( $ic = $run->getFileCollection ) {
+    if ( my $ic = $run->getFileCollection ) {
       $ic->deleteContents();
       $ic->edit( IsHidden => 1 );
     }
@@ -179,7 +173,7 @@ sub Run::Clone {
 	        ErgatisKey => $newid );
 
     # delete contents of run output collection and hide it
-    my ( $ic = $run->getFileCollection ) {
+    if ( my $ic = $run->getFileCollection ) {
       $ic->deleteContents();
       $ic->edit( IsHidden => 1 );
     }
