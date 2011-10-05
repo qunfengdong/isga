@@ -121,7 +121,10 @@ sub Run::Cancel {
     $run->edit( Status => ISGA::RunStatus->new( Name => 'Canceled' ) );
 
     # delete contents of run output collection and hide it
-    $run->getFileCollection->deleteContents();
+    my ( $ic = $run->getFileCollection ) {
+      $ic->deleteContents();
+      $ic->edit( IsHidden => 1 );
+    }
     
     # retrieve run outputs that have a file resource, and delete them
     foreach ( @{ISGA::RunOutput->query(Run => $run, FileResource => {'NOT NULL' => undef})} ) {
@@ -176,7 +179,10 @@ sub Run::Clone {
 	        ErgatisKey => $newid );
 
     # delete contents of run output collection and hide it
-    $run->getFileCollection->deleteContents();
+    my ( $ic = $run->getFileCollection ) {
+      $ic->deleteContents();
+      $ic->edit( IsHidden => 1 );
+    }
 
     # clean up the clusters
     foreach ( @{ISGA::RunCluster->query( Run => $run )} ) {

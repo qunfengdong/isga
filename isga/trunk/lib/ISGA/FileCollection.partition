@@ -3,3 +3,4 @@ class: FileCollection
 partition_of: FileResource
 attributes:
   - { name: Type, type: FileCollectionType, options: [ REQUIRED ] }
+  - { name: Archive, column: archive_id, type: File }

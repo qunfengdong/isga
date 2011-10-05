@@ -36,6 +36,8 @@ use Exception::Class
  'X::API::Configuration' => { isa => 'X::API', fields => [ 'variable' ] },
  'X::API::Configuration::Missing' => { isa => 'X::API::Configuration' },
 
+ 'X::FileCollection' => { isa => 'X' },
+ 'X::FileCollection::ArchivedUnsupported' => { isa => 'X::FileCollection' },
 
  'X::File::FASTA' => { isa => 'X::File' },
  'X::File::FASTA::Binary' => { isa => 'X::File::FASTA' },
