@@ -1,5 +1,12 @@
 Revision history for ISGA
 
+1.5.1   Oct 31 2011
+
+	API CHANGES
+	
+	* Added Archived feature for FileCollections, where a .tgz file is stored rather than individual files
+	
+
 1.4.3   Sep 21 2011
 	
 	BUG FIXES

@@ -16,6 +16,9 @@ Returns a reference to an array of the resources contained in this collection.
 
     my $self = shift;
 
+    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+       message => 'getContents() not supported by archived FileCollections' );
+
     my $content = ISGA::FileCollectionContent->query( FileCollection => $self,
 							  OrderBy => 'Index' );
 
@@ -36,6 +39,9 @@ collection and in any child collections.
 
     my $self = shift;
 
+    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+       message => 'getFlattenedContents() not supported by archived FileCollections' );
+
     my $content = $self->getContents;
 
     my @return;
@@ -54,14 +60,14 @@ collection and in any child collections.
 
 #------------------------------------------------------------------------
 
-=item public ISGA::Tar getTar();
+=item PRIVATE ISGA::Tar _getTar();
 
 Builds and returns an ISGA::Tar object containing the
 contents of this file collection.
 
 =cut 
 #------------------------------------------------------------------------
-  sub getTar {
+  sub _getTar {
 
     my $self = shift;
 
@@ -90,7 +96,7 @@ contents of this file collection.
 
 =item public string getPath();
 
-Returns the filesystem path to a temporary tar file for this collection.
+Returns the filesystem path to a tar file for this collection.
 
 =cut 
 #------------------------------------------------------------------------
@@ -98,11 +104,16 @@ Returns the filesystem path to a temporary tar file for this collection.
 
     my $self = shift;
     
+    # if the collection has been archived, use it.
+    if ( my $archive = $self->getArchive ) {
+      return $archive->getPath;
+    }
+
     # see if we've cached the path
     exists $self->{cached_file_path} and return $self->{cached_file_path};
     
     # retrieve the wrapped tar contents
-    my $archive = $self->getTar();
+    my $archive = $self->_getTar();
 
     # open a "temporary" file, but we'll let it hang around
     my $tmp = File::Temp->new();

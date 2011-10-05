@@ -2,6 +2,69 @@
 
 use File::Copy;
 
+#------------------------------------------------------------------------
+
+=item public void archive();
+
+Create an archive for the FileCollection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub archive {
+
+    my $self = shift;
+
+    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+      message => 'archive() not supported by archived FileCollections' );
+
+    # create temp file
+    my $tar =  $self->getPath;
+    open my $fh, '<', $tar or X->throw( message => "unable to open $tar : $!" );
+    
+    # create file
+    my $archive = ISGA::File->addToRepository( $fh, 
+					       UserName => 'blargh',
+					       Type => ISGA::FileType->new( Name => 'Archived File Collection'),
+					       Format => ISGA::FileFormat->new( Name => 'Compressed Tar Archive'),
+					       Description => ''
+					     );
+    
+    # save as archive
+    $self->edit( Archive => $archive );
+
+    # unlink the archive
+    unlink($tar);
+
+  }
+
+#------------------------------------------------------------------------
+
+=item public void inflate();
+
+Inflate an archived FileCollection, creating distinct objects and
+files for each of its contents.
+
+=cut 
+#------------------------------------------------------------------------
+  sub inflate {
+
+    my $self = shift;
+
+    # if any contents exist for this collection, die
+    ISGA::FileCollectionContent->exists(FileCollection => $self) 
+	and X->throw( message => 'Can not inflate a FileCollection with existing contents' );
+
+    # 
+  }
+
+#------------------------------------------------------------------------
+
+=item public void archive();
+
+Create an archive for the FileCollection.
+
+=cut 
+#------------------------------------------------------------------------
 
 #------------------------------------------------------------------------
 
@@ -26,17 +89,11 @@ archive reference. This nests a file collection inside another one.
         my $logical_path = $prefix . "/" . $_->getUserName;
         my ( $file ) = $archive->add( $logical_path, $_->getPath );
 
-#	my ( $file ) = $archive->add_files( $_->getPath );
-#	$file->rename( $_->getUserName );
-#	$file->prefix( $prefix );
-
       # process nested collections
       } else {
 	$_->addToTar( $archive, $prefix );
       }
     }
-
-#    $archive->add_data( $prefix, '', { mode => '0700', type => 'DIR' } );
 
   }
 
@@ -53,21 +110,37 @@ that do not exist outisde of the collection will also be deleted.
 
     my $self = shift;
 
-    # delete all the contents
-    my $contents = ISGA::FileCollectionContent->query( FileCollection => $self,
-						       OrderBy => 'Index' );
+    $self->deleteContents();
+    $self->deleteArchive();
 
-    $_->delete for reverse @$contents;
-  
     # delete the database entry
     $self->NEXT::delete();
   }
 
 #------------------------------------------------------------------------
 
+=item public void deleteArchive();
+
+Removes the archive of a FileCollection. If the collection hasn't
+first been expanded, the data will be permanently lost.
+
+=cut 
+#------------------------------------------------------------------------
+  sub deleteArchive {
+
+    my $self = shift;
+
+    my $archive = $self->getArchive() or return;
+
+    $self->edit( Archive => undef );
+    $archive->delete();
+  }
+
+#------------------------------------------------------------------------
+
 =item public void deleteContents();
 
-Removes a file collections contents from the system and marks the collection as hidden
+Removes a file collections contents from the system.
 
 =cut 
 #------------------------------------------------------------------------
@@ -77,11 +150,8 @@ Removes a file collections contents from the system and marks the collection as 
 
     # delete all the contents
     my $contents = ISGA::FileCollectionContent->query( FileCollection => $self,
-							   OrderBy => 'Index' );
+						       OrderBy => 'Index' );
     $_->delete for reverse @$contents;
-  
-    # hide the collection
-    $self->edit( IsHidden => 1 );
   }
 
 #------------------------------------------------------------------------
@@ -95,6 +165,9 @@ Stages this file for an ergatis run.
   sub stage {
 
     my ($self, $dir) = @_;
+
+    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+       message => 'stage() not supported by archived FileCollections' );
 
     my $name = $self->getName;
 
