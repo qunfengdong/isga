@@ -14,7 +14,7 @@ Create an archive for the FileCollection.
 
     my $self = shift;
 
-    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+    $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
       message => 'archive() not supported by archived FileCollections' );
 
     # create temp file
@@ -166,7 +166,7 @@ Stages this file for an ergatis run.
 
     my ($self, $dir) = @_;
 
-    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+    $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
        message => 'stage() not supported by archived FileCollections' );
 
     my $name = $self->getName;

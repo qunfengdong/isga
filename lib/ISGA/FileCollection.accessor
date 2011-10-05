@@ -16,7 +16,7 @@ Returns a reference to an array of the resources contained in this collection.
 
     my $self = shift;
 
-    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+    $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
        message => 'getContents() not supported by archived FileCollections' );
 
     my $content = ISGA::FileCollectionContent->query( FileCollection => $self,
@@ -39,7 +39,7 @@ collection and in any child collections.
 
     my $self = shift;
 
-    $self->getArchived and X::FileCollection::ArchivedUnsupported->throw( 
+    $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
        message => 'getFlattenedContents() not supported by archived FileCollections' );
 
     my $content = $self->getContents;
