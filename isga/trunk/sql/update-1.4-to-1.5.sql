@@ -21,3 +21,10 @@ INSERT INTO fileformat ( fileformat_name, fileformat_extension, fileformat_help,
 
 INSERT INTO filetype ( filetype_name, filetype_help ) VALUES 
        ( 'Archived File Collection', 'A compressed archive of a file collection' );
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add ergatis ergatis-v2r16-cgbr1
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO ergatisinstall (ergatisinstall_name, ergatisinstall_version) VALUES ('ergatis-v2r16-cgbr1', 'ergatis-v2r16-cgbr1');
+
