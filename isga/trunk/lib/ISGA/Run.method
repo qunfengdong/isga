@@ -118,7 +118,7 @@ outputs.
 	$self->edit( Status => ISGA::RunStatus->new( Name => $new_status ) );
       
       if ( $new_status eq 'Complete' ) {
-	$self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'});
+	$self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'}) or X::API->throw("Did not properly parse pipeline.xml for endTime.");
       }
       
       # go through each cluster
