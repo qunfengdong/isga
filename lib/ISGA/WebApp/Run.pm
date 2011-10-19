@@ -64,20 +64,9 @@ sub Run::InstallGbrowseData {
 
   $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
 
-  $run->installGBrowseData();
-  $self->redirect( uri => "/Browser/gbrowse/$run/" );
-}
+  ISGA::RunningScript->schedule("setup_gbrowse_instance.pl --run=$run");
 
-sub Exception::Run::InstallGbrowseData {
-
-  my $self = shift;
-  my $run = $self->args->{run};
-
-  # remove conf
-  $run->deleteGBrowseConfigurationFile();
-
-  # remove database dir
-  $run->deleteGBrowseDatabase();
+  $self->redirect( uri => "/Run/View?run=$run" );
 }
 
 #------------------------------------------------------------------------

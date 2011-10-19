@@ -2,10 +2,15 @@ Revision history for ISGA
 
 1.5.1   Oct 31 2011
 
+	WEB CHANGES
+
+	* Modified file collection views to handle archived file collections
+
 	API CHANGES
 	
-	* Added Archived feature for FileCollections, where a .tgz file is stored rather than individual files
-	
+	* Added Archived feature for file collections, where a .tgz file is stored rather than individual files
+	* Replace calls to legacy rmtree with remove_tree	
+	* Tweaked RunningScript class to be a generic queueing system for farming tasks out to the command line
 
 1.4.3   Sep 21 2011
 	

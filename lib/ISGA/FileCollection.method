@@ -1,12 +1,14 @@
 # -*- cperl -*-
 
 use File::Copy;
+use File::Temp;
 
 #------------------------------------------------------------------------
 
 =item public void archive();
 
-Create an archive for the FileCollection.
+Create an archive for the FileCollection. This command will flatten
+any nested FileCollections rather than created nested tar files.
 
 =cut 
 #------------------------------------------------------------------------
@@ -17,13 +19,29 @@ Create an archive for the FileCollection.
     $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
       message => 'archive() not supported by archived FileCollections' );
 
+    # only do it for file list collections
+    $self->getType eq ISGA::FileCollectionType->new( Name => 'File List' )
+      or X::API->throw( message => 'Can only archive file list collections' );
+
+    # do not archive an empty collection
+    ISGA::FileCollectionContent->query( FileCollection => $self ) 
+      or X::API->throw( message => 'Can not archive an empty collection' );
+
+    # if we don't have type and format, grab the first elements
+    if ( ! $self->getFileType or ! $self->getFileFormat ) {
+
+      if ( my @contents = @{$self->getContents()} ) {	
+	$self->edit( FileType => $contents[0]->getType, FileFormat => $contents[0]->getFormat );
+      }
+    }
+
     # create temp file
     my $tar =  $self->getPath;
     open my $fh, '<', $tar or X->throw( message => "unable to open $tar : $!" );
     
     # create file
     my $archive = ISGA::File->addToRepository( $fh, 
-					       UserName => 'blargh',
+					       UserName => $self->getUserName . '.tar.gz',
 					       Type => ISGA::FileType->new( Name => 'Archived File Collection'),
 					       Format => ISGA::FileFormat->new( Name => 'Compressed Tar Archive'),
 					       Description => ''
@@ -31,6 +49,9 @@ Create an archive for the FileCollection.
     
     # save as archive
     $self->edit( Archive => $archive );
+
+    # now delete the contents
+    $self->deleteContents();
 
     # unlink the archive
     unlink($tar);
@@ -52,9 +73,58 @@ files for each of its contents.
 
     # if any contents exist for this collection, die
     ISGA::FileCollectionContent->exists(FileCollection => $self) 
-	and X->throw( message => 'Can not inflate a FileCollection with existing contents' );
+	and X::API->throw( message => 'Can not inflate a FileCollection with existing contents' );
 
-    # 
+    # retrieve archive
+    my $archive = $self->getArchive or X::API->throw( message => 'inflate() requires an archive');
+    my $archive_path = $archive->getPath;
+
+    # inflate to temporary directory
+    my $tmp_dir = File::Temp->newdir();
+    $tmp_dir->unlink_on_destroy(0);
+    system("tar x -f $archive_path -C $tmp_dir ");
+
+    # process all files in directory
+    my $dir = $tmp_dir . "/" . $self->getUserName;
+    opendir(my $dh, $dir) || X::API->throw( message => "unable to open dir $dir: $!" );
+
+    warn "untarred to $dir\n";
+
+    use Data::Dumper;
+    warn Dumper($self);
+
+    foreach ( readdir($dh) ) {
+
+      next if $_ eq '.' or $_ eq '..';
+
+      # open file
+      open my $fh, '<', "$dir/$_" or X::API->throw( message => "unable to open file $dir/$_ : $!" );
+
+      warn "adding $dir/$_\n";
+
+      # add file to repository
+      my $file = ISGA::File->addToRepository( $fh, 
+					      UserName => $_,
+					      Type => $self->getFileType,
+					      Format => $self->getFileFormat,
+					      Description => '',
+					      
+					      CreatedBy => $self->getCreatedBy,
+					      CreatedAt => $self->getCreatedAt,
+					      IsHidden => 0,
+					      StripDosLineBreaks => 0
+					    );
+
+      $self->addContents($file);
+    } 
+    
+    # add file to collection
+
+    # unlink archive
+    $self->edit( Archive => undef );
+    
+    # remove the archive
+    $archive->delete();    
   }
 
 #------------------------------------------------------------------------

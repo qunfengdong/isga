@@ -60,7 +60,7 @@ if( $options{help} ) {
 my $request = ISGA::UploadRequest->new( Id => $options{upload_request} );
 
 # register this script
-my $running = ISGA::RunningScript->create( PID => $$, Command => "download_file_to_repository.pl --upload_request=$options{upload_request}" );
+my $running = ISGA::RunningScript->register( "download_file_to_repository.pl --upload_request=$options{upload_request}" );
 
 # make sure we're in the correct status
 any { $request->getStatus eq $_ } qw( Pending Failed )

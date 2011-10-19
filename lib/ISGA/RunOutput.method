@@ -36,70 +36,112 @@ the underlying cluster is complete to avoid getting partial results.
 
     # build args hash for create statements
     my %args = ( Type => $cout->getType, Format => $format, IsHidden => 0,
+		 UserName => $run_name . '.' . $format->getExtension,
 		 CreatedAt => $now, CreatedBy => $account, ExistsOutsideCollection => 0,
 		 Description => "Output from $run_name" );
-    
-    # if we have a file list, then we aren't getting the file directly
+
+    my $resource;
+    my $is_file;
+
+    # one file vs many files
     if ( $cout->getErgatisFormat eq 'File List' ) {
       
       # read in our list of files
       open my $fh, '<', $raw_output or X->throw( error => "$raw_output - $!" ); 
       my @list = <$fh>;
-      close $fh;
-
-      my @files;
-
-      foreach ( @list ) {
-	chomp;
-
-	open my $fh, '<', $_ or X::File->throw( error => "Cant open $_ - $!" );
-	
-	$args{UserName} = basename($_);
-
-	my $file = ISGA::File->addToRepository( $fh, %args );
-	push @files, $file;
-      }
-
-      # if there were multiple files, add a new collection to store them
-      if ( @list > 1 ) {
-
-        my $username = $run_name . " " . $cout->getType->getName;
-
-	my $collection = ISGA::FileCollection->create
-	  ( Type => ISGA::FileCollectionType->new('File List'),
-	    CreatedAt => $now,
-	    CreatedBy => $account,
-	    Description => "Output from $run_name",
-	    IsHidden => 0,
-	    ExistsOutsideCollection => 0,
-	    UserName => $username
-	  );
-
-	$run_collection->addContents($collection);
-	$collection->addContents(\@files);
-	
-	$self->edit( FileResource => $collection );
-
-      } elsif ( @list == 1 ) {
-
-	$run_collection->addContents(\@files);
-	$self->edit( FileResource => $files[0] );
-      }
-
-    # otherwise we are just processing a single file
-    } else {
-      my @files;
-      open my $fh, '<', $raw_output or X::File->throw( error => "Cant open $_ - $!" );
-
-
-      # set run output based on run name and extension
-      # what about when the run has more than one output of the same type?
-      $args{UserName} =  $run_name . '.' . $format->getExtension;
-
-      my $file = ISGA::File->addToRepository( $fh, %args );
-      push @files, $file;
-
-      $run_collection->addContents(\@files);
-      $self->edit( FileResource => $files[0] );
+      close $fh; 
+      
+      if ( @list == 1 ) {
+	chomp $list[0];
+	$raw_output = $list[0];
+	$is_file = 1;
+      } else {
+	my $prefix = $run_name . " " . $cout->getType->getName;    
+	$resource = $self->saveErgatisOutputFileCollection( \@list, $prefix, %args );
+      }      
     }
+
+    # if not a 'File List' or list has one file
+    if ( $cout->getErgatisFormat eq 'File' or $is_file ) {
+      $resource = $self->saveErgatisOutputFile($raw_output, %args);
+    }
+    
+    # whatever we built, add it to the run collection
+    $run_collection->addContents($resource);
+    $self->edit( FileResource => $resource );
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutputFileCollection(array_ref $paths, string $prefix, hash $file_args);
+
+Copies Ergatis output consisting of multiple files to the Repository
+and adds them to the run collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub saveErgatisOutputFileCollection {
+
+    my ($self, $raw_outputs, $prefix, %args) = @_;
+    
+    # create the archive
+    my $tar = ISGA::Tar->new();
+   
+    # walk through files
+    foreach ( @$raw_outputs ) {
+      chomp;
+      my $logical_path = $prefix . "/" . basename($_);
+      my ($file) = $tar->add( $logical_path, $_ );
+    }
+ 
+    # open a "temporary" file, but we'll let it hang around
+    my $tmp = File::Temp->new();
+    $tar->write( $tmp->filename(), 1);
+
+    seek($tmp,0,0);
+    
+    # create file
+    my $archive = ISGA::File->addToRepository( $tmp, 
+					       UserName => "$prefix.tar.gz",
+					       Type => ISGA::FileType->new( Name => 'Archived File Collection'),
+					       Format => ISGA::FileFormat->new( Name => 'Compressed Tar Archive'),
+					       Description => 'file collection archive',
+					       CreatedAt => $args{CreatedAt},
+					       CreatedBy => $args{CreatedBy},
+					     );
+
+    # create the collection
+    my $collection = ISGA::FileCollection->create
+      ( Type => ISGA::FileCollectionType->new('File List'),
+	CreatedAt => $args{CreatedAt},
+	CreatedBy => $args{CreatedBy},
+	Description => $args{Description},
+	IsHidden => 0,
+	ExistsOutsideCollection => 0,
+	FileFormat => $args{Format},
+	FileType => $args{Type},
+	UserName => $prefix,
+	Archive => $archive
+      );
+
+    return $collection;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutputFile(string $path, hash $file_args);
+
+Copies Ergatis output consisting of a single file to the Repository
+and adds it to the run collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub saveErgatisOutputFile {
+
+    my ($self, $raw_output, %args) = @_;
+
+    open my $fh, '<', $raw_output or X::File->throw( error => "Cant open $_ - $!" );
+        
+    return ISGA::File->addToRepository( $fh, %args );    
   }

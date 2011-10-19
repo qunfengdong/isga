@@ -28,7 +28,7 @@ use base 'ISGA::Run';
 use Digest::MD5  qw(md5_hex);
 use Bio::Tools::GFF;
 use File::Copy;
-use File::Path qw(mkpath);
+use File::Path qw(mkpath remove_tree);
 
 {
 
@@ -212,9 +212,25 @@ hash containing the genome features.
     
     my $gff_file = ISGA::RunOutput->new( ClusterOutput => $self->getClusterOutput, 
 					 Run => $self )->getFileResource; 
-    
-    my $files = $gff_file->isa('ISGA::File') ? [$gff_file] : $gff_file->getFlattenedContents ;
-   
+
+    # default is a file
+    my $files = [$gff_file];
+
+    # remember if archived
+    my $was_archived = 0;
+
+    if ( $gff_file->isa('ISGA::FileCollection') ) {
+
+      # if we're archived, inflate the contents
+      if ( $gff_file->getArchive ) {
+	$gff_file->inflate();
+	$was_archived = 1;
+      }
+
+      $files = $gff_file->getFlattenedContents;
+
+    }
+
     my %features;
     
     foreach ( @$files ) {
@@ -299,6 +315,9 @@ hash containing the genome features.
       }
     }
     
+    # re-archive the collection if need be
+    $was_archived and $gff_file->archive();
+
     return \%features;
   }
  
@@ -447,6 +466,21 @@ Returns true if a gbrowse configuration has been created for this run.
   
 #------------------------------------------------------------------------
 
+=item public bool isInstallingGBrowse();
+
+Returns true if a GBrowse installation has been requested.
+
+=cut
+#------------------------------------------------------------------------
+  sub isInstallingGBrowse {
+
+    my $self = shift;
+
+    return ISGA::RunningScript->exists( Command => "setup_gbrowse_instance.pl --run=$self");
+  }
+
+#------------------------------------------------------------------------
+
 =item public void installGBrowseData();
 
 Install Gbrowse config file and gff file.
@@ -469,6 +503,8 @@ Install Gbrowse config file and gff file.
 
     # install gene details
     my $contig = $self->parseAndLoadGFF();
+
+    
 
     # create config file
     $self->writeGBrowseConfigurationFile($contig);
@@ -502,7 +538,7 @@ Install Gbrowse config file and gff file.
     
     my $dir = "$gbrowse_dir/databases/$id";
     
-    -d $dir and rmtree($dir);
+    -d $dir and remove_tree($dir);
   }
   
 #------------------------------------------------------------------------
@@ -526,6 +562,8 @@ Install Gbrowse config file and gff file.
     my $id = $self->getId;
     my $name = $self->getName;
     
+    warn "called writeConfigFile on contig:$contig:\n";
+
     # customize the template
     $conf =~ s{___DATABASE_DIR___}{$gbrowse_dir/databases/$id};
     $conf =~ s{___LANDMARK___}{$contig};
