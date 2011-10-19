@@ -66,5 +66,5 @@ actual file from the filesystem.
     # make sure the repository is set
     my $file_repository = ISGA::SiteConfiguration->value('file_repository') or X::API::Configuration::Missing->throw( variable => 'file_repository' );
 
-    unlink( "$file_repository/$p1/$p2/$name" );
+    -f "$file_repository/$p1/$p2/$name" and unlink( "$file_repository/$p1/$p2/$name" );
   }

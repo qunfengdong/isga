@@ -23,7 +23,7 @@ doesn't exist outside of the collection, it is deleted.
 
     # if the resource isn't referenced elsewhere, we delete it
     if ( ! $resource->existsOutsideCollection 
-	 and ! ISGA::FileCollectionContent->query( FileResource => $resource ) ) {
+	 and ! ISGA::FileCollectionContent->exists( FileResource => $resource ) ) {
       $resource->delete();
     }
 

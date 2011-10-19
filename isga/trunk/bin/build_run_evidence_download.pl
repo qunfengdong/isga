@@ -50,7 +50,7 @@ if( $options{help} ) {
 my $red = ISGA::RunEvidenceDownload->new( Id => $options{run_evidence_download} );
 
 # register this script
-my $running = ISGA::RunningScript->create( PID => $$, Command => "build_run_evidence_download.pl --run_evidence_download=$options{run_evidence_download}" );
+my $running = ISGA::RunningScript->register( "build_run_evidence_download.pl --run_evidence_download=$options{run_evidence_download}" );
 
 # make sure we're in the correct status
 any { $red->getStatus eq $_ } qw( Pending Failed )

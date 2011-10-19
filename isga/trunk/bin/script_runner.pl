@@ -55,18 +55,25 @@ my %skip;
 my $script_dir = ISGA::Site->getBinPath();
 
 # currently running scripts
-foreach ( @{ISGA::RunningScript->query()} ) {
+foreach ( @{ISGA::RunningScript->query( Error => undef)} ) {
 
-    my $pid = $_->getPID;
+  # check on running scripts to make sure they are still running.
+  if ( my $pid = $_->getPID ) {
 
     # test for running
     unless ( kill(SIGCHLD,$pid) ) {
-	
-	$skip{$_->getCommand} = undef;
-
-	# warn - oh crap, the script isn't running
-	warn "oh craps, $pid is supposed to be running, but it is not\n";
+      
+      $skip{$_->getCommand} = undef;
+      
+      # warn - oh crap, the script isn't running
+      warn "oh craps, $pid is supposed to be running, but it is not\n";
     }
+
+  # if it's not running, fire it off
+  } else {
+
+    system($script_dir . '/' . $_->getCommand . "&");
+  }
 }
 
 # look for available run_evidence_downloads
@@ -78,7 +85,7 @@ foreach ( @{ISGA::RunEvidenceDownload->query( Status => [ 'Pending', 'Failed' ] 
   next if exists $skip{$script};
   
   # otherwise run it
-  system($script);
+  system("$script &");
 }
 
 # look for available file downloads
@@ -88,5 +95,5 @@ foreach ( @{ISGA::UploadRequest->query( Status => ['Pending'] )} ) {
   my $script = "$script_dir/download_file_to_repository.pl --upload_request=$_";
 
   # don't run the script if it died oddly last time
-  exists $skip{$script} or system($script);
+  exists $skip{$script} or system("$script &");
 }

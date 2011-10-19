@@ -15,7 +15,7 @@ eval {
   my $account = $file_collection->getCreatedBy;    
   ISGA::Login->switchAccount( $account );
 
-  $file_collection->archive();
+  $file_collection->inflate();
 
   ISGA::DB->commit();
 };

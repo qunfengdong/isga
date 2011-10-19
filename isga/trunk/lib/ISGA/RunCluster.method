@@ -135,8 +135,7 @@ sub updateStatus {
   if ( $key == 6 ) {
     
     # find the outputs of this cluster
-    foreach my $cout ( @{ISGA::ClusterOutput->query( Component => $components )} ) {
-      next if $cout->getVisibility eq 'Internal';
+    foreach my $cout ( @{ISGA::ClusterOutput->query( Component => $components, Visibility => 'Pipeline' )} ) {
 
       # find the outputs of this cluster
       foreach ( @{ISGA::RunOutput->query( ClusterOutput => $cout, Run => $run )} ) {
@@ -201,3 +200,4 @@ sub getEvidenceDownloadName {
 
   return 'Run-' . $self->getRun->getErgatisKey . ' ' . $self->getCluster->getName . '.tar.gz';
 }
+

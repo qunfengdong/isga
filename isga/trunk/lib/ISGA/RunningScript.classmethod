@@ -1,0 +1,53 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public RunningScript register(string $command);
+
+Register the current running script
+
+=cut 
+#------------------------------------------------------------------------
+  sub register {
+
+    my ($class, $command) = @_;
+
+    # check if we are running
+    my ($self) = @{$class->query( Command => $command )};
+
+    # if there is no pid, let's claim the task
+    if ( $self ) {
+
+      # if another PID has claimed this job, we die
+      $self->getPID and X::API->throw( message => "Duplicate attempt to run $command by $$");
+
+      # if the job has an error, clear it
+      $self->getError and $self->edit( Error => undef );
+
+      # claim this task and return ourselves
+      $self->edit( PID => $$ );
+      return $self;
+    }
+
+    # create new instance
+    return $class->create( PID => $$, Command => $command );
+  }
+
+#------------------------------------------------------------------------
+
+=item public RunningScript schedule(string $command);
+
+Schedule the supplied script for execution. Will throw an exception if
+the script already exists.a
+
+=cut 
+#------------------------------------------------------------------------
+  sub schedule {
+    
+    my ($class, $command) = @_;
+
+    # make sure it hasn't been previously scheduled
+    $class->exists( Command => $command ) and X::API->throw( message => "$command is already scheduled" );
+
+    return $class->create( Command => $command );
+  }
