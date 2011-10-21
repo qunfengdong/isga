@@ -38,3 +38,12 @@ ALTER TABLE runningscript ADD COLUMN runningscript_error TEXT;
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 INSERT INTO ergatisinstall (ergatisinstall_name, ergatisinstall_version) VALUES ('ergatis-v2r16-cgbr1', 'ergatis-v2r16-cgbr1');
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add Run/Analysis page
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/Run/Analysis', 'Run Analysis', TRUE, '2columnright');
+
