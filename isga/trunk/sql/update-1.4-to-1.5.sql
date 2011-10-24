@@ -46,4 +46,10 @@ INSERT INTO ergatisinstall (ergatisinstall_name, ergatisinstall_version) VALUES 
 -------------------------------------------------------------------
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/Run/Analysis', 'Run Analysis', TRUE, '2columnright');
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add FileType for Run Analysis page
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Run Analysis', 'Contains the name, value, and description of various post run analysis performed on a pipeline run.');
 
