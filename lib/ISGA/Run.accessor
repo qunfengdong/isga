@@ -210,3 +210,13 @@ Returns true if the pipeline has a GBrowse installation
 =cut
 #------------------------------------------------------------------------
   sub hasGBrowseInstallation { return 0; }
+
+#------------------------------------------------------------------------
+
+=item public void hasRunAnalysis();
+
+Returns true if the pipeline has a Run Analysis
+
+=cut
+#------------------------------------------------------------------------
+sub hasRunAnalysis { return 0; }
