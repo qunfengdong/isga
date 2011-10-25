@@ -1,0 +1,24 @@
+---
+type:    map
+mapping:
+  "RunID":
+    type:    int
+    required:    yes
+
+  "Analysis":
+    type:    seq
+    sequence:
+      - type:    map
+        mapping:
+
+          "NAME":
+            type:    text
+            required:    yes
+
+          "VALUE":
+            type:    any
+            required:    yes
+
+          "DESCRIPTION":
+            type:    text
+            required:    yes
