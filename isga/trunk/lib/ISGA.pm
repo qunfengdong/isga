@@ -47,6 +47,7 @@ use ISGA::JobType::GridBlast;
 
 use ISGA::Run::ProkaryoticAnnotation;
 use ISGA::GlobalPipeline::ProkaryoticAnnotation;
+use ISGA::RunAnalysis;
 
 1; 
 __END__
