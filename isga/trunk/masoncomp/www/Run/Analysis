@@ -9,10 +9,16 @@ if ( ! ISGA::Login->hasGroup( $admin ) ) {
       or X::User::Denied->throw;
 }
 
+if ($run->hasRunAnalysis){
+
+  my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
+
 </%perl>
 
-% my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
 <& "/plugin/$plugin/analysis.mas", run => $run &>
+% } else {
+<& "/Run/no_analysis.mas", run => $run &>
+% }
 
 <%once>
 
