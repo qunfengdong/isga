@@ -2,6 +2,23 @@
  $run
 </%args>
 
+<sys:script type="text/javascript">
+$(document).ready(sectionHighlight);
+function sectionHighlight() {
+  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
+  var url = window.location.href;
+
+  for(var i = 0; i < menuLinks.length; i++){
+    if(url == menuLinks[i].href){
+      var link = menuLinks[i];
+      var li = link.parentNode;
+      li.style.backgroundColor = "#D8E47C";
+      li.nextElementSibling.style.backgroundColor = "#D8E47C";
+    }
+  }
+}
+</sys:script>
+
 <h1><% $run->getType->getName %> Run Status</h1>
 
 % my $running = $run->isRunning;
@@ -140,7 +157,7 @@ my $complete = ISGA::RunStatus->new( Name => 'Complete' );
 %   my $ergatis_uri = $run->getErgatisURI;
 <li class="title">Admin Tools</li>
 <li class="rmbutton pointer"><a href="<% $ergatis_uri %>">View Run In Ergatis</a></li>
-<li class="pointer onclick="window.location='<% $ergatis_uri %>'"><p>View this run in the Ergatis administrative interface.</p></li>
+<li class="pointer" onclick="window.location='<% $ergatis_uri %>'"><p>View this run in the Ergatis administrative interface.</p></li>
 
 %   if ( ! $canceled and $running ) {
 
