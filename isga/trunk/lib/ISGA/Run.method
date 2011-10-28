@@ -119,7 +119,6 @@ outputs.
       
       if ( $new_status eq 'Complete' ) {
 	$self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'}) or X::API->throw("Did not properly parse pipeline.xml for endTime.");
-#        $self->writeAnalysisYaml() if $self->hasRunAnalysis();
       }
       
       # go through each cluster
