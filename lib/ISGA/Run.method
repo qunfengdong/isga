@@ -119,13 +119,18 @@ outputs.
       
       if ( $new_status eq 'Complete' ) {
 	$self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'}) or X::API->throw("Did not properly parse pipeline.xml for endTime.");
-        $self->writeAnalysisYaml() if $self->hasRunAnalysis();
+#        $self->writeAnalysisYaml() if $self->hasRunAnalysis();
       }
       
       # go through each cluster
       $_->[0]->updateStatus($ergatis_status, $_->[1]) for @$working;
-      
+
       ISGA::DB->commit();
+
+      if ( $new_status eq 'Complete' ) {
+        $self->writeAnalysisYaml() if $self->hasRunAnalysis();
+      }
+
     };
     
     if ( $@ ) {
