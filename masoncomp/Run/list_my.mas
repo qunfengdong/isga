@@ -64,7 +64,7 @@ $(document).ready(function() {
 <sys:script type="text/javascript">
 $(document).ready(function() {
     $('#hide_runs').click(function() {
-      var inputs = $('input:checkbox:checked:value').serializeArray();
+      var inputs = $('input:checkbox:checked').serializeArray();
       var run = new Array();
       for (i=0; i<inputs.length; i++)
       {
