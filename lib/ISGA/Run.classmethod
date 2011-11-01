@@ -2,6 +2,8 @@
 
 use LWP::UserAgent;
 use File::Copy;
+use YAML;
+use File::Temp;
 
 #------------------------------------------------------------------------
 
@@ -93,6 +95,30 @@ sub submit {
 
   # prepare the clusters
   $run->_initializeClusters($builder);
+
+  # get paramter mask and write to file
+  my $parametermask = $builder->getParameterMask();
+  
+  my %args = ( Type => ISGA::FileType->new( Name => 'Run Parameters'),
+               Format => ISGA::FileFormat->new( Name => 'YAML' ),
+               IsHidden => 1, UserName => $builder->getName . ' Run Parameters',
+               CreatedAt => ISGA::Timestamp->new(),
+               CreatedBy => ISGA::Login->getAccount,
+               ExistsOutsideCollection => 1, Description => 'Post run analysis for ' . $builder->getName );
+
+
+  my $fh = File::Temp->new;
+  print $fh YAML::Dump($parametermask);
+  seek($fh,0,0);
+
+  my $file = ISGA::File->addToRepository( $fh, %args );
+
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $run->getFileCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $run->getFileCollection,
+                                       FileResource => $file,
+                                       Index => $next_index++
+                                     );
 
   return $run;
 }
