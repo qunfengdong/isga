@@ -5,6 +5,26 @@ use File::Path qw( remove_tree );
 
 #------------------------------------------------------------------------
 
+=item ABSTRACT void installTranscriptomeData();
+
+Unimplemented stub
+
+=cut 
+#------------------------------------------------------------------------
+sub installTranscriptomeData { X::API::UnrealizedMethod->throw( class => 'ISGA::Run', method => 'installTranscriptomeData' ); }
+
+#------------------------------------------------------------------------
+
+=item ABSTRACT void deleteTranscriptomeData();
+
+Unimplemented stub
+
+=cut 
+#------------------------------------------------------------------------
+sub deleteTranscriptomeData { X::API::UnrealizedMethod->throw( class => 'ISGA::Run', method => 'deleteTranscriptomeData' ); }
+
+#------------------------------------------------------------------------
+
 =item PRIVATE void _initializeOutputs(RunBuilder $rb);
 
 Creates placeholders for all expected pipeline outputs.

@@ -71,6 +71,27 @@ sub Run::InstallGbrowseData {
 
 #------------------------------------------------------------------------
 
+=item public void InstallTranscriptomeData();
+
+Method to setup transcriptome data.
+
+=cut
+#------------------------------------------------------------------------
+sub Run::InstallTranscriptomeData {
+
+  my $self = shift;
+  my $run = $self->args->{run};
+
+  $run->generatesTranscriptomeData() or X::User->throw( "Can not install transcriptome data for non-annotation pipelines" );
+  $run->hasTranscriptomeData() and X::User->throw( "This pipeline already has a transcriptome database" );
+  
+  ISGA::RunningScript->schedule("setup_transcriptome_db.pl --run=$run");
+
+  $self->redirect( uri => "/Run/View?run=$run" );
+}
+
+#------------------------------------------------------------------------
+
 =item public void Cancel();
 
 Method to Cancel a run.

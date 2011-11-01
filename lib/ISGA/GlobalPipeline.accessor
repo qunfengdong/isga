@@ -155,6 +155,16 @@ Returns true if the pipeline provides a Blast database.
 
 #------------------------------------------------------------------------
 
+=item public boolean generatesTranscriptomeData();
+
+Returns true if the pipeline generates transcriptome data.
+
+=cut
+#------------------------------------------------------------------------
+  sub generatesTranscriptomeData { return 0; }
+
+#------------------------------------------------------------------------
+
 =item public [PipelineConfiguration] getConfiguration();
 
 Returns the global configuration settings for this pipeline.

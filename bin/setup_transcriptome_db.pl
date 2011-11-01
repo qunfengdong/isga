@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-setup_gbrowse_instance.pl - Configures a GBrowse instance and accompanying database for a run.
+setup_transcriptome_db.pl - Installs transcriptome database for a run.
 
 =head1 SYNOPSIS
 
-USAGE: setup_gbrowse_instance.pl --run=id
+USAGE: setup_transcriptome_db.pl --run=id
        [ --help
        ]
 
@@ -17,7 +17,7 @@ B<--run>
 
 =head1 DESCRIPTION
 
-This creats a new GBrowse and gene database instance for the supplied run.
+This creats a new transcriptome database instance for the supplied run.
 
 =head1 INPUT
 
@@ -34,8 +34,6 @@ use ISGA;
 use Getopt::Long qw(:config no_ignore_case no_auto_abbrev pass_through);
 use Pod::Usage;
 
-use List::MoreUtils qw(any);
-
 my %options = ();
 my $result = GetOptions (\%options,
 			 'run=i',
@@ -50,7 +48,7 @@ if( $options{help} ) {
 my $run = $options{run};
 
 # register this script
-my $running = ISGA::RunningScript->register("setup_gbrowse_instance.pl --run=$run");
+my $running = ISGA::RunningScript->register("setup_transcriptome_db.pl --run=$run");
 
 # start transaction
 eval {
@@ -58,7 +56,7 @@ eval {
   ISGA::DB->begin_work();
 
 
-  $run->installGBrowseData();
+  $run->installTranscriptomeData();
 
   # delete notification request
   ISGA::DB->commit();
@@ -75,15 +73,11 @@ if ( $@ ) {
   # clean up
   $running->fail("$e");
 
-  # remove conf
-  $run->deleteGBrowseConfigurationFile();
-
   # remove database dir
-  $run->deleteGBrowseDatabase();
+  $run->deleteTranscriptomeData();
 
   X::Dropped->throw( error => $e);
 }
-
 
 sub check_parameters {
 
@@ -97,8 +91,8 @@ sub check_parameters {
   $options->{run} = ISGA::Run->new( Id => $options->{run} );
    
   # skip if we can't install GBrowse for this run
-  $options->{run}->hasGBrowseData or exit(0);
+  $options->{run}->generatesTranscriptomeData or exit(0);
 
   # skip if we have the data already
-  $options->{run}->hasGBrowseInstallation and exit(0);
+  $options->{run}->hasTranscriptomeData and exit(0);
 }

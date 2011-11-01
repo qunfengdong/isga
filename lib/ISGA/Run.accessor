@@ -200,16 +200,35 @@ Returns true if the pipeline generates data for display in GBrowse
 #------------------------------------------------------------------------
   sub hasGBrowseData { return shift->getGlobalPipeline->hasGBrowseData; }
 
-
 #------------------------------------------------------------------------
 
 =item public boolean hasGBrowseInstallation();
 
-Returns true if the pipeline has a GBrowse installation
+Returns true if the run has a GBrowse installation
 
 =cut
 #------------------------------------------------------------------------
   sub hasGBrowseInstallation { return 0; }
+
+#------------------------------------------------------------------------
+
+=item public boolean generatesTranscriptomeData();
+
+Returns true if the pipeline generates transcriptome data.
+
+=cut
+#------------------------------------------------------------------------
+  sub generatesTranscriptomeData { return shift->getGlobalPipeline->generatesTranscriptData; }
+
+#------------------------------------------------------------------------
+
+=item public boolean hasTranscriptomeData();
+
+Returns true if the run has transcriptome data loaded into the database.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasTranscriptomeData { return 0; }
 
 #------------------------------------------------------------------------
 
@@ -219,4 +238,4 @@ Returns true if the pipeline has a Run Analysis
 
 =cut
 #------------------------------------------------------------------------
-sub hasRunAnalysis { return 0; }
+  sub hasRunAnalysis { return 0; }
