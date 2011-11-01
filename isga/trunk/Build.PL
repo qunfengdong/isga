@@ -23,7 +23,7 @@ my $builder = MyBuild->new(
 		 'File::Copy::Recursive' => 0,  
 		 'File::Path' => '> 2',
 		 'File::Pid' => 0,
-		 'File::Temp' => '> 0.22',
+		 'File::Temp' => '>= 0.22',
 		 'GD::Image' => 0,
 		 'Graph'      => 0,
 		 'Hash::Merge::Simple' => 0,

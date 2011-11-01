@@ -46,6 +46,7 @@ INSERT INTO ergatisinstall (ergatisinstall_name, ergatisinstall_version) VALUES 
 -------------------------------------------------------------------
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/Run/Analysis', 'Run Analysis', TRUE, '2columnright');
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add FileType for Run Analysis page
@@ -54,3 +55,31 @@ INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase
 INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Run Analysis', 'Contains the name, value, and description of various post run analysis performed on a pipeline run.');
 INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Run Parameters', 'Contains the run parameter values used for a pipeline run.');
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add Transcriptome tables
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE transcriptome (
+  transcriptome_id SERIAL PRIMARY KEY,
+  run_id INTEGER REFERENCES run(run_id) NOT NULL UNIQUE 
+);
+
+CREATE TABLE nrhit (
+  nrhit_id SERIAL PRIMARY KEY,
+  transcriptome_id INTEGER REFERENCES transcriptome(transcriptome_id) NOT NULL,
+  nrhit_hit TEXT NOT NULL,
+  nrhit_description TEXT NOT NULL,
+  nrhit_evalue TEXT NOT NULL
+);
+
+CREATE TABLE transcriptomecontig (
+  transcriptomecontig_id SERIAL PRIMARY KEY,
+  transcriptome_id INTEGER REFERENCES transcriptome(transcriptome_id) NOT NULL,
+  transcriptomecontig_name TEXT NOT NULL,
+  transcriptomecontig_length INTEGER NOT NULL,
+  nrhit_id INTEGER REFERENCES nrhit(nrhit_id),
+  transcriptomecontig_paralogroup INTEGER,
+  transcriptomecontig_paralogcount INTEGER,
+  CONSTRAINT transcritomecontig_name_k2 UNIQUE (transcriptome_id, transcriptomecontig_name )
+);

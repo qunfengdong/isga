@@ -1,0 +1,9 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: TranscriptomeContig
+attributes:
+  - { name: Run, type: Run, options: [ REQUIRED ] }
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Length, type: number, options: [ REQUIRED ] }
+  - { name: NRHit, type: NRHit }
+  - { name: ParalogGroup, type: number }
+  - { name: ParalogCount, type: number }

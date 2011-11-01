@@ -504,8 +504,6 @@ Install Gbrowse config file and gff file.
     # install gene details
     my $contig = $self->parseAndLoadGFF();
 
-    
-
     # create config file
     $self->writeGBrowseConfigurationFile($contig);
   }

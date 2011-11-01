@@ -1,0 +1,7 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: NRHit
+attributes:
+  - { name: Hit, type: string, options: [ REQUIRED ] }
+  - { name: Description, type: string, options: [ REQUIRED ] }
+  - { name: Evalue, type: string, options: [ REQUIRED ] }
+  - { name: Transcriptome, type: Transcriptome, options: [ REQUIRED ] }
