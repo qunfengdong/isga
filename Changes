@@ -1,16 +1,19 @@
 Revision history for ISGA
 
-1.5.1   Oct 31 2011
+1.5.1   Dec 1 2011
 
 	WEB CHANGES
 
 	* Modified file collection views to handle archived file collections
-
+	* Add Transcriptome database query and view pages
+	
 	API CHANGES
 	
 	* Added Archived feature for file collections, where a .tgz file is stored rather than individual files
 	* Replace calls to legacy rmtree with remove_tree	
 	* Tweaked RunningScript class to be a generic queueing system for farming tasks out to the command line
+	* Add classes for storing transcriptome annotation results
+
 
 1.4.3   Sep 21 2011
 	

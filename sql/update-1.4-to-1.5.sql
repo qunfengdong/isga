@@ -41,6 +41,40 @@ INSERT INTO ergatisinstall (ergatisinstall_name, ergatisinstall_version) VALUES 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Add account creation policy site configuration
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO configurationvariable ( configurationvariable_name, configurationvariable_type, configurationvariable_form,
+       	    			    configurationvariable_description, configurationvariable_datatype )
+  VALUES ( 'new_account_policy', 'SiteConfiguration',
+'---
+templ: select
+NAME: tool_is_installed
+TITLE: tool_is_installed
+REQUIRED: 1
+OPTION: [ Open, Closed, Confirmation ]
+ERROR: [ [''Number::matches'', 1, 2, 3] ]
+OPT_VAL: [1,2, 3]
+',
+'<p>Determine the account creation policy for this installation.</p>
+<ul>
+ <li><strong>Open</strong> - Users may create accounts and use them immediately with no oversight</li>
+ <li><strong>Closed</strong> - Accounts may only be created by administrators using the create_isga_user.pl script</li>
+ <li><strong>Confirmation Required</strong> - Users may request accounts, but requests must be confirmed by an administrator before they can be used.</li>
+</ul>
+', 
+'string' );
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Fix ergatis_submission_directory description
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE configurationvariable SET configurationvariable_description = 'Full path to the temporary directory where Ergatis pipelines are built for this project (usually pipelines_building).' WHERE configurationvariable_name = 'ergatis_submission_directory';
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- Add Run/Analysis page
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -83,3 +117,14 @@ CREATE TABLE transcriptomecontig (
   transcriptomecontig_paralogcount INTEGER,
   CONSTRAINT transcritomecontig_name_k2 UNIQUE (transcriptome_id, transcriptomecontig_name )
 );
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add transcriptome use cases
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/WorkBench/TranscriptomeQueryResult', 'Transcriptome Results', TRUE, '2columnright');
+
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Run/InstallTranscriptomeData', 'Run::InstallTranscriptomeData', TRUE, 'none');

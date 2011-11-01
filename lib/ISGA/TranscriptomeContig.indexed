@@ -1,7 +1,7 @@
 --- !perl/MasonX::Foundation::Class::Indexed
 class: TranscriptomeContig
 attributes:
-  - { name: Run, type: Run, options: [ REQUIRED ] }
+  - { name: Transcriptome, type: Transcriptome, options: [ REQUIRED ] }
   - { name: Name, type: string, options: [ REQUIRED ] }
   - { name: Length, type: number, options: [ REQUIRED ] }
   - { name: NRHit, type: NRHit }
