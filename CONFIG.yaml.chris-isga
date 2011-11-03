@@ -2,7 +2,7 @@
 mason_data_directory: /data/web/isga.cgb/mason 
 apache_session_directory: /data/web/isga.cgb/session
 apache_session_lock_directory: /data/web/isga.cgb/session
-database: { name: isga, user: chemmeri, type: Pg }
+database: { name: isga_test, user: chemmeri, type: Pg }
 test_database: { name: isga, user: cgb, type: Pg }
 mail_config: mail.cgb.indiana.edu
 log_file: /data/web/isga.cgb/log
