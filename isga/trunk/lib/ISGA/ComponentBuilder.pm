@@ -181,7 +181,6 @@ the supplied component template.
           foreach my $refdb (@{ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => $$_{'REFERENCEDB'} ) )}){
             my $ref_tag = $refdb->getRelease->getReference->getTag->getName;
             if( ($ref_tag eq 'Organism' or $ref_tag eq 'OTU') and $refdb->getStatus->isAvailable()){
-#              push @{$$_{'OPTION'}}, $refdb->getRelease->getReference->getName . ' ' . $refdb->getRelease->getRelease;
               push @{$$_{'OPTION'}}, $refdb->getName;
               push @{$$_{'OPT_VAL'}}, $refdb->getFullPath;
             }
