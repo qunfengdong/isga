@@ -128,3 +128,10 @@ INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase
 
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Run/InstallTranscriptomeData', 'Run::InstallTranscriptomeData', TRUE, 'none');
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add referencedb label column
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+ALTER TABLE referencedb ADD COLUMN referencedb_label TEXT;
+
