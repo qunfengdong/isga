@@ -5,3 +5,4 @@ attributes:
   - { name: Path, type: string, options: [ REQUIRED ] }
   - { name: Status, type: PipelineStatus, options: [ REQUIRED ] }
   - { name: Type, type: ReferenceType, options: [ REQUIRED ] }
+  - { name: Label, type: string }

@@ -29,6 +29,7 @@ name for collections.
   sub getName {
 
     my $self = shift;
+    return $self->getLabel if (defined $self->getLabel);
     if ($self->getRelease->getReference->getTag->getName eq 'Organism'){
       return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease . ' (Assembled Genome)' if ($self->getPath =~ /genome/o);
       return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease;
