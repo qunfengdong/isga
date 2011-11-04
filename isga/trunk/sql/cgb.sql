@@ -171,6 +171,8 @@ INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('BSSEEKERDB', 'preprocessed for bsseeker');
 INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('OrthoDB Mapping', 'Preprocessed OrthoDB Gene to Ortholog ID Mappings');
+INSERT INTO filetype (filetype_name, filetype_help)
+  VALUES ('OrthoDB Conserved Single Copy', 'OrthoDB conserved single copy genes for a given OTU.');
 
 INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
   VALUES('formatdb', 'xxx', 'formatdb formated database', TRUE);
@@ -180,6 +182,8 @@ INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, 
   VALUES('bsseeker preprocessed', 'xxx', 'preprocessed for bsseeker', TRUE);
 INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
   VALUES('OrthoDB Preprocessed Mapping', 'xxx', 'preprocessed for OrthoDB classification', TRUE);
+INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
+        VALUES('OrthoDB Conserved Single Copy List', 'xxx', 'Tab-delimeted list of OrthoDB conserved single copy genes', FALSE);
 
 
 -------------------------------------------------------------------
@@ -208,6 +212,10 @@ INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
   VALUES ('OrthoDB Mapping Data',
          (SELECT filetype_id FROM filetype WHERE filetype_name = 'OrthoDB Mapping'),
          (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'OrthoDB Preprocessed Mapping'));
+INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
+  VALUES ('OrthoDB Conserved Single Copy',
+         (SELECT filetype_id FROM filetype WHERE filetype_name = 'OrthoDB Conserved Single Copy'),
+         (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'OrthoDB Conserved Single Copy List'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -640,6 +648,48 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'tabtext/OrthoDBVertebratesGeneMappings.dat', 'Vertebrates');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_arthropod_conserved_single_copy.txt', 'Arthropods');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_diptera_conserved_single_copy.txt', 'Diptera');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_fungi_conserved_single_copy.txt', 'Fungi');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_mammals_conserved_single_copy.txt', 'Mammals');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_metazoa_conserved_single_copy.txt', 'Metazoa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_primatesrodents_conserved_single_copy.txt', 'Primates and Rodents');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Conserved Single Copy'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/orthodb_vertebrates_conserved_single_copy.txt', 'Vertebrates');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
