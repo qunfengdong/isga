@@ -151,6 +151,7 @@ UPDATE componenttemplate SET componenttemplate_name = 'tRNAscan-SE' WHERE compon
 -------------------------------------------------------------------
 INSERT INTO referencetag (referencetag_name) VALUES ('Organism');
 INSERT INTO referencetag (referencetag_name) VALUES ('Collection');
+INSERT INTO referencetag (referencetag_name) VALUES ('OTU');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -158,23 +159,28 @@ INSERT INTO referencetag (referencetag_name) VALUES ('Collection');
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 
-INSERT INTO filetype (filetype_name, filetype_help) 
+INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('BLAST Nucleotide Database', 'blast formated db');
-INSERT INTO filetype (filetype_name, filetype_help) 
+INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('BLAST Amino Acid Database', 'blast formated db');
-INSERT INTO filetype (filetype_name, filetype_help) 
+INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('SHOREDB', 'preprocessed for shore');
 INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('Genomic cDNA', 'Annotated cDNA');
-INSERT INTO filetype (filetype_name, filetype_help) 
+INSERT INTO filetype (filetype_name, filetype_help)
   VALUES ('BSSEEKERDB', 'preprocessed for bsseeker');
+INSERT INTO filetype (filetype_name, filetype_help)
+  VALUES ('OrthoDB Mapping', 'Preprocessed OrthoDB Gene to Ortholog ID Mappings');
 
-INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary) 
+INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
   VALUES('formatdb', 'xxx', 'formatdb formated database', TRUE);
-INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary) 
+INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
   VALUES('Shore Index Folder', 'xxx', 'indexed shore file', TRUE);
-INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary) 
+INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
   VALUES('bsseeker preprocessed', 'xxx', 'preprocessed for bsseeker', TRUE);
+INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary)
+  VALUES('OrthoDB Preprocessed Mapping', 'xxx', 'preprocessed for OrthoDB classification', TRUE);
+
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -182,22 +188,26 @@ INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 
-INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id) 
-  VALUES ('BLAST Nucleotide Database', 
-         (SELECT filetype_id FROM filetype WHERE filetype_name = 'BLAST Nucleotide Database'), 
+INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
+  VALUES ('BLAST Nucleotide Database',
+         (SELECT filetype_id FROM filetype WHERE filetype_name = 'BLAST Nucleotide Database'),
          (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'formatdb'));
-INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id) 
-  VALUES ('BLAST Amino Acid Database', 
+INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
+  VALUES ('BLAST Amino Acid Database',
          (SELECT filetype_id FROM filetype WHERE filetype_name = 'BLAST Amino Acid Database'),
          (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'formatdb'));
-INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id) 
-  VALUES ('SHORE Preprocess Data', 
+INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
+  VALUES ('SHORE Preprocess Data',
          (SELECT filetype_id FROM filetype WHERE filetype_name = 'SHOREDB'),
          (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'Shore Index Folder'));
-INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id) 
-  VALUES ('BSEEKER Data', 
+INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
+  VALUES ('BSEEKER Data',
          (SELECT filetype_id FROM filetype WHERE filetype_name = 'BSSEEKERDB'),
          (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'bsseeker preprocessed'));
+INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
+  VALUES ('OrthoDB Mapping Data',
+         (SELECT filetype_id FROM filetype WHERE filetype_name = 'OrthoDB Mapping'),
+         (SELECT fileformat_id FROM fileformat WHERE fileformat_name = 'OrthoDB Preprocessed Mapping'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -205,8 +215,8 @@ INSERT INTO referencetype (referencetype_name, filetype_id, fileformat_id)
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
-  VALUES('NCBI-nr', '/nfs/bio/db/NCBI-nr', 
-         'Non-redundant GenBank CDS translations as well as, PDB, SwissProt, PIR, and PRF', 
+  VALUES('NCBI-nr', '/nfs/bio/db/NCBI-nr',
+         'Non-redundant GenBank CDS translations as well as, PDB, SwissProt, PIR, and PRF',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Collection'));
 INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
   VALUES('NCBI-nt', '/nfs/bio/db/NCBI-nt',
@@ -264,6 +274,10 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('Populus trichocarpa', '/nfs/bio/db/Populus_trichocarpa',
          'Reference information for Populus trichocarpa',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Organism'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('OrthoDB', '/nfs/bio/db/OrthoDB',
+         'OrthoDB presents a catalog of eukaryotic orthologous protein-coding genes across 44 vertebrates, 25 arthropods, and 46 fungi.',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='OTU'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -318,29 +332,31 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='Populus trichocarpa'),
          'v7.0_156', '03-31-2011', 'v7.0_156');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoDB'),
+         'OrthoDB4', '09-01-2010', 'OrthoDB4');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencedb entries
----- These are currently dummy place holders
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 
-INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path) 
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/rna/rna.fa');
 
-INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)    
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/protein.fa');
 
-INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)    
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='GRCh37.p2'),
@@ -452,20 +468,6 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'blast/protein/FrozenGeneCatalog20110204.proteins.fasta');
-
--- INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
---   VALUES (
---     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'SHORE Preprocess Data'),
---     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
---     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
---     '/some/fake/path');
-
--- INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
---   VALUES (
---     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BSEEKER Data'),
---     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='v1.0'),
---     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
---     '/some/fake/path');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
@@ -595,6 +597,49 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'uniref100.fasta');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBArthropodsGeneMappings.dat', 'Arthropods');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBDipteraGeneMappings.dat', 'Diptera');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBFungiGeneMappings.dat', 'Fungi');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBMammalsGeneMappings.dat', 'Mammals');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBMetazoaGeneMappings.dat', 'Metazoa');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBPrimatesRodentsGeneMappings.dat', 'Primates and Rodents');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'OrthoDB Mapping Data'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'tabtext/OrthoDBVertebratesGeneMappings.dat', 'Vertebrates');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
