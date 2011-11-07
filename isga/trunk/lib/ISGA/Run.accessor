@@ -218,7 +218,7 @@ Returns true if the pipeline generates transcriptome data.
 
 =cut
 #------------------------------------------------------------------------
-  sub generatesTranscriptomeData { return shift->getGlobalPipeline->generatesTranscriptData; }
+  sub generatesTranscriptomeData { return shift->getGlobalPipeline->generatesTranscriptomeData; }
 
 #------------------------------------------------------------------------
 
