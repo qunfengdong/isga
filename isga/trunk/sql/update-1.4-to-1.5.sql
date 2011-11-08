@@ -125,6 +125,8 @@ CREATE TABLE transcriptomecontig (
 -------------------------------------------------------------------
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/WorkBench/TranscriptomeQueryResult', 'Transcriptome Results', TRUE, '2columnright');
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/TranscriptomeContig/View', 'Transcriptome Contig', TRUE, '2columnright');
 
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Run/InstallTranscriptomeData', 'Run::InstallTranscriptomeData', TRUE, 'none');
