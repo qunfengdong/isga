@@ -93,18 +93,18 @@ $(document).ready(function() {
 });
 </sys:script>
 
-<sys:script type="text/javascript">
-$(document).ready(function() {
-  $('.clickmeupdate').livequery('click', function(event){
-      var link = $("a.clickmeupdate").attr("href");
-      $("a.clickmeupdate").attr("href", "#");
-      window.location = link;
-      document.getElementById('ajax_loader').innerHTML = 'Loading data into GBrowse<br><img src="/include/img/loader.gif" />'
-      this.id="disabled";
-      return false;
-  });
-});
-</sys:script>
+%# <sys:script type="text/javascript">
+%# $(document).ready(function() {
+%#   $('.clickmeupdate').livequery('click', function(event){
+%#       var link = $("a.clickmeupdate").attr("href");
+%#       $("a.clickmeupdate").attr("href", "#");
+%#       window.location = link;
+%#       document.getElementById('ajax_loader').innerHTML = 'Loading data into GBrowse<br><img src="/include/img/loader.gif" />'
+%#       this.id="disabled";
+%#       return false;
+%#   });
+%# });
+%# </sys:script>
 
 <sys:script type="text/javascript">
 $(document).ready(function() {
