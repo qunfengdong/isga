@@ -1,0 +1,20 @@
+<%args>
+ $contig
+ @group => ()
+</%args>
+
+<%perl>
+my $name = $contig->getName;
+</%perl>
+
+<h1><% $name %></h1>
+
+<div class="data">
+
+<table width="100%">
+<tbody>
+ <tr>
+  <th width="30%">Contig</th><td width="70%"><% $name %></td>
+ </tr>
+ <tr> 
+  <th>Length</th><td><% $contig->getLength %></td>

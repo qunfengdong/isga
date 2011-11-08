@@ -1,4 +1,4 @@
-<%args>
+<%args>  # -*- cperl -*-
  $term
  $run
 </%args>
@@ -10,6 +10,51 @@ $term or return $m->comp('/WorkBench/transcriptomequery.mas', run => $run, error
 
 my $transcriptomes = ISGA::Transcriptome->query( Run => $run );
 
+my @hits;
+
+# query nrhit_description and name
+my $nr_desc_hits = ISGA::NRHit->query( Description => { LIKE => "%$term%" }, Transcriptome => $transcriptomes );
+
+foreach ( @$nr_desc_hits ) {
+  push [ $_->getTranscriptome, 'NR Hit Description', $_->getDescription ];
+}
+
+my $nr_name_hits = ISGA::NRHit->query( Hit => { LIKE => "%term%" }, Transcriptome => $transcriptomes );
+
+foreach ( @$nr_name_hits ) {
+  push [ $_->getTranscriptome, 'NR Hit', $_->getHit ];
+}
+
+# query contig name
+my $c_name_hits = ISGA::TranscriptomeContig->query( Name => { LIKE => "%term%" }, Transcriptome => $transcriptome );
+
+foreach ( @$c_name_hits ) {
+  push [ $_, 'Contig', $_->getName ];
+}
+
 
 
 </%perl>
+
+<div class="data">
+<table width="100%">
+<tbody>
+ <tr><th>Search Term</th><td><% $term %></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="list">
+
+<table width="100%">
+ <tr><th>Contig</th><th>Match</th></tr>
+
+% foreach ( @hits ) {
+<tr>
+ <td><a href="/TranscriptomeContig/View?transcriptome_contig=<% $_->[0] %>"<% $_->getName %></a></td>
+ <td><strong><% $_->[1] %>:</strong> <% $_->[2] %></td>
+</tr>
+% }
+
+</table>
+</div>

@@ -39,7 +39,7 @@ if (%searchableRuns) {
 	my $genes = ISGA::Gene->query( Contig => $contigs, Note => { LIKE => "%$term%" }, OrderBy => 'Contig' );
 </%perl>
 <div class="data">
-<table wdith="100%">
+<table width="100%">
 	<tbody>
 		<tr>
 			<th>Search Term</th><td><i><% $term %></i></td>
