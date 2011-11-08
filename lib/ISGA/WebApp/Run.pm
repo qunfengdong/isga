@@ -58,15 +58,34 @@ Method to setup gbrowse data.
 =cut
 #------------------------------------------------------------------------
 sub Run::InstallGbrowseData {
-
+  use JSON;
   my $self = shift;
   my $run = $self->args->{run};
 
   $run->hasGBrowseData() or X::User->throw( "Can not install Gbrowse data for non-annotation pipelines" );
+  my $echo = {};
+  if ($run->isInstallingGBrowse){
+    $echo->{status} = 0;
+    $echo->{url} = "/submit/Run/InstallGbrowseData?run=$run";
+  } elsif ($run->hasGBrowseInstallation) {
+    $echo->{status} = 1;
+    $echo->{url} = "/submit/Run/InstallGbrowseData?run=$run";
+  } else {
+    $echo->{status} = 0;
+    ISGA::RunningScript->schedule("setup_gbrowse_instance.pl --run=$run");
+    $echo->{url} = "/submit/Run/InstallGbrowseData?run=$run";
+  }
 
-  ISGA::RunningScript->schedule("setup_gbrowse_instance.pl --run=$run");
+  my $json_text = to_json($echo);
 
-  $self->redirect( uri => "/Run/View?run=$run" );
+  # save result
+  $self->_save_arg( echo => $json_text );
+  $self->_save_arg( type => 'JSON' );
+
+  # redirect to what
+  $self->redirect( uri => '/Echo' );
+
+#  $self->redirect( uri => "/Run/View?run=$run" );
 }
 
 #------------------------------------------------------------------------
