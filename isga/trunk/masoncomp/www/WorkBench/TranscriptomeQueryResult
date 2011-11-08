@@ -1,0 +1,15 @@
+<%args>
+ $term
+ $run
+</%args>
+
+<%perl>
+
+# make sure we have a term to search with
+$term or return $m->comp('/WorkBench/transcriptomequery.mas', run => $run, error => 1);
+
+my $transcriptomes = ISGA::Transcriptome->query( Run => $run );
+
+
+
+</%perl>
