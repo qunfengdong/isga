@@ -144,11 +144,11 @@ outputs.
       # go through each cluster
       $_->[0]->updateStatus($ergatis_status, $_->[1]) for @$working;
 
-      ISGA::DB->commit();
-
       if ( $new_status eq 'Complete' ) {
         $self->writeAnalysisYaml() if $self->hasRunAnalysis();
       }
+
+      ISGA::DB->commit();
 
     };
     
