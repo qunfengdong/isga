@@ -88,6 +88,7 @@ INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase
 -------------------------------------------------------------------
 INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Run Analysis', 'Contains the name, value, and description of various post run analysis performed on a pipeline run.');
 INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Run Parameters', 'Contains the run parameter values used for a pipeline run.');
+INSERT INTO filetype (filetype_name, filetype_help) VALUES ('Run Analysis Histogram', 'A histogram for various bins of data.');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
