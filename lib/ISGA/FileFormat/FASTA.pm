@@ -230,6 +230,7 @@ sub verify {
     }
   }
 
+  X::File::FASTA::Header::EmptySequence->throw( name => $name, line => $line-1 ) if ($fasta{base_count} < 1);
   
   seek($fh,0,0);
 
