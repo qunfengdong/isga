@@ -264,8 +264,6 @@ sub Run::Submit {
     $_->delete();
   }
 
-#  X->throw('bam!');
-  
   # nuke it and redirect
   $run_builder->delete();
 
