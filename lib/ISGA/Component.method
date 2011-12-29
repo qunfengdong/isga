@@ -36,10 +36,10 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 	}
 	
 	# add separating space to command if it already has a value
-	if ( defined $self->{parameters}{$_->{CONFIGLINE}} ) {
-	  $self->{parameters}{$_->{CONFIGLINE}} .= " $command";
+	if ( defined $self->{parameters}{$_->{NAME}} ) {
+	  $self->{parameters}{$_->{NAME}} .= " $command";
 	} else {
-	  $self->{parameters}{$_->{CONFIGLINE}} = $command;
+	  $self->{parameters}{$_->{NAME}} = $command;
 	}
       }
     }
