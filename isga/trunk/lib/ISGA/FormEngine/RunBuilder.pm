@@ -444,7 +444,7 @@ sub EditParameters {
 
   my $run_builder = $args->{run_builder};
   
-  my $form = $run_builder->buildParameterForm();
+  my $form = $run_builder->buildParameterForm($args);
 
   return $form;
 } 
