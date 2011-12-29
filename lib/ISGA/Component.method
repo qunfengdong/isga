@@ -51,7 +51,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 
     # write the file
     my $path = $rb->getFullErgatisPath . '/'. $self->getErgatisName . '.config';
-    ISGA::Utility->writeFile($path, $output_buffer);
+    ISGA::Utility->writeFile($path, $out_buffer);
   }
   
 #------------------------------------------------------------------------
