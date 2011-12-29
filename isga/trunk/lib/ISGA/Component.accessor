@@ -2,41 +2,17 @@
 
 #------------------------------------------------------------------------
 
-=item public string getConfigFile();
+=item public string getConfigFilePath();
 
-Returns a string containing this components config file.
-
-=cut 
-#------------------------------------------------------------------------
-  sub getConfigFile {
-
-    my $self = shift;
-    
-    my $name = $self->getConfigFileName;
-
-    my $path = (join '/', '___package_include___', $self->getErgatisInstall->getName, $name);
-
-    # read the template for the config file
-    open my $fh, '<', $path or X::File->throw( error => "$path: $!" );
-    my $file = do { local $/; <$fh> };
-    close $fh;  
-
-    return $file;
-  }
-
-#------------------------------------------------------------------------
-
-=item public string getConfigFileName();
-
-Returns the name of this components config file.
+Returns the path to thie components config file relative to the package include directory.
 
 =cut 
 #------------------------------------------------------------------------
-   sub getConfigFileName {
+   sub getConfigFilePath {
 
      my $self = shift;
 
-     return $self->getErgatisName . '.config';
+     return $self->getErgatisInstall->getName . '/' . $self->getErgatisName . '.config';
    }
 
 #------------------------------------------------------------------------

@@ -442,45 +442,9 @@ sub EditParameters {
 
   my ($class, $args) = @_;
 
-  my $form = ISGA::FormEngine->new($args);
-  $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
-
   my $run_builder = $args->{run_builder};
-  my $pipeline = $run_builder->getPipeline;
-  my $components = $pipeline->getComponents;
-  my $parameter_mask = $run_builder->getParameterMask;
   
-  my @form;
-
-  my @hidden;
-
-  for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
-    
-    my $run_builder_form = $pipeline->getComponentBuilder($_, $parameter_mask)->getRunBuilderForm();
-
-    if ( $run_builder_form ) {
-      push @form, $run_builder_form;
-      push @hidden, 
-	{ templ => 'hidden',
-	  NAME => 'component',
-	  VALUE => $_
-	},
-      }
-  }
-
-  push @form, @hidden, 
-    {
-     templ => 'hidden',
-     NAME => 'run_builder',
-     VALUE => $run_builder,
-    };
-
-  $form->conf( { ACTION => '/submit/RunBuilder/EditParameters',
-		 FORMNAME => 'run_builder_edit_parameters',
-		 SUBMIT => 'Save',
-		 sub => \@form } );
-  $form->make;
-
+  my $form = $form_builder->buildParameterForm();
 
   return $form;
 } 

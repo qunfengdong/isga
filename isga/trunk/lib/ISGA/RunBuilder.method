@@ -5,6 +5,76 @@ use Clone qw(clone);
 
 #------------------------------------------------------------------------
 
+=item public ISGA::FormEngine buildParameterForm(hashRef $args);
+
+Builds the FormEngine object for the RunBuilder object.
+
+=cut 
+#------------------------------------------------------------------------
+  sub buildParameterForm {
+
+    my ($self, $args) = @_;
+    
+    my $form = ISGA::FormEngine->new($args);
+    $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
+    
+    my @form = @{$self->buiParameterFormFields()};
+
+    $form->conf( { ACTION => '/submit/RunBuilder/EditParameters',
+		   FORMNAME => 'run_builder_edit_parameters',
+		   SUBMIT => 'Save',
+		   sub => \@form } );
+
+    $form->make;
+   
+    return $form;
+  }
+
+#------------------------------------------------------------------------
+
+=item public ISGA::FormEngine buildParameterFormFields();
+
+Builds the FormEngine object for the RunBuilder object.
+
+=cut 
+#------------------------------------------------------------------------
+  sub buildParameterFormFields {
+
+    my ($self) = @_;
+
+    my (@form, @hidden);
+
+    my $pipeline = $self->getPipeline;
+    my $components = $self->getComponents;
+    my $parameter_mask = $self->getParameterMask;
+    
+    for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
+      
+      my $run_builder_form = $pipeline->getComponentBuilder($_, $parameter_mask)->getRunBuilderForm();
+      
+      if ( $run_builder_form ) {
+	push @form, $run_builder_form;
+	push @hidden, 
+	  { templ => 'hidden',
+	    NAME => 'component',
+	    VALUE => $_
+	  };
+      }
+    }
+    
+    push @form, @hidden, 
+      {
+       templ => 'hidden',
+       NAME => 'run_builder',
+       VALUE => $self,
+      };
+    
+    return \@form;
+  }
+  
+
+#------------------------------------------------------------------------
+
 =item public void stage([RunBuilderInput] $rbi);
 
 Stages pipeline files for an ergatis run. Builds pipeline.layout xml

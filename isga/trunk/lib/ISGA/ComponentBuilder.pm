@@ -442,7 +442,7 @@ sub getForm { return shift->{PipelineBuilder}{FormEngine}; }
 
 =item public HashRef getRunBuilderForm( );
 
-Returns the FormEngine portion of the ComponentBuilder
+Returns the RunBuilder FormEngine portion of the ComponentBuilder
 
 =cut
 
