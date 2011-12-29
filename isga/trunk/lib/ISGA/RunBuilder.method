@@ -45,7 +45,7 @@ Builds the FormEngine object for the RunBuilder object.
     my (@form, @hidden);
 
     my $pipeline = $self->getPipeline;
-    my $components = $self->getComponents;
+    my $components = $pipeline->getComponents;
     my $parameter_mask = $self->getParameterMask;
     
     for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
