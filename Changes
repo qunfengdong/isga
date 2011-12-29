@@ -10,10 +10,20 @@ Revision history for ISGA
 	API CHANGES
 	
 	* Added Archived feature for file collections, where a .tgz file is stored rather than individual files
+	* Config files are now generated through Mason rather than regexps, allowing each replacement to be done 
+	  through a method call.
 	* Replace calls to legacy rmtree with remove_tree	
 	* Tweaked RunningScript class to be a generic queueing system for farming tasks out to the command line
 	* Add classes for storing transcriptome annotation results
+	* Migrated work of preparing RunBuilder parameter form from FormEngine to RunBuilder class so 
+	  it can be subclassed.
 
+	DETAILED API CHANGES
+
+        * Removed getConfigFile() and getConfigFileName() methods from ISGA::Component - replaced by 
+	  getConfigFilePath()
+	* Removed getDecoratedInputValue() method from ISGA::Component - replaced by getInput()
+	* Added getIteration() and getParameter() methods to ISGA::Component.	
 
 1.4.3   Sep 21 2011
 	

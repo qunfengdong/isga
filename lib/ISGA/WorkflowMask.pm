@@ -87,7 +87,6 @@ sub getErgatisInstall {
   return ISGA::ErgatisInstall->new( Name => $self->{ergatis_install} );
 }
 
-
 #------------------------------------------------------------------------
 
 =item public [Component] getDisabledComponents();
@@ -180,6 +179,7 @@ sub recalculateOrphanedComponents {
 
   my $disabled = {};
 
+  # retrieve the explicitely disabled components
   foreach ( @{$self->getDisabledComponents} ) {
     $disabled->{ $_->getErgatisName } = $_;
   }

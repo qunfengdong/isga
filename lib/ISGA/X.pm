@@ -36,6 +36,8 @@ use Exception::Class
  'X::API::Configuration' => { isa => 'X::API', fields => [ 'variable' ] },
  'X::API::Configuration::Missing' => { isa => 'X::API::Configuration' },
 
+ 'X::API::ComponentNotConfigured' => { isa => 'X::API' },
+
  'X::FileCollection' => { isa => 'X' },
  'X::FileCollection::ArchivedUnsupported' => { isa => 'X::FileCollection' },
 
@@ -103,6 +105,10 @@ sub X::User::HTTP::Request::message {
 
   return 'Error retrieving ' . $e->url . ' HTTP status was (' . $e->status_code . ') ' . 
     $e->status_text;
+}
+
+sub X::API::ComponentNotConfigured::message {
+  return 'A component must be configured with a RunBuilder before this method can be called from it.';
 }
 
 

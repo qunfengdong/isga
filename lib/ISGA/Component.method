@@ -16,26 +16,15 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 
     my ($self, $rb, $mask, $cluster_inputs, $iteration) = @_;
 
-    my $name = $self->getErgatisName . '.config';
-    
-    my %inputMask;
-
-    # retrieve all inputs for this component and overlay inputs to pipeline
-    foreach ( @{ISGA::ClusterInput->query( Component => $self )} ) {
-      my $value = exists $cluster_inputs->{$_} ? $cluster_inputs->{$_} : $_->getValue($rb);
-      $inputMask{ '___' . $_->getName . '___' } = $self->getDecoratedInputValue($_, $value) 
-    }  
-
-    # read the template for the config file
-    my $file = $self->getConfigFile;
+    # register RunBuilder
+    $self->{run_builder} = $rb;
+    $self->{cluster_inputs} = $cluster_inputs;
+    $iteration and $self->{iteration} = $iteration;
 
     # do we copy our parameter mask from a different component
     my $build_component = $self->getCopyParameterMask || $self;
 
     if ( my $builder = ISGA::ComponentBuilder->new($build_component, $mask) ) {
-
-      my %config;
- 
       foreach ( @{$builder->getParameters} ) {
 	
 	my $command = '';
@@ -47,35 +36,95 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 	}
 	
 	# add separating space to command if it already has a value
-	if ( defined $config{$_->{CONFIGLINE}} ) {
-	  $config{$_->{CONFIGLINE}} .= " $command";
-      } else {
-	$config{$_->{CONFIGLINE}} = $command;
+	if ( defined $self->{parameters}{$_->{CONFIGLINE}} ) {
+	  $self->{parameters}{$_->{CONFIGLINE}} .= " $command";
+	} else {
+	  $self->{parameters}{$_->{CONFIGLINE}} = $command;
+	}
       }
-      }
-
-      # if this is an iteration, we need to ninja-set the output token
-      if ( $iteration ) {
-	my ($token) = $name =~ /\.(\w+).config$/;
-	$config{___output_token___} = $token;
-      }
-
-      while ( my ($key, $value) = each %config ) { $file =~ s/$key/$value/g; }
-      
     }
 
-    # set project_id_root which is required for some ergatis components to work
-    if ( $file =~ /___project_id_root___/ ) {
-      my $value = $rb->getScrubbedName();
-      $file =~ s/___project_id_root___/$value/g;
-    }
-    
-    while ( my ($key, $value) = each %inputMask ) { $file =~ s/$key/$value/g; }      
+    # use Mason to generate the config file
+    my $out_buffer;
+    my $interp = HTML::Mason::Interp->new( comp_root  => '___package_include___', out_method => \$out_buffer );
+    $interp->exec( $self->getConfigFilePath, self => $self );
 
-    my $path = join("/", $rb->getFullErgatisPath, $name);
-
-    ISGA::Utility->writeFile($path, $file);
+    # write the file
+    my $path = $rb->getFullErgatisPath . '/'. $self->getErgatisName . '.config';
+    ISGA::Utility->writeFile($path, $output_buffer);
   }
+  
+#------------------------------------------------------------------------
+
+=item public string getParameter(string $name);
+
+Returns a the ergatis config value for the supplied parameter.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getParameter {
+    
+    my ($self, $name) = @_;
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+    exists $self->{parameters}{$name} or X::API->throw( message => "$name not found as parameter for component " . $self->getName );
+    return $self->{parameters}{$name};
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getIteration();
+
+Returns the iteration count for the component.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getIteration {
+
+    my $self = shift;
+    exists $self->{iteration} or X::API::ComponentNotConfigured->throw();
+    return $self->{iteration};
+  }
+    
+#------------------------------------------------------------------------
+
+=item public string getInput(string $name);
+
+Returns a the ergatis config value for the supplied input.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getInput {
+    
+    my ($self, $name) = @_;
+
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+
+    my $ci = ISGA::ClusterInput->new( Component => $self, Name => $name );
+    my $value = exists $self->{cluster_inputs}{$ci} ? $self->{cluster_inputs}{$ci} : $ci->getValue($self->{run_builder});
+    return $value;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getProjectIDRoot();
+
+Returns a cloned ComponentBuilder with ParameterMask values injected in
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getProjectIDRoot {
+
+    my $self = shift;
+
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+
+    return $self->{run_builder}->getScrubbedName;
+  }
+
 
 
 #------------------------------------------------------------------------
