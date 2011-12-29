@@ -12,7 +12,7 @@ Returns the path to thie components config file relative to the package include 
 
      my $self = shift;
 
-     return $self->getErgatisInstall->getName . '/' . $self->getErgatisName . '.config';
+     return '/' . $self->getErgatisInstall->getName . '/' . $self->getErgatisName . '.config';
    }
 
 #------------------------------------------------------------------------
