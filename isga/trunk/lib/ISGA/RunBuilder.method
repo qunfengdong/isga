@@ -18,7 +18,7 @@ Builds the FormEngine object for the RunBuilder object.
     my $form = ISGA::FormEngine->new($args);
     $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
     
-    my @form = @{$self->buiParameterFormFields()};
+    my @form = @{$self->buildParameterFormFields()};
 
     $form->conf( { ACTION => '/submit/RunBuilder/EditParameters',
 		   FORMNAME => 'run_builder_edit_parameters',
