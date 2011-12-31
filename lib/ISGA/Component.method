@@ -15,15 +15,15 @@ Write the $iteration-th config file for this component in support of an Ergatis 
   sub writeConfigFile {
 
     my ($self, $rb, $mask, $cluster_inputs, $iteration) = @_;
-
+    
     # register RunBuilder
     $self->{run_builder} = $rb;
     $self->{cluster_inputs} = $cluster_inputs;
     $iteration and $self->{iteration} = $iteration;
-
+    
     # do we copy our parameter mask from a different component
     my $build_component = $self->getCopyParameterMask || $self;
-
+    
     if ( my $builder = ISGA::ComponentBuilder->new($build_component, $mask) ) {
       foreach ( @{$builder->getParameters} ) {
 	
@@ -35,6 +35,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 	}
 	
 	$self->{parameters}{$_->{NAME}} = $command;
+      }
     }
 
     # use Mason to generate the config file
