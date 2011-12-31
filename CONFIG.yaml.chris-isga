@@ -13,7 +13,7 @@ custom_parameters:
 # Email address to send notification mail from
   mail_sender: 'ISGA Chris System <biohelp@cgb.indiana.edu>'
 # Temporary file directory to use for ISGA.  Please use full path.
-  tmp_file_directory: /home/chemmeri/isga/tmp/ISGA
+  tmp_file_directory: /research/projects/ergatis-dev/chemmeri/tmp/ISGA
 # The URL for the cgi directory of the Ergatis installation that ISGA will use.
   ergatis_base_uri: https://chris-ergatis.cgb.indiana.edu/cgi/
 # The time allowed between resetting a password and confirming the password change.  e.g., 24h
