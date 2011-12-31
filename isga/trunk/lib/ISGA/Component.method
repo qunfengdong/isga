@@ -28,20 +28,13 @@ Write the $iteration-th config file for this component in support of an Ergatis 
       foreach ( @{$builder->getParameters} ) {
 	
 	my $command = '';
-	my $value = $_->{VALUE};
-	
+
 	# if the parameter uses a command line flag, supply it here
-	if ( defined $value ) {
-	  $command = exists $_->{FLAG} ? "$_->{FLAG} $value" : "$value";
+	if ( defined $_->{VALUE} ) {
+	  $command = exists $_->{FLAG} ? "$_->{FLAG} $_->{VALUE}" : "$_->{VALUE}";
 	}
 	
-	# add separating space to command if it already has a value
-	if ( defined $self->{parameters}{$_->{NAME}} ) {
-	  $self->{parameters}{$_->{NAME}} .= " $command";
-	} else {
-	  $self->{parameters}{$_->{NAME}} = $command;
-	}
-      }
+	$self->{parameters}{$_->{NAME}} = $command;
     }
 
     # use Mason to generate the config file
