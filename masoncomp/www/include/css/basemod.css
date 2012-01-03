@@ -360,6 +360,10 @@
     text-align: center;
  }
 
+ td.right{
+    text-align: right;
+ }
+
  span.upstream {
     background-color: #fedfbf;
  }
