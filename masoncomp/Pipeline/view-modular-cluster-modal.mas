@@ -34,7 +34,7 @@ foreach ( grep { ! $_->getDependsOn } @$components ) {
   my $description;
   
   foreach my $dep_component ( @dependents ) {
-    my $builder = ISGA::ComponentBuilder->new($dep_component) or next;
+    my $builder = $pipeline->getComponentBuilder($dep_component) or next;
     $builder->hasParameters or next;
 
     $count++;
@@ -42,14 +42,14 @@ foreach ( grep { ! $_->getDependsOn } @$components ) {
     $builder->getComponentDescription;
   }
  
-  my $b = ISGA::ComponentBuilder->new($_);
+  my $b = $pipeline->getComponentBuilder($_);
   if ( $b->{PipelineBuilder} and $count == 0 ) { 
     $link = "<a href=\"/Pipeline/ViewParameters?pipeline=$pipeline&component=$_\">View Parameters</a>";
     $description = $b->getComponentDescription;
   }
 
   my $on_off_switch = $wf_mask->isActive($_) ? "on" : "off";
-  my $builder = ISGA::ComponentBuilder->new($_);
+  my $builder = $pipeline->getComponentBuilder($_);
 </%perl>
   <tr class="odd">
 %#    <td align="right"><% $_->getName %></td>

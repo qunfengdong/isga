@@ -26,7 +26,7 @@ when you dont want to pay to load the YAML object.
 
 =item public GlobalPipeline getGlobalTemplate();
 
-Returns the GlobalPipeline that this UserPipeline is ultimated
+Returns the GlobalPipeline that this UserPipeline is ultimately
 templated on.
 
 =cut
@@ -207,5 +207,5 @@ Returns a component builder with the supplied parameter mask applied.
 
     $parameter_mask ||= $self->getParameterMask;
 
-    return ISGA::ComponentBuilder->new( $component, $parameter_mask );
+    return ISGA::ComponentBuilder->new( $component, $self->getGlobalTemplate, $parameter_mask );
   }

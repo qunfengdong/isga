@@ -59,6 +59,28 @@ Returns the directory for storing global-pipeline specific mason components.
 
 #------------------------------------------------------------------------
 
+=item public string getFormPath();
+
+Returns a string containing the path to this pipelines form
+configuration file.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getFormPath {
+
+    my $self = shift;
+
+    # check for existance of file based on ergatis install
+    my $file = join( '/', '___package_include___', $self->getErgatisInstall->getName(), 
+		     $self->getLabel);
+    $file .= ".yaml";
+    -f $file or X::API->throw( message => "Pipeline configuration file: $file is missing" );
+
+    return $file;
+  }
+
+#------------------------------------------------------------------------
+
 =item public [Workflow] getWorkflow();
 
 Returns the Workflow objects associated with this pipeline.
@@ -116,12 +138,15 @@ Returns a list of components in the provided cluster of this pipeline.
     return ISGA::Component->query( Cluster => $self->getClusters );
   }
 
-
 #------------------------------------------------------------------------
 
 =item public ComponentBuilder getComponentBuilder(Component $component);
 
 Returns a component builder for the passed component. No parmater mask is applied.
+
+=item public ComponentBuilder getComponentBuilder(Component $component, ParameterMask $mask);
+
+Returns a component builder with the supplied parameter mask applied.
 
 =cut
 #------------------------------------------------------------------------
@@ -129,9 +154,8 @@ Returns a component builder for the passed component. No parmater mask is applie
 
     my $self = shift;
 
-    return ISGA::ComponentBuilder->new(@_);
+    return ISGA::ComponentBuilder->new(shift, $self, @_);
   }
-
 
 #------------------------------------------------------------------------
 

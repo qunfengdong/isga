@@ -1,10 +1,11 @@
 <%args> # -*- cperl -*-
  $component
+ $pipeline
  $name
 </%args>
 <%perl>
 
-my $builder = ISGA::ComponentBuilder->new( $component );
+my $builder = $pipeline->getComponentBuilder( $component );
 
 </%perl>
 <% $builder->getParameterDescription( $name ) %>

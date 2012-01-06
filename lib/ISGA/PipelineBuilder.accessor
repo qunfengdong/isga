@@ -1,4 +1,21 @@
 # -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public GlobalPipeline getGlobalPipeline();
+
+Returns the GlobalPipeline for this builder.
+
+=cut
+#------------------------------------------------------------------------
+  sub getGlobalPipeline {
+
+    my $self = shift;
+    my $pipeline = $self->getPipeline;
+    $pipeline->isa('ISGA::GlobalPipeline') and return $pipeline;
+    return $pipeline->getGlobalTemplate();
+  }
+
 #------------------------------------------------------------------------
 
 =item public WorkflowMask getWorkflowMask();
@@ -59,7 +76,6 @@ when you dont want to pay to load the YAML object.
 #------------------------------------------------------------------------
   sub getRawParameterMask { return $_[0]->{pipelinebuilder_parametermask}; }
 
-
 #------------------------------------------------------------------------
 
 =item public ComponentBuilder getComponentBuilder(Component $component);
@@ -72,7 +88,7 @@ Returns a component builder with this objects parameter mask applied.
 
     my ($self, $component) = @_;
 
-    return ISGA::ComponentBuilder->new( $component, $self->getParameterMask );
+    return ISGA::ComponentBuilder->new( $component, $self->getGlobalPipeline, $self->getParameterMask );
   }
 
 #------------------------------------------------------------------------

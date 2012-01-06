@@ -47,7 +47,7 @@ $(document).ready(function() {
 @import "/include/css/tablesorter.css";
 </sys:style>
 
-% my $default_builder = ISGA::ComponentBuilder->new($component);
+% my $default_builder = $pipeline->getComponentBuilder($component); 
 % my $note;
 
 <h1><% $component->getName %> Parameters</h1>

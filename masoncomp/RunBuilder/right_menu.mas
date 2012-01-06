@@ -7,7 +7,7 @@
 % my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', UserClass => $account->getUserClass);
 % my $runs = ISGA::Run->getCurrentRunCount($account);
 
-% my $has_run_parameters = $run_builder->hasRunParameters();                    
+% my $has_run_parameters = $run_builder->hasParameters();                    
 <sys:rightmenu>
 % my $missing_inputs = $run_builder->getMissingRequiredInputs;
 % my $missing_params = $run_builder->hasUnconfiguredParameters;

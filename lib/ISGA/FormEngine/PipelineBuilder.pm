@@ -108,7 +108,7 @@ sub EditComponent {
   my $pipeline_builder = $args->{pipeline_builder};
   my $component = $args->{component};
   my $parameter_mask = $pipeline_builder->getParameterMask();
-  my $component_builder = ISGA::ComponentBuilder->new($component, $parameter_mask);
+  my $component_builder = $pipeline_builder->getComponentBuilder($component, $parameter_mask);
   my $form_params = [ $component_builder->getForm() ];
 
   my $form = ISGA::FormEngine->new($args);
@@ -149,7 +149,7 @@ sub AnnotateCluster {
   my $component = $args->{component};
 
   my $pipeline_builder = $args->{pipeline_builder};
-  my $component_builder = ISGA::ComponentBuilder->new($component);
+  my $component_builder = $pipeline_builder->getComponentBuilder($component);
   my $parameter_mask = $pipeline_builder->getParameterMask();
   my @form = ({templ => 'fieldset', TITLE => 'Altered Parameters', sub => []});  
 
@@ -225,7 +225,7 @@ sub ChooseComponent {
     my $link = "No Parameters";
     
     foreach my $dep_components (  @{ISGA::Component->query( DependsOn => $_ )}  ){
-      if (my $builder = ISGA::ComponentBuilder->new($dep_components)){
+      if (my $builder = $pBuilder->getComponentBuilder($dep_components)){
 	if ( $builder->{PipelineBuilder} ){
 	  $count++;
 	  $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$dep_components\">Edit</a>";
@@ -233,7 +233,7 @@ sub ChooseComponent {
       }
     }
 
-    my $b = ISGA::ComponentBuilder->new($_);
+    my $b = $pBuilder->getComponentBuilder($_);
     $b->{PipelineBuilder} and $count == 0 and $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$_\">Edit</a>";
     
     my $entry = {templ => 'data_row',

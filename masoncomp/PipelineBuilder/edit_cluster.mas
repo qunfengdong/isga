@@ -8,7 +8,7 @@
 my $noParams;
 my $wf_mask = $pipeline_builder->getWorkflowMask();
 foreach ( @{$components}){
-  if ( my $builder = ISGA::ComponentBuilder->new($_) ){
+  if ( my $builder = $pipeline_builder->getComponentBuilder($_) ) { 
     if ( $builder->{PipelineBuilder} ){
 </%perl>
 
@@ -27,7 +27,7 @@ foreach ( @{$components}){
 }
 
 foreach ( @{$noParams}){
-  my $builder = ISGA::ComponentBuilder->new($_);
+  my $builder = $pipeline_builder->getComponentBuilder($_); 
 </%perl>
 <p><% $_->getName %><br>
 <em class="red">Has no parameters to be set.</em><br>

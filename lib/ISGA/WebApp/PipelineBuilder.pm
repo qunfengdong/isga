@@ -226,7 +226,7 @@ sub PipelineBuilder::EditComponent {
   my $form = ISGA::FormEngine::PipelineBuilder->EditComponent($web_args);
 
   # look into optimizing this to use session
-  my $component_builder = ISGA::ComponentBuilder->new($component);
+  my $component_builder = $pipeline_builder->getComponentBuilder($component);
 
   if ($form->canceled( )) {
     $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );

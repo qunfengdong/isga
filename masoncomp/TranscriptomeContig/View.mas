@@ -27,10 +27,10 @@ my $name = $contig->getName;
   <th>Hit</th><td><a href="http://www.ncbi.nlm.nih.gov/protein/<% $hit %>"><% $hit %></a></td>
  </tr>
  <tr>
-  <th>Description</th><td><% $hit->getDescription %></td>
+  <th>Description</th><td><% $nrhit->getDescription %></td>
  </tr>
  <tr>
-  <th>E-value</th><td><% $hit->getEvalue %></td>
+  <th>E-value</th><td><% $nrhit->getEvalue %></td>
  </tr>
 % } else {
  <tr><td colspan="2">No signficant matches against NR</td></tr>

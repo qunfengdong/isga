@@ -12,7 +12,7 @@ use List::Util qw(min);
 my $account = ISGA::Login->getAccount;
 my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', UserClass => $account->getUserClass);
 my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
-my $has_run_parameters = $run_builder->hasRunParameters();
+my $has_run_parameters = $run_builder->hasParameters();
 my $runs = ISGA::Run->getCurrentRunCount($account);
 my $plugin = $run_builder->getWebPluginDirectory();
 
@@ -63,8 +63,8 @@ the file being submitted.</p>
  <tr><th width="30%">Detail</th><th>Value</th></tr>
 </thead>
 <tbody>
-% foreach ( @{$run_builder->getPrettyPrint} ) {
- <tr><td><% $_->[1] %></td><td><% $_->[2] %></td></tr>
+% foreach ( @{$run_builder->getParametersToPrint} ) {
+ <tr><td><% $_->[0] %></td><td><% $_->[1] %></td></tr>
 % }
 </tbody>
 </table>

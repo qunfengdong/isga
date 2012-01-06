@@ -36,7 +36,7 @@ $pipeline_builder ||= $form->get_input('pipeline_builder');
 
 %   my $hasParams = 0;
 %   foreach ( @{$cluster->getComponents}){
-%     if (my $builder =  ISGA::ComponentBuilder->new($_) ){
+%     if (my $builder =  $pipeline_builder->getComponentBuilder($_) ){
 %       $hasParams = 1;
 %       my @components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' );
 <& /PipelineBuilder/modal_edit_cluster.mas, pipeline_builder => $pipeline_builder, components => @components, cluster => $cluster &>

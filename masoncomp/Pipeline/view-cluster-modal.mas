@@ -28,7 +28,7 @@
         <td>Edit Parameters</td>
       </tr>
 %foreach ( @{$components} ){
-%  if ( my $builder = ISGA::ComponentBuilder->new($_) ){
+%  if ( my $builder = $pipeline->getComponentBuilder($_) ) { 
 %    if ( $builder->{PipelineBuilder} ){
       <tr>
         <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
@@ -41,13 +41,13 @@
 %}
 %foreach ( @{$noParams}){
 % next unless($_->getName);
-%  my $builder = ISGA::ComponentBuilder->new($_);
+%  my $builder = $pipeline->getComponentBuilder($_);
       <tr>
         <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
         <td><em class="red">Has no parameters to be set.</em></td>
       </tr>
 %}
-% my $hasParams = grep {ISGA::ComponentBuilder->new($_)} @{$components};
+% my $hasParams = grep {$pipeline->getComponentBuilder($_)} @{$components};
 % if (not $hasParams){
 <tr><td colspan="2"><% $cluster->getName %> does not have any parameters.</td></tr>
 % }

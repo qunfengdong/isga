@@ -6,7 +6,7 @@
 
 <%perl>
 
-my $builder = ISGA::ComponentBuilder->new($component, $pipeline->getParameterMask);
+my $builder = $pipeline->getComponentBuilder($component);
 
 </%perl>
 

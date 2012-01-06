@@ -23,9 +23,6 @@ use YAML;
 use overload
   q{""}  => sub { return YAML::Dump($_[0]); };
 
-
-# need to override string method to save
-
 #------------------------------------------------------------------------
 
 =item public ParameterMask new(string $yaml);

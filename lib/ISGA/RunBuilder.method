@@ -19,6 +19,8 @@ Builds the FormEngine object for the RunBuilder object.
     $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
     
     my @form = @{$self->buildParameterFormFields()};
+    
+    push @form, { templ => 'hidden', NAME => 'run_builder', VALUE => $self };
 
     $form->conf( { ACTION => '/submit/RunBuilder/EditParameters',
 		   FORMNAME => 'run_builder_edit_parameters',
@@ -40,38 +42,13 @@ Builds the FormEngine object for the RunBuilder object.
 #------------------------------------------------------------------------
   sub buildParameterFormFields {
 
-    my ($self) = @_;
+    my $self = shift;
 
-    my (@form, @hidden);
+    my @form;
 
-    my $pipeline = $self->getPipeline;
-    my $components = $pipeline->getComponents;
-    my $parameter_mask = $self->getParameterMask;
-    
-    for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
-      
-      my $run_builder_form = $pipeline->getComponentBuilder($_, $parameter_mask)->getRunBuilderForm();
-      
-      if ( $run_builder_form ) {
-	push @form, $run_builder_form;
-	push @hidden, 
-	  { templ => 'hidden',
-	    NAME => 'component',
-	    VALUE => $_
-	  };
-      }
-    }
-    
-    push @form, @hidden, 
-      {
-       templ => 'hidden',
-       NAME => 'run_builder',
-       VALUE => $self,
-      };
-    
-    return \@form;
-  }
-  
+    my $run_builder_form = $self->getPipelineDefinition->getParameterForm();
+    return [$run_builder_form];
+  }    
 
 #------------------------------------------------------------------------
 

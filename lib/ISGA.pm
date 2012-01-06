@@ -27,6 +27,7 @@ use ISGA::Objects;
 use ISGA::Utility;
 
 use ISGA::WorkflowMask;
+use ISGA::PipelineDefinition;
 use ISGA::ComponentBuilder;
 use ISGA::ParameterMask;
 use ISGA::ErgatisRunStatus;

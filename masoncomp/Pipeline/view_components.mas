@@ -5,9 +5,8 @@
 
 %my $noParams;
 %foreach ( @{$components}){
-%  if ( ISGA::ComponentBuilder->new($_) && ISGA::ComponentBuilder->new($_)->{PipelineBuilder} ){
-%#    if ( ISGA::ComponentBuilder->new($_)->{PipelineBuilder} ){
-%      my $builder = ISGA::ComponentBuilder->new($_);
+%  if ( $pipeline->getComponentBuilder($_) && $pipeline->getComponentBuilder($_)->{PipelineBuilder} ){
+%      my $builder = $pipeline->getComponentBuilder($_);
 <p><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>"><% $_->getName %></a><br>
 <% $builder->getComponentDescription  %>
 </p>
@@ -19,7 +18,7 @@
 
 %foreach ( @{$noParams}){
 % next unless($_->getName);
-% if( my $builder = ISGA::ComponentBuilder->new($_) ){
+% if( my $builder = $pipeline->getComponentBuilder($_) ){
 <p><% $_->getName %><br>
 <em class="red">Has no parameters to be set.</em><br>
 <% $builder->getComponentDescription  %>

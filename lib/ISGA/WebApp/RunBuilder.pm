@@ -157,34 +157,22 @@ sub RunBuilder::EditParameters {
   if ( $form->canceled() ) {
   }
 
+
   if ( $form->ok ) {
 
     my $parameter_mask = $run_builder->getParameterMask();
 
-    # cache all the values in case there are name duplicates
-    my %inputs;
+    my $definition = $run_builder->getPipelineDefinition();
 
-    # loop through components
-    for my $component ( @{$form->get_inputs('component')} ) {
-      
-      # grab component builder
-      my $component_builder = ISGA::ComponentBuilder->new($component, $parameter_mask);
-      
-      foreach my $parameter ( @{$component_builder->getRunBuilderParameters} ) {
+    foreach my $parameter ( @{$definition->getParameters} ) {
 
-	my $name = $parameter->{NAME};
+      my $name = $parameter->{NAME};
+      my $value = $form->get_input($name);
+      my $title = $parameter->{TITLE};
 
-	my $value = $form->get_input($name);
-	my $title = $parameter->{TITLE};
-	if ( exists $parameter->{COMPONENT} ) {
-	  $title = join(' ', $parameter->{COMPONENT}, $title);
-	}
-
-	$parameter_mask->{Component}{$component}{$name} = { Description => 'Run Parameter',
-							    Title => $title,
-							    Value => $value };
-
-      }
+      $parameter_mask->{Run}{$name} = { Description => 'Run Parameter',
+					Title => $title,
+					Value => $value };
     }
 
     $run_builder->edit( ParameterMask => $parameter_mask );
@@ -196,9 +184,6 @@ sub RunBuilder::EditParameters {
   $self->_save_arg( 'form', $form );
   $self->redirect( uri => "/RunBuilder/EditParameters?run_builder=$run_builder" );
 }
-
-
-
 
 #------------------------------------------------------------------------
 
@@ -259,7 +244,7 @@ sub RunBuilder::SelectInput {
       for my $component ( @{$form->get_inputs('component')} ) {
       
 	# grab component builder
-	my $component_builder = ISGA::ComponentBuilder->new($component, $mask);
+	my $component_builder = $run_builder->getComponentBuilder($component, $mask);
 	foreach my $parameter ( @{$component_builder->getRunBuilderInputParameters($pi)} ) {
 	
 	  my $name = $parameter->{NAME};
@@ -409,7 +394,7 @@ sub RunBuilder::SelectInputList {
       for my $component ( @{$form->get_inputs('component')} ) {
       
 	# grab component builder
-	my $component_builder = ISGA::ComponentBuilder->new($component, $mask);
+	my $component_builder = $run_builder->getComponentBuilder($component, $mask);
 
 	foreach my $parameter ( @{$component_builder->getRunBuilderInputParameters($pi)} ) {
 	
