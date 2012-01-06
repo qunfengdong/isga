@@ -114,7 +114,7 @@ CREATE TABLE transcriptomecontig (
   transcriptomecontig_name TEXT NOT NULL,
   transcriptomecontig_length INTEGER NOT NULL,
   nrhit_id INTEGER REFERENCES nrhit(nrhit_id),
-  transcriptomecontig_paralogroup INTEGER,
+  transcriptomecontig_paraloggroup INTEGER,
   transcriptomecontig_paralogcount INTEGER,
   CONSTRAINT transcritomecontig_name_k2 UNIQUE (transcriptome_id, transcriptomecontig_name )
 );

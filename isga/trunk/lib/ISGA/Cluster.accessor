@@ -23,23 +23,3 @@ Returns true if the cluster iterates over an input.
 
     return ( $self->getIteratesOn ? 1 : 0 );
   }
-
-#------------------------------------------------------------------------
-
-=item public [Cluster] getParams();
-
-Returns a 1 if Cluster had editable parameters or 0 if it doesn't
-
-=cut
-#------------------------------------------------------------------------
-  sub hasParams {
-    my $self = shift;
-    my $components = $self->getComponents;
-    foreach my $component ( @{$components}){
-      if ( ISGA::ComponentBuilder->new($component)){
-         return 1;
-      }
-    }
-    return 0;
-  }
-

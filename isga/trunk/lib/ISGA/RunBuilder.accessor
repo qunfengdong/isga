@@ -2,6 +2,30 @@
 
 #------------------------------------------------------------------------
 
+=item public string getParameter();
+
+Returns the ergatis config value for the supplied parameter.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getParameter {
+
+    my ($self, $name) = @_;
+
+    my $p_def = $self->getPipelineDefinition();
+
+    my $parameter = $p_def->getParameter($name) or X::API->throw( message => "$name not found as run parameter" );
+
+    my $result = '';
+    if ( defined $parameter->{VALUE} ) {
+      $result = exists $parameter->{FLAG} ? "$parameter->{FLAG} $parameter->{VALUE}" : "$parameter->{VALUE}";
+    }
+
+    return $result;
+  }
+
+#------------------------------------------------------------------------
+
 =item public GlobalPipeline getGlobalPipeline();
 
 Returns the global pipeline for the run builder.
@@ -10,6 +34,31 @@ Returns the global pipeline for the run builder.
 #------------------------------------------------------------------------
   sub getGlobalPipeline {
     return shift->getPipeline->getGlobalTemplate();
+  }
+
+#------------------------------------------------------------------------
+
+=item public PipelineDefinition getPipelineDefinition();
+
+Returns the pipeline definition for this RunBuilder.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getPipelineDefinition { return ISGA::PipelineDefinition->newByRunBuilder(shift); }
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder with this objects parameter mask applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my $self = shift;
+
+    return ISGA::ComponentBuilder->new(shift, $self->getGlobalPipeline, @_ );
   }
 
 #------------------------------------------------------------------------
@@ -210,34 +259,17 @@ when you dont want to pay to load the YAML object.
 
 #------------------------------------------------------------------------
 
-=item public bool hasRunParameters();
+=item public bool hasParameters();
 
 Returns true if the RunBuilder has any defined run parameters. 
 
-WARNINGS: This method is slow because it answers the question
-dynamically. You may be able to speeed this method up dramatically by overriding
+WARNINGS: This method mey be  slow because it answers the question
+dynamically. You may be able to speed this method up by overriding
 with a method that returns a hardcoded value.
 
 =cut
 #------------------------------------------------------------------------
-  sub hasRunParameters {
-
-    my $self = shift;
-
-    my $pipeline = $self->getPipeline;
-    my $components = $pipeline->getComponents;   
-    my $parameter_mask = $self->getParameterMask;   
-
-    for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
-      
-      my $run_builder_form = 
-	$pipeline->getComponentBuilder($_, $parameter_mask)->getRunBuilderForm;
-      
-      $run_builder_form and return 1;
-    }
-    
-    return 0;
-  }  
+  sub hasParameters { return shift->getPipelineDefinition->hasParameters(); }
 
 #------------------------------------------------------------------------
 
@@ -252,105 +284,43 @@ be configured.
 
     my $self = shift;
 
-    my $pipeline = $self->getPipeline;
-    my $components = $pipeline->getComponents;    
-    my $parameter_mask = $self->getParameterMask;   
-   
-    for ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
+    my $p_def = $self->getPipelineDefinition();
 
-      my $run_builder_form = 
-	$pipeline->getComponentBuilder($_, $parameter_mask)->getRunBuilderForm;
-      
-      foreach ( @{$run_builder_form->{sub}} ) {
-
-	exists $_->{VALUE} or return 1;
-      }
+    foreach ( @{$p_def->getParameters} ) {
+      exists $_->{VALUE} or return 1;
     }
-    
+
     return 0;
   }
 
 #------------------------------------------------------------------------
 
-=item public ArrayRef getParameterDetails();
+=item public [['parameter','value']] getParametersToPrint();
 
-Returns [string $clustername, string $parametername, string $value]
-for each runbuilder parameter.
+Returns [string $parametername, string $value] for each runbuilder parameter.
 
 =cut
 #------------------------------------------------------------------------
-  sub getParameterDetails {
+  sub getParametersToPrint {
 
     my $self = shift;
 
-    my $pipeline = $self->getPipeline;
-    my $components = $pipeline->getComponents;
-    my $parameter_mask = $self->getParameterMask;
+    my $p_def = $self->getPipelineDefinition();
 
     my @params;
 
-    for my $component ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
+    foreach my $field ( @{$p_def->getParameters} ) {
+      next if ( exists $field->{templ} and $field->{templ} eq 'hidden' );
 
-      my $cluster_name = $component->getCluster->getName;      
-
-      my $run_builder_form = 
-	$pipeline->getComponentBuilder($component, $parameter_mask)->getRunBuilderForm;
+      my @details = ( $field->{TITLE} );
+      push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
       
-      foreach ( @{$run_builder_form->{sub}} ) {
-        next if ( defined $_->{templ} and $_->{templ} eq 'hidden' );
-	my @details = ( $cluster_name, $_->{TITLE} );
-
-	push @details, ( exists $_->{VALUE} ? $_->{VALUE} : '<span class="alert">None</span>' );
-
-        $details[2] = $parameter_mask->{Component}{$component}{$_->{NAME}}{Print} if(exists $parameter_mask->{Component}{$component}{$_->{NAME}}{Print});
-
-	push @params, \@details;
+      if(exists $field->{OPT_VAL} && exists $field->{VALUE}){
+	my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[2] } 0..$#{$field->{OPT_VAL}};
+	$details[1] = ${$field->{OPTION}}[$index];
       }
+      push @params, \@details;
     }
 
     return \@params;
   }
-
-#------------------------------------------------------------------------
-
-=item public ArrayRef getPrettyPrint();
-
-Returns [string $clustername, string $parametername, string $value]
-for each runbuilder parameter.
-
-=cut
-#------------------------------------------------------------------------
-  sub getPrettyPrint {
-
-    my $self = shift;
-
-    my $pipeline = $self->getPipeline;
-    my $components = $pipeline->getComponents;
-    my $parameter_mask = $self->getParameterMask;
-
-    my @params;
-
-    for my $component ( grep { $pipeline->getComponentBuilder($_) } @$components ) {
-
-      my $cluster_name = $component->getCluster->getName;
-
-      my $run_builder_form =
-        $pipeline->getComponentBuilder($component, $parameter_mask)->getRunBuilderForm;
-
-      foreach my $field ( @{$run_builder_form->{sub}} ) {
-        next if ( defined $field->{templ} and $field->{templ} eq 'hidden' );
-        my @details = ( $cluster_name, $field->{TITLE} );
-
-        push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
-
-        if(exists $field->{OPT_VAL} && exists $field->{VALUE}){
-          my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[2] } 0..$#{$field->{OPT_VAL}};
-          $details[2] = ${$field->{OPTION}}[$index];
-        }
-        push @params, \@details;
-      }
-    }
-
-    return \@params;
-  }
-

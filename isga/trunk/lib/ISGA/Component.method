@@ -24,7 +24,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
     # do we copy our parameter mask from a different component
     my $build_component = $self->getCopyParameterMask || $self;
     
-    if ( my $builder = ISGA::ComponentBuilder->new($build_component, $mask) ) {
+    if ( my $builder = $rb->getComponentBuilder($build_component, $mask) ) {
       foreach ( @{$builder->getParameters} ) {
 	
 	my $command = '';
@@ -48,6 +48,7 @@ Write the $iteration-th config file for this component in support of an Ergatis 
     ISGA::Utility->writeFile($path, $out_buffer);
   }
   
+ 
 #------------------------------------------------------------------------
 
 =item public string getParameter(string $name);
@@ -63,6 +64,24 @@ Returns a the ergatis config value for the supplied parameter.
     exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
     exists $self->{parameters}{$name} or X::API->throw( message => "$name not found as parameter for component " . $self->getName );
     return $self->{parameters}{$name};
+  }
+
+ 
+#------------------------------------------------------------------------
+
+=item public string getRunParameter(string $name);
+
+Returns a the ergatis config value for the supplied run parameter.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getRunParameter {
+    
+    my $self = shift;
+
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+    return $self->{run_builder}->getParameter(@_);
   }
 
 #------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package ISGA::ComponentBuilder;
+package ISGA::ComponentBuilder2;
 
 #------------------------------------------------------------------------
 

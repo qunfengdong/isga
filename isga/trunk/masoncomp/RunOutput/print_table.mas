@@ -5,6 +5,8 @@
 
 <%perl>
 
+my $run_status = $run->getStatus();
+
 my %results = ( Pipeline => {} );
 
 foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
@@ -83,7 +85,11 @@ $(document).ready(function()  {
 %         }
 <% $file->getUserName %></a></td>
 %       } else {
-<td>Not Available Yet</td>
+%         if ( $run_status eq 'Complete' ) {
+  <td>No Output</td>
+%         } else {
+  <td>Not Available Yet</td>
+%         }
 %       }
 
 %       my $output = $run_output->getClusterOutput;

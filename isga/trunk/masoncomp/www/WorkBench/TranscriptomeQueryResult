@@ -16,20 +16,22 @@ my @hits;
 my $nr_desc_hits = ISGA::NRHit->query( Description => { LIKE => "%$term%" }, Transcriptome => $transcriptomes );
 
 foreach ( @$nr_desc_hits ) {
-  push [ $_->getTranscriptome, 'NR Hit Description', $_->getDescription ];
+  my $contig = ISGA::TranscriptomeContig->new( NRHit => $_ );
+  push @hits, [ $contig, 'NR Hit Description', $_->getDescription ];
 }
 
-my $nr_name_hits = ISGA::NRHit->query( Hit => { LIKE => "%term%" }, Transcriptome => $transcriptomes );
+my $nr_name_hits = ISGA::NRHit->query( Hit => { LIKE => "%$term%" }, Transcriptome => $transcriptomes );
 
 foreach ( @$nr_name_hits ) {
-  push [ $_->getTranscriptome, 'NR Hit', $_->getHit ];
+  my $contig = ISGA::TranscriptomeContig->new( NRHit => $_ );
+  push @hits, [ $contig, 'NR Hit', $_->getHit ];
 }
 
 # query contig name
-my $c_name_hits = ISGA::TranscriptomeContig->query( Name => { LIKE => "%term%" }, Transcriptome => $transcriptome );
+my $c_name_hits = ISGA::TranscriptomeContig->query( Name => { LIKE => "%$term%" }, Transcriptome => $transcriptomes );
 
 foreach ( @$c_name_hits ) {
-  push [ $_, 'Contig', $_->getName ];
+  push @hits, [ $_, 'Contig', $_->getName ];
 }
 
 
@@ -51,7 +53,7 @@ foreach ( @$c_name_hits ) {
 
 % foreach ( @hits ) {
 <tr>
- <td><a href="/TranscriptomeContig/View?transcriptome_contig=<% $_->[0] %>"<% $_->getName %></a></td>
+ <td><a href="/TranscriptomeContig/View?transcriptome_contig=<% $_->[0] %>"><% $_->[0]->getName %></a></td>
  <td><strong><% $_->[1] %>:</strong> <% $_->[2] %></td>
 </tr>
 % }

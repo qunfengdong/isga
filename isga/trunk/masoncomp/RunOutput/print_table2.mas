@@ -21,6 +21,8 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
   }
 }
 
+my $run_status = $run->getStatus;
+
 </%perl>
 
 % if ( $embed ) {
@@ -80,7 +82,11 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
  </td>
 %     } else {
   <td></td>
+% if ( $run_status eq 'Complete' ) {
+  <td>No Output</td>
+% } else {
   <td>Not Available Yet</td>
+% }
 %     }
 </tr>
 %   }
