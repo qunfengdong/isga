@@ -138,3 +138,10 @@ INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecas
 -------------------------------------------------------------------
 ALTER TABLE referencedb ADD COLUMN referencedb_label TEXT;
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add clusteroutput default base name column
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+ALTER TABLE clusteroutput ADD COLUMN clusteroutput_basename TEXT;
+

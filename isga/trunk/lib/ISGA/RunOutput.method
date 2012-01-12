@@ -33,10 +33,11 @@ the underlying cluster is complete to avoid getting partial results.
     -e $raw_output or X::File::NotFound->throw( $raw_output );  
 
     my $format = $cout->getFormat;
-
+    my $username = defined $cout->getBaseName ? $run_name . ' ' . $cout->getBaseName : $run_name . '.' . $format->getExtension;
     # build args hash for create statements
     my %args = ( Type => $cout->getType, Format => $format, IsHidden => 0,
-		 UserName => $run_name . '.' . $format->getExtension,
+#		 UserName => $run_name . '.' . $format->getExtension,
+                 UserName => $username,
 		 CreatedAt => $now, CreatedBy => $account, ExistsOutsideCollection => 0,
 		 Description => "Output from $run_name" );
 
@@ -55,7 +56,6 @@ the underlying cluster is complete to avoid getting partial results.
 	chomp $list[0];
 	$raw_output = $list[0];
 	$is_file = 1;
-
       # if there are no results, leave it blank
       } elsif ( @list == 0 ) {
 	return;
