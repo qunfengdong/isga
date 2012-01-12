@@ -80,7 +80,8 @@ sub insert {
       Format => ISGA::FileFormat->new( Name => $t->{Format} ),
       ErgatisFormat => $t->{ErgatisFormat},
       Visibility => $t->{Visibility},
-      FileLocation => $t->{FileLocation}
+      FileLocation => $t->{FileLocation},
+      BaseName => $t->{BaseName}
     );
 
   ISGA::ClusterOutput->create(%args);

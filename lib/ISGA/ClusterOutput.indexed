@@ -7,3 +7,4 @@ attributes:
   - { name: ErgatisFormat, type: string, options: [ REQUIRED ] }
   - { name: Visibility, column: outputvisibility_name, type: string, options: [ REQUIRED ] }
   - { name: FileLocation, column: clusteroutput_fileloc, type: string, options: [ REQUIRED ] }
+  - { name: BaseName, column: clusteroutput_basename, type: string }
