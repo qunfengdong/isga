@@ -286,12 +286,19 @@ INSERT INTO reference (reference_name, reference_path, reference_description, re
   VALUES('OrthoDB', '/nfs/bio/db/OrthoDB',
          'OrthoDB presents a catalog of eukaryotic orthologous protein-coding genes across 44 vertebrates, 25 arthropods, and 46 fungi.',
         (SELECT referencetag_id FROM referencetag WHERE referencetag_name='OTU'));
+INSERT INTO reference (reference_name, reference_path, reference_description, referencetag_id)
+  VALUES('NCBI dbEST', '/nfs/bio/db/EST',
+         'dbEST contains sequence data and other information on "single-pass" cDNA sequences, or "Expressed Sequence Tags", from a number of organisms.',
+        (SELECT referencetag_id FROM referencetag WHERE referencetag_name='Collection'));
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencereleases for referencedb
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI-nr'),
+         'nr-01-23-2012', '01-23-2012', 'nr-01-23-2012');
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI-nr'),
          'nr-02-19-2011', '02-19-2011', 'nr-02-19-2011');
@@ -301,6 +308,9 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI-nt'),
          'nt-05-17-2011', '05-17-2011', 'nt-05-17-2011');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='UniProt100'),
+         '12-13-2011', '12-13-2011', '12-13-2011');
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='UniProt100'),
          '11-30-2010', '11-30-2010', '11-30-2010');
@@ -343,6 +353,9 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoDB'),
          'OrthoDB4', '09-01-2010', 'OrthoDB4');
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI dbEST'),
+         'est-12-14-2011', '12-14-2011', 'est-12-14-2011');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -588,8 +601,15 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-02-19-2011'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-01-23-2012'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'nr');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='nr-02-19-2011'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     'nr');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
@@ -602,8 +622,15 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='12-13-2011'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'uniref100.fasta');
+
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Amino Acid Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='11-30-2010'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'),
     'uniref100.fasta');
 
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
@@ -690,6 +717,24 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='OrthoDB4'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'tabtext/orthodb_vertebrates_conserved_single_copy.txt', 'Vertebrates');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-12-14-2011'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'est_human', 'dbEST Human');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-12-14-2011'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'est_mouse', 'dbEST Mouse');
+INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
+  VALUES (
+    (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-12-14-2011'),
+    (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
+    'est_others', 'dbEST Others');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
