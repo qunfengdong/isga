@@ -61,7 +61,7 @@ sub purge {
 
 #------------------------------------------------------------------------
 
-=item public void updateStatus(hashref $ergatis);
+=item public void updateStatus(hashref $ergatis, [Components] $components);
 
 
 This will update the run cluster status, as well as pull information
@@ -141,12 +141,21 @@ sub updateStatus {
       foreach ( @{ISGA::RunOutput->query( ClusterOutput => $cout, Run => $run )} ) {
 	next if $_->getFileResource;
 
-	# sometimes ergatis will list a component as finished before all the output has been
-	# finalized. When this happens, we don't set the status to complete so that the 
-	# next pass can pick it up.
-	eval { $_->saveErgatisOutput() };
+	# Update RunOutput as a transaction to preserve complete transfers if the update later fails
+	eval {
 	  
+	  ISGA::DB->begin_work();
+
+	  $_->saveErgatisOutput();
+
+	  ISGA::DB->commit();
+
+	};
+
 	if ( $@ ) {
+	  ISGA::DB->rollback();
+
+	  # sometimes we don't see a file (maybe NFS lag), we skip it and don't update cluster status so we have to come back next time
 	  if ( X::File::NotFound->caught() ) {
 	    delete $edit{Status};
 	  } else {
@@ -154,14 +163,26 @@ sub updateStatus {
 	    $e->rethrow();
 	  }
 	}
-
       }      
-    }
-
+    }    
   }
-
+  
   # only edit if something has changed
-  keys %edit and  $self->edit(%edit);
+  if ( keys %edit ) {
+
+    eval {
+      ISGA::DB->begin_work();
+      $self->edit(%edit);      
+      ISGA::DB->commit();
+    };
+    
+    if ( $@ ) {
+      ISGA::DB->rollback();
+      
+      my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+      $e->rethrow();
+    } 
+  }   
 }
 
 #------------------------------------------------------------------------

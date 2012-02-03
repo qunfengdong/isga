@@ -36,7 +36,6 @@ the underlying cluster is complete to avoid getting partial results.
     my $username = defined $cout->getBaseName ? $run_name . ' ' . $cout->getBaseName : $run_name . '.' . $format->getExtension;
     # build args hash for create statements
     my %args = ( Type => $cout->getType, Format => $format, IsHidden => 0,
-#		 UserName => $run_name . '.' . $format->getExtension,
                  UserName => $username,
 		 CreatedAt => $now, CreatedBy => $account, ExistsOutsideCollection => 0,
 		 Description => "Output from $run_name" );

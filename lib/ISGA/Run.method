@@ -122,29 +122,24 @@ outputs.
     my $status = $self->getStatus;
     return if $status eq 'Complete';
 
+    my ($finished, $working) = @{$self->_getCurrentStatus};
+    my $ergatis_status = ISGA::ErgatisRunStatus->new( $self, $finished );    
+    my $new_status = ucfirst( $$ergatis_status{'start pipeline:'}->{state} );
+    
+    $new_status ||= "Submitting";  
+
+    # go through each cluster
+    $_->[0]->updateStatus($ergatis_status, $_->[1]) for @$working;
+      
     eval {
 
       ISGA::DB->begin_work();
 
-      my ($finished, $working) = @{$self->_getCurrentStatus};
-
-      my $ergatis_status = ISGA::ErgatisRunStatus->new( $self, $finished );
-
-      my $new_status = ucfirst( $$ergatis_status{'start pipeline:'}->{state} );
-    
-      $new_status ||= "Submitting";  
-      
       $new_status eq $status or
 	$self->edit( Status => ISGA::RunStatus->new( Name => $new_status ) );
       
       if ( $new_status eq 'Complete' ) {
 	$self->edit( FinishedAt => $ergatis_status->{'start pipeline:'}->{'endTime'}) or X::API->throw("Did not properly parse pipeline.xml for endTime.");
-      }
-      
-      # go through each cluster
-      $_->[0]->updateStatus($ergatis_status, $_->[1]) for @$working;
-
-      if ( $new_status eq 'Complete' ) {
         $self->writeAnalysisYaml() if $self->hasRunAnalysis();
       }
 

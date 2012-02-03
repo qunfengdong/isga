@@ -2,6 +2,10 @@ Revision history for ISGA
 
 1.5.1   Dec 1 2011
 
+	BUG FIXES
+
+	* Fixed bug in specifying a run for update_run_status.pl
+
 	WEB CHANGES
 
 	* Modified file collection views to handle archived file collections
@@ -17,6 +21,8 @@ Revision history for ISGA
 	* Add classes for storing transcriptome annotation results
 	* Migrated work of preparing RunBuilder parameter form from FormEngine to RunBuilder class so 
 	  it can be subclassed.
+	* Replaced monolithic Run->updateStatus transaction with separate transactions for each RunOutput to save
+	  previous work when an update fails or is aborted.
 
 	DETAILED API CHANGES
 
