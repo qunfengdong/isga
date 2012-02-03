@@ -34,7 +34,7 @@ my @statuses = map { ISGA::RunStatus->new( Name => $_ ) }
 
 my @runs = defined $runid ? @{ISGA::Run->query( Id => $runid )} : @{ISGA::Run->query( Status => \@statuses )};
 
-foreach my $run ( @{ISGA::Run->query( Status => \@statuses )} ) {
+foreach my $run ( @runs ) {
 
   eval {
 
