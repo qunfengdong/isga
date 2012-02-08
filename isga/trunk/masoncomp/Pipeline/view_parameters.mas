@@ -47,7 +47,6 @@ $(document).ready(function() {
 @import "/include/css/tablesorter.css";
 </sys:style>
 
-% my $default_builder = $pipeline->getComponentBuilder($component); 
 % my $note;
 
 <h1><% $component->getName %> Parameters</h1>
@@ -83,7 +82,7 @@ $(document).ready(function() {
  </td>
  <td><% $_->{VALUE} %></td>
 
-% $note = $default_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
+% $note = $component_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
 
  <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : $note %></td>
 </tr>
@@ -101,7 +100,7 @@ $(document).ready(function() {
  </td>
   <td><% exists $_->{VALUE} ? $_->{VALUE} : '' %></td>
 
-% $note = $default_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
+% $note = $component_builder->getParameter($_->{NAME})->{VALUE} eq $_->{VALUE} ? "Default Value" : "No Note";
 
   <td><% exists $_->{ANNOTATION} ? $_->{ANNOTATION} : $note %></td>
 </tr>

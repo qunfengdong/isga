@@ -18,7 +18,7 @@
       <tr>
         <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
 %      if ( $wf_mask->isActive($_) ) {
-        <td><a href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>">Edit Paramters</a></td>
+        <td><a href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>">Edit Parameters</a></td>
 %      } else {
         <td><em class="red">You have disabled this analysis.</em></td>
 %      }

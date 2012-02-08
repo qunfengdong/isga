@@ -20,6 +20,9 @@ use warnings;
 
 use YAML;
 
+use Data::Dumper;
+use List::MoreUtils qw(any);
+
 use overload
   q{""}  => sub { return YAML::Dump($_[0]); };
 
@@ -49,33 +52,32 @@ Initializes the PipelineDefinition for the supplied Pipeline.
 
 Initializes the PipelineDefinition for the supplied RunBuilder.
 
-=item public ISGA::PipelineDefinition new(Run $run);
-
-Initializes the PipelineDefinition for the supplied Run.
-
 =cut
 #------------------------------------------------------------------------
   sub new {
 
-    my ($class, $pipeline, $mask) = @_;
+    my ($class, $caller) = @_;
     
-    # make sure we have a global pipeline and it is defined
-    $pipeline = $pipeline->getGlobalTemplate();
-    defined $pipelines{$pipeline} or X::API->throw( message => "Unable to find definition for pipeline $pipeline" );
-    
-    my $self = clone($pipelines{$pipeline});
-    
-    if ( $mask ) {
-      #    return $pipeline->injectMaskValues($mask, $self);
-    }
-    
-    return $self;  
+    # handle run builder case
+    $caller->isa('ISGA::RunBuilder') and return $class->_newByRunBuilder($caller);
+    $caller->isa('ISGA::Pipeline') and return $class->_newByPipeline($caller);
+
+    X::API::Parameter::Invalid->throw( value => ref($caller), message => 'Supplied Parameter is not a RunBuilder or Pipeline' );
   }
 
-  sub newByPipeline {
+#------------------------------------------------------------------------
+
+=item PRIVATE PipelineDefinition _newByPipeline(Pipeline $pipeline);
+
+Constructor for special case where the caller of new() is a
+Pipeline. 
+
+=cut
+#------------------------------------------------------------------------
+  sub _newByPipeline {
 
     my ($class, $pipeline) = @_;
-    
+
     my $global_template = $pipeline->getGlobalTemplate();
     defined $pipelines{$global_template} or X::API->throw( message => "Unable to find definition for pipeline $global_template" );
     
@@ -83,25 +85,61 @@ Initializes the PipelineDefinition for the supplied Run.
 
     if ( $pipeline->isa('ISGA::UserPipeline') ) {
 
-      # process the WorkflowMask
+      # find active components
+
+      # verify
+      my %active;
+
+      # grab active components
+      foreach ( @{$pipeline->getComponents} ) {
+	$active{$_->getErgatisName} = undef;
+      }
+
+      # filter form
+      $self->{Parameters} = [grep { any { exists $active{$_} } @{$_->{USEDBY}} } @{$self->{Parameters}}];
+
+      # filter lookup
+      foreach ( keys %{$self->{ParameterLookup}} ) {
+	any { exists $active{$_} } @{$self->{ParameterLookup}{$_}{USEDBY}} or delete $self->{ParameterLookup}{$_};
+      }
+	
+      # filter mapping
+      $self->{ParameterMapping} = [grep { exists $active{$_->{Component}} } @{$self->{ParameterMapping}}];
+
+      # bazinga
+      $self->injectMaskValues($pipeline->getParameterMask);
+
+      warn Dumper($self);
 
     }
+    
+    
 
     return $self;
   }
 
-  sub newByRunBuilder {
+#------------------------------------------------------------------------
+
+=item PRIVATE PipelineDefinition _newByRunBuilder(RunBuilder $run_builder);
+
+Constructor for special case where the caller of new() is a
+RunBuilder. Build the PipelineDefinition for the underlying Pipeline
+and then inject the RunBuilder mask.
+
+=cut
+#------------------------------------------------------------------------
+  sub _newByRunBuilder {
     
     my ($class, $run_builder) = @_;
 
     # retrieve the global pipeline
     my $pipeline = $run_builder->getPipeline;
+    my $self = $class->_newByPipeline($pipeline);
     
-    my $self = $class->newByPipeline($pipeline);
-    
+    # initialize form
+
     # inject mask values
     $self->injectMaskValues($run_builder->getParameterMask);
-
     return $self;
   }
 
@@ -120,10 +158,12 @@ Injects ParameterMask values into the pipeline definition.
     my $mask_params = exists $parameter_mask->{Run} ? $parameter_mask->{Run} : undef;
 
     foreach (keys %$mask_params) {
-
       $self->{ParameterLookup}{$_}{VALUE} = $mask_params->{$_}{Value};
       $self->{ParameterLookup}{$_}{ANNOTATION} = $mask_params->{$_}{Description};    
     }
+
+    # retain other parameters for if we want to mask components, overwrite any existing mask
+    $self->{component_mask}{Component} = exists $parameter_mask->{Component} ? $parameter_mask->{Component} : {};
   }
 
 #------------------------------------------------------------------------
@@ -137,25 +177,86 @@ Initialize the PipelineDefinition object.
   sub _initialize {
 
     my $self = shift;
+    my $pipeline = shift;
 
     $self->{ParameterLookup} = {};
+    $self->{pipeline} = $pipeline;
 
-    # handle RunBuilder parameters
-    if ( exists $self->{Params} ) {
-      
-      my @runbuilder;
+    # retrieve all the components for the pipeline;
+    my @components = @{$pipeline->getComponents};
 
-      for ( @{$self->{Params}} ) {
-	$self->_processParameterForForm($_);
-	push @runbuilder, $_;
-	$self->{ParameterLookup}{$_->{NAME}} = $_;
+    my %component_map;
+    my %component_archive;
+
+    # store components and apply definition mask if it exists
+    foreach my $component ( @components ) {
+
+      my $erg_name = $component->getErgatisName;
+
+      # get component
+      my $c_mask = ( exists $self->{Components}{$erg_name} ? $self->{Components}{$erg_name} : [] );
+
+      if ( my $cb = ISGA::ComponentBuilder->_cloneForPipeline($pipeline, $component, $c_mask) ) {
+	$component_map{$erg_name} = $cb;
+	$component_archive{$erg_name} = $component;
       }
-      
-      $self->{RunBuilder}{FormEngine} = { templ => 'fieldset',
-					  'sub' => \@runbuilder,
-                                          'CLASS' => 'runbuilderForm',
-					};
     }
+
+    # pull components into Run Parameters
+    if ( exists $self->{Parameters} ) {
+      for my $param ( @{$self->{Parameters}} ) {
+
+	# make it form-worthy
+	ISGA::ComponentBuilder->_processParameterForForm($param);
+	$self->{ParameterLookup}{$param->{NAME}} = $param;
+      }
+    }
+   
+    # initialize ParameterMapping
+    exists $self->{ParameterMapping} or $self->{ParameterMapping} = [];
+
+    foreach ( @{$self->{ParameterMapping}} ) {
+      exists $component_map{$_->{Component}} or X::API->throw( message => "Component $_->{Component} not found\n" );
+
+      warn "looking at $_->{Name} and $_->{Component}\n";
+
+      # check for a value replacement
+#      my $value = exists $_->{Value} ? $_->{Value} : 'Specified at run time';
+      
+#      $component_map{$_->{Component}}->_overrideParameter($_->{Name}, $value);
+      $component_map{$_->{Component}}->_removeParameter($_->{Name});
+
+#      if ( $_->{Component} eq 'ncbi-blastx_plus.reference_genome' ) {
+#	use Data::Dumper;
+#	warn Dumper($component_map{$_->{Component}});
+#      }
+
+    }
+
+    # save components to ComponentBuilder
+    while ( my ($key,$val) = each %component_map ) {
+      $val->_initializeForm($pipeline, $component_archive{$key});
+    }
+
+
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public hashRef getParameterForm();
+
+Returns the FormEngine portion of the RunBuilder parameters.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterForm { 
+
+    my $self = shift;
+
+    return { templ => 'fieldset',
+	     sub => $self->{Parameters},
+	     CLASS => 'runbuilderForm' };
   }
 
 #========================================================================
@@ -167,6 +268,78 @@ Initialize the PipelineDefinition object.
 =cut
 #========================================================================
 
+
+#------------------------------------------------------------------------
+
+=item public HashRef getComponentParameterValues(RunBuilder $run_builder, Component $component);
+
+Returns a hashref of name => values for all parameters to the supplied component.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentParameterValues {
+
+    my ($self, $run_builder, $component) = @_;
+
+    # do we copy our parameter mask from a different component
+    my $build_component = $component->getCopyParameterMask || $component;
+    my $e_name = $build_component->getErgatisName;
+
+    # start off empty
+    my $parameters = {};
+
+    # process anything from the component
+    if ( my $builder = $self->getComponentBuilder($build_component) ) {
+#      warn "the builder worked\n";
+      $parameters = $builder->getParameterValues();
+#    } else {
+#      warn "the builder did not work\n";
+    }
+
+#    warn Dumper($parameters);
+
+    # now process anything from the run parameters
+    foreach ( grep { $_->{Component} eq $e_name } @{$self->{ParameterMapping}} ) {
+      
+      # value
+      if ( exists $_->{Value} ) {
+	$parameters->{$_->{Name}} = $_->{Value};
+
+      # parameter
+      } elsif ( exists $_->{Parameter} ) {
+
+	my $p = $self->{ParameterLookup}{$_->{Parameter}};
+	$parameters->{$_->{Name}} = exists $p->{FLAG} ? "$p->{FLAG} $p->{VALUE}" : $p->{VALUE};
+
+      # callback
+      } elsif ( exists $_->{Callback} ) {
+	warn "calling $_->{Callback}\n";
+	warn Dumper($_->{Callback});
+	my $method = $_->{Callback};
+	$parameters->{$_->{Name}} = $run_builder->$method($self, $build_component, $_->{Name});
+      }
+    }
+
+    return $parameters;
+  }
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder with this objects parameter mask applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my ($self, $component) = @_;
+
+    # retrieve the component
+
+    return ISGA::ComponentBuilder->new($component, $self->{pipeline}, $self->{component_mask} );
+  }
+
 #------------------------------------------------------------------------
 
 =item public string getParameter( string name );
@@ -175,14 +348,14 @@ Returns the tip/description associated with the supplied parameter name.
 
 =cut
 #------------------------------------------------------------------------
-sub getParameter {
-
-  my ($self, $param) = @_;
-
-  exists $self->{ParameterLookup}{$param} or return '';
-  return $self->{ParameterLookup}{$param};
-}
-
+  sub getParameter {
+    
+    my ($self, $param) = @_;
+    
+    exists $self->{ParameterLookup}{$param} or return '';
+    return $self->{ParameterLookup}{$param};
+  }
+  
 #------------------------------------------------------------------------
 
 =item public boolean hasParameters()
@@ -202,41 +375,6 @@ Returns the run builder parameters.
 =cut
 #------------------------------------------------------------------------
   sub getParameters { return [values %{shift->{ParameterLookup}}]; }
-
-#------------------------------------------------------------------------
-
-=item public hashRef getParameterForm();
-
-Returns the FormEngine portion of the RunBuilder parameters.
-
-=cut
-#------------------------------------------------------------------------
-  sub getParameterForm { return shift->{RunBuilder}{FormEngine}; }
-
-#------------------------------------------------------------------------
-
-=item public hashRef getFilteredParameters(Component $component);
-
-Returns a hash ref containing any filtered component parameters as keys.
-
-=cut
-#------------------------------------------------------------------------
-  sub getFilteredParameters {
-    
-    my ($self, $component) = @_;
-    
-    my %filtered = ();
-    
-    my $erg = $component->getErgatisName;
-    
-    if ( exists $self->{Components}{$erg} and exists $self->{Components}{$erg}{FilteredParams} ) {
-      foreach ( @{$self->{Components}{$erg}{FilteredParams}} ) {
-	$filtered{$_} = undef;
-      }
-    }
-
-    return \%filtered;
-  }
 
 #------------------------------------------------------------------------
 
@@ -268,42 +406,6 @@ has no data structyure.
 
 #------------------------------------------------------------------------
 
-=item PRIVATE hashRef _processParameterForForm(hashRef parameter);
-
-Processes the YAML definition of a parameter to prepare it for FormEngine.
-
-=cut
-#------------------------------------------------------------------------
-sub _processParameterForForm {
-
-  my $self = shift;
-  my $param = shift;
-
-  $param->{LABEL} = $param->{NAME};
-
-  if ( ! exists $param->{templ} || $param->{templ} eq 'text' ) {
-    exists $param->{MAXLEN} or $param->{MAXLEN} = 60;
-    exists $param->{SIZE} or $param->{SIZE} = 60;
-    if ( exists $param->{REQUIRED} ) {
-      push @{$param->{ERROR}}, 'not_null', 'Text::checkHTML';
-    }
-    
-  } elsif ( exists $param->{REFERENCEDB} ) {
-    foreach my $refdb ( @{ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => $param->{REFERENCEDB} ) )} ) {
-      my $ref_tag = $refdb->getRelease->getReference->getTag->getName;
-      if ( ($ref_tag eq 'Organism' or $ref_tag eq 'OTU') and $refdb->getStatus->isAvailable()) {
-	push @{$param->{OPTION}}, $refdb->getName;
-	push @{$param->{OPT_VAL}}, $refdb->getFullPath;
-      }
-    }
-  }
-
-  return $param;
-}
-
-
-#------------------------------------------------------------------------
-
 =item Class Initialization
 
 YAML files are loaded and cached at server startup.
@@ -316,7 +418,7 @@ YAML files are loaded and cached at server startup.
 
     my $form_path = $pipeline->getFormPath;
     my $self = YAML::LoadFile($form_path);
-    $self->_initialize();
+    $self->_initialize($pipeline);
     
     $pipelines{$pipeline} = $self;
   }

@@ -1,18 +1,24 @@
 Revision history for ISGA
 
 1.5.1   Dec 1 2011
-
+	
 	BUG FIXES
 
 	* Fixed bug in specifying a run for update_run_status.pl
+        * Print 'Disabled' for value of disabled checkboxes when annotating custom parameters in
+          PipelineBuilder.
 
 	WEB CHANGES
 
 	* Modified file collection views to handle archived file collections
 	* Add Transcriptome database query and view pages
+	* Added link to reset all parameters for a component when building a custom pipeline
 	
 	API CHANGES
 	
+	* When creating a PipelineBuilder with a UserPipeline template, current customizations are now kept 
+	  separate from any customizations to the template until the pipeline is finalized. This allows us
+	  to 'reset' changes in the PipelineBuilder while still maintaining the starting state. 
 	* Added Archived feature for file collections, where a .tgz file is stored rather than individual files
 	* Config files are now generated through Mason rather than regexps, allowing each replacement to be done 
 	  through a method call.
@@ -30,6 +36,7 @@ Revision history for ISGA
 	  getConfigFilePath()
 	* Removed getDecoratedInputValue() method from ISGA::Component - replaced by getInput()
 	* Added getIteration() and getParameter() methods to ISGA::Component.	
+	* Added getComponent() and injectMaskValues() methods to ISGA::ParameterMask.
 
 1.4.3   Sep 21 2011
 	

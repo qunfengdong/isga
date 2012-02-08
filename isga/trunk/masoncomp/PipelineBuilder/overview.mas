@@ -25,12 +25,11 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
 
 <div id="workflow">
 
-% my $pipeline = $pipeline_builder->getPipeline;
 <img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
 
 <map name="clusters" >
 
-% foreach ( @{ISGA::Workflow->query( Pipeline => $pipeline )} ) {
+% foreach ( @{ISGA::Workflow->query( Pipeline => $pipeline_builder->getGlobalPipeline )} ) {
 %   next if ( (not defined $_->getCoordinates) || ($_->getCoordinates eq '') );
 %   my $cluster = $_->getCluster;
 <area \

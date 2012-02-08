@@ -56,6 +56,50 @@ sub new {
 =cut
 #========================================================================
 
+#------------------------------------------------------------------------
+
+=item public HashRef getComponent(Component $component);
+
+Returns the portion of the mask for the supplied component.
+
+=cut
+#------------------------------------------------------------------------
+sub getComponent {
+
+  my ($self, $component) = @_;
+
+  return exists $self->{Component}{$component} ? $self->{Component}{$component} : {};
+}
+
+#========================================================================
+
+=head2 MUTATORS
+
+=over 4
+
+=cut
+#========================================================================
+
+#------------------------------------------------------------------------
+
+=item public void injectMaskValues(ParameterMask $mask);
+
+Inject values of the supplied ParameterMask over the current object.
+
+=cut
+#------------------------------------------------------------------------
+sub injectMaskValues {
+
+  my ($self, $mask) = @_;
+
+  # process all the components in the  new mask
+  while ( my ($component, $mask_params) = each %{$mask->{Component}} ) {
+    while ( my ($var, $value) = each %$mask_params ) {
+      $self->{Component}{$component}{$var} = $value;
+    }  
+  }
+}
+
 1;
 
 __END__

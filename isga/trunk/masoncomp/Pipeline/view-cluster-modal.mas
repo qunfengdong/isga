@@ -32,7 +32,7 @@
 %    if ( $builder->{PipelineBuilder} ){
       <tr>
         <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
-        <td><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>">View Paramters</a></td>
+        <td><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>">View Parameters</a></td>
       </tr>
 %    } else {
 %      push(@{$noParams}, $_);

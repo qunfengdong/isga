@@ -1,6 +1,7 @@
 <%args>
  $form
  $pipeline_builder
+ $component
 </%args>
 
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
@@ -67,7 +68,16 @@ each parameter.</p>
 will be taken to a screen where you can make notes about your paramenter changes.</p>
 </div></div>
 
+
 <% $form->get %>
+
+<br />
+<hr>
+
+
+<p><a href="/submit/PipelineBuilder/ResetComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $component %>">Reset this component</a> to reset all its parameters to the pipeline defaults.</p>
+
+
 
 
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>

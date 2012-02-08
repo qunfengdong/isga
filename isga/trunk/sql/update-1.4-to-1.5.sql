@@ -131,6 +131,7 @@ INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase
 
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Run/InstallTranscriptomeData', 'Run::InstallTranscriptomeData', TRUE, 'none');
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencedb label column
@@ -140,8 +141,24 @@ ALTER TABLE referencedb ADD COLUMN referencedb_label TEXT;
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Add transcriptome use cases
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/PipelineBuilder/ResetComponent', 'PipelineBuilder::ResetComponent', TRUE, 'none');
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- Add clusteroutput default base name column
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 ALTER TABLE clusteroutput ADD COLUMN clusteroutput_basename TEXT;
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- change foreign key for user pipeline templates
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+ALTER TABLE userpipeline DROP CONSTRAINT "userpipeline_userpipeline_template_fkey";
+ALTER TABLE userpipeline ADD CONSTRAINT userpipeline_userpipeline_template_fkey 
+    FOREIGN KEY (userpipeline_template) REFERENCES pipeline(pipeline_id);

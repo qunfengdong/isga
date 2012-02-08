@@ -107,8 +107,7 @@ sub EditComponent {
   
   my $pipeline_builder = $args->{pipeline_builder};
   my $component = $args->{component};
-  my $parameter_mask = $pipeline_builder->getParameterMask();
-  my $component_builder = $pipeline_builder->getComponentBuilder($component, $parameter_mask);
+  my $component_builder = $pipeline_builder->getComponentBuilder($component);
   my $form_params = [ $component_builder->getForm() ];
 
   my $form = ISGA::FormEngine->new($args);
@@ -160,7 +159,7 @@ sub AnnotateCluster {
 			        'templ' => 'print',
 				'TITLE' => $$value{Title},
 				'LABEL' => $key,
-				'VALUE' => $$value{Value}},
+				'VALUE' => ( defined $value->{Value} ? $value->{Value} : 'Disabled' )},
 			       {'templ' => 'textarea',
 				'NAME' => $key."_comment",
 				'LABEL' => $key."_comment",

@@ -82,27 +82,15 @@ sub PipelineBuilder::Create {
 
   }
 
-  my $pipeline_template;
-
-  my $parameter_mask;
-  if ( $pipeline->isa( 'ISGA::UserPipeline' ) ) {
-    $pipeline_template = $pipeline->getGlobalTemplate;
-    $parameter_mask = $pipeline->getParameterMask;
-
-  }else{
-    $pipeline_template = $pipeline;
-    $parameter_mask = '';
-  }
-
-  $pipeline_template->getStatus->isAvailable or
+  $pipeline->getGlobalTemplate->getStatus->isAvailable or
     X::User::Denied->throw( error => "This pipeline is no longer available to be run. A newer version of the pipeline may be available." );
 
   my %form_args =
     (
-     Pipeline => $pipeline_template,
+     Pipeline => $pipeline,
      CreatedBy => $account,
      Name => $default_name,
-     ParameterMask => $parameter_mask,
+     ParameterMask => '',
      StartedOn => ISGA::Date->new(),
      Description => '',
     );
@@ -177,15 +165,17 @@ sub PipelineBuilder::Finalize {
 
   # figure out our template
   my $template = $pipeline_builder->getPipeline;
-  $template->isa('ISGA::GlobalPipeline') or
-    $template = $template->getTemplate;
+
+  # merge parameter masks
+  my $mask = $template->getParameterMask;
+  $mask ? $mask->injectMaskValues($pipeline_builder->getParameterMask) : $mask = $pipeline_builder->getParameterMask; 
 
   # 1: create the pipeline
   my $pipeline = ISGA::UserPipeline->create
     (
      Name => $pipeline_builder->getName,
      WorkflowMask => $pipeline_builder->getRawWorkflowMask,
-     ParameterMask => $pipeline_builder->getRawParameterMask,
+     ParameterMask => $mask,
      Status => ISGA::PipelineStatus->new( Name => 'Available' ),
      Template => $template,
      Description => $pipeline_builder->getDescription,
@@ -210,6 +200,28 @@ sub PipelineBuilder::Finalize {
 
 #------------------------------------------------------------------------
 
+=item public void ResetComponent();
+
+Resets all parameters in a component to the default values.
+
+=cut
+#------------------------------------------------------------------------
+sub PipelineBuilder::ResetComponent {
+
+  my $self = shift;
+  my $web_args = $self->args;
+  my $pipeline_builder = $web_args->{pipeline_builder};
+  my $component = $web_args->{component};
+
+  my $parameter_mask = $pipeline_builder->getParameterMask();
+  exists $parameter_mask->{Component}{$component} and delete $parameter_mask->{Component}{$component};
+
+  $pipeline_builder->edit(ParameterMask => $parameter_mask);
+  $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
+}
+
+#------------------------------------------------------------------------
+
 =item public void EditComponent();
 
 Saves component parameter changes
@@ -225,8 +237,8 @@ sub PipelineBuilder::EditComponent {
 
   my $form = ISGA::FormEngine::PipelineBuilder->EditComponent($web_args);
 
-  # look into optimizing this to use session
-  my $component_builder = $pipeline_builder->getComponentBuilder($component);
+  # exlude our current parameter mask to compare against base
+  my $component_builder = $pipeline_builder->getPipeline->getComponentBuilder($component);
 
   if ($form->canceled( )) {
     $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
@@ -234,58 +246,42 @@ sub PipelineBuilder::EditComponent {
 
   if ( $form->ok ) {
 
-    # load parameter mask and get a link into our cluster
+    # load parameter mask
     my $parameter_mask = $pipeline_builder->getParameterMask();
-    my $mask_params = exists $parameter_mask->{ Component }->{ $component } ? $parameter_mask->{ Component }->{ $component } : {};
+    my $mask = $parameter_mask->getComponent($component);
 
-    my %current_values;
-    # loop through all parameters
-    foreach my $value ( @{$component_builder->getParameters} ) {
+    my %new_mask;
 
-      my $key = $value->{NAME};
+    # loop through component parameters
+    foreach my $param ( @{$component_builder->getRequiredParameters}, @{$component_builder->getOptionalParameters} ) {
 
-      # save default value
-      $current_values{ $key } = ( exists $value->{VALUE} ? $value->{VALUE} : undef );
+      my $key = $param->{NAME};
 
-      exists $mask_params->{ $key } and $current_values{$key} = $mask_params->{$key}{Value};
+      # did the user unset a default value
+      if ( ! exists $web_args->{$key} and exists $param->{VALUE} ) {
+	$new_mask{$key} = { Value => undef, Title => "$param->{COMPONENT} $param->{TITLE}" };
+	$new_mask{$key}{Description} = exists $mask->{$key} ? $mask->{$key}{Description} : '';
 
-      if (! exists $web_args->{$key} and exists $value->{VALUE} ){
-        if ( ! exists $mask_params->{$key} ) {
-          $mask_params->{$key} = { Description => '' };
-        }
-        $mask_params->{$key}{Value} = undef;
-        $mask_params->{$key}{Title} = "$value->{COMPONENT} $value->{TITLE}";
-
-      # if the value doesn't exist, delete it from the mask
-      }elsif ( ! defined $web_args->{$key} or $web_args->{$key} eq '' ){
-	exists $mask_params->{$key} and delete $mask_params->{$key};
-
-      # if the supplied value is different then save it in the mask
-      } elsif ( ! defined($current_values{$key}) or $current_values{$key} ne $web_args->{$key} ) {
-	if ( ! exists $mask_params->{$key} ) {
-	  $mask_params->{$key} = { Description => '' };
-	}
-	$mask_params->{$key}{Value} = $web_args->{$key};
-        $mask_params->{$key}{Title} = "$value->{COMPONENT} $value->{TITLE}";
-      }
-
+      # or is the value different from the default
+      } elsif ( $web_args->{$key} ne $param->{VALUE} ) {
+	$new_mask{$key} = { Value => $web_args->{$key}, Title => "$param->{COMPONENT} $param->{TITLE}" };
+	$new_mask{$key}{Description} = exists $mask->{$key} ? $mask->{$key}{Description} : '';	
+      }      
     }
     
-    keys %$mask_params and $parameter_mask->{ Component }->{ $component } = $mask_params;
-
+    $parameter_mask->{Component}{$component} = \%new_mask;
     $pipeline_builder->edit( ParameterMask => $parameter_mask );
-    if (keys %$mask_params){
+
+    if (keys %new_mask){
       $self->redirect( uri => "/PipelineBuilder/AnnotateCluster?pipeline_builder=$pipeline_builder&component=$component" );
     } else {
-#      my $cluster = $component->getCluster;
       $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
-   }
-
+    }
   }
+
   # bounce!!!!!
      $self->_save_arg( 'form', $form);
      $self->redirect( uri => "/PipelineBuilder/EditComponent?pipeline_builder=$pipeline_builder&component=$component" );
-
 }
 
 #------------------------------------------------------------------------
@@ -304,7 +300,7 @@ sub PipelineBuilder::EditWorkflow {
   my $cluster = $self->args->{cluster};
 
   # make sure this isn't a required cluster
-  my $workflow = ISGA::Workflow->new( Pipeline => $pipeline_builder->getPipeline, Cluster => $cluster );
+  my $workflow = ISGA::Workflow->new( Pipeline => $pipeline_builder->getGlobalPipeline, Cluster => $cluster );
   $workflow->isRequired and X::API->throw( message => "Can not toggle a required cluster" );
   my $wf_mask = $pipeline_builder->getWorkflowMask();
 

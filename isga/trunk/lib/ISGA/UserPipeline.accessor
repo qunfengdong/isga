@@ -188,24 +188,16 @@ Returns the pipeline layout for the template used to create this pipeline.
 #------------------------------------------------------------------------
   sub getLayout { shift->getTemplate->getLayout; }
 
-
 #------------------------------------------------------------------------
 
 =item public ComponentBuilder getComponentBuilder(Component $component);
 
 Returns a component builder with this objects parameter mask applied.
 
-=item public ComponentBuilder getComponentBuilder(Component $component, ParameterMask $mask);
-
-Returns a component builder with the supplied parameter mask applied.
-
 =cut
 #------------------------------------------------------------------------
   sub getComponentBuilder {
 
-    my ($self, $component, $parameter_mask) = @_;
-
-    $parameter_mask ||= $self->getParameterMask;
-
-    return ISGA::ComponentBuilder->new( $component, $self->getGlobalTemplate, $parameter_mask );
+    my ($self, $component) = @_;
+    return ISGA::ComponentBuilder->new( $component, $self->getGlobalTemplate, $self->getParameterMask );
   }

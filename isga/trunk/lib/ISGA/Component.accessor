@@ -2,9 +2,26 @@
 
 #------------------------------------------------------------------------
 
+=item public Component getComponentBuilderBase();
+
+Returns the component for which this component's component builder
+will be based. Generally the current component, but some components
+copy parameters from a different component.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getComponentBuilderBase {
+
+    my $self = shift;
+
+    return $self->getCopyParameterMask || $self;
+  }
+
+#------------------------------------------------------------------------
+
 =item public string getConfigFilePath();
 
-Returns the path to thie components config file relative to the package include directory.
+Returns the path to this components config file relative to the package include directory.
 
 =cut 
 #------------------------------------------------------------------------
