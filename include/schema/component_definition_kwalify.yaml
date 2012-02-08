@@ -15,6 +15,9 @@ mapping:
       - type:    map
         mapping:
 
+          "REFERENCEDB":
+            type: text
+
           "NAME":
             type:    text
             required:    yes

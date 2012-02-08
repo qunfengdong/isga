@@ -22,7 +22,7 @@ $accepting_jobs or $m->comp('/site/sge_outage.mas');
 <h1>Submission Builder</h1>
 
 % if( $runs >= $quota ){
-<div class="downtime"><p>You are currently at your quota for the allowable number of simultaneously running pipelines. ISGA currenlty only allows users to run <% $quota %> pipelines at the same time.  We apologize for 
+<div class="downtime"><p>You are currently at your quota for the allowable number of simultaneously running pipelines. ISGA currently only allows users to run <% $quota %> pipelines at the same time.  We apologize for 
 any inconvenience this may cause you.</p></div>
 % }
 

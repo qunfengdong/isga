@@ -43,7 +43,7 @@ foreach ( grep { ! $_->getDependsOn } @$components ) {
   }
  
   my $b = $pipeline->getComponentBuilder($_);
-  if ( $b->{PipelineBuilder} and $count == 0 ) { 
+  if ( exists $b->{PipelineBuilder} and $count == 0 ) { 
     $link = "<a href=\"/Pipeline/ViewParameters?pipeline=$pipeline&component=$_\">View Parameters</a>";
     $description = $b->getComponentDescription;
   }
@@ -52,8 +52,6 @@ foreach ( grep { ! $_->getDependsOn } @$components ) {
   my $builder = $pipeline->getComponentBuilder($_);
 </%perl>
   <tr class="odd">
-%#    <td align="right"><% $_->getName %></td>
-%#    <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $description  %></p></td>
     <td><em class="clustermodal"><% $_->getName %></em></td>
     <td class="centertext" align="center"><% $link %></td>
     <td class="centertext" align="right"><% $on_off_switch %></td>

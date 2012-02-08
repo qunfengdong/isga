@@ -114,10 +114,7 @@ sub RunBuilder::EditDetails {
   my $run_builder = $web_args->{run_builder};
 
   if ($form->canceled( )) {
-
-    $self->redirect( 
-     uri => "/RunBuilder/View?run_builder=$run_builder" 
-		   );
+    $self->redirect(uri => "/RunBuilder/View?run_builder=$run_builder");
   }
 
   if ( $form->ok ) {
@@ -155,8 +152,8 @@ sub RunBuilder::EditParameters {
   my $form = ISGA::FormEngine::RunBuilder->EditParameters($web_args);
   
   if ( $form->canceled() ) {
+    $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
   }
-
 
   if ( $form->ok ) {
 

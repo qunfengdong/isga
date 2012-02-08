@@ -121,6 +121,7 @@ file and copies customized config files for components.
 
       } else {
 
+	# write configuration file the super cool new way
 	$_->writeConfigFile($self, $mask, \%inputs) for @{$self->getComponents($cluster)};
       }
     }

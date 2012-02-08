@@ -44,7 +44,29 @@ Returns the pipeline definition for this RunBuilder.
 
 =cut 
 #------------------------------------------------------------------------
-  sub getPipelineDefinition { return ISGA::PipelineDefinition->newByRunBuilder(shift); }
+  sub getPipelineDefinition {
+
+    my $self = shift;
+
+    return $self->{pipeline_definition} || ( $self->{pipeline_definition} = ISGA::PipelineDefinition->new($self) );
+  }
+
+#------------------------------------------------------------------------
+
+=item public HashRef getComponentParameterValues(Component $component);
+
+Returns a hashref of name => values for all parameters to the supplied component.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentParameterValues {
+
+    my ($self, $component) = @_;
+
+    my $pd = $self->getPipelineDefinition();
+    
+    return $pd->getComponentParameterValues($self, $component);
+  }
 
 #------------------------------------------------------------------------
 
@@ -316,7 +338,7 @@ Returns [string $parametername, string $value] for each runbuilder parameter.
       push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
       
       if(exists $field->{OPT_VAL} && exists $field->{VALUE}){
-	my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[2] } 0..$#{$field->{OPT_VAL}};
+	my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[1] } 0..$#{$field->{OPT_VAL}};
 	$details[1] = ${$field->{OPTION}}[$index];
       }
       push @params, \@details;

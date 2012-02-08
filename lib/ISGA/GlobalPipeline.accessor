@@ -144,17 +144,12 @@ Returns a list of components in the provided cluster of this pipeline.
 
 Returns a component builder for the passed component. No parmater mask is applied.
 
-=item public ComponentBuilder getComponentBuilder(Component $component, ParameterMask $mask);
-
-Returns a component builder with the supplied parameter mask applied.
-
 =cut
 #------------------------------------------------------------------------
   sub getComponentBuilder {
 
-    my $self = shift;
-
-    return ISGA::ComponentBuilder->new(shift, $self, @_);
+    my ($self, $component) = @_;
+    return ISGA::ComponentBuilder->new($component, $self);
   }
 
 #------------------------------------------------------------------------

@@ -27,7 +27,7 @@ Returns the workflow mask for this pipeline.
   sub getWorkflowMask {
     
     my $self = shift;    
-    return ISGA::WorkflowMask->new($self->{pipelinebuilder_workflowmask}, $self->getPipeline->getErgatisInstall);
+    return ISGA::WorkflowMask->new($self->{pipelinebuilder_workflowmask}, $self->getGlobalPipeline->getErgatisInstall);
   }
 
 #------------------------------------------------------------------------
@@ -59,11 +59,10 @@ Returns the directory for storing global-pipeline specific mason components.
 
 Returns the parameter mask for this pipeline.
 
+
 =cut
 #------------------------------------------------------------------------
-  sub getParameterMask {
-    return ISGA::ParameterMask->new($_[0]->{pipelinebuilder_parametermask});
-  }
+  sub getParameterMask { return ISGA::ParameterMask->new(shift->{pipelinebuilder_parametermask}); }
 
 #------------------------------------------------------------------------
 
@@ -88,7 +87,9 @@ Returns a component builder with this objects parameter mask applied.
 
     my ($self, $component) = @_;
 
-    return ISGA::ComponentBuilder->new( $component, $self->getGlobalPipeline, $self->getParameterMask );
+    my $component_builder = $self->getPipeline->getComponentBuilder($component) or return undef;
+    $component_builder->injectMaskValues($component, $self->getParameterMask);
+    return $component_builder;      
   }
 
 #------------------------------------------------------------------------
