@@ -355,7 +355,7 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
          'OrthoDB4', '09-01-2010', 'OrthoDB4');
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI dbEST'),
-         'est-12-14-2011', '12-14-2011', 'est-12-14-2011');
+         'est-02-06-2012', '02-06-2012', 'est-02-06-2012');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -720,19 +720,19 @@ INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_i
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-12-14-2011'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-02-06-2012'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'est_human', 'dbEST Human');
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-12-14-2011'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-02-06-2012'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'est_mouse', 'dbEST Mouse');
 INSERT INTO referencedb (referencetype_id, referencerelease_id, pipelinestatus_id, referencedb_path, referencedb_label)
   VALUES (
     (SELECT referencetype_id FROM referencetype WHERE referencetype_name = 'BLAST Nucleotide Database'),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-12-14-2011'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_release='est-02-06-2012'),
     (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'),
     'est_others', 'dbEST Others');
 
