@@ -6,7 +6,7 @@
 
 <div id="workflow">
 
-<img id="workflowimage" class="mapper" usemap="#clusters" src="<% $src %>">
+<img alt="pipeline workflow diagram" id="workflowimage" class="mapper" usemap="#clusters" src="<% $src %>">
 
 <map name="clusters" >
 
