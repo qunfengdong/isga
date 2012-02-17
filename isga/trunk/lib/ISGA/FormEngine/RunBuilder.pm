@@ -117,10 +117,6 @@ sub SelectInputList {
   # check for parameters
   if ( $pipeline_input->hasParameters ) {
     push @form, ( $rbi ? $rbi->getForm : $pipeline_input->getForm );
-
-    for ( @{$pipeline_input->getComponents} ) {
-      push @form, { templ => 'hidden', NAME => 'component', VALUE => $_ };
-    }
   }
   
   $form->conf( { ACTION => '/submit/RunBuilder/SelectInputList',

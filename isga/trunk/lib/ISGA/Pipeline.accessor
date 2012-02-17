@@ -102,6 +102,21 @@ by other components.
 
 #------------------------------------------------------------------------
 
+=item public PipelineDefinition getPipelineDefinition();
+
+Returns the pipeline definition for this Pipeline.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getPipelineDefinition {
+
+    my $self = shift;
+
+    return $self->{pipeline_definition} || ( $self->{pipeline_definition} = ISGA::PipelineDefinition->new($self) );
+  }
+
+#------------------------------------------------------------------------
+
 =item public [ClusterOutput] getOutputs(%args);
 
 Returns the output files for this pipeline. The following args are available.

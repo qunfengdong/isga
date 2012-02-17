@@ -41,18 +41,8 @@ Returns an array of parameter hashes for this run builder input.
     
     my $params = $pi->getParameters();
 
-    my %masked;
-
-    foreach my $param ( @$params ) {
-      my $name = $param->{NAME};
-
-      for ( values %{$mask->{Component}} ) {
-
-	if ( exists $_->{$name} and ! exists $masked{$name} ) {
-	  $param->{VALUE} = $_->{$name}{Value};
-	  $masked{$name} = 1;
-	}
-      }
+    foreach ( @$params ) {
+      exists $mask->{$_->{NAME}} and $_->{VALUE} = $mask->{$_->{NAME}}{Value};
     }
 
     return $params;

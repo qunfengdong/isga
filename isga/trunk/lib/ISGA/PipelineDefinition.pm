@@ -112,8 +112,6 @@ Pipeline.
       warn Dumper($self);
 
     }
-    
-    
 
     return $self;
   }
@@ -218,13 +216,14 @@ Initialize the PipelineDefinition object.
     foreach ( @{$self->{ParameterMapping}} ) {
       exists $component_map{$_->{Component}} or X::API->throw( message => "Component $_->{Component} not found\n" );
 
+      $component_map{$_->{Component}}->_removeParameter($_->{Name});
+
       warn "looking at $_->{Name} and $_->{Component}\n";
 
       # check for a value replacement
 #      my $value = exists $_->{Value} ? $_->{Value} : 'Specified at run time';
       
 #      $component_map{$_->{Component}}->_overrideParameter($_->{Name}, $value);
-      $component_map{$_->{Component}}->_removeParameter($_->{Name});
 
 #      if ( $_->{Component} eq 'ncbi-blastx_plus.reference_genome' ) {
 #	use Data::Dumper;
@@ -232,6 +231,62 @@ Initialize the PipelineDefinition object.
 #      }
 
     }
+
+    # check for inputses
+    exists $self->{Input} or $self->{Input} = {};
+
+    while ( my ($key, $values) = each %{$self->{Input}} ) {
+
+      foreach ( @$values ) {
+	
+	# make it form-worthy
+	ISGA::ComponentBuilder->_processParameterForForm($_);	
+      }      
+    }
+
+
+#139 	# handle RBI parameters
+#140 	if ( exists $self->{InputParams} ) {
+#141 	
+#142 	my %inputs;
+#143 	
+#144 	my @all_rbi;
+#145 	
+#146 	for ( @{$self->{InputParams}} ) {
+#147 	
+#148 	if (not(exists $_->{'templ'}) || $_->{'templ'} eq 'text'){
+#149 	exists $_->{MAXLEN} or $_->{'MAXLEN'} = 60;
+#150 	exists $_->{SIZE} or $_->{'SIZE'} = 60;
+#151 	if (exists $_->{'REQUIRED'}){
+#152 	push(@{$_->{'ERROR'}}, 'not_null', 'Text::checkHTML');
+#153 	}
+#154 	}
+#155 	
+#156 	my $name = $_->{input};
+#157 	push @{$inputs{$name}}, $_;
+#158 	push @all_rbi, $_;
+#159 	}
+#160 	
+#161 	$self->{RunBuilderInput} = \%inputs;
+#162 	$self->{AllRunBuilderInput} = { sub => \@all_rbi };
+#163 	}
+
+
+#372 	sub getRunBuilderInputParameters {
+#373 	
+#374 	my ($self, $pi) = @_;
+#375 	
+#376 	my $name = $pi->getClusterInput->getName();
+#377 	
+#378 	if ( exists $self->{RunBuilderInput}{$name} ) {
+#379 	return $self->{RunBuilderInput}{$name};
+#380 	}
+#381 	
+#382 	return [];
+#383 	}
+
+
+
 
     # save components to ComponentBuilder
     while ( my ($key,$val) = each %component_map ) {
@@ -313,8 +368,6 @@ Returns a hashref of name => values for all parameters to the supplied component
 
       # callback
       } elsif ( exists $_->{Callback} ) {
-	warn "calling $_->{Callback}\n";
-	warn Dumper($_->{Callback});
 	my $method = $_->{Callback};
 	$parameters->{$_->{Name}} = $run_builder->$method($self, $build_component, $_->{Name});
       }
@@ -338,6 +391,21 @@ Returns a component builder with this objects parameter mask applied.
     # retrieve the component
 
     return ISGA::ComponentBuilder->new($component, $self->{pipeline}, $self->{component_mask} );
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getInputParameters( string name );
+
+Returns the parameters for the supplied input
+
+=cut
+#------------------------------------------------------------------------
+  sub getInputParameters {
+    
+    my ($self, $param) = @_;
+    
+    return  exists $self->{Input}{$param} ? $self->{Input}{$param} : [];
   }
 
 #------------------------------------------------------------------------

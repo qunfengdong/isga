@@ -29,7 +29,7 @@ Returns the path to this components config file relative to the package include 
 
      my $self = shift;
 
-     return '/' . $self->getErgatisInstall->getName . '/' . $self->getErgatisName . '.config';
+     return '/' . $self->getErgatisInstall->getName . '/' . $self->getRawErgatisName . '.config';
    }
 
 #------------------------------------------------------------------------
@@ -64,3 +64,108 @@ specific formatting needs of this component.
      my ($self, $ci, $string) = @_;
      return $string;
    }
+
+#------------------------------------------------------------------------
+
+=item public string getRawErgatisName();
+
+Returns the ergatis name for this component without an iterator
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawErgatisName { return shift->{component_ergatisname}; }
+
+
+#------------------------------------------------------------------------
+
+=item public string getParameter(string $name);
+
+Returns the ergatis config value for the supplied parameter.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getParameter {
+    
+    my ($self, $name) = @_;
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+    exists $self->{parameters}{$name} or X::API->throw( message => "$name not found as parameter for component " . $self->getName );
+    return $self->{parameters}{$name};
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getIteration();
+
+Returns the iteration count for the component.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getIteration {
+
+    my $self = shift;
+    exists $self->{iteration} or X::API::ComponentNotConfigured->throw();
+    return $self->{iteration};
+  }
+    
+#------------------------------------------------------------------------
+
+=item public string getInput(string $name);
+
+Returns the ergatis config value for the supplied input.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getInput {
+    
+    my ($self, $name) = @_;
+
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+
+    my $ci = ISGA::ClusterInput->new( Component => $self, Name => $name );
+    my $value = exists $self->{cluster_inputs}{$ci} ? $self->{cluster_inputs}{$ci}{Path} : $ci->getValue($self->{run_builder});
+    return $value;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getInputParameter(string $input, string $parameter);
+
+Returns the ergatis config value for the supplied parameter of the
+supplied input.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getInputParameter {
+
+    my ($self, $input, $parameter) = @_;
+
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+
+    my $ci = ISGA::ClusterInput->new( Component => $self, Name => $input );
+
+    exists $self->{cluster_inputs}{$ci}{Parameters}{$parameter} 
+      or X::API->throw( message => "$parameter is not a defined parameter for $input\n" );
+    return $self->{cluster_inputs}{$ci}{Parameters}{$parameter}{Value};
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getProjectIDRoot();
+
+Returns a cloned ComponentBuilder with ParameterMask values injected in
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getProjectIDRoot {
+
+    my $self = shift;
+
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+
+    return $self->{run_builder}->getScrubbedName;
+  }

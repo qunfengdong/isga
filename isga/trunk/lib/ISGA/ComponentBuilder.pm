@@ -275,8 +275,6 @@ Returns a hashref of name => values for all parameters for this component.
     my $self = shift;
     my %parameters;
 
-#    warn "looking at $self->{Name}:\n";
-    
     foreach ( @{$self->getParameters} ) {
       
       # should this snippet be pulled into a method?
