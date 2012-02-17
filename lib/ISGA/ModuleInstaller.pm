@@ -217,6 +217,8 @@ sub installMasonFiles {
   # determine mason plugin directory
   my $mas_dir = join( '/', '___package_masoncomp___', 'plugin', $self->getClassPath  );
 
+  warn "copy ", $self->getMasonSourcePath, " to $mas_dir\n";
+
   File::Copy::Recursive::dircopy( $self->getMasonSourcePath,  $mas_dir ) or die $!;  
 }
 

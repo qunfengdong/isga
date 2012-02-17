@@ -71,36 +71,6 @@ Returns the name of this components config file.
 
 #------------------------------------------------------------------------
 
-=item public string getConfigFileName();
-
-Returns the name of this components config file.
-
-=cut 
-#------------------------------------------------------------------------
-   sub getConfigFileName {
-
-     my $self = shift;
-
-     return $self->SUPER::getErgatisName() . '.config';
-   }
-
-#------------------------------------------------------------------------
-
-=item public string getBaseErgatisName();
-
-Returns the ergatis name for this component without an iterator
-
-=cut
-#------------------------------------------------------------------------
-  sub getBaseErgatisName {
-
-    my $self = shift;
-
-    return $self->SUPER::getErgatisName();
-  }
-
-#------------------------------------------------------------------------
-
 =item public string getErgatisName();
 
 Returns the ergatis name for this component.

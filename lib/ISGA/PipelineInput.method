@@ -15,28 +15,34 @@ pipeline input is used in. Otherwise returns an empty list.
 
     my $p = $self->getPipeline;
 
-    my @full;
-    my %exists;
+ #   my @full;
+ #   my %exists;
 
-    my @components;
+#    my @components;
+
+    # get pipeline definition
+    my $pd = $p->getPipelineDefinition();
+
+    $self->{cache}{parameters} = $pd->getInputParameters($self->getClusterInput->getName);
+    
 
     # retrieve all the parameters for this pi
-    for my $c ( grep { $p->getComponentBuilder($_) } @{$p->getComponents} ) {
-      my $params = $p->getComponentBuilder($c)->getRunBuilderInputParameters($self);
-      
-      for ( @$params ) {
-	my $name = $_->{NAME};
-	if ( ! $exists{$name} ) { 
-	  push @full, $_;
-	  $exists{$name} = 1;
-	}
-      }
+ #   for my $c ( grep { $p->getComponentBuilder($_) } @{$p->getComponents} ) {
+ #     my $params = $p->getComponentBuilder($c)->getRunBuilderInputParameters($self);
+ #     
+ #     for ( @$params ) {
+#	my $name = $_->{NAME};
+#	if ( ! $exists{$name} ) { 
+##	  push @full, $_;
+#	  $exists{$name} = 1;
+#	}
+#      }
 
-      @$params and push @components, $c;
-    }
+#      @$params and push @components, $c;
+#    }
 
-    $self->{cache}{parameters} = \@full;
-    $self->{cache}{components} = \@components;
+#    $self->{cache}{parameters} = \@full;
+#    $self->{cache}{components} = \@components;
 
   }
 

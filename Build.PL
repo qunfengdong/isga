@@ -36,6 +36,7 @@ my $builder = MyBuild->new(
 		 'LWP::UserAgent' => 0,
 		 'PerlIO::gzip' => 0,
 		 'Pod::Simple::HTMLBatch' => 0,
+		 'Scalar::MoreUtils' => 0,
 		 'Schedule::SGE' => 0,	 
 		 'Test::More' => 0,
 		 'URI' => 0,

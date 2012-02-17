@@ -159,7 +159,7 @@ $(document).ready(function(){
 </tr>
 %       if ( $ci->hasParameters ) {
 %         foreach ( @{$i->getParameters} ) {
-<tr><th class="parameter"><% $_->{TITLE} %></th><td colspan="2"><% $_->{VALUE} %></td></tr>
+<tr><th class="parameter"><% $_->{TITLE} %></th><td><% $_->{VALUE} %></td></tr>
 %         }
 %       }
 %     }

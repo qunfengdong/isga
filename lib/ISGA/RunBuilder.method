@@ -63,6 +63,9 @@ file and copies customized config files for components.
 
     my ($self) = @_;
 
+    use Data::Dumper;
+
+
     my $pipeline = $self->getPipeline();
     my $dir = $self->getFullErgatisPath();
 
@@ -75,8 +78,6 @@ file and copies customized config files for components.
     # write pipeline layout
     $self->writeLayoutXML($dir);
 
-    my $mask = $self->getParameterMask();
-
     # gather all the inputs
     foreach my $rbi ( @{ISGA::RunBuilderInput->query(RunBuilder => $self)} ) {
 
@@ -84,45 +85,47 @@ file and copies customized config files for components.
       $rbi->getFileResource->stage($dir);
 
       my $ci = $rbi->getPipelineInput->getClusterInput;
+
       if ( $ci->isIterator ) {
 	push @{$iterators{$ci}}, $rbi;
       } else {
-	$inputs{$ci} = "$dir/" . $rbi->getFileResource->getName;
-	if ( my $rbi_mask = $rbi->getParameterMask ) {
-	  $mask = merge $mask, $rbi_mask;
-	}
+	$inputs{$ci} = 
+	  { 
+	   Path => "$dir/" . $rbi->getFileResource->getName,
+	   Parameters => $rbi->getParameterMask 
+	  };
       }
     }
+
+
 
     foreach my $cluster ( @{$pipeline->getClusters} ) {
 
       # if this is an iterator component we need to handle things differently
       if ( my $ci = $cluster->getIteratesOn ) {
 
-	my $i_mask = $mask;
 	my $i = 1;
 	
 	for my $rbi ( @{$iterators{$ci}} ) {
 	  
-	  # if we have parameters we need to clone the hash to make sure each component has
-	  # the right parameters
-	  if ( my $rbi_mask = $rbi->getParameterMask ) {
-	    $i_mask = clone($mask);
-	    $i_mask = merge $i_mask, $rbi_mask;
-	  }
+	  $inputs{$ci} = 
+	    { 
+	     Path => "$dir/" . $rbi->getFileResource->getName,
+	     Parameters => $rbi->getParameterMask 
+	    };
 	  
-	  # use this particular file
-	  $inputs{$ci} = "$dir/" . $rbi->getFileResource->getName;
-
-	  $_->writeConfigFile($self, $i_mask, \%inputs, $i) 
+	  $_->writeConfigFile($self, \%inputs, $i) 
 	    for grep { $_->getIteration == $i } @{$self->getComponents($cluster)};
 	  $i++;
 	}
 
+	# the iterator cluster input isn't shared with other clusters
+	delete $inputs{$ci};
+
       } else {
 
 	# write configuration file the super cool new way
-	$_->writeConfigFile($self, $mask, \%inputs) for @{$self->getComponents($cluster)};
+	$_->writeConfigFile($self, \%inputs) for @{$self->getComponents($cluster)};
       }
     }
   }
@@ -315,7 +318,7 @@ Returns the cluster name to use and the xml for the
 	my $component = ISGA::Component::Iterated->new($_, $i);
       
 	my $name = $component->getErgatisName();
-	my $bname = $component->getBaseErgatisName();
+	my $bname = $component->getRawErgatisName();
 
 	my $comp_xml = 
 	  "<commandSet type=\"serial\"><state>incomplete</state><name>$name</name></commandSet>";

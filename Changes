@@ -7,6 +7,7 @@ Revision history for ISGA
 	* Fixed bug in specifying a run for update_run_status.pl
         * Print 'Disabled' for value of disabled checkboxes when annotating custom parameters in
           PipelineBuilder.
+	* Resolved corner case where run with some output already generated could not be canceled.
 
 	WEB CHANGES
 
@@ -37,6 +38,8 @@ Revision history for ISGA
 	* Removed getDecoratedInputValue() method from ISGA::Component - replaced by getInput()
 	* Added getIteration() and getParameter() methods to ISGA::Component.	
 	* Added getComponent() and injectMaskValues() methods to ISGA::ParameterMask.
+	* Added getRawErgatisName() to ISGA::Component
+	* Removed getBaseErgatisName() and getConfigFileName() from ISGA::Component::Iterated
 
 1.4.3   Sep 21 2011
 	

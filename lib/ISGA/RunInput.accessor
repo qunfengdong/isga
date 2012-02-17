@@ -32,28 +32,17 @@ Returns an array of parameter hashes for this run builder input.
 =cut
 #------------------------------------------------------------------------
   sub getParameters {
-
+    
     my $self = shift;
     
     # get the pipeline input mask
-    my $pi = $self->getPipelineInput;
     my $mask = $self->getParameterMask;
+    my $params = $self->getPipelineInput->getParameters();
     
-    my $params = $pi->getParameters();
-
-    my %masked;
-
     foreach my $param ( @$params ) {
       my $name = $param->{NAME};
-
-      for ( values %{$mask->{Component}} ) {
-
-	if ( exists $_->{$name} and ! exists $masked{$name} ) {
-	  $param->{VALUE} = $_->{$name}{Value};
-	  $masked{$name} = 1;
-	}
-      }
+      $param->{VALUE} = $mask->{$name}{Value} if exists $mask->{$name};
     }
-
+    
     return $params;
   }

@@ -234,27 +234,17 @@ sub RunBuilder::SelectInput {
     
     if ( $pi->hasParameters ) {
       
-      my %inputs;
       my $mask = $rbi->getParameterMask();
 
-      # loop through components
-      for my $component ( @{$form->get_inputs('component')} ) {
-      
-	# grab component builder
-	my $component_builder = $run_builder->getComponentBuilder($component, $mask);
-	foreach my $parameter ( @{$component_builder->getRunBuilderInputParameters($pi)} ) {
+      my $pd = $run_builder->getPipelineDefinition();
+      foreach my $parameter ( @{$pd->getInputParameters($pi->getClusterInput->getName)} ) {
 	
-	  my $name = $parameter->{NAME};
-	  my $value = $form->get_input($name);
+	my $name = $parameter->{NAME};
+	my $value = $form->get_input($name);
 
-	  # parameter names may have conflicts, so save arrays
-	  if ( ref $value eq 'ARRAY' ) {
-	    exists $inputs{$name} or $inputs{$name} = $value;
-	    $value = shift @{$inputs{$name}};
-	  }
-
-	  $mask->{Component}{$component}{$name} = { Value => $value };
-	}
+	# we no longer have to supply hidden things to map across components
+	
+	$mask->{$name} = { Value => $value };
       }
 
       $rbi->edit( ParameterMask => $mask );
@@ -383,32 +373,19 @@ sub RunBuilder::SelectInputList {
 
     if ( $pi->hasParameters ) {
       
-      my %inputs;
-
       my $mask = $rbi->getParameterMask();
 
-      # loop through components
-      for my $component ( @{$form->get_inputs('component')} ) {
-      
-	# grab component builder
-	my $component_builder = $run_builder->getComponentBuilder($component, $mask);
-
-	foreach my $parameter ( @{$component_builder->getRunBuilderInputParameters($pi)} ) {
+      my $pd = $run_builder->getPipelineDefinition();
+      foreach my $parameter ( @{$pd->getInputParameters($pi->getClusterInput->getName)} ) {
 	
-	  my $name = $parameter->{NAME};
+	my $name = $parameter->{NAME};
+	my $value = $form->get_input($name);
 
-	  my $value = $form->get_input($name);
-
-	  # parameter names may have conflicts, so save arrays
-	  if ( ref $value eq 'ARRAY' ) {
-	    exists $inputs{$name} or $inputs{$name} = $value;
-	    $value = shift @{$inputs{$name}};
-	  }
-
-	  $mask->{Component}{$component}{$name} = { Value => $value };
-	}
+	# we no longer have to supply hidden things to map across components
+	
+	$mask->{$name} = { Value => $value };
       }
-      
+
       $rbi->edit( ParameterMask => $mask );
     }
     

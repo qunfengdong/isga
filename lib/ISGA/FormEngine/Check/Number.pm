@@ -18,6 +18,7 @@ use strict;
 use warnings;
 
 use List::Util qw(first);
+use Scalar::MoreUtils qw(empty);
 
 #========================================================================
 
@@ -87,7 +88,7 @@ Asserts that the number supplied is either an interger or decimal.
 #------------------------------------------------------------------------
 sub isNumber {
   my ($value, $form) = @_;
-  return '' if($value eq '');
+  return '' if empty($value);
   if (not ($value =~ /^\-?\d*\.?\d+$/o)){
     return 'Input is not a number.';
   }
@@ -106,7 +107,8 @@ Asserts that the number supplied is positive.
 #------------------------------------------------------------------------
 sub isPositive {
   my ($value, $form) = @_;
-  return '' if($value eq '');
+
+  return '' if empty($value);
   if ($value =~ /^\-/o){
     return 'Input must be a positive number.';
   }
@@ -125,7 +127,9 @@ Asserts that the number supplied is in Scientific Notation
 #------------------------------------------------------------------------
 sub isScientificNotation {
   my ($value, $form) = @_;
-  return '' if($value eq '');
+
+  return '' if empty($value);
+
   if (not ($value =~ /^\d+(e\-?\d+)?$/o)){
     return 'Input is not in proper format. ex: 1e-5';
   }
@@ -143,7 +147,9 @@ Asserts that the number supplied is an interger.
 #------------------------------------------------------------------------
 sub isInteger {
   my ($value, $form) = @_;
-  return '' if($value eq '');
+
+  return '' if empty($value);
+
   if (not ($value =~ /^-?\d+$/o)){
     return 'Input is not an integer';
   }
@@ -161,6 +167,8 @@ Asserts that the number supplied is greater than min, exclusive of min.
 sub isGreaterThan {
 
   my ($value, $form, $caller, $min) = @_;
+
+  return '' if empty($value);
 
   if ( $value <= $min ) {
     return "Value must be greater than $min";

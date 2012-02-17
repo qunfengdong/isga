@@ -30,7 +30,7 @@ my $action =
 </tr>
 %   if ( $cluster_input->hasParameters ) {
 %     foreach ( @{$rbi->getParameters} ) {
-<tr><td></td><th class="parameter"><% $_->{TITLE} %></th><td colspan="2"><% $_->{VALUE} %></td></tr>
+<tr><th colspan="2" class="parameter"><% $_->{TITLE} %></th><td colspan="2"><% $_->{VALUE} %></td></tr>
 %     }
 %   }
 % }

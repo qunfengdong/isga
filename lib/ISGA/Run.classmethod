@@ -88,7 +88,6 @@ sub submit {
   ISGA::RunInput->create( Run => $run, FileResource => $_->getFileResource,
 			   PipelineInput => $_->getPipelineInput,
 			   ParameterMask => $_->getParameterMask ) for @$inputs;
-  #  $run->addFileResource( $_->getFileResource ) for @$inputs;
 
   # prepare the outputs
   $run->_initializeOutputs($builder);
@@ -136,9 +135,6 @@ sub _submitToErgatis {
   my ($class, $builder) = @_;
 
   my $ua = LWP::UserAgent->new;
-
-  # set credentials for 
-#  $ua->credentials("", "", "", "");
 
   my $project = ISGA::PipelineConfiguration->value( 'ergatis_project_name', 
 						    Pipeline => $builder->getPipeline->getGlobalTemplate() );

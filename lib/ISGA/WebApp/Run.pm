@@ -143,19 +143,19 @@ sub Run::Cancel {
     # update run status
     $run->edit( Status => ISGA::RunStatus->new( Name => 'Canceled' ) );
 
-    # delete contents of run output collection and hide it
-    if ( my $ic = $run->getFileCollection ) {
-      $ic->deleteContents();
-      $ic->edit( IsHidden => 1 );
-    }
-    
     # retrieve run outputs that have a file resource, and delete them
     foreach ( @{ISGA::RunOutput->query(Run => $run, FileResource => {'NOT NULL' => undef})} ) {
       my $fr = $_->getFileResource;
       $_->edit( FileResource => undef );
       $fr->delete();
     }
-    
+
+    # delete contents of run output collection and hide it
+    if ( my $ic = $run->getFileCollection ) {
+      $ic->deleteContents();
+      $ic->edit( IsHidden => 1 );
+    }
+        
     # notify the user their run was canceled
     ISGA::RunNotification->create( Run => $run,
 				   Account => $run->getCreatedBy,

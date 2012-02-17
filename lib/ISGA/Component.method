@@ -4,11 +4,11 @@ use Data::Dumper;
 
 #------------------------------------------------------------------------
 
-=item public void writeConfigFile( RunBuilder $rb, ParameterMask $mask, { ClusterInput => string } $cluster_inputs );
+=item public void writeConfigFile( RunBuilder $rb, { ClusterInput => HashRef } $cluster_inputs );
 
 Write the config file for this component in support of an Ergatis run.
 
-=item public void writeConfigFile( RunBuilder $rb, ParameterMask $mask, { ClusterInput => string } $cluster_inputs, int $iteration );
+=item public void writeConfigFile( RunBuilder $rb, { ClusterInput => HashRef } $cluster_inputs, int $iteration );
 
 Write the $iteration-th config file for this component in support of an Ergatis run.
 
@@ -16,8 +16,10 @@ Write the $iteration-th config file for this component in support of an Ergatis 
 #------------------------------------------------------------------------
   sub writeConfigFile {
 
-    my ($self, $rb, $mask, $cluster_inputs, $iteration) = @_;
+    my ($self, $rb, $cluster_inputs, $iteration) = @_;
     # nuke mask from this!
+
+    warn Dumper($cluster_inputs);
 
     # register RunBuilder
     $self->{run_builder} = $rb;
@@ -37,94 +39,6 @@ Write the $iteration-th config file for this component in support of an Ergatis 
     ISGA::Utility->writeFile($path, $out_buffer);
   }
   
-#------------------------------------------------------------------------
-
-=item public string getParameter(string $name);
-
-Returns a the ergatis config value for the supplied parameter.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub getParameter {
-    
-    my ($self, $name) = @_;
-    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
-    exists $self->{parameters}{$name} or X::API->throw( message => "$name not found as parameter for component " . $self->getName );
-    return $self->{parameters}{$name};
-  }
-
-#------------------------------------------------------------------------
-
-=item public string getRunParameter(string $name);
-
-Returns a the ergatis config value for the supplied run parameter.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub getRunParameter2 {
-    
-    my $self = shift;
-
-    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
-    return $self->{run_builder}->getParameter(@_);
-  }
-
-#------------------------------------------------------------------------
-
-=item public string getIteration();
-
-Returns the iteration count for the component.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub getIteration {
-
-    my $self = shift;
-    exists $self->{iteration} or X::API::ComponentNotConfigured->throw();
-    return $self->{iteration};
-  }
-    
-#------------------------------------------------------------------------
-
-=item public string getInput(string $name);
-
-Returns a the ergatis config value for the supplied input.
-
-=cut
-
-#------------------------------------------------------------------------
-  sub getInput {
-    
-    my ($self, $name) = @_;
-
-    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
-
-    my $ci = ISGA::ClusterInput->new( Component => $self, Name => $name );
-    my $value = exists $self->{cluster_inputs}{$ci} ? $self->{cluster_inputs}{$ci} : $ci->getValue($self->{run_builder});
-    return $value;
-  }
-
-#------------------------------------------------------------------------
-
-=item public string getProjectIDRoot();
-
-Returns a cloned ComponentBuilder with ParameterMask values injected in
-
-=cut
-
-#------------------------------------------------------------------------
-  sub getProjectIDRoot {
-
-    my $self = shift;
-
-    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
-
-    return $self->{run_builder}->getScrubbedName;
-  }
-
 #------------------------------------------------------------------------
 
 =item public ISGA::Component formatArrayParam(ParameterMaskValue $array);

@@ -19,9 +19,20 @@ use strict;
 use warnings;
 
 use YAML;
+use Scalar::Util qw( reftype );
+
 
 use overload
   q{""}  => sub { return YAML::Dump($_[0]); };
+
+#========================================================================
+
+=head2 CONSTRUCTORS
+
+=over 4
+
+=cut
+#========================================================================
 
 #------------------------------------------------------------------------
 
@@ -37,7 +48,7 @@ sub new {
   # other wise read string into YAML
   my $self = YAML::Load($yaml);
 
-  exists $self->{Component} or $self->{Component} = {};
+  (reftype($self) and reftype($self) eq 'HASH') or $self = {};
 
   # if we had an empty parameter mask we need to force the class
   if (  ref($self) ne $class ) {
@@ -67,6 +78,8 @@ Returns the portion of the mask for the supplied component.
 sub getComponent {
 
   my ($self, $component) = @_;
+
+  exists $self->{Component} or return {};
 
   return exists $self->{Component}{$component} ? $self->{Component}{$component} : {};
 }
@@ -99,6 +112,15 @@ sub injectMaskValues {
     }  
   }
 }
+
+#========================================================================
+
+=head2 CLASS METHODS
+
+=over 4
+
+=cut
+#========================================================================
 
 1;
 
