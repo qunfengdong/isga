@@ -12,9 +12,10 @@ Assigns colors and draw pipline workflow.
     my ($self, $wf_mask) = @_;
 
     my $image = GD::Image->new( '___package_masoncomp___/www/' . $self->getImage );
-    my $green = $image->colorClosest(162,210,99);
+    my $green = $image->colorClosest(160,199,98);
     my $yellow = $image->colorClosest(223,210,91);
-    my $red = $image->colorClosest(177,118,110);
+    my $grey =  $image->colorClosest(204,204,204);
+    my $red = $image->colorClosest(255,153,153);
 
     # if we weren't passed clusters and a workflow mask from a pipeline, retrieve our own
     defined $wf_mask or $wf_mask = $self->getWorkflowMask;
@@ -44,7 +45,7 @@ Assigns colors and draw pipline workflow.
 
 	for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
 	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
-	    $image->setPixel($i,$j, $yellow) if ($image->getPixel($i,$j) == $green);
+	    $image->setPixel($i,$j, $grey) if ($image->getPixel($i,$j) == $green);
 	  }
 	}	
       }
