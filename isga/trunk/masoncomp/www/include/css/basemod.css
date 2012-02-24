@@ -417,7 +417,7 @@ img.thumbnail{
   height: 180px;
   float: left;
   margin: 0;
-  padding 0;
+  padding: 0;
 }
 p.description{
   margin: 25px 200px;
@@ -425,7 +425,7 @@ p.description{
 
 ul.listmenu{
   float: right;
-  width 180px;
+  width: 180px;
   margin: 0;
   padding: 0;
 }
@@ -439,6 +439,11 @@ table.fixed {
   table-layout:fixed;
 }
 
+.hint {
+  font-size: .9em;
+  color: #777;
+  position: relative;
+}
 /* END SECTION */
 
 
