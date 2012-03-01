@@ -19,8 +19,6 @@ Write the $iteration-th config file for this component in support of an Ergatis 
     my ($self, $rb, $cluster_inputs, $iteration) = @_;
     # nuke mask from this!
 
-    warn Dumper($cluster_inputs);
-
     # register RunBuilder
     $self->{run_builder} = $rb;
     $self->{cluster_inputs} = $cluster_inputs;

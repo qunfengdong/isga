@@ -5,6 +5,23 @@ use Clone qw(clone);
 
 #------------------------------------------------------------------------
 
+=item public void maskComponents();
+
+RunBuilder specific method for determining components to mask when
+creating a run.
+
+=cut 
+#------------------------------------------------------------------------' 
+  sub maskComponents {
+
+    my $self = shift;
+
+    exists $self->{masked_components} and return;
+    $self->{masked_components} = {};
+  }
+
+#------------------------------------------------------------------------
+
 =item public ISGA::FormEngine buildParameterForm(hashRef $args);
 
 Builds the FormEngine object for the RunBuilder object.
@@ -20,6 +37,9 @@ Builds the FormEngine object for the RunBuilder object.
     
     my @form = @{$self->buildParameterFormFields()};
     
+    use Data::Dumper;
+    warn Dumper(\@form);
+
     push @form, { templ => 'hidden', NAME => 'run_builder', VALUE => $self };
 
     $form->conf( { ACTION => '/submit/RunBuilder/EditParameters',
@@ -34,7 +54,7 @@ Builds the FormEngine object for the RunBuilder object.
 
 #------------------------------------------------------------------------
 
-=item public ISGA::FormEngine buildParameterFormFields();
+=item public [field] buildParameterFormFields();
 
 Builds the FormEngine object for the RunBuilder object.
 
@@ -43,8 +63,6 @@ Builds the FormEngine object for the RunBuilder object.
   sub buildParameterFormFields {
 
     my $self = shift;
-
-    my @form;
 
     my $run_builder_form = $self->getPipelineDefinition->getParameterForm();
     return [$run_builder_form];
@@ -62,9 +80,6 @@ file and copies customized config files for components.
   sub stage {
 
     my ($self) = @_;
-
-    use Data::Dumper;
-
 
     my $pipeline = $self->getPipeline();
     my $dir = $self->getFullErgatisPath();
@@ -97,10 +112,12 @@ file and copies customized config files for components.
       }
     }
 
-
-
     foreach my $cluster ( @{$pipeline->getClusters} ) {
 
+      # retrieve components
+      my @components = @{$self->getComponents($cluster)};
+
+      
       # if this is an iterator component we need to handle things differently
       if ( my $ci = $cluster->getIteratesOn ) {
 
@@ -115,7 +132,7 @@ file and copies customized config files for components.
 	    };
 	  
 	  $_->writeConfigFile($self, \%inputs, $i) 
-	    for grep { $_->getIteration == $i } @{$self->getComponents($cluster)};
+	    for grep { $_->getIteration == $i } @components;
 	  $i++;
 	}
 
@@ -125,7 +142,7 @@ file and copies customized config files for components.
       } else {
 
 	# write configuration file the super cool new way
-	$_->writeConfigFile($self, \%inputs) for @{$self->getComponents($cluster)};
+	$_->writeConfigFile($self, \%inputs) for @components;
       }
     }
   }
@@ -313,7 +330,7 @@ Returns the cluster name to use and the xml for the
 
       my $ixml = $xml_snippet;
 
-      foreach ( @{$p->getComponents($cluster)} ) {
+      foreach ( grep { ! $self->isMaskedComponent($_) }  @{$p->getComponents($cluster)} ) {
 
 	my $component = ISGA::Component::Iterated->new($_, $i);
       
@@ -363,7 +380,7 @@ Returns the cluster name to use and the xml for the
     my $xml = $cluster->getLayoutXML();
       
     # replace all components 
-    foreach my $component ( @{$p->getComponents($cluster)} ) {
+    foreach my $component ( @{$self->getComponents($cluster)} ) {
       
       my $name = $component->getErgatisName();
       my $comp_xml = 

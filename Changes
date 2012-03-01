@@ -17,6 +17,9 @@ Revision history for ISGA
 	
 	API CHANGES
 	
+	* Added callbacks to handle Run parameters so that one parameter can be processed several different
+	  ways for different components
+	* Added ability for RunBuilder to disable components based on Run parameters.
 	* When creating a PipelineBuilder with a UserPipeline template, current customizations are now kept 
 	  separate from any customizations to the template until the pipeline is finalized. This allows us
 	  to 'reset' changes in the PipelineBuilder while still maintaining the starting state. 
