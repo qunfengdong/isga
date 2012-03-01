@@ -42,7 +42,7 @@ my $run_status = $run->getStatus;
 %   my $cname = $cluster->{Cluster}->getName;
 <tr class="list_label">
  <td colspan="4" style="font-weight: bold;"><% $cluster->{Cluster}->getName %>\
-<a class="title" href="#" title="<% $cname %>|<% $cluster->{Cluster}->getDescription() %>"><span class="sup">?</span></a>
+ <a href="#" title='<% $cname %>|<% $cluster->{Cluster}->getDescription() %>'><span class="sup">?</span></a>
  </td>
 </tr>
 
@@ -55,14 +55,13 @@ my $run_status = $run->getStatus;
 %     my $tname = $type->getName;
 <tr class="<% $tr_class %>" >
  <td><% $tname %>\
-  <a class="title" href="#" title="<% $tname %>|<% $type->getHelp %>"><span class="sup">?</span></a>
-
+  <a href="#" title='<% $tname %>|<% $type->getHelp %>'><span class="sup">?</span></a>
  </td>
 
 %     my $format = $output->getFormat;
 %     my $fname = $format->getName;
  <td><% $fname %>\
-  <a class="title" href="#" title='<% $fname %>|<% $format->getHelp %>'><span class="sup">?</span></a>
+  <a href="#" title='<% $fname %>|<% $format->getHelp %>'><span class="sup">?</span></a>
  </td>
 %     my $file = $run_output->getFileResource;
 %     if ( $file ) {
