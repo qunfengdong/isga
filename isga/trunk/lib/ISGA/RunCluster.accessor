@@ -13,16 +13,18 @@ iterations, it will create Iterated Components.
 
     my $self = shift;
 
-    my $pipeline = $self->getRun->getType();
-    my $components = $pipeline->getComponents($self->getCluster);
+    my $run = $self->getRun();
+    my $pipeline = $run->getType();
+    my @components = grep { ! $run->hasMaskedComponent($_) } @{$pipeline->getComponents($self->getCluster)};
+
     my $iterations = $self->getIterations;
 
     # we are done if this isn't an iterated cluster
-    return $components unless $iterations;
+    return \@components unless $iterations;
 
     my @return;
     
-    for my $c ( @$components ) {
+    for my $c ( @components ) {
       push @return, ISGA::Component::Iterated->new($c, $_) for ( 1 .. $iterations );
     }
 

@@ -169,7 +169,7 @@ sub UploadInput {
                       'Genome Sequence' => '<a href="https://wiki.cgb.indiana.edu/download/attachments/25821247/sample_data.fna">Download Sample Data</a>',
                       'Native 454 format' => '<a href="https://wiki.cgb.indiana.edu/download/attachments/25821247/Typhi_E017866_454_1.sff">Download Sample Data</a>');
 
-  my $sample_data = $sample_link{$type->getName};
+  my $sample_data = exists $sample_link{$type->getName} ? $sample_link{$type->getName} : '';
   my $selected = [];
 
   my @form = 

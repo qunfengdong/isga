@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: maskedcomponent
+attributes:
+  - { name: MaskedByRun, type: Run }
+  - { name: MaskedComponent, type: Component }

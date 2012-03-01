@@ -255,8 +255,6 @@ sub Run::Submit {
   $runs >= $quota 
     and X::User::Denied->throw( error => 'You have reached your concurrent pipeline quota.');
   
-
-
   my $run = ISGA::Run->submit($run_builder);
 
   # nuke the builder

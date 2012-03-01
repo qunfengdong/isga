@@ -89,6 +89,11 @@ sub submit {
 			   PipelineInput => $_->getPipelineInput,
 			   ParameterMask => $_->getParameterMask ) for @$inputs;
 
+  # log any masked components
+  foreach ( @{$builder->getMaskedComponents} ) {
+    $run->addMaskedComponent($_);
+  }
+
   # prepare the outputs
   $run->_initializeOutputs($builder);
 

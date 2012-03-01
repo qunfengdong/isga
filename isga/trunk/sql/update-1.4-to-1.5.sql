@@ -41,6 +41,17 @@ INSERT INTO ergatisinstall (ergatisinstall_name, ergatisinstall_version) VALUES 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Create mapping table for runs and masked components
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE maskedcomponent (
+  run_id INTEGER REFERENCES run(run_id) NOT NULL,
+  component_id INTEGER REFERENCES component(component_id) NOT NULL,
+  CONSTRAINT maskedcomponent_pk UNIQUE (run_id, component_id )
+);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- Add account creation policy site configuration
 -------------------------------------------------------------------
 -------------------------------------------------------------------
