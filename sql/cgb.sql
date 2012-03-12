@@ -138,6 +138,19 @@ UPDATE siteconfiguration SET siteconfiguration_value = 'biohelp@cgb.indiana.edu'
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Edit CGB tmp space
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE siteconfiguration SET siteconfiguration_value = '/usr/tmp'
+  FROM configurationvariable b
+  WHERE siteconfiguration.configurationvariable_id = b.configurationvariable_id AND b.configurationvariable_name = 'local_tmp';
+
+UPDATE siteconfiguration SET siteconfiguration_value = '/research/projects/isga/tmp/ISGA'
+  FROM configurationvariable b
+  WHERE siteconfiguration.configurationvariable_id = b.configurationvariable_id AND b.configurationvariable_name = 'shared_tmp';
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- Fix broken component_template names
 -------------------------------------------------------------------
 -------------------------------------------------------------------

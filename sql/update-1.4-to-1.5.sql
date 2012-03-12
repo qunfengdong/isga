@@ -173,3 +173,40 @@ ALTER TABLE clusteroutput ADD COLUMN clusteroutput_basename TEXT;
 ALTER TABLE userpipeline DROP CONSTRAINT "userpipeline_userpipeline_template_fkey";
 ALTER TABLE userpipeline ADD CONSTRAINT userpipeline_userpipeline_template_fkey 
     FOREIGN KEY (userpipeline_template) REFERENCES pipeline(pipeline_id);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- add siteconfiguration entries for local and shared tmp
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO configurationvariable
+ (configurationvariable_type, configurationvariable_datatype, configurationvariable_name, configurationvariable_form, configurationvariable_description)
+ VALUES ( 'SiteConfiguration', 'path', 'local_tmp',
+          '---
+NAME: local_tmp
+TITLE: local_tmp
+REQUIRED: 1
+ERROR: ''File::isPath''
+',
+          'Directory for local disk tmp space.  Please use full path.'
+);
+
+-- blank to start with
+INSERT INTO siteconfiguration ( configurationvariable_id, siteconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'local_tmp'), '');
+
+INSERT INTO configurationvariable
+ (configurationvariable_type, configurationvariable_datatype, configurationvariable_name, configurationvariable_form, configurationvariable_description)
+ VALUES ( 'SiteConfiguration', 'path', 'shared_tmp',
+          '---
+NAME: shared_tmp
+TITLE: shared_tmp
+REQUIRED: 1
+ERROR: ''File::isPath''
+',
+          'Directory for shared disk tmp space.  This is important if you use a cluster to perform Toolbox jobs.  Please use full path.'
+);
+
+-- blank to start with
+INSERT INTO siteconfiguration ( configurationvariable_id, siteconfiguration_value ) VALUES (
+ (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'shared_tmp'), '');

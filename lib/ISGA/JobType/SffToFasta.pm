@@ -121,8 +121,8 @@ sub buildWebAppCommand {
         my $sff_upload = $webapp->apache_req->upload('upload_sff_file');
 
         ## Hardcoded paths.
-#        my $files_path = "___tmp_file_directory___/workbench/sfftofasta/";
-        my $files_path = "___tmp_file_directory___/workbench/" . $job->getType->getName . "/";
+        my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+        my $files_path = "$tmp_dir/workbench/" . $job->getType->getName . "/";
         umask(0);
         mkpath($files_path );
 

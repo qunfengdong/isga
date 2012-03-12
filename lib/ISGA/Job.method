@@ -145,7 +145,8 @@ sub submitJob {
   eval {
 
     ISGA::DB->begin_work();
-    my $files_path = "___tmp_file_directory___/workbench/" . $self->getType->getName . "/";
+    my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+    my $files_path = "$tmp_dir/workbench/" . $self->getType->getName . "/";
     my $log_name  = $self->getType->getName . "_" .  $self->getId;
     my $out_directory = $files_path.$log_name;
     my $command = "$out_directory/${log_name}_sge.sh";
@@ -153,8 +154,8 @@ sub submitJob {
 
     my $sge=ISGA::SGEScheduler->new(
                                     -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
-                                    -output_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeout",
-                                    -error_file => '___tmp_file_directory___'."/workbench/sge_log/".$log_name.".sgeerror",
+                                    -output_file => "$tmp_dir/workbench/sge_log/".$log_name.".sgeout",
+                                    -error_file => "$tmp_dir/workbench/sge_log/".$log_name.".sgeerror",
                                    );
 
     $sge->command($command);
@@ -248,7 +249,8 @@ the blast parameters, and the input file.
 sub buildConfigFile{
   my ($self, $config_args) = @_;
 
-  my $tmp = '___tmp_file_directory___' . time . $$ . $self->getType->getName . 'Config.yaml';
+  my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+  my $tmp = '$tmp_dir' . time . $$ . $self->getType->getName . 'Config.yaml';
 
   my %args = ( Type => ISGA::FileType->new( Name => 'Toolbox Job Configuration'),
                Format => ISGA::FileFormat->new( Name => 'YAML' ),
