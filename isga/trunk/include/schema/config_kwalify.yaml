@@ -81,11 +81,6 @@ mapping:
      type:    text
      required:    yes
 
-    "tmp_file_directory":
-     type:    text
-     required:    yes
-     pattern:    /^\/\S+(\/\S+)*[^\/]$/
-
     "ergatis_base_uri":
      type:    text
      required:    yes

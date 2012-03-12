@@ -147,8 +147,8 @@ sub buildWebAppCommand {
 
         $project =~ s/ /_/g;
         ## Hardcoded paths.
-#        my $files_path = "___tmp_file_directory___/workbench/newblertohawkeye/";
-        my $files_path = "___tmp_file_directory___/workbench/" . $job->getType->getName . "/";
+        my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+        my $files_path = "$tmp_dir/workbench/" . $job->getType->getName . "/";
         umask(0);
         mkpath($files_path );
 

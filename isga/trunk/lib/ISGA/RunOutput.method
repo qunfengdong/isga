@@ -90,7 +90,9 @@ and adds them to the run collection.
     my ($self, $raw_outputs, $prefix, %args) = @_;
     
     # create the archive
-    my $tar = ISGA::Tar->new();
+    my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+  
+    my $tar = ISGA::Tar->new(tmpdir => "$tmp_dir");
    
     # walk through files
     foreach ( @$raw_outputs ) {

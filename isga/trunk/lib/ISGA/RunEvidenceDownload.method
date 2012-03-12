@@ -33,7 +33,9 @@ sub buildEvidenceFile {
   my $self = shift;
   my $run = $self->getRun;
 
-  my $archive = ISGA::Tar->new();
+  my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+
+  my $archive = ISGA::Tar->new(tmpdir => "$tmp_dir");
   my $run_dir = "Run-" . $run->getErgatisKey;
 
   foreach my $rc ( grep { $_->hasEvidence() } @{$run->getClusters} ) {

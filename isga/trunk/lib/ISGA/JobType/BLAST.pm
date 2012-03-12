@@ -285,7 +285,8 @@ sub buildWebAppCommand {
         my $file =  ISGA::FileResource->new( Id => $form->get_input('associated_file') ) if ($form->get_input('associated_file') and $form->get_input('associated_file') ne '');
 
         ## Hardcoded paths.
-        my $files_path = "___tmp_file_directory___/workbench/" . $job->getType->getName . "/";
+        my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+        my $files_path = "$tmp_dir/workbench/" . $job->getType->getName . "/";
         umask(0);
         mkpath($files_path );
 
