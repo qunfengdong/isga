@@ -118,7 +118,8 @@ Returns the filesystem path to a tar file for this collection.
     my $archive = $self->_getTar();
 
     # open a "temporary" file, but we'll let it hang around
-    my $tmp = File::Temp->new();
+    my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+    my $tmp = File::Temp->new(DIR => $tmp_dir);
     $tmp->unlink_on_destroy(0);
 
     # cache the name of this file for the lifetime of the object

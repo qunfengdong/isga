@@ -259,8 +259,8 @@ sub buildConfigFile{
                CreatedBy => ISGA::Login->getAccount,
                ExistsOutsideCollection => 0, Description => 'Config for ' . $self->getType->getName );
 
-
-  my $fh = File::Temp->new;
+  my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+  my $fh = File::Temp->new(DIR => $tmp_dir);
   print $fh YAML::Dump($config_args);
   seek($fh,0,0);
 

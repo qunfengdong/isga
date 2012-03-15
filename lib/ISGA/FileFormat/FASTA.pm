@@ -58,7 +58,8 @@ sub format {
 
   my ($class, $fh) = @_;
 
-  my $new_fh = File::Temp->new();
+  my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+  my $new_fh = File::Temp->new(DIR => $tmp_dir);
   
   eval { 
 
