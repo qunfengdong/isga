@@ -110,8 +110,8 @@ sub submit {
                CreatedBy => ISGA::Login->getAccount,
                ExistsOutsideCollection => 1, Description => 'Post run analysis for ' . $builder->getName );
 
-
-  my $fh = File::Temp->new;
+  my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+  my $fh = File::Temp->new(DIR => $tmp_dir);
   print $fh YAML::Dump($parametermask);
   seek($fh,0,0);
 
