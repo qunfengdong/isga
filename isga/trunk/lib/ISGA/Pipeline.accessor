@@ -185,4 +185,3 @@ Returns TRUE if a pipeline has pipelinebuilder parameters and false if
     }
     return 0;
   }
-

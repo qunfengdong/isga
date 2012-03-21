@@ -8,6 +8,7 @@ attributes:
   - { name: Template, type: ComponentTemplate, options: [ REQUIRED ] }
   - { name: Index, type: number, options: [ REQUIRED ] }
   - { name: DependsOn, column: component_dependson, type: Component }
+  - { name: DependencyType, type: string }
   - { name: CopyParameterMask, column: component_copyparametermask, type: Component }
   - { name: ErgatisInstall, type: ErgatisInstall, options: [ REQUIRED ] }
   - { name: SubClass, type: string }

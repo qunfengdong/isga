@@ -86,6 +86,12 @@ sub insert {
   exists $t->{DependsOn} and 
     $args{DependsOn} = ISGA::Component->new( ErgatisName => $t->{DependsOn}, ErgatisInstall => $ei);
 
+  exists $t->{DependencyType} and $args{DependencyType} = $t->{DependencyType};
+
+  if ( exists $t->{DependsOn} xor exists $t->{DependencyType} ) {
+    X::API->throw( "DependsOn and DependencyType must be specified together for $t->{ErgatisName}" );
+  }
+
   exists $t->{CopyParameterMask} and 
     $args{CopyParameterMask} = ISGA::Component->new( ErgatisName => $t->{CopyParameterMask}, ErgatisInstall => $ei);
 
@@ -128,6 +134,12 @@ sub update {
 
   exists $t->{DependsOn} and 
     $args{DependsOn} = ISGA::Component->new( ErgatisName => $t->{DependsOn}, ErgatisInstall => $ei);
+
+  exists $t->{DependencyType} and $args{DependencyType} = $t->{DependencyType};
+
+  if ( exists $t->{DependsOn} xor exists $t->{DependencyType} ) {
+    X::API->throw( "DependsOn and DependencyType must be specified together for $t->{ErgatisName}" );
+  }
 
   exists $t->{CopyParameterMask} and 
     $args{CopyParameterMask} = ISGA::Component->new( ErgatisName => $t->{CopyParameterMask}, ErgatisInstall => $ei);
@@ -178,6 +190,13 @@ sub checkEquality {
     X::API->throw( message => "DependsOn does not match entry for Component $t->{ErgatisName}\n" );   
   defined $DependsOn and $DependsOn->getErgatisName ne $t->{DependsOn} and
     X::API->throw( message => "DependsOn does not match entry for Component $t->{ErgatisName}\n" );   
+
+  my $DependencyType = $o->getDependencyType();
+  ( defined $DependencyType xor exists $t->{DependencyType} ) and 
+    X::API->throw( message => "DependencyType does not match entry for Component $t->{ErgatisName}\n" );
+  defined $DependencyType and $DependencyType ne $t->{DependencyType} and
+    X::API->throw( message => "DependencyType does not match entry for Component $t->{ErgatisName}\n" );
+
   my $SubClass = $o->getSubClass();
   ( defined $SubClass xor exists $t->{SubClass} ) and
     X::API->throw( message => "SubClass does not match entry for Component $t->{ErgatisName}\n" );   

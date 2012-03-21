@@ -62,7 +62,7 @@ Component and parameter mask.
 
     my ($class, $component, $pipeline, $mask) = @_;
 
-    return undef unless( defined $pipelines{$pipeline}{$component});
+    return undef unless( defined $pipelines{$pipeline}{$component} and exists $pipelines{$pipeline}{$component}{PipelineBuilder});
 
     my $self = clone($pipelines{$pipeline}{$component});
 
@@ -435,8 +435,6 @@ Injects ParameterMask values into the pipeline definition.
     my $mask_params = exists $parameter_mask->{Component}{$component} ? $parameter_mask->{Component}{$component} : undef;
 
     foreach (keys %$mask_params) {
-
-      #$self->{ParameterLookup}{$_}{VALUE} = ref $mask_params->{$_}->{Value} eq 'ARRAY' ? $self->formatArrayParam($mask_params->{$_}->{Value}) : $mask_params->{$_}->{Value};
       $self->{ParameterLookup}{$_}{VALUE} = $mask_params->{$_}{Value};
       $self->{ParameterLookup}{$_}{ANNOTATION} = $mask_params->{$_}{Description};    
     }
