@@ -108,9 +108,6 @@ Pipeline.
 
       # bazinga
       $self->injectMaskValues($pipeline->getParameterMask);
-
-      warn Dumper($self);
-
     }
 
     return $self;
@@ -215,24 +212,10 @@ Initialize the PipelineDefinition object.
 
     foreach ( @{$self->{ParameterMapping}} ) {
       exists $component_map{$_->{Component}} or X::API->throw( message => "Component $_->{Component} not found\n" );
-
       $component_map{$_->{Component}}->_removeParameter($_->{Name});
-
-      warn "looking at $_->{Name} and $_->{Component}\n";
-
-      # check for a value replacement
-#      my $value = exists $_->{Value} ? $_->{Value} : 'Specified at run time';
-      
-#      $component_map{$_->{Component}}->_overrideParameter($_->{Name}, $value);
-
-#      if ( $_->{Component} eq 'ncbi-blastx_plus.reference_genome' ) {
-#	use Data::Dumper;
-#	warn Dumper($component_map{$_->{Component}});
-#      }
-
     }
 
-    # check for inputses
+    # check for inputs
     exists $self->{Input} or $self->{Input} = {};
 
     while ( my ($key, $values) = each %{$self->{Input}} ) {
@@ -244,58 +227,11 @@ Initialize the PipelineDefinition object.
       }      
     }
 
-
-#139 	# handle RBI parameters
-#140 	if ( exists $self->{InputParams} ) {
-#141 	
-#142 	my %inputs;
-#143 	
-#144 	my @all_rbi;
-#145 	
-#146 	for ( @{$self->{InputParams}} ) {
-#147 	
-#148 	if (not(exists $_->{'templ'}) || $_->{'templ'} eq 'text'){
-#149 	exists $_->{MAXLEN} or $_->{'MAXLEN'} = 60;
-#150 	exists $_->{SIZE} or $_->{'SIZE'} = 60;
-#151 	if (exists $_->{'REQUIRED'}){
-#152 	push(@{$_->{'ERROR'}}, 'not_null', 'Text::checkHTML');
-#153 	}
-#154 	}
-#155 	
-#156 	my $name = $_->{input};
-#157 	push @{$inputs{$name}}, $_;
-#158 	push @all_rbi, $_;
-#159 	}
-#160 	
-#161 	$self->{RunBuilderInput} = \%inputs;
-#162 	$self->{AllRunBuilderInput} = { sub => \@all_rbi };
-#163 	}
-
-
-#372 	sub getRunBuilderInputParameters {
-#373 	
-#374 	my ($self, $pi) = @_;
-#375 	
-#376 	my $name = $pi->getClusterInput->getName();
-#377 	
-#378 	if ( exists $self->{RunBuilderInput}{$name} ) {
-#379 	return $self->{RunBuilderInput}{$name};
-#380 	}
-#381 	
-#382 	return [];
-#383 	}
-
-
-
-
     # save components to ComponentBuilder
     while ( my ($key,$val) = each %component_map ) {
       $val->_initializeForm($pipeline, $component_archive{$key});
     }
-
-
   }
-
 
 #------------------------------------------------------------------------
 
@@ -345,13 +281,8 @@ Returns a hashref of name => values for all parameters to the supplied component
 
     # process anything from the component
     if ( my $builder = $self->getComponentBuilder($build_component) ) {
-#      warn "the builder worked\n";
       $parameters = $builder->getParameterValues();
-#    } else {
-#      warn "the builder did not work\n";
     }
-
-#    warn Dumper($parameters);
 
     # now process anything from the run parameters
     foreach ( grep { $_->{Component} eq $e_name } @{$self->{ParameterMapping}} ) {

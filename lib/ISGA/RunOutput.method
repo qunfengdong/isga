@@ -102,7 +102,6 @@ and adds them to the run collection.
     }
  
     # open a "temporary" file, but we'll let it hang around
-    my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
     my $tmp = File::Temp->new(DIR => $tmp_dir);
     $tar->write( $tmp->filename(), 1);
 

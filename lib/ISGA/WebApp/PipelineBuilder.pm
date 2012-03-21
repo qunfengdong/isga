@@ -183,7 +183,6 @@ sub PipelineBuilder::Finalize {
      CreatedAt => ISGA::Timestamp->new(),
     );
 
-
   # 2: calculate input requirements
   foreach ( grep { $_->getDependency ne 'Internal Only' } @{$pipeline_builder->getInputs} ) {
 
@@ -359,7 +358,6 @@ sub PipelineBuilder::AnnotateCluster {
     $pipeline_builder->edit( ParameterMask => $parameter_mask );
 
     $self->redirect( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
-#    $self->redirect( uri => "/PipelineBuilder/EditCluster?pipeline_builder=$pipeline_builder&cluster=$cluster" );
 
   }
 
@@ -432,8 +430,10 @@ sub PipelineBuilder::ChooseComponent {
     } else { $wf_mask->disableCluster($cluster); }
 
     # cycle through all tier one components in the cluster and look for those whose status has changed
-    foreach my $component ( grep { ! defined $_->getDependsOn } @{ISGA::Component->query( Cluster => $cluster )} ) {
+    foreach my $component ( @{ISGA::Component->query( Cluster => $cluster )} ) {
       
+      next if $component->getDependsOn and $component->getDependencyType eq 'Part Of';
+
       my $is_active = $wf_mask->isActive($component);
 
       if ( $is_active and ! exists $enabled{$component} ) {

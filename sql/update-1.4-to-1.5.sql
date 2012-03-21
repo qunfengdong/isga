@@ -1,5 +1,28 @@
 SET SESSION client_min_messages TO 'warning';
 
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add DependencyType column to component
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE dependencytype (
+ dependencytype_name TEXT PRIMARY KEY
+);
+
+INSERT INTO dependencytype ( dependencytype_name ) VALUES ( 'Depends On' );
+INSERT INTO dependencytype ( dependencytype_name ) VALUES ( 'Part Of' );
+
+ALTER TABLE component ADD COLUMN component_dependencytype TEXT REFERENCES dependencytype(dependencytype_name);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Drop obsolete pages
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+DELETE FROM usecase WHERE usecase_name = '/PipelineBuilder/EditCluster';
+DELETE FROM usecase WHERE usecase_name = '/Pipeline/ViewComponents';
+  
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Create archived tag,type,format columns for FileCollections

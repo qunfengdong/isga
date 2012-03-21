@@ -250,3 +250,22 @@ Returns the output for the pipeline that would result from this builder.
   }
       
 
+#------------------------------------------------------------------------
+
+=item public bool clusterHasParameters(Cluster $cluster);
+
+Returns true if the supplied cluster has parameters to edit and false otherwise.
+
+=cut
+#------------------------------------------------------------------------
+  sub clusterHasParameters {
+
+    my ($self, $cluster) = @_;
+    
+    foreach ( @{ISGA::Component->query( Cluster => $cluster )} ) {
+      return 1 if $self->getComponentBuilder($_);
+    }
+
+    return 0;
+  }
+    

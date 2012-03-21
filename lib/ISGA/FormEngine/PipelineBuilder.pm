@@ -202,58 +202,24 @@ sub ChooseComponent {
 
   my $pBuilder = $args->{pipeline_builder};
   my $cluster = $args->{cluster};
-  my $components = ISGA::Component->query( Cluster => $cluster );
+  my $components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index', DependsOn => undef, Name => {'NOT NULL' => undef});
   my $wf_mask = $pBuilder->getWorkflowMask();
   
   my $form = ISGA::FormEngine->new($args);
   $form->set_skin_obj('ISGA::FormEngine::SkinTable');
 
   my @form;
-  my $check_class;
+  my $check_class = $cluster->getName;
+  $check_class =~ s/ /_/g;
 
-  foreach ( @{$components} ) {
+  foreach my $component ( @{$components} ) {
    
-    # In a modular cluster, a component dependent on another isn't shown in the selection form
-    # and is controlled by the top level component it's dependency is traced to.
-    next if $_->getDependsOn;
+    push @form, $class->_addComponentToForm($check_class, $pBuilder, $component);
     
-    $check_class = $_->getCluster->getName;
-    $check_class =~ s/ /_/g;
-
-    my $count = 0;
-    my $link = "No Parameters";
-    
-    foreach my $dep_components (  @{ISGA::Component->query( DependsOn => $_ )}  ){
-      if (my $builder = $pBuilder->getComponentBuilder($dep_components)){
-	if ( $builder->{PipelineBuilder} ){
-	  $count++;
-	  $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$dep_components\">Edit</a>";
-	}
-      }
+    foreach ( @{ISGA::Component->query( Cluster => $cluster, DependsOn => $component, OrderBy => 'Index', Name => {'NOT NULL' => undef})} ) {      
+      push @form, $class->_addComponentToForm($check_class, $pBuilder, $_);
     }
-
-    my $b = $pBuilder->getComponentBuilder($_);
-    $b->{PipelineBuilder} and $count == 0 and $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pBuilder&component=$_\">Edit</a>";
-    
-    my $entry = {templ => 'data_row',
-		 sub => [
-			 {templ => 'print',
-			  ALIGN => 'right',
-			  VALUE => $_->getName},
-			 {templ => 'check',
-			  NAME => 'component',
-			  ALIGN => 'right',
-			  CLASS => $check_class." centertext",
-			  OPT_VAL => $_},
-			 {templ => 'print',
-			  CLASS => "centertext",
-			  VALUE => $link},
-			]};
-    
-    $wf_mask->isActive($_) and $entry->{sub}[1]{VALUE} = $_;
-    push @form, $entry;
   }
-
 
   my $select_link = "<a onclick=\"\$(\'input[\@type=checkbox].".$check_class."\').attr(\'checked\', \'checked\')\">Select All</a>";
   my $deselect_link = "<a onclick=\"\$(\'input[\@type=checkbox].".$check_class."\').removeAttr(\'checked\')\">Deselect All</a>"; 
@@ -285,6 +251,46 @@ sub ChooseComponent {
   $form->make;
   return $form;
 
+}
+
+#------------------------------------------------------------------------
+
+=item public hashref form _addComponentToForm(string $check_class, PipelineBuilder $pipeline_builder, Component $component);
+
+Returns a FormEngine row for the component chooser.
+
+=cut
+#------------------------------------------------------------------------
+sub _addComponentToForm {
+
+  my ($class, $check_class, $pipeline_builder, $component) = @_;
+
+  my $wf_mask = $pipeline_builder->getWorkflowMask();
+  my $link = "No Parameters";
+
+  my $b = $pipeline_builder->getComponentBuilder($component);
+  $b->{PipelineBuilder} 
+    and $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pipeline_builder&component=$component\">Edit</a>";
+  
+  my $toggle = { templ => 'print', VALUE => ' ', CLASS => 'centertext' };
+  
+  if ( ! $component->getDependsOn or $component->getDependencyType eq 'Depends On' ) {
+    $toggle = { templ => 'check', NAME => 'component', ALIGN => 'right', CLASS => $check_class." centertext", OPT_VAL => $component };
+    $wf_mask->isActive($component) and $toggle->{VALUE} = $component;
+  }
+  
+  my $entry = {templ => 'data_row',
+	       sub => [
+		       {templ => 'print',
+			ALIGN => 'right',
+			VALUE => $component->getName},
+		       $toggle,
+		       {templ => 'print',
+			CLASS => "centertext",
+			VALUE => $link},
+			]};
+  
+  return $entry;
 }
 
 1;

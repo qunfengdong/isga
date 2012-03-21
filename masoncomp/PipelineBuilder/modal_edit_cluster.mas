@@ -1,5 +1,4 @@
 <%args>
- $components
  $pipeline_builder
  $cluster
 </%args>
@@ -12,9 +11,8 @@
         <td>Component</td>
         <td>Edit Parameters</td>
       </tr>
-%foreach ( @{$components}){
+%foreach ( @{ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' )} ) {
 %  if ( my $builder = $pipeline_builder->getComponentBuilder($_) ) {
-%    if ( $builder->{PipelineBuilder} ){
       <tr>
         <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
 %      if ( $wf_mask->isActive($_) ) {
@@ -23,17 +21,7 @@
         <td><em class="red">You have disabled this analysis.</em></td>
 %      }
       </tr>
-%    } else {
-%      push(@{$noParams}, $_);
-%    }
 %  }
-%}
-%foreach ( @{$noParams}){
-%  my $builder = $pipeline_builder->getComponentBuilder($_);
-      <tr>
-        <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
-        <td><em class="red">Has no parameters to be set.</em></td>
-      </tr>
 %}
     </tbody>
   </table>
