@@ -41,7 +41,7 @@ custom_parameters:
 # SGE root path directory
   SGE_ROOT: /cluster/sge-62u4
 # SGE Queue
-  SGE_QUEUE: seq 
+  SGE_QUEUE: workbench 
 # Full path to toAmos
   toAmos_executable: /bioportal/sw/bin/toAmos
 # Full path to bank-transact
