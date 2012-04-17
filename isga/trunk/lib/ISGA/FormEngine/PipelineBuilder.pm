@@ -273,16 +273,18 @@ sub _addComponentToForm {
     and $link = "<a href=\"/PipelineBuilder/EditComponent?pipeline_builder= $pipeline_builder&component=$component\">Edit</a>";
   
   my $toggle = { templ => 'print', VALUE => ' ', CLASS => 'centertext' };
-  
+  my $indentclass = 'indent';
   if ( ! $component->getDependsOn or $component->getDependencyType eq 'Depends On' ) {
     $toggle = { templ => 'check', NAME => 'component', ALIGN => 'right', CLASS => $check_class." centertext", OPT_VAL => $component };
     $wf_mask->isActive($component) and $toggle->{VALUE} = $component;
+    $indentclass = undef;
   }
   
   my $entry = {templ => 'data_row',
 	       sub => [
 		       {templ => 'print',
 			ALIGN => 'right',
+                        CLASS => $indentclass,
 			VALUE => $component->getName},
 		       $toggle,
 		       {templ => 'print',
