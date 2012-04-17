@@ -240,12 +240,14 @@ sub ChooseComponent {
                  FORMNAME => $check_class.'_choose_component',
                  SUBMIT => 'Save',
                  CHECKALL => $check_class.'CheckAll',
-                 ADDCOLUMN => $select_link.' | '.$deselect_link,
-                 SPECIALCLASS => "centertext",
+                 SPECIALCLASS => "left",
                  DIVCLASS => "modaltable",
                  sub => \@form } );
-  $form->set_main_vars({TITLE => ['Component', 'Turn On/Off', 'Edit Parameters'],
-                        TITLEALIGN => ['left', 'left', 'left']});
+
+  my $on_off = 'Turn On/Off<br>' . $select_link.' | '.$deselect_link;
+  $form->set_main_vars({TITLE => ['Component', 'Edit Parameters', $on_off],
+                        CLASS => ['left', 'left', 'centertext'],
+                        TITLEALIGN => ['left', 'left', 'center']});
 
 
   $form->make;
@@ -286,10 +288,10 @@ sub _addComponentToForm {
 			ALIGN => 'right',
                         CLASS => $indentclass,
 			VALUE => $component->getName},
-		       $toggle,
 		       {templ => 'print',
-			CLASS => "centertext",
+			CLASS => "left",
 			VALUE => $link},
+                       $toggle,
 			]};
   
   return $entry;

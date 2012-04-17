@@ -364,6 +364,11 @@
     text-align: right;
  }
 
+ td.left{
+    text-align: left;
+ }
+
+
  span.upstream {
     background-color: #fedfbf;
  }
