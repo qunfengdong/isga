@@ -1,7 +1,5 @@
 # -*- cperl -*-
 
-use Data::Dumper;
-
 #------------------------------------------------------------------------
 
 =item public void writeConfigFile( RunBuilder $rb, { ClusterInput => HashRef } $cluster_inputs );

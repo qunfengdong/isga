@@ -465,6 +465,7 @@ sub _processParameterForForm {
   my $param = shift;
 
   $param->{LABEL} = $param->{NAME};
+  exists $param->{DESCRIPTION} and $param->{TIP} = $param->{DESCRIPTION};
 
   if ( ! exists $param->{templ} || $param->{templ} eq 'text' ) {
     exists $param->{MAXLEN} or $param->{MAXLEN} = 60;

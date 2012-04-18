@@ -94,11 +94,12 @@ pipeline.
     my $self = shift;
   
     my $wf_mask = $self->getWorkflowMask();
-    my $clusters = $self->getGlobalTemplate->getClusters;
-    defined $self->getActiveAlternateClusters and push(@$clusters, @{$self->getActiveAlternateClusters});
+    my @clusters = map { $_->getCluster } @{$self->getGlobalTemplate->getWorkflow};
+
+    defined $self->getActiveAlternateClusters and push(@clusters, @{$self->getActiveAlternateClusters});
 
     # return the clusters that are active
-    return [grep { $wf_mask->isActive($_) } @$clusters];
+    return [grep { $wf_mask->isActive($_) } @clusters];
   }
 
 #------------------------------------------------------------------------

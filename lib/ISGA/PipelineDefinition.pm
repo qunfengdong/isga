@@ -178,7 +178,7 @@ Initialize the PipelineDefinition object.
     $self->{pipeline} = $pipeline;
 
     # retrieve all the components for the pipeline;
-    my @components = @{$pipeline->getComponents};
+    my @components = @{$pipeline->getAllComponents};
 
     my %component_map;
     my %component_archive;
@@ -244,6 +244,8 @@ Returns the FormEngine portion of the RunBuilder parameters.
   sub getParameterForm { 
 
     my $self = shift;
+
+    warn Dumper($self->{Parameters});
 
     return { templ => 'fieldset',
 	     sub => $self->{Parameters},

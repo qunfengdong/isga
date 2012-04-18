@@ -379,7 +379,12 @@ Returns [string $parametername, string $value] for each runbuilder parameter.
       my @details = ( $field->{TITLE} );
       push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
       
-      if(exists $field->{OPT_VAL} && exists $field->{VALUE}){
+      # check boxes are different
+      if ( $field->{templ} eq 'check' and exists $field->{VALUE} ) {
+	$details[1] = $field->{OPTION} || 'Yes';
+	
+      # for forms with multiple options map back to the option for pretty printing
+      } elsif(exists $field->{OPT_VAL} && exists $field->{VALUE}){
 	my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[1] } 0..$#{$field->{OPT_VAL}};
 	if ( defined($index) ) {
 	  $details[1] = ${$field->{OPTION}}[$index];

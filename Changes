@@ -16,7 +16,8 @@ Revision history for ISGA
 	* Added link to reset all parameters for a component when building a custom pipeline
 	
 	API CHANGES
-	
+
+	* WorkflowMask can now be supplied for a global pipeline to turn a component off by default	
 	* Added callbacks to handle Run parameters so that one parameter can be processed several different
 	  ways for different components
 	* Added ability for RunBuilder to disable components based on Run parameters.
