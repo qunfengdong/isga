@@ -12,14 +12,7 @@
 
 <sys:script type="text/javascript">
 $(document).ready(function() {
- $('a.jTip').each(function(){
-   $(this).qtip({
-    content: {
-      text: 'Loading...',
-      ajax: {
-        url: $(this).attr('href')
-      }
-    }, 
+   $('a[title]').qtip({
     hide: {
       delay: 1000,
       fixed: true
@@ -37,10 +30,9 @@ $(document).ready(function() {
       }
     }
    });
- })
- .click(function(event) { event.preventDefault(); });
-}); 
+});
 </sys:script>
+
 <h1>Pipeline Building: Edit Parameters</h1>
 
 % #<h1><% $pipeline->getName %></h1>
