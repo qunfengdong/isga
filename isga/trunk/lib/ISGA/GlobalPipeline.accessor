@@ -112,7 +112,28 @@ Convenience method to return a list of clusters in this pipeline.
   sub getClusters { 
 
     my $self = shift;
-    return [map { $_->getCluster } @{$self->getWorkflow}];
+
+    my @clusters = map {$_->getCluster} @{$self->getWorkflow};
+
+    if ( my $wf_mask = $self->getWorkflowMask ) {
+      return [grep { $wf_mask->isActive($_) } @clusters];
+    }
+    
+    return \@clusters;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getAllClusters();
+
+Convenience method to return a list of all clusters in this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getAllClusters { 
+
+    my $self = shift;
+    return [map {$_->getCluster} @{$self->getWorkflow}];
   }
 
 #------------------------------------------------------------------------
@@ -136,6 +157,29 @@ Returns a list of components in the provided cluster of this pipeline.
     }
     
     return ISGA::Component->query( Cluster => $self->getClusters );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getAllComponents();
+
+Returns a list of components in this pipeline.
+
+=item public [Component] getAllComponents(Cluster $cluster);
+
+Returns a list of components in the provided cluster of this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getAllComponents { 
+
+    my ($self, $cluster) = @_;
+
+    if ( $cluster and ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $self )) {
+      return ISGA::Component->query(Cluster => $cluster);
+    }
+    
+    return ISGA::Component->query( Cluster => $self->getAllClusters );
   }
 
 #------------------------------------------------------------------------

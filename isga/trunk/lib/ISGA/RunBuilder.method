@@ -37,8 +37,6 @@ Builds the FormEngine object for the RunBuilder object.
     
     my @form = @{$self->buildParameterFormFields()};
     
-    use Data::Dumper;
-    warn Dumper(\@form);
 
     push @form, { templ => 'hidden', NAME => 'run_builder', VALUE => $self };
 

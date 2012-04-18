@@ -81,6 +81,7 @@ sub insert {
 	      ErgatisInstall => $ei,
 	     );
 
+  exists $t->{WorkflowMask} and $args{WorkflowMask} = $t->{WorkflowMask};
   exists $t->{SubClass} and $args{SubClass} =  $t->{SubClass};
 
   # check for overridden status
@@ -150,6 +151,7 @@ sub update {
 	     );
 
   exists $t->{SubClass} and $args{SubClass} =  $t->{SubClass};
+  exists $t->{WorkflowMask} and $args{WorkflowMask} = $t->{WorkflowMask};
 
   # check for overridden status
   if ( my $status = $ml->getStatus ) {
@@ -198,6 +200,11 @@ sub checkEquality {
   defined $SubClass and $SubClass ne $t->{SubClass} and
     X::API->throw( message => "SubClass does not match entry for Pipeline $t->{Name}\n" );   
 
+  my $wf_mask = $o->getWorkflowMask();
+  ( defined $wf_mask xor exists $t->{WorkflowMask} ) and
+    X::API->throw( message => "WorkflowMask does not match entry for Pipeline $t->{Name}\n" );
+  defined $wf_mask and $wf_mask ne $t->{WorkflowMask} and
+    X::API->throw( message => "WorkflowMask does not match entry for Pipeline $t->{Name}\n" );
 }
 
 1;
