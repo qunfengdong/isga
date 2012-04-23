@@ -20,7 +20,6 @@ use warnings;
 
 use YAML;
 
-use Data::Dumper;
 use List::MoreUtils qw(any);
 
 use overload
@@ -244,8 +243,6 @@ Returns the FormEngine portion of the RunBuilder parameters.
   sub getParameterForm { 
 
     my $self = shift;
-
-    warn Dumper($self->{Parameters});
 
     return { templ => 'fieldset',
 	     sub => $self->{Parameters},
