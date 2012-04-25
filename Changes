@@ -4,6 +4,7 @@ Revision history for ISGA
 	
 	BUG FIXES
 
+	* Fixed 'Cancel' button on RunBuilder edit parameters form
 	* Fixed bug in specifying a run for update_run_status.pl
         * Print 'Disabled' for value of disabled checkboxes when annotating custom parameters in
           PipelineBuilder.
@@ -40,7 +41,13 @@ Revision history for ISGA
         * Removed getConfigFile() and getConfigFileName() methods from ISGA::Component - replaced by 
 	  getConfigFilePath()
 	* Removed getDecoratedInputValue() method from ISGA::Component - replaced by getInput()
-	* Added getIteration() and getParameter() methods to ISGA::Component.	
+	* Added getIteration() and getParameter() methods to ISGA::Component.
+	* Added getGlobalPipeline() shortcut method to ISGA::PipelineBuilder.
+	* Added getComponentBuilder() method to ISGA::RunBuilder.
+	* Removed obsolete hasParams() method from ISGA::Cluster.
+	* Renamed hasRunParmeters() method of ISGA::RunBuilder to hasParameters() for consistency.
+	* Renamed getPrettyPrint() method of ISGA::RunBuilder to getParametersToPrint() for clarity.
+	* Removed obsolete getParameterDetails() method from ISGA::RunBuilder.
 	* Added getComponent() and injectMaskValues() methods to ISGA::ParameterMask.
 	* Added getRawErgatisName() to ISGA::Component
 	* Removed getBaseErgatisName() and getConfigFileName() from ISGA::Component::Iterated

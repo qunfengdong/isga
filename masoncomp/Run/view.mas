@@ -147,7 +147,8 @@ my $complete = ISGA::RunStatus->new( Name => 'Complete' );
 <sys:rightmenu>
 <ul>
 % if ( ! $running and ! $canceled ) {
-%   if ( ! $is_admin or $run->getCreatedBy == ISGA::Login->getAccount ) {
+%   if ( ISGA::Login->getAccount->mayRead($run) ) {
+%#   if ( ! $is_admin or $run->getCreatedBy == ISGA::Login->getAccount ) {
 % my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
 <& "/plugin/$plugin/run-right-menu.mas", run => $run &>
 %   }
