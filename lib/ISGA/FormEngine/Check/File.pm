@@ -38,11 +38,32 @@ sub isPath {
     
   my $data = shift;
   
+  my @files = split( /\//, $data );
+
+  foreach ( @files ) {
+    if ( $_ !~ /^[-A-Za-z0-9_ \.]+$/ ) {
+      return 'Must not contain special characters.';
+    }
+  }
+  return '';
+}
+
+#------------------------------------------------------------------------
+
+=item public string isAbsolutePath(string value);
+
+Enforces rules on path names
+
+=cut 
+#------------------------------------------------------------------------
+sub isAbsolutePath {
+    
+  my $data = shift;
+  
   $data =~ m{^/} or return 'Path must be absolute.';
 
   # need to check for valid unix filesystem name
-
-  return '';
+  return &isPath($data);
 }
 
 #------------------------------------------------------------------------
@@ -68,7 +89,9 @@ sub isUniqueName {
 
 
 ISGA::FormEngine::SkinUniform->_register_check('File::isUniqueName');
-ISGA::FormEngine::SkinUniform->_register_check('File::isFileHandle');
+ISGA::FormEngine::SkinUniform->_register_check('File::isPath');
+ISGA::FormEngine::SkinUniform->_register_check('File::isAbsolutePath');
+
 
 1;
 __END__

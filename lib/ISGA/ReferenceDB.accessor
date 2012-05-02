@@ -29,12 +29,17 @@ name for collections.
   sub getName {
 
     my $self = shift;
-    return $self->getLabel if (defined $self->getLabel);
-    if ($self->getRelease->getReference->getTag->getName eq 'Organism'){
-      return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease . ' (Assembled Genome)' if ($self->getPath =~ /genome/o);
-      return $self->getRelease->getReference->getName . ' ' . $self->getRelease->getRelease;
-    }else{
-      return $self->getRelease->getReference->getName. ' ' . $self->getRelease->getVersion;
+
+    # we used to return a label if it existed, but we don't have those anymore
+#    return $self->getLabel if (defined $self->getLabel);
+
+    my $release = $self->getRelease;
+         
+    my $name= $release->getReference->getName . ' (' . $release->getVersion . ')';
+    if ( my $label = $self->getTemplate->getLabel ) {
+      $name .= " $label";
     }
+
+    return $name;
   }
 

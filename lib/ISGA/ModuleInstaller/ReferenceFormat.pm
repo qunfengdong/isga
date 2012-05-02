@@ -1,11 +1,11 @@
-package ISGA::ModuleInstaller::Base;
+package ISGA::ModuleInstaller::ReferenceFormat;
 
 #------------------------------------------------------------------------
 
 =head1 NAME
 
-B<ISGA::ModuleInstaller::Base> provides common methods for installing
-pipelines.
+B<ISGA::ModuleInstaller::ReferenceFormat> provides methods for
+installing reference format information for a pipeline.
 
 =head1 SYNOPSIS
 
@@ -15,11 +15,13 @@ pipelines.
 
 =cut
 #------------------------------------------------------------------------
-
 use strict;
 use warnings;
 
+use base 'ISGA::ModuleInstaller::Base';
+
 use YAML;
+
 
 #========================================================================
 
@@ -46,41 +48,23 @@ sub load {
   $obj_class =~ s{ModuleInstaller\:\:}{};
 
   # read in yaml file
-  my $filename = join('/', $ml->getDatabaseSourcePath(), $class->getYAMLFile());
+  my $filename = join('/', $ml->getDatabaseSourcePath(), 'referenceformat.yaml');
   $ml->log("Loading $filename");
   -e $filename or return;
   my $file = YAML::LoadFile($filename);
-  
+
   # test each entry
   foreach ( @$file ) {
-    
-    # check for a subclass
-    if ( exists $_->{SubClass} ) {
-      eval "require $obj_class\:\:$_->{SubClass}";
+
+    my $rows = ISGA::DB->select( Table => 'referenceformat',
+				 Select => 'referenceformat_name',
+				 Fields => { referenceformat_name => $_->{Name} });
+
+    if ( @$rows == 0 ) {
+      ISGA::DB->insert(Table => 'referenceformat', Fields => { referenceformat_name => $_->{Name} });
     }
-
-    # attempt to retrieve this item from the database by key
-    my @results = @{$obj_class->query(%{$class->extractKey($ml, $_)})};
-    
-    # if there is no result we just insert it
-    if ( @results == 0 ) {
-      $class->insert($ml, $_);
-      $ml->log("Inserted $obj_class Object");
-      
-    } elsif ( @results == 1 and $ml->isForced ) {
-      $class->update($ml, $results[0], $_);
-
-    } elsif ( @results == 1 ) {
-      $class->checkEquality( $ml, $results[0], $_ );
-      $ml->log("Ignoring $obj_class Object that exists in database");
-
-      # if there are more than one result, something is very wrong
-    } else {
-      X::API->throw( message => "Invalid key for XXX returned multiple objects" );
-    }    
-  }  
+  }
 }
-
 
 1;
 __END__

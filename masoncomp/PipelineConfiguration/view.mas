@@ -13,6 +13,13 @@ my $pipeline_status = $pipeline->getStatus;
 my $ps;
 $ps->{$_} = $_->getName for @{ISGA::PipelineStatus->query( OrderBy => 'Name' )};
 $ps->{selected} = $pipeline_status->getId;
+
+# software
+my @software = @{ISGA::PipelineSoftware->query( Pipeline => $pipeline )};
+
+# databases
+my @databases = @{ISGA::PipelineReference->query( Pipeline => $pipeline )};
+
 </%perl>
 
 <sys:script type="text/javascript" src="/include/js/jquery.jeditable.mini.js"></sys:script>
@@ -27,6 +34,41 @@ $ps->{selected} = $pipeline_status->getId;
         submit : 'OK',
         style: 'inherit'
       }); 
+
+<%perl>
+foreach ( @software ) {
+
+  my $releases = ISGA::SoftwareRelease->query( Software => $_->getSoftware, OrderBy => { DESC => 'Release' } );
+  my $rel = { '' => 'Ergatis Configuration' };
+  $rel->{$_} = $_->getVersion for grep { $_->getStatus->isAvailable } @$releases;
+</%perl>
+      $('#editable_release<% $_ %>').editable('/submit/Software/SetPipelineSoftware', {
+        data : '<% encode_json($rel) %>',
+        name : 'software_release',
+        type : 'select',
+        submitdata: { pipeline_software: "<% $_ %>"},
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+% }
+
+<%perl>
+foreach ( @databases ) {
+
+  my $releases = ISGA::ReferenceRelease->query( Reference => $_->getReference, OrderBy => { DESC => 'Release' } );
+  my $rel = { '' => 'Ergatis Configuration' };
+  $rel->{$_} = $_->getVersion for @$releases;
+</%perl>
+      $('#editable_reference<% $_ %>').editable('/submit/Reference/SetPipelineReference', {
+        data : '<% encode_json($rel) %>',
+        name : 'reference_release',
+        type : 'select',
+        submitdata: { pipeline_reference: "<% $_ %>"},
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+% }
+
  });
 </sys:script>
 
@@ -53,5 +95,59 @@ None (Global Settings)\
 </table>
 
 </div>
+
+% if ( @software ) {
+<h3>Pipeline Software</h3>
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Software</th><th>Release</th></tr>
+</thead>
+<tbody>
+%   foreach ( @software ) { 
+<tr><td><strong><% $_->getSoftware->getName %></strong></td><td><span class="editable" id="editable_release<% $_ %>">\
+%     if ( my $release = $_->getSoftwareRelease ) {
+<% $release->getVersion %></span></td>
+%     } else {
+Use Ergatis Configuration</span></td>
+%     }
+</tr>
+%     if ( my $note = $_->getNote ){
+<tr><td colspan="2" class="document"><% $note %></td></tr>
+%     }
+%   }
+</tbody>
+</table>
+</div>
+% }
+
+% if ( @databases ) {
+<h3>Pipeline References</h3>
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Reference</th><th>Release</th></tr>
+</thead>
+<tbody>
+%   foreach ( @databases ) { 
+<tr><td><strong><% $_->getReference->getName %></strong></td><td><span class="editable" id="editable_reference<% $_ %>">\
+%     if ( my $release = $_->getReferenceRelease ) {
+<% $release->getVersion %></span></td>
+%     } else {
+Use Ergatis Configuration</span></td>
+%     }
+</tr>
+%     if ( my $note = $_->getNote ){
+<tr><td colspan="2" class="document"><% $note %></td></tr>
+%     }
+%   }
+</tbody>
+</table>
+</div>
+% }
+
+
+
+<h3>Pipeline Configuration</h3>
 
 <& /Configuration/list.mas, sorted => $sorted &>

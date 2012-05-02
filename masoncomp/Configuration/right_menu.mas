@@ -2,3 +2,4 @@
 <li class="rmbutton"><a href="/SiteConfiguration/View">Site Configuration</a></li>
 <li class="rmbutton"><a href="/UserClassConfiguration/View">User Class Configuration</a></li>
 <li class="rmbutton"><a href="/PipelineConfiguration/View">Pipeline Configuration</a></li>
+<li class="rmbutton"><a href="/SoftwareConfiguration/List">Software Configuration</a></li>

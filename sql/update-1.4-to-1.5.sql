@@ -1,5 +1,202 @@
 SET SESSION client_min_messages TO 'warning';
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- convert reference release and version
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+ALTER TABLE referencerelease ADD COLUMN tempdate DATE;
+UPDATE referencerelease SET tempdate = date(referencerelease_version);
+ALTER TABLE referencerelease ALTER COLUMN tempdate SET NOT NULL;
+UPDATE referencerelease SET referencerelease_version = referencerelease_release;
+ALTER TABLE referencerelease DROP COLUMN referencerelease_release;
+ALTER TABLE referencerelease RENAME COLUMN tempdate TO referencerelease_release;
+
+ALTER TABLE referencerelease ADD COLUMN pipelinestatus_id INTEGER REFERENCES pipelinestatus(pipelinestatus_id);
+UPDATE referencerelease SET pipelinestatus_id = a.b FROM (SELECT DISTINCT referencerelease_id AS a, pipelinestatus_id AS b FROM referencedb) AS a
+    WHERE referencerelease.referencerelease_id = a.a;
+ALTER TABLE referencerelease ALTER COLUMN pipelinestatus_id SET NOT NULL;
+ALTER TABLE referencedb DROP COLUMN pipelinestatus_id;
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add referencelabel and referenceformat controlled vocabularies
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE referenceformat ( referenceformat_name TEXT PRIMARY KEY );
+CREATE TABLE referencelabel ( referencelabel_name TEXT PRIMARY KEY );
+INSERT INTO referencelabel VALUES ('Assembled Genome');
+INSERT INTO referencelabel VALUES ('Proteome');
+
+CREATE TABLE referencetemplate (
+  referencetemplate_id SERIAL PRIMARY KEY,
+  reference_id INTEGER REFERENCES reference(reference_id) NOT NULL,
+  referencetemplate_format TEXT REFERENCES referenceformat(referenceformat_name) NOT NULL,
+  referencetemplate_label TEXT REFERENCES referencelabel(referencelabel_name)
+);
+
+create UNIQUE INDEX referencetemplate_idx on referencetemplate( reference_id,referencetemplate_format,(coalesce(referencetemplate_label,'*** NULL IS HERE ***')));
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Migrate referencetype to referenceformat
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO referenceformat ( SELECT referencetype_name FROM referencetype );
+
+ALTER TABLE referencedb ADD COLUMN label TEXT;
+UPDATE referencedb SET label = 'Assembled Genome' WHERE referencedb_path ~ '/genome';
+UPDATE referencedb SET label = 'Proteome' WHERE referencedb_path ~ '/protein';
+UPDATE referencedb SET label = 'Proteome' WHERE referencedb_path ~ '/peptide';
+
+
+INSERT INTO referencetemplate ( reference_id, referencetemplate_format, referencetemplate_label )
+SELECT c.reference_id, b.referencetype_name, a.label FROM referencedb a, referencetype b,
+  ( SELECT max(referencerelease_id) AS referencerelease_id, reference_id FROM referencerelease
+    GROUP BY reference_id) AS c
+  WHERE a.referencetype_id = b.referencetype_id AND a.referencerelease_id = c.referencerelease_id;
+
+ALTER TABLE referencedb ADD COLUMN referencetemplate_id INTEGER REFERENCES referencetemplate(referencetemplate_id);
+
+UPDATE referencedb SET referencetemplate_id = a.referencetemplate_id 
+ FROM referencetemplate a, referencetype b, referencerelease c
+ WHERE referencedb.referencetype_id = b.referencetype_id AND b.referencetype_name = a.referencetemplate_format 
+       AND referencedb.label = a.referencetemplate_label AND referencedb.referencerelease_id = c.referencerelease_id
+       AND c.reference_id = a.reference_id;
+
+UPDATE referencedb SET referencetemplate_id = a.referencetemplate_id 
+ FROM referencetemplate a, referencetype b, referencerelease c
+ WHERE referencedb.referencetype_id = b.referencetype_id AND b.referencetype_name = a.referencetemplate_format 
+       AND referencedb.label IS NULL AND a.referencetemplate_label IS NULL 
+       AND referencedb.referencerelease_id = c.referencerelease_id AND c.reference_id = a.reference_id;
+
+ALTER TABLE referencedb DROP COLUMN label;
+ALTER TABLE referencedb DROP COLUMN referencetype_id;
+DROP TABLE referencetype;
+
+ALTER TABLE reference DROP COLUMN referencetag_id;
+DROP TABLE referencetag;
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Modify run_builder table to store link to previous run software
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+ALTER TABLE runbuilder ADD COLUMN run_id INTEGER REFERENCES run(run_id);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Modify reference table to have link
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+ALTER TABLE reference ADD COLUMN reference_link TEXT;
+ALTER TABLE reference DROP CONSTRAINT "reference_reference_path_key";
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add software use cases
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/SoftwareConfiguration/View', 'View Software Configuration', TRUE, '2columnright');
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/SoftwareConfiguration/List', 'List Software Configurations', TRUE, '2columnright');
+
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/SoftwareConfiguration/AddRelease', 'Add Software Release', TRUE, '2columnright');
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Software/AddRelease', 'Software::AddRelease', TRUE, 'none');
+
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/SoftwareConfiguration/EditRelease', 'Edit Software Release', TRUE, '2columnright');
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Software/EditRelease', 'Software::EditRelease', TRUE, 'none');
+
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Software/SetPipelineSoftware', 'Software::SetPipelineSoftware', TRUE, 'none');
+
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Reference/AddRelease', 'Reference::AddRelease', TRUE, 'none');
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Reference/EditRelease', 'Reference::EditRelease', TRUE, 'none');
+INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
+  VALUES ('/submit/Reference/SetPipelineReference', 'Reference::SetPipelineReference', TRUE, 'none');
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- modify referencedb table to be used for pipelines
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+--ALTER TABLE referencedb ADD COLUMN reference_id INTEGER REFERENCES reference(reference_id);
+--UPDATE referencedb SET reference_id = referencerelease.reference_id FROM referencerelease
+--  WHERE referencedb.referencerelease_id = referencerelease.referencerelease_id;
+ALTER TABLE referencerelease ADD CONSTRAINT referencerelease_key2 UNIQUE (reference_id, referencerelease_id);
+--ALTER TABLE referencedb ADD CONSTRAINT referencedb_fk FOREIGN KEY (reference_id, referencerelease_id) 
+--        REFERENCES referencerelease(reference_id, referencerelease_id);
+
+CREATE TABLE pipelinereference (
+  pipelinereference_id SERIAL PRIMARY KEY,
+  pipeline_id INTEGER REFERENCES globalpipeline(pipeline_id) NOT NULL,
+  reference_id INTEGER REFERENCES reference(reference_id) NOT NULL,
+  referencerelease_id INTEGER,
+  pipelinereference_note TEXT,
+  CONSTRAINT pipelinereference_key2 UNIQUE (pipeline_id, reference_id ),
+  CONSTRAINT pipelinereference_fk FOREIGN KEY (reference_id,referencerelease_id) REFERENCES referencerelease(reference_id,referencerelease_id)
+);
+
+CREATE TABLE runreference (
+  run_id INTEGER REFERENCES run(run_id) NOT NULL,
+  referencerelease_id INTEGER NOT NULL,
+  CONSTRAINT runrelease_pk UNIQUE (run_id, referencerelease_id )
+);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add tables for software used in pipelines
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE TABLE software (
+  software_id SERIAL PRIMARY KEY,
+  software_name TEXT NOT NULL UNIQUE,
+  software_link TEXT
+);
+
+CREATE TABLE softwarerelease (
+  softwarerelease_id SERIAL PRIMARY KEY,
+  software_id INTEGER REFERENCES software(software_id) NOT NULL,
+  softwarerelease_release date NOT NULL,
+  softwarerelease_version TEXT NOT NULL,
+  pipelinestatus_id INTEGER REFERENCES pipelinestatus(pipelinestatus_id) NOT NULL,
+  softwarerelease_path TEXT NOT NULL,
+  CONSTRAINT software_release_k2 UNIQUE (software_id, softwarerelease_id)
+);
+
+CREATE TABLE pipelinesoftware (
+  pipelinesoftware_id SERIAL PRIMARY KEY,
+  pipeline_id INTEGER REFERENCES globalpipeline(pipeline_id) NOT NULL,
+  software_id INTEGER REFERENCES software(software_id) NOT NULL,
+  softwarerelease_id INTEGER,
+  pipelinesoftware_note TEXT,
+  CONSTRAINT pipelinesoftware_key2 UNIQUE (pipeline_id, software_id ),
+  CONSTRAINT pipelinesoftware_fk FOREIGN KEY (software_id,softwarerelease_id) REFERENCES softwarerelease(software_id,softwarerelease_id)
+);
+
+CREATE TABLE runsoftware (
+  run_id INTEGER REFERENCES run(run_id) NOT NULL,
+  softwarerelease_id INTEGER NOT NULL,
+  CONSTRAINT runsoftware_pk UNIQUE (run_id, softwarerelease_id )
+);
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- View RunBuilder Protocol (TEMPORARY HACK!!!!!)
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/RunBuilder/ViewProtocol', 'Run Protocol', TRUE, '1column');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -165,13 +362,6 @@ INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase
 
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Run/InstallTranscriptomeData', 'Run::InstallTranscriptomeData', TRUE, 'none');
-
--------------------------------------------------------------------
--------------------------------------------------------------------
--- Add referencedb label column
--------------------------------------------------------------------
--------------------------------------------------------------------
-ALTER TABLE referencedb ADD COLUMN referencedb_label TEXT;
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------

@@ -1,0 +1,10 @@
+<%args>
+ $reference => undef
+ $software => undef
+ $form
+</%args>
+
+
+<h1>Add a Release</h1>
+
+<% $form->get %>

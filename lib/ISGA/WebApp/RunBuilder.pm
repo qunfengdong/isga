@@ -172,7 +172,11 @@ sub RunBuilder::EditParameters {
 					Value => $value };
     }
 
-    $run_builder->edit( ParameterMask => $parameter_mask );
+    # process software_template
+    my $template = $form->get_input('software_template');
+    $template ||= undef;
+
+    $run_builder->edit( CopySoftwareFrom => $template, ParameterMask => $parameter_mask );
     $self->redirect( uri => "/RunBuilder/View?run_builder=$run_builder" );
   }
 

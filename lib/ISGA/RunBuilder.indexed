@@ -8,3 +8,4 @@ attributes:
   - { name: ErgatisDirectory, type: string, options: [ REQUIRED, UNIQUE ] }
   - { name: Description, type: string, options: [ REQUIRED ] }
   - { name: ParameterMask, type: string, options: [ REQUIRED, NOGET ] }
+  - { name: CopySoftwareFrom, type: Run }

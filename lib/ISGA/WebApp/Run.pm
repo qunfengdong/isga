@@ -257,6 +257,17 @@ sub Run::Submit {
   
   my $run = ISGA::Run->submit($run_builder);
 
+  # save any used software to the run
+  foreach ( @{ISGA::PipelineSoftware->query( Pipeline => $run_builder->getGlobalPipeline )} ) {
+    my $release = $_->getSoftwareRelease();
+    $release and $run->addSoftwareRelease($release);
+  }
+
+  foreach ( @{ISGA::PipelineReference->query( Pipeline => $run_builder->getGlobalPipeline )} ) {
+    my $release = $_->getReferenceRelease();
+    $release and $run->addReferfenceRelease($release);
+  }
+
   # nuke the builder
   foreach ( @{$run_builder->getInputs} ) {
     $_->delete();

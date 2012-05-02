@@ -1,0 +1,32 @@
+<%args>
+ $software
+</%args>
+
+<h1><% $software->getName %></h1>
+
+<p><a href="<% $software->getLink %>"><% $software->getLink %></a><br>
+The following releases have been defined for this software.</p>
+
+
+<a href="AddRelease?software=<% $software %>">Add New Release</a>
+
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
+</thead>
+<tbody>
+% foreach ( @{ISGA::SoftwareRelease->query( Software => $software, OrderBy => { DESC => 'Release' } )} ) {
+<tr>
+ <td><% $_->getVersion %></td>
+ <td><% $_->getRelease %></td>
+ <td><% $_->getStatus->getName %></td>
+ <td><a href="EditRelease?software_release=<% $_ %>">Edit</a></td>
+</tr>
+<tr>
+ <td></td><td colspan="3"><% $_->getPath %></td>
+</tr>
+% }
+</tbody>
+</table>
+</div>

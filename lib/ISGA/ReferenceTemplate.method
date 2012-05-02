@@ -1,0 +1,18 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public boolean hasAvailableRelease();
+
+Returns true if this template has an available release.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasAvailableRelease {
+    
+    my $self = shift;
+
+    my @count = grep { $_->getRelease->getStatus->isAvailable } @{ISGA::ReferenceDB->query( Template => $self )};
+
+    return scalar(@count);
+  }

@@ -1,0 +1,10 @@
+<%args>
+ $software => undef
+ $reference => undef
+</%args>
+
+% if ( $software ) {
+<& /SoftwareConfiguration/view_software.mas, software => $software &>
+% } elsif ( $reference ) {
+<& /SoftwareConfiguration/view_reference.mas, reference => $reference &>
+% }
