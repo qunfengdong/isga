@@ -22,6 +22,8 @@ UPDATE reference SET reference_path = '/nfs/bio/db/hmmer3_hmm'
 UPDATE reference SET reference_path = '/nfs/bio/db/Prosite'
  WHERE reference_name = 'PROSITE';
 
+UPDATE reference SET reference_path = '/nfs/bio/db/UniProt100'
+ WHERE reference_name = 'UniRef100';
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencereleases for referencedb
@@ -29,10 +31,10 @@ UPDATE reference SET reference_path = '/nfs/bio/db/Prosite'
 -------------------------------------------------------------------
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI nr'),
-         '2012-01-21', 'nr-01-23-2012', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'nr-01-23-2012');
+         '05-01-2012', 'nr-05-01-2012', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'nr-05-01-2012');
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='UniProt100'),
-         '2011-12-13', '12-13-2011',(SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), '12-13-2011');
+         '04-18-2012', '04-18-2012',(SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), '04-18-2012');
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoDB'),
          '2012-02-11','OrthoDB5', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'OrthoDB5');
@@ -57,13 +59,13 @@ INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_
   VALUES (
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
             AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='nr-01-23-2012'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='nr-05-01-2012'),
     'nr');
 INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
   VALUES (
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
             AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniProt100')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='12-13-2011'),
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='04-18-2012'),
     'uniref100.fasta');
 
 
