@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Software
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED ] }
+  - { name: Link, type: string }

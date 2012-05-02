@@ -13,6 +13,11 @@ use ISGA::ModuleInstaller::FileType;
 use ISGA::ModuleInstaller::GlobalPipeline;
 use ISGA::ModuleInstaller::PipelineInput;
 use ISGA::ModuleInstaller::Workflow;
+use ISGA::ModuleInstaller::Software;
+use ISGA::ModuleInstaller::Reference;
+use ISGA::ModuleInstaller::ReferenceLabel;
+use ISGA::ModuleInstaller::ReferenceFormat;
+use ISGA::ModuleInstaller::ReferenceTemplate;
 
 use File::Copy;
 use File::Path;
@@ -169,6 +174,12 @@ sub install {
     ISGA::ModuleInstaller::GlobalPipeline->load($self);
     ISGA::ModuleInstaller::Workflow->load($self);
     ISGA::ModuleInstaller::PipelineInput->load($self);
+    ISGA::ModuleInstaller::Software->load($self);
+    ISGA::ModuleInstaller::Reference->load($self);
+    ISGA::ModuleInstaller::ReferenceLabel->load($self);
+    ISGA::ModuleInstaller::ReferenceFormat->load($self);
+    ISGA::ModuleInstaller::ReferenceTemplate->load($self);
+
   }
 }
 
@@ -217,8 +228,6 @@ sub installMasonFiles {
   # determine mason plugin directory
   my $mas_dir = join( '/', '___package_masoncomp___', 'plugin', $self->getClassPath  );
 
-  warn "copy ", $self->getMasonSourcePath, " to $mas_dir\n";
-
   File::Copy::Recursive::dircopy( $self->getMasonSourcePath,  $mas_dir ) or die $!;  
 }
 
@@ -246,14 +255,11 @@ sub installIncludeFiles {
   #
   # grab all of our .config and .yaml files and copy them
   File::Find::find( sub { return if -d $_; 
-			  return unless /\.(config|yaml)$/;
+			  return unless /\.(config|yaml|protocol)$/;
 			  copy( $File::Find::name, $include_dir ); },
 		    $self->getIncludeSourcePath() );
   
 }
-
-
-
 
 1;
 

@@ -81,8 +81,6 @@ sub insert {
 
   exists $t->{SubClass} and $args{SubClass} =  $t->{SubClass};
 
-  exists $t->{Name} and $args{Name} = $t->{Name};
-
   exists $t->{DependsOn} and 
     $args{DependsOn} = ISGA::Component->new( ErgatisName => $t->{DependsOn}, ErgatisInstall => $ei);
 

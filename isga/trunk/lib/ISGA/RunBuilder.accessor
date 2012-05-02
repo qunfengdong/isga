@@ -69,6 +69,128 @@ Returns the ergatis config value for the supplied parameter.
 
 #------------------------------------------------------------------------
 
+=item public string getSoftware(Software $software);
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getSoftware {
+    
+    my ($self, $software) = @_;
+    
+    # are we over-writing the software with a different run????
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      # default to no match
+      my $return = '';
+      $return = $_->getPath for grep { $_->getSoftware == $software } @{$run->getSoftwareReleases};
+      return $return;
+    }
+
+    # check for a release
+    my $ps = ISGA::PipelineSoftware->new( Pipeline => $self->getGlobalPipeline, Software => $software );
+    my $release = $ps->getSoftwareRelease;
+
+    return $release ? $release->getPath : '';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getSoftwareVersion(Software $software);
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getSoftwareVersion {
+    
+    my ($self, $software) = @_;
+    
+    # are we over-writing the software with a different run????
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      # default to no match
+      my $return = 'Not Available';
+      $return = $_->getVersion for grep { $_->getSoftware == $software } @{$run->getSoftwareReleases};
+      return $return;
+    }
+
+    # check for a release
+    my $ps = ISGA::PipelineSoftware->new( Pipeline => $self->getGlobalPipeline, Software => $software );
+    my $release = $ps->getSoftwareRelease;
+
+    return $release ? $release->getVersion : 'Not Available';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getReferencePath(ReferenceTemplate $template );
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getReferencePath {
+    
+    my ($self, $template) = @_;
+    
+    my $reference = $template->getReference;
+    my $release = undef;
+
+    # are we over-writing the reference with a different run?
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      $release = $_ for grep { $_->getReference == $reference } @{$run->getReferenceReleases};
+      
+    } else {
+
+      # check for a release
+      my $pr = ISGA::PipelineReference->new( Pipeline => $self->getGlobalPipeline, Reference => $reference );
+      $release = $pr->getReferenceRelease;
+    }
+    
+    # if we don't have a release then return nothing now
+    $release or return '';
+
+    return ISGA::ReferenceDB->new( Template => $template, Release => $release )->getFullPath;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getReferenceVersion(Reference $reference );
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getReferenceVersion {
+    
+    my ($self, $reference) = @_;
+    
+    my $release = undef;
+
+    # are we over-writing the reference with a different run?
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      $release = $_ for grep { $_->getReference == $reference } @{$run->getReferenceReleases};
+      
+    } else {
+
+      # check for a release
+      my $pr = ISGA::PipelineReference->new( Pipeline => $self->getGlobalPipeline, Reference => $reference );
+      $release = $pr->getReferenceRelease;
+    }
+
+    return $release ? $release->getVersion : 'Not Available';
+  }
+
+#------------------------------------------------------------------------
+
 =item public GlobalPipeline getGlobalPipeline();
 
 Returns the global pipeline for the run builder.

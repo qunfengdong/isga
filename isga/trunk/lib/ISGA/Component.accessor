@@ -34,6 +34,21 @@ Returns the path to this components config file relative to the package include 
 
 #------------------------------------------------------------------------
 
+=item public string getProtocolPath();
+
+Returns the path to this components protocol file relative to the package include directory.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getProtocolPath {
+
+     my $self = shift;
+
+     return '/' . $self->getErgatisInstall->getName . '/' . $self->getRawErgatisName . '.protocol';
+   }
+
+#------------------------------------------------------------------------
+
 =item public string getErgatisLabel();
 
 Returns the label portion of the Ergatis component.
@@ -91,6 +106,38 @@ Returns the ergatis config value for the supplied parameter.
     exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
     exists $self->{parameters}{$name} or X::API->throw( message => "$name not found as parameter for component " . $self->getName );
     return $self->{parameters}{$name};
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getSoftware(string $name);
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getSoftware {
+    
+    my $self = shift;
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+    return $self->{run_builder}->getSoftware(@_);
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getReferencePath(ReferenceTemplate $template);
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getReferencePath {
+    
+    my $self = shift;
+    exists $self->{run_builder} or X::API::ComponentNotConfigured->throw();
+    return $self->{run_builder}->getReferencePath(@_);
   }
 
 #------------------------------------------------------------------------

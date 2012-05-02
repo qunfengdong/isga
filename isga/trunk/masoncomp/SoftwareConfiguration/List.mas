@@ -1,0 +1,44 @@
+<%perl>
+my @software =  map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName, $_ ] } @{ISGA::Software->query()};
+my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName, $_ ] } @{ISGA::Reference->query()};
+</%perl>
+
+
+<h1>Software Configuration</h1>
+
+<p>This page lists versions of software and databases that are available to ISGA. It can be used to add new releases as well as editting information on and the status of existing installations.</p>
+
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Name</th><th>Releases</th><th>Tools</th></tr>
+</thead>
+<tbody>
+<tr><th class="subhead" colspan="3">Software</th></tr>
+% foreach ( @software ) {
+<tr>
+ <td><strong><% $_->getName %></strong></td>
+ <td><select>
+%   foreach ( @{ISGA::SoftwareRelease->query( Software => $_, OrderBy => { DESC => 'Release'  })} ) {
+<option><% $_->getVersion %></option>
+%   }
+ </select></td>
+ <td><a href="/SoftwareConfiguration/View?software=<% $_ %>">View</a> | <a href="/SoftwareConfiguration/AddRelease?software=<% $_ %>">Add Release</a></td>
+</tr>
+% }
+<tr><th class="subhead" colspan="3">References</th></tr>
+% foreach ( @reference ) {
+<tr>
+ <td><strong><% $_->getName %></strong></td>
+ <td><select>
+%   foreach ( @{ISGA::ReferenceRelease->query( Reference => $_, OrderBy => { DESC => 'Release'  })} ) {
+<option><% $_->getVersion %></option>
+%   }
+ </select></td>
+ <td><a href="/SoftwareConfiguration/View?reference=<% $_ %>">View</a> | <a href="/SoftwareConfiguration/AddRelease?reference=<% $_ %>">Add Release</a></td>
+</tr>
+% }
+
+</tbody>
+</table>
+</div>

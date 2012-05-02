@@ -63,6 +63,54 @@ Builds the FormEngine object for the RunBuilder object.
     my $self = shift;
 
     my $run_builder_form = $self->getPipelineDefinition->getParameterForm();
+
+    my @groups = (
+		  {
+		   templ => 'option',
+		   OPTION => ['Use Latest Available'],
+		   OPT_VAL => ['']
+		  }
+		 );
+
+    my $gp = $self->getGlobalPipeline;
+    my $account = ISGA::Login->getAccount;
+
+    # retrieve your runs of this type
+    my @runs = grep { $_->getGlobalPipeline == $gp } @{ISGA::Run->query( CreatedBy => $account )};
+
+    if ( @runs ) {
+      push @groups,
+	{ LABEL => 'Your Previous Runs',
+	  templ => 'group',
+	  OPTION => [map { $_->getName } @runs],
+	  OPT_VAL => \@runs
+	};
+    }
+
+    # retrieve shared runs of this type
+    my @shared = grep { $_->getGlobalPipeline == $gp } @{ $account->getSharedRuns() };
+
+    if ( @shared ) {
+      push @groups,
+	{ LABEL => 'Your Previous Runs',
+	  templ => 'group',
+	  OPTION => [map { $_->getName . ' (' . $_->getCreatedBy->getName . ')' } @shared],
+	  OPT_VAL => \@runs
+	};
+    }
+      
+    # push software options on to end of sub
+    push @{$run_builder_form->{sub}},
+      { 
+       REQUIRED => '1',
+       NAME => 'software_template',
+       templ => 'groupselect',
+       TITLE => 'Software and Databases',
+       TIP => 'By default your pipeline will run using the latest installed versions of software and reference databases. You may also choose to use the same versions as in a previous run',
+       HINT => 'You may use the same software and database versions as in a previous run',
+       sub => \@groups
+      };
+
     return [$run_builder_form];
   }    
 
@@ -81,6 +129,9 @@ file and copies customized config files for components.
 
     my $pipeline = $self->getPipeline();
     my $dir = $self->getFullErgatisPath();
+
+    use File::Path;
+    -e $dir and rmtree($dir);
 
     my %inputs;
     my %iterators;
@@ -110,14 +161,12 @@ file and copies customized config files for components.
       }
     }
 
-    foreach my $cluster ( @{$pipeline->getClusters} ) {
+    my @clusters = map { [ $_, $self->getComponents($_) ] } @{$pipeline->getClusters};
 
-      # retrieve components
-      my @components = @{$self->getComponents($cluster)};
-
+    foreach my $cluster ( @clusters ) {
       
       # if this is an iterator component we need to handle things differently
-      if ( my $ci = $cluster->getIteratesOn ) {
+      if ( my $ci = $cluster->[0]->getIteratesOn ) {
 
 	my $i = 1;
 	
@@ -130,7 +179,7 @@ file and copies customized config files for components.
 	    };
 	  
 	  $_->writeConfigFile($self, \%inputs, $i) 
-	    for grep { $_->getIteration == $i } @components;
+	    for grep { $_->getIteration == $i } @{$cluster->[1]};
 	  $i++;
 	}
 
@@ -140,9 +189,16 @@ file and copies customized config files for components.
       } else {
 
 	# write configuration file the super cool new way
-	$_->writeConfigFile($self, \%inputs) for @components;
+	$_->writeConfigFile($self, \%inputs) for @{$cluster->[1]};
       }
     }
+
+    # create protocol file
+    my $out_buffer;
+    my $interp = HTML::Mason::Interp->new( comp_root  => '___package_include___', out_method => \$out_buffer );
+    $interp->exec( '/ergatis-v2r16-cgbr1/Transcriptome Analysis (Apr 2012).protocol', self => $self, clusters => \@clusters);
+    
+    return $out_buffer;
   }
   
 #------------------------------------------------------------------------

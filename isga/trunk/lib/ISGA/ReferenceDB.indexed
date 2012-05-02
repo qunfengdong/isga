@@ -3,6 +3,4 @@ class: ReferenceDB
 attributes:
   - { name: Release, type: ReferenceRelease, options: [ REQUIRED ] }
   - { name: Path, type: string, options: [ REQUIRED ] }
-  - { name: Status, type: PipelineStatus, options: [ REQUIRED ] }
-  - { name: Type, type: ReferenceType, options: [ REQUIRED ] }
-  - { name: Label, type: string }
+  - { name: Template, type: ReferenceTemplate, options: [ REQUIRED ] }

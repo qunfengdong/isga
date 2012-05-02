@@ -16,9 +16,17 @@ Revision history for ISGA
 	* Add Transcriptome database query and view pages
 	* Added link to reset all parameters for a component when building a custom pipeline
 	
-	API CHANGES
+	PIPELINE CHANGES
 
 	* WorkflowMask can now be supplied for a global pipeline to turn a component off by default	
+	* Added 'Depends On' and 'Part Of' dependency relationships between components to better handle
+	  disabling components
+	* Added custom protocol to each pipeline run.
+	* Versions of software can now be tracked
+	* New Runs can be configured to copy software and database versions from previous runs.
+
+	API CHANGES
+
 	* Added callbacks to handle Run parameters so that one parameter can be processed several different
 	  ways for different components
 	* Added ability for RunBuilder to disable components based on Run parameters.
@@ -35,22 +43,6 @@ Revision history for ISGA
 	  it can be subclassed.
 	* Replaced monolithic Run->updateStatus transaction with separate transactions for each RunOutput to save
 	  previous work when an update fails or is aborted.
-
-	DETAILED API CHANGES
-
-        * Removed getConfigFile() and getConfigFileName() methods from ISGA::Component - replaced by 
-	  getConfigFilePath()
-	* Removed getDecoratedInputValue() method from ISGA::Component - replaced by getInput()
-	* Added getIteration() and getParameter() methods to ISGA::Component.
-	* Added getGlobalPipeline() shortcut method to ISGA::PipelineBuilder.
-	* Added getComponentBuilder() method to ISGA::RunBuilder.
-	* Removed obsolete hasParams() method from ISGA::Cluster.
-	* Renamed hasRunParmeters() method of ISGA::RunBuilder to hasParameters() for consistency.
-	* Renamed getPrettyPrint() method of ISGA::RunBuilder to getParametersToPrint() for clarity.
-	* Removed obsolete getParameterDetails() method from ISGA::RunBuilder.
-	* Added getComponent() and injectMaskValues() methods to ISGA::ParameterMask.
-	* Added getRawErgatisName() to ISGA::Component
-	* Removed getBaseErgatisName() and getConfigFileName() from ISGA::Component::Iterated
 
 1.4.3   Sep 21 2011
 	

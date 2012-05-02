@@ -9,8 +9,6 @@
 <tbody>
 
 % foreach ( @sorted ) {
-% use Data::Dumper;
-% warn Dumper($_);
 
 %   my $var = $_->getVariable();
 

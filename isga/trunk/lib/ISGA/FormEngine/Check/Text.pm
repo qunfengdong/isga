@@ -103,9 +103,29 @@ sub alphaNumeric {
   return '';
 }
 
+#------------------------------------------------------------------------
+
+=item public String checkDate(string value);
+
+Returns an error if the supplied text isn't a valid date.
+
+=cut 
+#------------------------------------------------------------------------
+sub checkDate {
+
+  my $value = shift;
+
+  eval { ISGA::Date->new($value) };
+
+  $@ and 'Must be a numerical date in YYYY-MM-DD format.';
+  
+  return '';
+}
+
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkHTML');
 ISGA::FormEngine::SkinUniform->_register_check('Text::alphaNumeric');
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkUnixFileName');
+ISGA::FormEngine::SkinUniform->_register_check('Text::checkDate');
 
 1;
 __END__

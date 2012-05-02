@@ -1,0 +1,8 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: SoftwareRelease
+attributes:
+  - { name: Software, type: Software, options: [ REQUIRED ] }
+  - { name: Version, type: string, options: [ REQUIRED ] }
+  - { name: Release, type: Date, options: [ REQUIRED ] }
+  - { name: Status, type: PipelineStatus, options: [ REQUIRED ] }
+  - { name: Path, type: string, options: [ REQUIRED ] }

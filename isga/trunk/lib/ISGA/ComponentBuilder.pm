@@ -475,12 +475,11 @@ sub _processParameterForForm {
     }
     
   } elsif ( exists $param->{REFERENCEDB} ) {
-    foreach my $refdb ( @{ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => $param->{REFERENCEDB} ) )} ) {
-      my $ref_tag = $refdb->getRelease->getReference->getTag->getName;
-      if ( ($ref_tag eq 'Organism' or $ref_tag eq 'OTU') and $refdb->getStatus->isAvailable()) {
-	push @{$param->{OPTION}}, $refdb->getName;
-	push @{$param->{OPT_VAL}}, $refdb->getFullPath;
-      }
+    foreach my $template ( @{ISGA::ReferenceTemplate->query( Label => $param->{REFERENCEDB} )} ) {
+      next unless $template->hasAvailableRelease;
+
+      push @{$param->{OPTION}}, $template->getName;
+      push @{$param->{OPT_VAL}}, $template;
     }
   }
 

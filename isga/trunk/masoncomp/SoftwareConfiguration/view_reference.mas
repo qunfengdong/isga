@@ -1,0 +1,32 @@
+<%args>
+ $reference
+</%args>
+
+<h1><% $reference->getName %></h1>
+
+<p><a href="<% $reference->getLink %>"><% $reference->getLink %></a><br>
+The following releases have been defined for this reference.</p>
+
+
+<a href="AddRelease?reference=<% $reference %>">Add New Release</a>
+
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
+</thead>
+<tbody>
+% foreach ( @{ISGA::ReferenceRelease->query( Reference => $reference, OrderBy => { DESC => 'Release' } )} ) {
+<tr>
+ <td><% $_->getVersion %></td>
+ <td><% $_->getRelease %></td>
+ <td><% $_->getStatus->getName %></td>
+ <td><a href="EditRelease?reference_release=<% $_ %>">Edit</a></td>
+</tr>
+<tr>
+ <td></td><td colspan="3"><% $_->getPath %></td>
+</tr>
+% }
+</tbody>
+</table>
+</div>

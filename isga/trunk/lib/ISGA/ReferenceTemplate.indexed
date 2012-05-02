@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ReferenceTemplate
+attributes:
+  - { name: Reference, type: Reference, options: [ REQUIRED ] }
+  - { name: Format, type: string, options: [ REQUIRED ] }
+  - { name: Label, type: string }

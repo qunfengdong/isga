@@ -1,0 +1,7 @@
+<%args> # -*- cperl -*-
+ $run_builder
+</%args>
+
+% my $protocol = $run_builder->stage();
+
+<% $protocol %>
