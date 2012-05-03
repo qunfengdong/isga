@@ -265,7 +265,7 @@ sub Run::Submit {
 
   foreach ( @{ISGA::PipelineReference->query( Pipeline => $run_builder->getGlobalPipeline )} ) {
     my $release = $_->getReferenceRelease();
-    $release and $run->addReferfenceRelease($release);
+    $release and $run->addReferenceRelease($release);
   }
 
   # nuke the builder
