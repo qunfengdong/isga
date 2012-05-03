@@ -295,13 +295,129 @@ UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarereleas
                                 pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
            AND software_id = (SELECT software_id FROM software WHERE software_name = 'Glimmer');
 
---INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
---   VALUES ((SELECT software_id FROM software WHERE software_name = ''), '', '', 4,
---           '');
---UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
---     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
---                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
---           AND software_id = (SELECT software_id FROM software WHERE software_name = '');
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'PS Scan'), '1.67', '2008-09-15', 4,
+           '/nfs/bio/sw/encap/ps_scan-20080915/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'PS Scan');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'PS Scan');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'HMMer'), '2.3.2', '2003-10-03', 4,
+           '/nfs/bio/sw/encap/hmmer-2.3.2/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'HMMer');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'TRNAScan-SE'), '1.23', '2002-04-01', 4,
+           '/nfs/bio/sw/encap/tRNAscanSE-1.23/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'TRNAScan-SE');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'RNAmmer'), '1.2', '2008-09-09', 4,
+           '/nfs/bio/sw/encap/rnammer-1.2/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'RNAmmer');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'BER'), '20051118', '2005-11-18', 4,
+           '/nfs/bio/sw/encap/praze-20051118/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'BER');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'Praze'), '20051118', '2005/11/18', 4,
+           '/nfs/bio/sw/encap/praze-20051118/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'Praze');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'LipoP'), '1.0', '2007-06-06', 4,
+           '/nfs/bio/sw/encap/lipop-1.0/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'LipoP');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'SignalP'), '3.0', '2004-01-01', 1,
+           '/nfs/bio/sw/encap/signalp-3.0/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'SignalP');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'SignalP'), '4.0', '2012/12/09', 4,
+           '/research/projects/isga/sw/signalp-4.0/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'SignalP');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'TransTermHP'), '2.06', '2008-12-18', 4,
+           '/nfs/bio/sw/encap/transterm_hp-2.06/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'TransTermHP');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'Asgard'), '1.5.3', '2011-01-19', 4,
+           '/nfs/bio/sw/encap/asgard-1.5/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'Asgard');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'asn2all'), '6.3', '2010-07-27', 4,
+           '/nfs/bio/sw/encap/asn2all_20100727/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'asn2all');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'tbl2asn'), '13.2', '2009-03-01', 4,
+           '/nfs/bio/sw/encap/tbl2asn-13.2/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'tbl2asn');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'MAST'), '4.3.0', '2009-10-06', 4,
+           '/nfs/bio/sw/encap/meme-4.3.0/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'MAST');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'TMHMM'), '2.0c', '2007-05-08', 4,
+           '/nfs/bio/sw/encap/TMHMM-2.0c/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'TMHMM');
 
 
 
@@ -346,26 +462,13 @@ INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerele
 INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
    VALUES ((SELECT software_id FROM software WHERE software_name = 'BLAST2GO'), '2.5.0', '2011/06/10', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
            '/research/projects/isga/sw/b2g4pipe/');
-INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
-   VALUES ((SELECT software_id FROM software WHERE software_name = 'PS Scan'), '1.67', '2008/09/15', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
-           '/nfs/bio/sw/encap/ps_scan-20080915/bin/');
-INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
-   VALUES ((SELECT software_id FROM software WHERE software_name = 'Praze'), '20051118', '2005/11/18', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
-           '/nfs/bio/sw/encap/praze-20051118/bin/');
+
 INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
    VALUES ((SELECT software_id FROM software WHERE software_name = 'MEGAN'), '3.8', '2010/07/01', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
            '/nfs/bio/sw/encap/megan_3.9/');
 INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
-   VALUES ((SELECT software_id FROM software WHERE software_name = 'SignalP'), '4.0', '2012/12/09', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
-           '/research/projects/isga/sw/signalp-4.0/');
-INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
    VALUES ((SELECT software_id FROM software WHERE software_name = 'RepeatMasker'), '3.29', '2010/08/17', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
            '/nfs/bio/sw/encap/RepeatMasker-3.29/bin/');
-
---INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
---   VALUES ((SELECT software_id FROM software WHERE software_name = ''), '', '', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = ''),
---           '');
-
 
 UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/hmmer-3.0i/bin/')
      WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
@@ -379,22 +482,10 @@ UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FRO
      WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
            AND software_id = (SELECT software_id FROM software WHERE software_name = 'BLAST2GO');
-UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/ps_scan-20080915/bin/')
-     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
-                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
-           AND software_id = (SELECT software_id FROM software WHERE software_name = 'PS Scan');
-UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/praze-20051118/bin/')
-     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
-                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
-           AND software_id = (SELECT software_id FROM software WHERE software_name = 'Praze');
 UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/megan_3.9/')
      WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
            AND software_id = (SELECT software_id FROM software WHERE software_name = 'MEGAN');
-UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/research/projects/isga/sw/signalp-4.0/')
-     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
-                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
-           AND software_id = (SELECT software_id FROM software WHERE software_name = 'SignalP');
 UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/RepeatMasker-3.29/bin/')
      WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
