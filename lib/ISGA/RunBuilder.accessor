@@ -265,6 +265,22 @@ this run builder.
 
 #------------------------------------------------------------------------
 
+=item public string getProtocolPath();
+
+Returns the path to this components protocol file relative to the package include directory.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getProtocolPath {
+
+     my $self = shift;
+     my $gp = $self->getGlobalPipeline;
+
+     return '/' . $gp->getErgatisInstall->getName . '/' . $gp->getLabel . '.protocol';
+   }
+
+#------------------------------------------------------------------------
+
 =item public string getWebPluginDirectory();
 
 Returns the directory for storing global-pipeline specific mason components.

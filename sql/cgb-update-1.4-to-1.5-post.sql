@@ -6,24 +6,29 @@
 -------------------------------------------------------------------
 UPDATE reference SET reference_path = '/nfs/bio/db/OrthoDB'
  WHERE reference_name = 'OrthoDB';
-
 UPDATE reference SET reference_path = '/nfs/bio/db/EST'
  WHERE reference_name = 'NCBI dbEST';
 
 UPDATE reference SET reference_path = '/nfs/bio/db/NCBI-nr'
  WHERE reference_name = 'NCBI nr';
-
 UPDATE reference SET reference_path = '/nfs/bio/db/OrthoMCL'
  WHERE reference_name = 'OrthoMCL';
-
 UPDATE reference SET reference_path = '/nfs/bio/db/hmmer3_hmm'
  WHERE reference_name = 'Pfam';
-
 UPDATE reference SET reference_path = '/nfs/bio/db/Prosite'
  WHERE reference_name = 'PROSITE';
-
 UPDATE reference SET reference_path = '/nfs/bio/db/UniProt100'
  WHERE reference_name = 'UniRef100';
+
+UPDATE reference SET reference_path = '/nfs/bio/db/TIGRFAM'
+ WHERE reference_name = 'TIGRFAM';
+UPDATE reference SET reference_path = '/nfs/bio/db/COG'
+ WHERE reference_name = 'COG';
+UPDATE reference SET reference_path = '/nfs/bio/db/Priam'
+ WHERE reference_name = 'Priam';
+UPDATE reference SET reference_path = '/nfs/bio/db/RegTransBase'
+ WHERE reference_name = 'RegTransBase';
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencereleases for referencedb
@@ -50,6 +55,72 @@ INSERT INTO referencerelease (reference_id, referencerelease_release, referencer
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='PROSITE'),
          '2012-04-11','Prosite-04-11-2012', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'Prosite-04-11-2012');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Pfam'),
+         '2009-09-29','hmm_all-09-29-09', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
+	         'hmm_all-09-29-09');
+INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
+  VALUES (
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam')), 
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='hmm_all-09-29-09'),
+    'coding_hmm.lib.bin');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='TIGRFAM'),
+         '2004-01-15','1.0', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'TIGRFAM-v1');
+INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
+  VALUES (
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'TIGRFAM')), 
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='1.0'),
+    '');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='COG'),
+         '2003-03-02','2003-03-02', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'), 
+	         'COG-03-2-2003');
+INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
+  VALUES (
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'COG')), 
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='2003-03-02'),
+    'whog');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Priam'),
+         '2009-06-16','2009-06-16', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
+	         'Priam-06-16-2009');
+INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
+  VALUES (
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Profile Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Priam')), 
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='2009-06-16'),
+    'profile_EZ');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='PROSITE'),
+         '2011-02-08','2011-02-08', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
+	         'Prosite-02-08-2011');
+INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
+  VALUES (
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'PROSITE Protein Family Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'PROSITE')), 
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='2011-02-08'),
+    'prosite.dat');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='RegTransBase'),
+         '2006-01-01','1', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
+	         'regtransbase_alignments_v1');
+INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
+  VALUES (
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'Regulatory Interaction Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase')), 
+    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='1'),
+    '');
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencedb entries
@@ -200,6 +271,58 @@ INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='Prosite-04-11-2012'),
     'prosite.dat');
 
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Add Software for Prok Feb 2011
+--
+-- I'm sinning and hardcoding pipeline status ( 4 = Published, 1 = Available )
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'NCBI BLAST'), '2.2.19', '2008-11-17', 4,
+           '/nfs/bio/sw/encap/blast-2.2.19/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'NCBI BLAST');
+
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'Glimmer'), '3.02', '2006-05-09', 4,
+           '/nfs/bio/sw/encap/glimmer-3.02/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'Glimmer');
+
+--INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+--   VALUES ((SELECT software_id FROM software WHERE software_name = ''), '', '', 4,
+--           '');
+--UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+--     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+--                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+--           AND software_id = (SELECT software_id FROM software WHERE software_name = '');
+
+
+
+-- X Name: NCBI BLAST
+-- X Name: Glimmer
+
+-- - Name: PS Scan
+-- - Name: HMMer
+-- - Name: TRNAscan-SE
+-- - Name: RNAmmer
+-- - Name: BER
+-- - Name: LipoP
+-- - Name: SignalP
+-- - Name: TransTermHP
+-- - Name: Asgard
+-- - Name: asn2all
+-- - Name: tbl2asn
+-- - Name: MAST
+-- - Name: TMHMM
+
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add software releases
@@ -207,8 +330,13 @@ INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_
 -------------------------------------------------------------------
 
 INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
-   VALUES ((SELECT software_id FROM software WHERE software_name = 'NCBI BLAST+'), '2.2.25', '2011-03-31', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'NCBI BLAST+'), '2.2.25', '2011-03-31', 4,
            '/nfs/bio/sw/encap/ncbi_blast-2.2.25/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'NCBI BLAST+');
+
 INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
    VALUES ((SELECT software_id FROM software WHERE software_name = 'HMMer'), '3.0i', '2010/03/28', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
            '/nfs/bio/sw/encap/hmmer-3.0i/bin/');
@@ -238,10 +366,6 @@ INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerele
 --   VALUES ((SELECT software_id FROM software WHERE software_name = ''), '', '', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = ''),
 --           '');
 
-UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/ncbi_blast-2.2.25/bin/')
-     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
-                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
-           AND software_id = (SELECT software_id FROM software WHERE software_name = 'NCBI BLAST+');
 
 UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/hmmer-3.0i/bin/')
      WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
@@ -296,6 +420,8 @@ UPDATE pipelinereference SET referencerelease_id =
 
 -- hack in genome references
 INSERT INTO pipelinereference (pipeline_id, reference_id, referencerelease_id) 
-SELECT 3, reference_id, referencerelease_id FROM referencerelease NATURAL JOIN reference WHERE reference_description ~ 'Reference information';
+SELECT ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' ),
+         reference_id, referencerelease_id FROM referencerelease NATURAL JOIN reference WHERE reference_description ~ 'Reference information';
 
 

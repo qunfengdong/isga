@@ -196,7 +196,7 @@ file and copies customized config files for components.
     # create protocol file
     my $out_buffer;
     my $interp = HTML::Mason::Interp->new( comp_root  => '___package_include___', out_method => \$out_buffer );
-    $interp->exec( '/ergatis-v2r16-cgbr1/Transcriptome Analysis (Apr 2012).protocol', self => $self, clusters => \@clusters);
+    $interp->exec( $self->getProtocolPath, self => $self, clusters => \@clusters);
     
     return $out_buffer;
   }
