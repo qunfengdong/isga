@@ -170,7 +170,8 @@ CREATE TABLE softwarerelease (
   softwarerelease_version TEXT NOT NULL,
   pipelinestatus_id INTEGER REFERENCES pipelinestatus(pipelinestatus_id) NOT NULL,
   softwarerelease_path TEXT NOT NULL,
-  CONSTRAINT software_release_k2 UNIQUE (software_id, softwarerelease_id)
+  CONSTRAINT software_release_k2 UNIQUE (software_id, softwarerelease_id),
+  CONSTRAINT software_release_k3 UNIQUE (software_id, softwarerelease_version)
 );
 
 CREATE TABLE pipelinesoftware (
