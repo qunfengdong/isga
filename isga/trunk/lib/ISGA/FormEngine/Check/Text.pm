@@ -117,7 +117,9 @@ sub checkDate {
 
   eval { ISGA::Date->new($value) };
 
-  $@ and 'Must be a numerical date in YYYY-MM-DD format.';
+  if($@) {
+    return 'Must be a numerical date in YYYY-MM-DD format.';
+  }
   
   return '';
 }
