@@ -470,6 +470,10 @@ INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerele
    VALUES ((SELECT software_id FROM software WHERE software_name = 'RepeatMasker'), '3.29', '2010/08/17', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
            '/nfs/bio/sw/encap/RepeatMasker-3.29/bin/');
 
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'ORFPredictor'), '2.0', '2010/04/15', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name = 'Published'),
+           '/nfs/bio/sw/encap/orfpredictor_2.0/bin/');
+
 UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_path = '/nfs/bio/sw/encap/hmmer-3.0i/bin/')
      WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
