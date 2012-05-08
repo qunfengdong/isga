@@ -1,4 +1,21 @@
 
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Change UniProt100 to UniRef100
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE referencerelease SET reference_id = ( SELECT reference_id FROM reference where reference_name = 'UniRef100' )
+ WHERE reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniProt100' );
+UPDATE referencedb SET referencetemplate_id = ( SELECT referencetemplate_id FROM referencetemplate WHERE reference_id = 
+                                           ( SELECT reference_id FROM reference where reference_name = 'UniRef100' ))
+ WHERE referencetemplate_id = ( SELECT referencetemplate_id FROM referencetemplate WHERE reference_id = 
+                                           ( SELECT reference_id FROM reference where reference_name = 'UniProt100' ));
+DELETE FROM referencetemplate WHERE reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniProt100' );
+DELETE FROM reference WHERE reference_name = 'UniProt100';
+
+
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Set reference paths
@@ -29,115 +46,139 @@ UPDATE reference SET reference_path = '/nfs/bio/db/Priam'
 UPDATE reference SET reference_path = '/nfs/bio/db/RegTransBase'
  WHERE reference_name = 'RegTransBase';
 
+
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencereleases for referencedb
+--
+-- I'm sinning and hardcoding pipeline status ( 4 = Published, 1 = Available )
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- nr 02-19-2011 already exists in our database
+UPDATE pipelinereference SET referencerelease_id = 
+  ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'nr-02-19-2011' )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr');
+
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI nr'),
-         '05-01-2012', 'nr-05-01-2012', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'nr-05-01-2012');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI nr'), '05-01-2012', 'nr-05-01-2012', 4, 'nr-05-01-2012');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'nr',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr')));
+
+--uniprot 11-30-2010 already exists in our database
+UPDATE pipelinereference SET referencerelease_id = 
+  ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '11-30-2010' 
+       AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniRef100') )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniRef100');
+
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='UniProt100'),
-         '04-18-2012', '04-18-2012',(SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), '04-18-2012');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='UniRef100'), '04-18-2012', '04-18-2012', 4, '04-18-2012');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'uniref100.fasta',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniRef100')));
+
+
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoDB'),
-         '2012-02-11','OrthoDB5', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'OrthoDB5');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoDB'), '2012-02-11','OrthoDB5', 4, 'OrthoDB5');
+
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI dbEST'),
-         '2012-02-06','est-02-06-2012', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'est-02-06-2012');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI dbEST'), '2012-02-06','est-02-06-2012', 4, 'est-02-06-2012');
+
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoMCL'),
-         '2011-04-14','orthomcl-04-14-2011', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'orthomcl-04-14-2011');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='OrthoMCL'), '2011-04-14','orthomcl-04-14-2011', 4, 'orthomcl-04-14-2011');
+
+-- hack in hmm2 database
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='Pfam'),
-         '2012-03-05','hmm_all-03-05-12', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'hmm_all-03-05-12');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Pfam'), '2009-09-29','23', 4, '/nfs/bio/db/hmm_all/hmm_all-09-29-09');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'coding_hmm.lib.bin',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database' 
+       AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam');
+
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Pfam'), '2012-03-05', '26', 4, 'hmm_all-03-05-12');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'coding_hmm.lib',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database'
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam'))); 
+
+
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='PROSITE'),
          '2012-04-11','Prosite-04-11-2012', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'Prosite-04-11-2012');
 
-INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='Pfam'),
-         '2009-09-29','hmm_all-09-29-09', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
-	         'hmm_all-09-29-09');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
-    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='hmm_all-09-29-09'),
-    'coding_hmm.lib.bin');
 
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='TIGRFAM'),
-         '2004-01-15','1.0', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 'TIGRFAM-v1');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='TIGRFAM'), '2009-11-18','8.0', 4, 'TIGRFAM-v1');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), '',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'TIGRFAM')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='1.0'),
-    '');
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'TIGRFAM')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'TIGRFAM');
 
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='COG'),
-         '2003-03-02','2003-03-02', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Available'), 
-	         'COG-03-2-2003');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='COG'), '2003-03-02','2003-03-02', 4, 'COG-03-2-2003');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'whog',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'COG')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='2003-03-02'),
-    'whog');
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'COG')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'COG');
 
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='Priam'),
-         '2009-06-16','2009-06-16', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
-	         'Priam-06-16-2009');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='Priam'), '2009-06-16','2009-06-16', 4, 'Priam-06-16-2009');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'profile_EZ',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Profile Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Priam')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='2009-06-16'),
-    'profile_EZ');
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Priam')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Priam');
 
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='PROSITE'),
-         '2011-02-08','2011-02-08', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
-	         'Prosite-02-08-2011');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='PROSITE'), '2011-02-08','20.70', 4, 'Prosite-02-08-2011');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'prosite.dat',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'PROSITE Protein Family Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'PROSITE')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='2011-02-08'),
-    'prosite.dat');
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'PROSITE')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'PROSITE');
 
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='RegTransBase'),
-         '2006-01-01','1', (SELECT pipelinestatus_id FROM pipelinestatus WHERE pipelinestatus_name='Published'), 
-	         'regtransbase_alignments_v1');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='RegTransBase'), '2006-01-01','1',  4, 'regtransbase_alignments_v1');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'v1',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'Regulatory Interaction Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='1'),
-    '');
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencedb entries
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
-    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='nr-05-01-2012'),
-    'nr');
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
-    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniProt100')), 
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='04-18-2012'),
-    'uniref100.fasta');
 
 
 INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
@@ -258,12 +299,6 @@ INSERT  INTO referencedb (referencetemplate_id, referencerelease_id, referencedb
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='orthomcl-04-14-2011'),
     'aa_seqs_OrthoMCL-5.fasta');
 
-INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
-  VALUES (
-    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database'
-            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam')),
-    (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='hmm_all-03-05-12'),
-    'coding_hmm.lib');
 INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_path)
   VALUES (
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'PROSITE Protein Family Database'
