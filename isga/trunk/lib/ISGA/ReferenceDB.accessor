@@ -11,11 +11,18 @@ Returns the full path for a ReferenceDB.
   sub getFullPath {
 
     my $self = shift;
-    
-    my $full_path = $self->getRelease->getReference->getPath . '/'. $self->getRelease->getPath . '/' . $self->getPath;
 
-    return $full_path;
+    my $path = $self->getPath;
+    return $path if $path =~ m{^/};
+
+    my $release = $self->getRelease;
+    $path = $release->getPath . '/' . $path;
+    return $path if $path =~ m{^/};
+
+    $path = $release->getReference->getPath . '/' . $path;
+    return $path;
   }
+
 #------------------------------------------------------------------------
 
 =item public string getName();
@@ -29,9 +36,6 @@ name for collections.
   sub getName {
 
     my $self = shift;
-
-    # we used to return a label if it existed, but we don't have those anymore
-#    return $self->getLabel if (defined $self->getLabel);
 
     my $release = $self->getRelease;
          
