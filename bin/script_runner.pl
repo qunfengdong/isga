@@ -77,7 +77,7 @@ foreach ( @{ISGA::RunningScript->query( Error => undef)} ) {
 }
 
 # look for available run_evidence_downloads
-foreach ( @{ISGA::RunEvidenceDownload->query( Status => [ 'Pending', 'Failed' ] )} ) {
+foreach ( @{ISGA::RunEvidenceDownload->query( Status => [ 'Pending' ] )} ) {
     
   my $script = "$script_dir/build_run_evidence_download.pl --run_evidence_download=$_";
   
