@@ -2,6 +2,15 @@ SET SESSION client_min_messages TO 'warning';
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Add protocol file types
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO fileformat (fileformat_name, fileformat_extension, fileformat_help, fileformat_isbinary) VALUES 
+  ( 'HTML', 'html', 'Web page format.', FALSE  );
+INSERT INTO filetype (filetype_name, filetype_help) VALUES ( 'Run Protocol', 'Record of steps taken in a pipeline run.' );
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 -- convert reference release and version
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -198,6 +207,14 @@ CREATE TABLE runsoftware (
 -------------------------------------------------------------------
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/RunBuilder/ViewProtocol', 'Run Protocol', TRUE, '1column');
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- View Run Protocol
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
+  VALUES ('/Run/ViewProtocol', 'Run Protocol', TRUE, '1column');
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------

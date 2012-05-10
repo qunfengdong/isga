@@ -15,7 +15,6 @@ DELETE FROM referencetemplate WHERE reference_id = ( SELECT reference_id FROM re
 DELETE FROM reference WHERE reference_name = 'UniProt100';
 
 
-
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Set reference paths
@@ -45,7 +44,6 @@ UPDATE reference SET reference_path = '/nfs/bio/db/Priam'
  WHERE reference_name = 'Priam';
 UPDATE reference SET reference_path = '/nfs/bio/db/RegTransBase'
  WHERE reference_name = 'RegTransBase';
-
 
 
 -------------------------------------------------------------------
@@ -101,6 +99,10 @@ INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplat
   VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'coding_hmm.lib.bin',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'HMMer Protein Family Database' 
        AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam')));
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'coding_hmm.lib.db',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'Protein Family Mapping Database' 
+       AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam')));
 UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
  WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
@@ -133,8 +135,12 @@ UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerel
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='COG'), '2003-03-02','2003-03-02', 4, 'COG-03-2-2003');
 INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
-  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'whog',
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'myva',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
+            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'COG')));
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'whog',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'Protein Family Mapping Database' 
             AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'COG')));
 UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
  WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
@@ -166,7 +172,7 @@ UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerel
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
   VALUES((SELECT reference_id FROM reference WHERE reference_name='RegTransBase'), '2006-01-01','1',  4, 'regtransbase_alignments_v1');
 INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
-  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'v1',
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), '',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'Regulatory Interaction Database' 
             AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase')));
 UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))

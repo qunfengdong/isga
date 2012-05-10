@@ -116,10 +116,11 @@ Builds the FormEngine object for the RunBuilder object.
 
 #------------------------------------------------------------------------
 
-=item public void stage([RunBuilderInput] $rbi);
+=item public string stage([RunBuilderInput] $rbi);
 
 Stages pipeline files for an ergatis run. Builds pipeline.layout xml
-file and copies customized config files for components.
+file and copies customized config files for components. If successful,
+this returns a string representation of the protocol for the run.
 
 =cut 
 #------------------------------------------------------------------------

@@ -5,7 +5,7 @@ use File::Copy;
 use YAML;
 use File::Temp;
 
-#------------------------------------------------------------------------
+#----------------------------------------------------------------------
 
 =item public Run submit(RunBuilder $builder);
 
@@ -21,7 +21,8 @@ sub submit {
   my ($class, $builder) = @_;
 
   # write config files and layout.xml to ergatis submit directory
-  $builder->stage();
+  my $protocol = $builder->stage();
+  my $name = $builder->getName();
 
   # submit job
   my $id = $class->_submitToErgatis($builder);
@@ -36,7 +37,6 @@ sub submit {
       $recipient = join ( ',', @$recipient );
     }
       
-
     # send special email
     my %mail =
       ( To => $recipient,
@@ -59,8 +59,8 @@ sub submit {
       ExistsOutsideCollection => 1,
       Type => ISGA::FileCollectionType->new( Name => 'Run Results' ),
       CreatedAt => ISGA::Timestamp->new,
-      UserName => $builder->getName . ' Results',
-      Description => 'Result files for the Run ' . $builder->getName,
+      UserName => $name . ' Results',
+      Description => 'Result files for the Run ' . $name,
       IsHidden => 0 );
 
   # create run
@@ -70,7 +70,7 @@ sub submit {
       FileCollection => $collection,
       RawDataStatus => 'Available',
       Status => ISGA::RunStatus->new( Name => 'Running' ),
-      Name => $builder->getName,
+      Name => $name,
       Description => $builder->getDescription,
       CreatedAt => ISGA::Timestamp->new,
       IsHidden => 0, 
@@ -100,15 +100,18 @@ sub submit {
   # prepare the clusters
   $run->_initializeClusters($builder);
 
-  # get paramter mask and write to file
+  # write protocol to collection
+  $run->writeProtocol($protocol, $name);
+
+  # get parameter mask and write to file
   my $parametermask = $builder->getParameterMask();
   
   my %args = ( Type => ISGA::FileType->new( Name => 'Run Parameters'),
                Format => ISGA::FileFormat->new( Name => 'YAML' ),
-               IsHidden => 1, UserName => $builder->getName . ' Run Parameters',
+               IsHidden => 1, UserName => $name . ' Run Parameters',
                CreatedAt => ISGA::Timestamp->new(),
                CreatedBy => ISGA::Login->getAccount,
-               ExistsOutsideCollection => 1, Description => 'Post run analysis for ' . $builder->getName );
+               ExistsOutsideCollection => 1, Description => 'Post run analysis for ' . $name );
 
   my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
   my $fh = File::Temp->new(DIR => $tmp_dir);

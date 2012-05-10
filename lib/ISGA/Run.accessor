@@ -75,6 +75,42 @@ sub isFinished {
 
 #------------------------------------------------------------------------
 
+=item public bool hasProtocolFile();
+
+Returns true if the run has a protocol file in its collection.
+
+=cut
+#------------------------------------------------------------------------
+sub hasProtocolFile {
+
+  my $self = shift;
+
+  foreach ( @{$self->getFileCollection->getContents} ) {
+    return 1 if $_->getType->getName eq 'Run Protocol';
+  }
+
+  return 0;
+}
+
+#------------------------------------------------------------------------
+
+=item public File getProtocolFile();
+
+Returns the protocol file for this run if one exists.
+
+=cut
+#------------------------------------------------------------------------
+sub getProtocolFile {
+
+  my $self = shift;
+
+  foreach ( @{$self->getFileCollection->getContents} ) {
+    return $_ if $_->getType->getName eq 'Run Protocol';
+  }
+}
+
+#------------------------------------------------------------------------
+
 =item public GlobalPipeline getGlobalPipeline
 
 Retrieves the GlobalPipeline for this run.
