@@ -137,17 +137,19 @@ $(document).ready(function() {
 });
 </sys:script>
 
-<%once>
-my $complete = ISGA::RunStatus->new( Name => 'Complete' );
-</%once>
-
-
 % my $is_admin = ISGA::Login->hasGroup( ISGA::Group->new( Name => 'Run Administrators' ));
 
 <sys:rightmenu>
 <ul>
 % if ( ! $running and ! $canceled ) {
 %   if ( ISGA::Login->getAccount->mayRead($run) ) {
+
+%     if ( $run->hasProtocolFile() ) {
+<li class="title">Protocols</li>
+<li class="rmbutton pointer"><a href="/Run/ViewProtocol?run=<% $run %>">View Protocol</a></li>
+<li class="pointer" onclick="window.location='/Run/ViewProtocol?run=<% $run %>'"><p>View the protocol used for this run.</p><li>
+%     }
+
 %#   if ( ! $is_admin or $run->getCreatedBy == ISGA::Login->getAccount ) {
 % my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
 <& "/plugin/$plugin/run-right-menu.mas", run => $run &>
@@ -172,3 +174,9 @@ my $complete = ISGA::RunStatus->new( Name => 'Complete' );
 </ul>
 
 </sys:rightmenu>
+
+
+<%once>
+my $complete = ISGA::RunStatus->new( Name => 'Complete' );
+</%once>
+

@@ -1,0 +1,9 @@
+<%args> # -*- cperl -*-
+ $run
+</%args>
+% ISGA::Login->getAccount->mayRead($run) or X::User::Denied->throw( "You do not have permission to view the protocol for this run." );
+% if ( my $file = $run->getProtocolFile() ) {
+<% $file->toString %>
+% } else {
+<p>No protocol was created for this run.</p>
+% }
