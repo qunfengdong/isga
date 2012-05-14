@@ -15,7 +15,8 @@ Revision history for ISGA
 	* Modified file collection views to handle archived file collections
 	* Add Transcriptome database query and view pages
 	* Added link to reset all parameters for a component when building a custom pipeline
-	
+	* Migrated form tips into current page
+
 	PIPELINE CHANGES
 
 	* WorkflowMask can now be supplied for a global pipeline to turn a component off by default	

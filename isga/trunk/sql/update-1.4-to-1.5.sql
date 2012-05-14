@@ -237,7 +237,8 @@ ALTER TABLE component ADD COLUMN component_dependencytype TEXT REFERENCES depend
 -------------------------------------------------------------------
 DELETE FROM usecase WHERE usecase_name = '/PipelineBuilder/EditCluster';
 DELETE FROM usecase WHERE usecase_name = '/Pipeline/ViewComponents';
-  
+DELETE FROM usecase WHERE usecase_name = '/Component/GetParameterDescription';  
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Create archived tag,type,format columns for FileCollections

@@ -212,8 +212,7 @@ save the object to our cache.
 					      'OUTER' => '1', 
 					      'TITLE' => $component->getName,
 					      'sub' => []};
-      
-      
+
       if ( @required ) {
 	
 	push @{$self->{PipelineBuilder}{FormEngine}{sub}},
@@ -245,7 +244,7 @@ save the object to our cache.
 	  # create shortcut to parameter from name
 	  $self->{ParameterLookup}{ $_->{NAME} } = $_;
 	  $_->{COMPONENT} = $component->getName;
-	  $_->{TIP} = "/Component/GetParameterDescription?component=$component&name=$_->{NAME}&pipeline=$pipeline";
+	  $_->{TIP} = $_->{DESCRIPTION};
 	}
       }      
     }
@@ -296,21 +295,6 @@ Returns the tip/description associated with the component.
 =cut
 #------------------------------------------------------------------------
   sub getComponentDescription { return shift->{Description}; }
-
-#------------------------------------------------------------------------
-
-=item public string getParameterDescription( string name );
-
-Returns the tip/description associated with the component.
-
-=cut
-#------------------------------------------------------------------------
-  sub getParameterDescription {
-    
-    my ($self, $param) = @_;
-    
-    return $self->{ParameterLookup}{$param}{DESCRIPTION};
-  }
 
 #------------------------------------------------------------------------
 
