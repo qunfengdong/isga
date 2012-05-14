@@ -550,6 +550,12 @@ UPDATE pipelinesoftware SET softwarerelease_id = ( SELECT softwarerelease_id FRO
 -- Add references to pipeline
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+UPDATE pipelinereference SET referencerelease_id =
+ ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'nr-05-01-2012' )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr');
+
 UPDATE pipelinereference SET referencerelease_id = 
  ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'est-02-06-2012' )
  WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
@@ -561,6 +567,30 @@ UPDATE pipelinereference SET referencerelease_id =
  WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI dbEST');
+
+UPDATE pipelinereference SET referencerelease_id =
+ ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'OrthoDB5' )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'OrthoDB');
+
+UPDATE pipelinereference SET referencerelease_id =
+ ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'orthomcl-04-14-2011' )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'OrthoMCL');
+
+UPDATE pipelinereference SET referencerelease_id =
+ ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '26' )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Pfam');
+
+UPDATE pipelinereference SET referencerelease_id =
+ ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'Prosite-04-11-2012' )
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'PROSITE');
 
 -- hack in genome references
 INSERT INTO pipelinereference (pipeline_id, reference_id, referencerelease_id) 
