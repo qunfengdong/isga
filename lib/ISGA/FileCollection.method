@@ -90,11 +90,6 @@ files for each of its contents.
     my $dir = $tmp_dir . "/" . $self->getUserName;
     opendir(my $dh, $dir) || X::API->throw( message => "unable to open dir $dir: $!" );
 
-    warn "untarred to $dir\n";
-
-    use Data::Dumper;
-    warn Dumper($self);
-
     foreach ( readdir($dh) ) {
 
       next if $_ eq '.' or $_ eq '..';
