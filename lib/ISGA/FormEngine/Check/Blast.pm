@@ -123,7 +123,7 @@ sub compatibleBlastProgramAndDB {
   my $type = '';
   if ($db =~ /^\d+$/o){
     my $refdb = ISGA::ReferenceDB->new( Id => $db );
-    $type = $refdb->getType->getName;
+    $type = $refdb->getTemplate->getFormat;
   }
 
   if($program eq 'blastn'){
