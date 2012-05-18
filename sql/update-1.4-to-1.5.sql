@@ -36,6 +36,7 @@ CREATE TABLE referenceformat ( referenceformat_name TEXT PRIMARY KEY );
 CREATE TABLE referencelabel ( referencelabel_name TEXT PRIMARY KEY );
 INSERT INTO referencelabel VALUES ('Assembled Genome');
 INSERT INTO referencelabel VALUES ('Proteome');
+INSERT INTO referencelabel VALUES ('CDS');
 
 CREATE TABLE referencetemplate (
   referencetemplate_id SERIAL PRIMARY KEY,
@@ -57,7 +58,11 @@ ALTER TABLE referencedb ADD COLUMN label TEXT;
 UPDATE referencedb SET label = 'Assembled Genome' WHERE referencedb_path ~ '/genome';
 UPDATE referencedb SET label = 'Proteome' WHERE referencedb_path ~ '/protein';
 UPDATE referencedb SET label = 'Proteome' WHERE referencedb_path ~ '/peptide';
-
+UPDATE referencedb SET label = 'CDS' WHERE referencedb_path ~ '/rna';
+UPDATE referencedb SET label = 'CDS' WHERE referencedb_path ~ '/cds';
+UPDATE referencedb SET label = 'CDS' WHERE referencedb_path ~ '/cdna';
+UPDATE referencedb SET label = 'CDS' WHERE referencedb_path ~ '/ncbi_cds';
+UPDATE referencedb SET label = 'CDS' WHERE referencedb_path ~ '/transcript';
 
 INSERT INTO referencetemplate ( reference_id, referencetemplate_format, referencetemplate_label )
 SELECT c.reference_id, b.referencetype_name, a.label FROM referencedb a, referencetype b,
