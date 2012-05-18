@@ -119,7 +119,7 @@ mapping:
     "blast_executable":
      type:    text
      required:    yes
-     pattern:    /^\/\S+(\/\S+)*\/blastall$/
+     pattern:    /^\/\S+(\/\S+)*\/$/
 
     "cdbfasta_executable":
      type:    text

@@ -26,12 +26,12 @@ custom_parameters:
   sh_executable: /bin/sh
 # Full path to SGE executables.
   sge_executables: /cluster/sge-62u4/bin/sol-amd64
-# Full path to blastall.
-  blast_executable: /bioportal/sw/bin/blastall
+# Full path to blast.
+  blast_executable: /nfs/bio/sw/encap/ncbi_blast-2.2.25/bin/
 # Full path to cdbfasta.
-  cdbfasta_executable: /bioportal/sw/bin/cdbfasta
+  cdbfasta_executable: /nfs/bio/sw/bin/cdbfasta
 # Full path to formatdb.
-  formatdb_executable: /bioportal/sw/bin/formatdb
+  formatdb_executable: /nfs/bio/sw/bin/formatdb
 # Name of you SGE cell
   SGE_CELL: default
 # SGE execution port number
@@ -43,12 +43,12 @@ custom_parameters:
 # SGE Queue
   SGE_QUEUE: workbench 
 # Full path to toAmos
-  toAmos_executable: /bioportal/sw/bin/toAmos
+  toAmos_executable: /nfs/bio/sw/bin/toAmos
 # Full path to bank-transact
-  bank_transact_executable: /bioportal/sw/bin/bank-transact
+  bank_transact_executable: /nfs/bio/sw/bin/bank-transact
 # Full path to SffToCa
-  sffToCA_executable: /bioportal/sw/bin/sffToCA
+  sffToCA_executable: /nfs/bio/sw/bin/sffToCA
 # Full path to amos2sq
-  amos2sq_executable: /bioportal/sw/bin/amos2sq
+  amos2sq_executable: /nfs/bio/sw/bin/amos2sq
 # Full path to clustalw2
   clustalw_executable: /nfs/bio/sw/bin/clustalw2

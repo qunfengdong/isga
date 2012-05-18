@@ -26,8 +26,8 @@ custom_parameters:
   sh_executable: /bin/sh
 # Full path to SGE executables.
   sge_executables: /cluster/sge/bin/sol-amd64
-# Full path to blastall.
-  blast_executable: /bioportal/sw/bin/blastall
+# Full path to blast.
+  blast_executable: /nfs/bio/sw/encap/ncbi_blast-2.2.25/bin/
 # Full path to cdbfasta.
   cdbfasta_executable: /bioportal/sw/bin/cdbfasta
 # Full path to formatdb.
