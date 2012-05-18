@@ -46,63 +46,52 @@ sub buildForm {
 #  my $nuc_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Nucleotide Database' ), Status => ISGA::PipelineStatus->new( Name => 'Published' ) );
 #  my $prot_ref = ISGA::ReferenceDB->query( Type => ISGA::ReferenceType->new( Name => 'BLAST Amino Acid Database' ), Status => ISGA::PipelineStatus->new( Name => 'Published' ) );
 
-  my $nuc_ref = [];
-  my $prot_ref = [];
+  my $nuc_gen_ref = [];
+  my $prot_gen_ref = [];
+  my $nuc_org_ref = [];
+  my $prot_org_ref = [];
+
   foreach ( @{ISGA::ReferenceDB->query( )} ){
     if($_->getTemplate->getFormat eq 'BLAST Nucleotide Database' and $_->getRelease->getStatus->getName eq 'Published'){
-        push(@$nuc_ref, $_);
+        push(@$nuc_gen_ref, $_) if($_->getTemplate->getLabel ne 'CDS' and $_->getTemplate->getLabel ne 'Assembled Genome');
+        push(@$nuc_org_ref, $_) if($_->getTemplate->getLabel eq 'CDS' or $_->getTemplate->getLabel eq 'Assembled Genome');
     } elsif($_->getTemplate->getFormat eq 'BLAST Amino Acid Database' and $_->getRelease->getStatus->getName eq 'Published') {
-        push(@$prot_ref, $_);
+        push(@$prot_gen_ref, $_) if($_->getTemplate->getLabel ne 'Proteome');
+        push(@$prot_org_ref, $_) if($_->getTemplate->getLabel eq 'Proteome');
     }
   }
 
   push @db_groups,
     (
      {
-      LABEL => 'Nucleotide Databases',
+      LABEL => 'General Nucleotide Databases',
       templ => 'group',
-      OPTION => [map {  $_->getTemplate->getLabel =~ /dbEST/ ? $_->getTemplate->getLabel : $_->getRelease->getReference->getName } @$nuc_ref],
-      OPT_VAL => [map { $_->getId } @$nuc_ref]
+      OPTION => [map { $_->getTemplate->getLabel =~ /dbEST/ ? $_->getTemplate->getLabel : $_->getRelease->getReference->getName } @$nuc_gen_ref],
+      OPT_VAL => [map { $_->getId } @$nuc_gen_ref]
      },
      {
-      LABEL => 'Protein Databases',
+      LABEL => 'General Protein Databases',
       templ => 'group',
-      OPTION => [map { $_->getRelease->getReference->getName } @$prot_ref],
-      OPT_VAL => [map { $_->getId } @$prot_ref]
+      OPTION => [map {  $_->getRelease->getReference->getName } @$prot_gen_ref],
+      OPT_VAL => [map { $_->getId } @$prot_gen_ref]
      },
     );
 
-#  push @db_groups,
-#    (
-#     {
-#      LABEL => 'General Nucleotide Databases',
-#      templ => 'group',
-#      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getName : () } @$nuc_ref],
-#      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getId : () } @$nuc_ref]
-#     },
-#     {
-#      LABEL => 'General Protein Databases',
-#      templ => 'group',
-#      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getName : () } @$prot_ref],
-#      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Collection' ? $_->getId : () } @$prot_ref]
-#     },
-#    );
-#
-#  push @db_groups,
-#    (
-#     {
-#      LABEL => 'Organism Nucleotide Databases',
-#      templ => 'group',
-#      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getName : () } @$nuc_ref],
-#      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getId : () } @$nuc_ref]
-#     },
-#     {
-#      LABEL => 'Organism Protein Databases',
-#      templ => 'group',
-#      OPTION => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getName : () } @$prot_ref],
-#      OPT_VAL => [map { $_->getRelease->getReference->getTag->getName eq 'Organism' ? $_->getId : () } @$prot_ref]
-#     },
-#    );
+  push @db_groups,
+    (
+     {
+      LABEL => 'Organism Nucleotide Databases',
+      templ => 'group',
+      OPTION => [map { $_->getRelease->getReference->getName } @$nuc_org_ref],
+      OPT_VAL => [map { $_->getId } @$nuc_org_ref]
+     },
+     {
+      LABEL => 'Organism Protein Databases',
+      templ => 'group',
+      OPTION => [map { $_->getRelease->getReference->getName } @$prot_org_ref],
+      OPT_VAL => [map { $_->getId } @$prot_org_ref]
+     },
+    );
   my $account = ISGA::Login->getAccount;
   my $runs = ISGA::Run->query( CreatedBy => $account, Status => 'Complete', 
 			       OrderBy => 'CreatedAt', IsHidden => 0 );
@@ -241,7 +230,7 @@ sub buildForm {
                   },
                   {
                     'OPTION' => ['Standard', 'Tabular (no comment lines)', 'Tabular (with comment lines)', 'XML'],
-                    'OPT_VAL' => ['0', '8', '9', '7'],
+                    'OPT_VAL' => ['0', '6', '7', '5'],
                     'VALUE' => '0',
                     'NAME' => 'outputformat',
                     'LABEL' => 'outputformat',
@@ -352,6 +341,16 @@ sub buildWebAppCommand {
           }
         }
 
+        my $filter_switch;
+        if ($blastfilter eq 'T' and $blast_program ne 'blastn'){
+          $filter_switch = '-seg yes'
+        } elsif ($blastfilter eq 'T' and $blast_program eq 'blastn'){
+          $filter_switch = '-dust yes'
+        } elsif ($blastfilter eq 'F' and $blast_program ne 'blastn'){
+          $filter_switch = '-seg no'
+        } elsif ($blastfilter eq 'F' and $blast_program eq 'blastn'){
+          $filter_switch = '-dust no'
+        }
         my $database = join(' ', @database_array);
 
         my %args = ( );
@@ -372,14 +371,14 @@ sub buildWebAppCommand {
 #        my $command;
         my $sge_submit_script = "$out_directory/${log_name}_sge.sh";
 
-        my $blast_command = "___blast_executable___ -p $blast_program -i $runpath -o $blast_output -e $evalue -d \"$database\" -F $blastfilter -b $nummatches -v $descriptions";
-        $blast_command .= " -m $outputformat" if($outputformat != 0);
+        my $blast_command = "___blast_executable___$blast_program -query $runpath -out $blast_output -evalue $evalue -db \"$database\" $filter_switch -num_alignments $nummatches -num_descriptions $descriptions";
+        $blast_command .= " -outfmt $outputformat" if($outputformat != 0);
 
         if($database =~ /Tair9_cdna/og or $database =~ /Tair9_pep/og){
             open my $fh, '>', $sge_submit_script or X->throw(message => 'Error creating sge shell script.');
             print $fh '#!/bin/bash'."\n\n";
             print $fh 'echo "starting blast" 1>&2'."\n";
-            print $fh "___blast_executable___ -p $blast_program -i $runpath -o $blast_output -e $evalue -d \"$database\" -F $blastfilter -b $nummatches -v $descriptions\n\n";
+            print $fh "___blast_executable___$blast_program -query $runpath -out $blast_output -evalue $evalue -db \"$database\" $filter_switch -num_alignments $nummatches -num_descriptions $descriptions\n\n";
             print $fh 'echo "starting preprocessing output" 1>&2'."\n";
             print $fh "___scripts_bin___parse_blast_output.pl $blast_output\n\n";
             close $fh;
