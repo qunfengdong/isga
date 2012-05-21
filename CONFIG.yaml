@@ -17,7 +17,7 @@ custom_parameters:
 # The time allowed between resetting a password and confirming the password change.  e.g., 24h
   password_reset_cutoff: 24h
 # The base url for your local ISGA web server
-  base_uri: https://chris-isga.cgb.indiana.edu/
+  base_uri: http://chris-isga.cgb.indiana.edu/
 # Path to your local copies of searchable databases, i.e., NCBI nr, PFAM, etc.  Please use full path.
   database_path: /data/
 # Path to the bin directory containing scripts used in ISGA.  Please use full path.
@@ -26,8 +26,8 @@ custom_parameters:
   sh_executable: /bin/sh
 # Full path to SGE executables.
   sge_executables: /cluster/sge/bin/sol-amd64
-# Full path to blastall.
-  blast_executable: /bioportal/sw/bin/blastall
+# Full path to blast.
+  blast_executable: /nfs/bio/sw/encap/ncbi_blast-2.2.25/bin/
 # Full path to cdbfasta.
   cdbfasta_executable: /bioportal/sw/bin/cdbfasta
 # Full path to formatdb.

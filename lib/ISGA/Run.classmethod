@@ -82,6 +82,10 @@ sub submit {
 
   my $run = ISGA::Run->create(%run_args);
 
+  # save the id to our protocol
+  $protocol =~ s/___Run_ID___/$run/g;
+
+
   # log the inputs
   my $inputs = ISGA::RunBuilderInput->query( RunBuilder => $builder);
   
