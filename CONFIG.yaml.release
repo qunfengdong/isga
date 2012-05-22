@@ -29,7 +29,7 @@ custom_parameters:
 # Full path to SGE executables.
   sge_executables: /cluster/sge/bin/
 # Full path to blastall.
-  blast_executable: /sw/bin/blastall
+  blast_executable: /sw/bin/blast
 # Full path to cdbfasta.
   cdbfasta_executable: /sw/bin/cdbfasta
 # Full path to formatdb.
