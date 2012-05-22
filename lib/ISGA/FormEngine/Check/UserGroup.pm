@@ -38,7 +38,7 @@ sub nameIsAvailable {
 
   my ($data, $form) = @_;
   
-  my $name = $form->get_input('name'));
+  my $name = $form->get_input('name');
 
   my $error = "This name is already in use.";
 
