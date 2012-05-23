@@ -4,12 +4,17 @@
 
 <h1>Build Your Pipeline</h1>
 <%perl>
+my $template = $pipeline_builder->getPipeline;
+my $status = $template->getStatus->getName;
+if( $status ne 'Published' ){
+$m->comp("/site/old_pipeline_warn.mas", pipeline => $template);
+}
+
 if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   my $plugin = $pipeline_builder->getWebPluginDirectory;
   $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-overview.mas");
 }
 </%perl>
-% my $template = $pipeline_builder->getPipeline;
 <p>
 <strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
 <strong>Started On:</strong> <% $pipeline_builder->getStartedOn->text %>
