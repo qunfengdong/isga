@@ -3,6 +3,10 @@
 </%args>
 
 <%perl>
+my $status = $pipeline->getStatus->getName;
+if( $status ne 'Published' ){
+$m->comp("/site/old_pipeline_warn.mas", pipeline => $pipeline);
+}
 
 # handle global pipelines
 if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
