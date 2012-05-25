@@ -51,6 +51,8 @@ use ISGA::ComponentTemplate;
 use ISGA::ClusterInput;
 use ISGA::ClusterOutput;
 use ISGA::ConfigurationVariable;
+use ISGA::PipelineConfiguration;
+
 
 use ISGA::ErgatisInstall;
 use ISGA::ModuleInstaller;
