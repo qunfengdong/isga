@@ -42,7 +42,7 @@ Installs a new pipeline into the local ISGA installation.
 use strict;
 use warnings;
 
-use ISGA;
+#use ISGA qw(minimal);
 
 use ISGA::ModuleInstaller;
 
