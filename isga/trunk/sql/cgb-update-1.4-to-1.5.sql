@@ -20,3 +20,11 @@ UPDATE siteconfiguration SET siteconfiguration_value = '/usr/tmp'
 UPDATE siteconfiguration SET siteconfiguration_value = '/research/projects/isga/tmp/ISGA'
   FROM configurationvariable b
   WHERE siteconfiguration.configurationvariable_id = b.configurationvariable_id AND b.configurationvariable_name = 'shared_tmp';
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Fix typo fixes
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE filetype SET filetype_help = 'This is the raw results produced by HMMER. For detailed information, please see this pdf document: ftp://selab.janelia.org/pub/hmmer/CURRENT/Userguide.pdf' WHERE filetype_name = 'HMM Search Result';
+

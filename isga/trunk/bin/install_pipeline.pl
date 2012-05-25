@@ -42,8 +42,17 @@ Installs a new pipeline into the local ISGA installation.
 use strict;
 use warnings;
 
-#use ISGA qw(minimal);
+use ISGA::X;
 
+use ISGA::GlobalPipeline;
+use ISGA::FileFormat;
+use ISGA::FileType;
+use ISGA::ComponentTemplate;
+use ISGA::ClusterInput;
+use ISGA::ClusterOutput;
+use ISGA::ConfigurationVariable;
+
+use ISGA::ErgatisInstall;
 use ISGA::ModuleInstaller;
 
 use Getopt::Long qw(:config no_ignore_case no_auto_abbrev pass_through);
