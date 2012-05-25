@@ -101,11 +101,8 @@ sub getStatus {
 sub setPipelineName {
   my ($self, $name) = @_;
 
-  my $obj_class = $class;
-  $obj_class =~ s{ModuleInstaller\:\:}{};
-
   # read in yaml file
-  my $filename = join('/', $ml->getDatabaseSourcePath(), 'pipeline.yaml');
+  my $filename = join('/', $self->getDatabaseSourcePath(), 'pipeline.yaml');
   my $file = YAML::LoadFile($filename);
   
   $self->{pipeline_name} = $file->[0]->{Name};
