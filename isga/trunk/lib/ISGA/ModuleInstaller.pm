@@ -66,6 +66,8 @@ sub new {
   # retrieve pipeline version
   $self->loadVersion();
    
+  $self->ssetPipelineName();
+
   return $self;
 }
 
