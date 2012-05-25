@@ -56,6 +56,7 @@ use ISGA::Workflow;
 use ISGA::PipelineInput;
 use ISGA::PipelineSoftware;
 use ISGA::PipelineReference;
+use ISGA::ReferenceTemplate;
 
 use ISGA::ErgatisInstall;
 use ISGA::ModuleInstaller;
