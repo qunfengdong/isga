@@ -415,10 +415,14 @@ YAML files are loaded and cached at server startup.
   foreach my $pipeline ( @{ISGA::GlobalPipeline->query()} ) {
 
     my $form_path = $pipeline->getFormPath;
-    my $self = YAML::LoadFile($form_path);
-    $self->_initialize($pipeline);
-    
-    $pipelines{$pipeline} = $self;
+
+    if ( -f $form_path ) {
+      my $self = YAML::LoadFile($form_path);
+      $self->_initialize($pipeline);
+      $pipelines{$pipeline} = $self;
+    } else {
+      warn "unable to load pipeline YAML $form_path\n";
+    }
   }
 
 }

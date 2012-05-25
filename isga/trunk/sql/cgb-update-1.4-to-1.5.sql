@@ -7,10 +7,6 @@ SET SESSION client_min_messages TO 'warning';
 -------------------------------------------------------------------
 UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/blast/db/', reference_name = 'NCBI nr'	
     WHERE reference_name = 'NCBI-nr';
-UPDATE reference SET reference_link = 'http://cegg.unige.ch/orthodb5/'	
-    WHERE reference_name = 'OrthoDB';
-UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/blast/db/'	
-    WHERE reference_name = 'NCBI dbEST';
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
