@@ -66,7 +66,7 @@ sub new {
   # retrieve pipeline version
   $self->loadVersion();
    
-  $self->ssetPipelineName();
+  $self->setPipelineName();
 
   return $self;
 }
