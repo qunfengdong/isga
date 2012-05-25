@@ -174,13 +174,16 @@ sub install {
     ISGA::ModuleInstaller::GlobalPipeline->load($self);
     ISGA::ModuleInstaller::Workflow->load($self);
     ISGA::ModuleInstaller::PipelineInput->load($self);
-    ISGA::ModuleInstaller::Software->load($self);
-    ISGA::ModuleInstaller::Reference->load($self);
-    ISGA::ModuleInstaller::ReferenceLabel->load($self);
-    ISGA::ModuleInstaller::ReferenceFormat->load($self);
-    ISGA::ModuleInstaller::ReferenceTemplate->load($self);
 
   }
+
+  # This is a hack for release 1.5 to force these new tables to be loaded - remove in 1.6
+  ISGA::ModuleInstaller::Software->load($self);
+  ISGA::ModuleInstaller::Reference->load($self);
+  ISGA::ModuleInstaller::ReferenceLabel->load($self);
+  ISGA::ModuleInstaller::ReferenceFormat->load($self);
+  ISGA::ModuleInstaller::ReferenceTemplate->load($self);
+  
 }
 
 #------------------------------------------------------------------------
