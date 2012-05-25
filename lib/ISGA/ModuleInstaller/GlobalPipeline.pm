@@ -92,9 +92,6 @@ sub insert {
   my $o = ISGA::GlobalPipeline->create(%args);
 
   $class->initializePipelineConfiguration($o);
-
-  # save the pipeline name
-  $ml->setPipelineName($t->{Name});  
 }
 
 #------------------------------------------------------------------------
