@@ -53,6 +53,7 @@ use ISGA::ClusterOutput;
 use ISGA::ConfigurationVariable;
 use ISGA::PipelineConfiguration;
 use ISGA::Workflow;
+use ISGA::PipelineInput;
 
 use ISGA::ErgatisInstall;
 use ISGA::ModuleInstaller;
