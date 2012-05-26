@@ -32,3 +32,17 @@ UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/
 UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/genomes/Arabidopsis_thaliana/' WHERE reference_name = 'Arabidopsis thaliana';
 UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/genomes/Drosophila_melanogaster/' WHERE reference_name = 'Drosophila melanogaster';
 UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/genomes/Caenorhabditis_elegans/' WHERE reference_name = 'Caenorhabditis elegans';
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- asgard_simple and lipop have broken component_templates
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE componenttemplate SET componenttemplate_name = 'asgard_simple'
+ WHERE componenttemplate_name = 'asgard' AND ergatisinstall_id = 
+        ( SELECT ergatisinstall_id FROM ergatisinstall WHERE ergatisinstall_name = 'ergatis-v2r11-cgbr1' );
+UPDATE componenttemplate SET componenttemplate_name = 'lipop' WHERE componenttemplate_name = 'lipoprotein_motif';
+
+
+   
