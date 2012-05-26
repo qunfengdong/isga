@@ -81,6 +81,24 @@ if ( $@ ) {
   # remove database dir
   $run->deleteGBrowseDatabase();
 
+  # set email list
+  my $email = join (",", @{ISGA::Site->getErrorNotificationEmail});
+  my $server = ISGA::Site->getServerName();
+  my $support_email = ISGA::SiteConfiguration->value('support_email');
+  my $run = $red->getRun();
+
+  my %mail =
+    ( To => $email,
+      From => $server . " <$support_email>",
+      Subject => $server. ' Build Evidence Failure',
+      Message => "Build Run Evidence failed for run $run.
+
+$e" );
+
+       Mail::Sendmail::sendmail(%mail)
+        or X::Mail::Send->throw( text => $Mail::Sendmail::error, message => \%mail );
+
+
   X::Dropped->throw( error => $e);
 }
 
