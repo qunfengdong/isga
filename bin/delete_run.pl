@@ -64,6 +64,9 @@ eval {
     
   ISGA::DB->begin_work();
 
+  # first purge the run
+  $run->purge();
+
   foreach ( @{ISGA::RunCancelation->query( Run => $run )} ) {
     $_->delete;
   }
