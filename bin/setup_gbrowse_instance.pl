@@ -90,8 +90,8 @@ if ( $@ ) {
   my %mail =
     ( To => $email,
       From => $server . " <$support_email>",
-      Subject => $server. ' Build Evidence Failure',
-      Message => "Build Run Evidence failed for run $run.
+      Subject => $server. ' GBrowse Installation Failure',
+      Message => "setup_gbrowse_instance.pl failed for run $run.
 
 $e" );
 
