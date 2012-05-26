@@ -578,7 +578,7 @@ Install Gbrowse config file and gff file.
 
 =cut
 #------------------------------------------------------------------------
-  sub deleteGBrowseData {
+  sub deleteGBrowse {
 
     my $self = shift;
 
