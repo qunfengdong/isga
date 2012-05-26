@@ -54,11 +54,59 @@ my $result = GetOptions (\%options,
 
 my $run = $options{run};
 
+if ( ISGA::RunNotification->exists( Run => $run ) ) {
+  print "There is a pending notification regarding this run. Please try again in 5 minutes.\n";
+  exit(-1);
+}
+
 # start transaction
 eval {
     
   ISGA::DB->begin_work();
+
+  foreach ( @{ISGA::RunCancelation->query( Run => $run )} ) {
+    $_->delete;
+  }
   
+  foreach ( @{ISGA::RunEvidenceDownload->query( Run => $run )} ) {
+    $_->delete;
+  }
+
+  foreach ( @{ISGA::RunOutput->query( Run => $run )} ) {
+    my $fr = $_->getFileResource;
+    $_->delete();
+    $fr->delete();
+  }
+
+  foreach ( @{ISGA::RunReference->query( Run => $run )} ) {
+    $_->delete;
+  }
+
+  foreach ( @{ISGA::RunSoftware->query( Run => $run )} ) {
+    $_->delete;
+  }
+
+  foreach ( @{ISGA::RunCluster->query( Run => $run )} ) {
+    $_->delete;
+  }
+
+  foreach ( @{ISGA::RunShare->query( Run => $run )} ) {
+    $_->delete;
+  }
+
+  foreach ( @{ISGA::RunInput->query( Run => $run )} ) {
+    $_->delete;
+  }
+
+  # remove files
+  my $fc = $run->getFileCollection();
+  $fc->delete();
+
+  # remove GBrowse
+
+  # remove run
+  $run->delete();
+
   ISGA::DB->commit();
 };
 
