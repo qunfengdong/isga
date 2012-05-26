@@ -23,10 +23,6 @@ foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
 
     # don't try to archive empty lists
     next unless ISGA::FileCollectionContent->exists( FileCollection => $file );
-
-
-    warn $_->getClusterOutput->getFileLocation, "- $file\n";
-
     $file->archive();
   }
 }

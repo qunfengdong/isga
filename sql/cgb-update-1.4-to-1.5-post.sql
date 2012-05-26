@@ -14,9 +14,9 @@ UPDATE referencedb SET referencetemplate_id = ( SELECT referencetemplate_id FROM
 DELETE FROM referencetemplate WHERE reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniProt100' );
 DELETE FROM reference WHERE reference_name = 'UniProt100';
 
-UPDATE referencerelease SET referencerelease_version = '2011_10'
+UPDATE referencerelease SET referencerelease_version = '2010_11'
   WHERE reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniRef100' )
-        AND referencerelease_version = '11-30-2011';
+        AND referencerelease_version = '11-30-2010';
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -71,9 +71,21 @@ UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerel
                                 pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Jan 2010' )
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NIAA');
 
+-- nr 09-20-2009
+INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI nr'), '2009-09-20','nr-09-20-2009', 1, 'nr-09-20-2009');
+INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
+  VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'nr',
+    (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
+       AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr')));
+UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerelease_referencerelease_id_seq'))
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Jan 2010' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr');
+
 -- nr 11-19-2010
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI nr'), '2010-11-19','23', 1, 'nr-11-19-2010');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='NCBI nr'), '2010-11-19','nr-11-19-2010', 1, 'nr-11-19-2010');
 INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
   VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'nr',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
@@ -99,7 +111,7 @@ INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplat
 
 --uniprot 11-30-2010 already exists in our database
 UPDATE pipelinereference SET referencerelease_id = 
-  ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '2011_10' 
+  ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '2010_11' 
        AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniRef100') )
  WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
@@ -254,6 +266,45 @@ UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerel
                                 pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase');
 
+UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'hs_ref_GRCh37')
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Homo Sapien');
+
+UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'Tair10')
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Arabidopsis thaliana');
+
+UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '5.31')
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Drosophila melanogaster');
+
+UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'WS225')
+ WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
+           AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Caenorhabditis elegans');
+
+Databases:
+Human: hs_ref_GRCh37 (/nfs/bio/db/Homo_sapien/shore)
+Tair10: (/nfs/bio/db/Arabidopsis_thaliana/shore)
+Drosophila_melanogaster: 5.31 (/nfs/bio/db/Drosophila_melanogaster/shore)
+Caenorhabditis_elegans: WS225
+(/nfs/bio/db/Caenorhabditis_elegans/WS225/shore)
+
+     reference_name      |           reference_path            
+-------------------------+-------------------------------------
+ Homo Sapien             | /nfs/bio/db/Homo_sapien
+ Arabidopsis thaliana    | /nfs/bio/db/Arabidopsis_thaliana
+ Drosophila melanogaster | /nfs/bio/db/Drosophila_melanogaster
+ Caenorhabditis elegans  | /nfs/bio/db/Caenorhabditis_elegans
+                   5 |            4 | GRCh37.p2                | GRCh37.p2             | 2010-07-30               |                 4
+                   6 |            5 | Tair10                   | Tair10                | 2010-11-17               |                 4
+                   7 |            6 | 5.31                     | 5.31                  | 2010-11-19               |                 4
+                   8 |            7 | WS225                    | WS225                 | 2011-05-19               |                 4
+(4 rows)
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencedb entries
@@ -385,6 +436,9 @@ INSERT INTO referencedb (referencetemplate_id, referencerelease_id, referencedb_
             AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'PROSITE')),
     (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version='Prosite-04-11-2012'),
     'prosite.dat');
+
+
+
 
 
 -------------------------------------------------------------------
@@ -648,6 +702,13 @@ UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarereleas
 -- Add software releases
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
+   VALUES ((SELECT software_id FROM software WHERE software_name = 'SHORE'), '0.6unstable', '2011-02-14', 4,
+           '/nfs/bio/sw/encap/shore-0.6.unstable/bin/');
+UPDATE pipelinesoftware SET softwarerelease_id = (SELECT CURRVAL('softwarerelease_softwarerelease_id_seq'))
+     WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
+                                pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
+           AND software_id = (SELECT software_id FROM software WHERE software_name = 'SHORE');
 
 INSERT INTO softwarerelease ( software_id, softwarerelease_version, softwarerelease_release, pipelinestatus_id, softwarerelease_path )
    VALUES ((SELECT software_id FROM software WHERE software_name = 'NCBI BLAST+'), '2.2.25', '2011-03-31', 4,
@@ -753,5 +814,216 @@ INSERT INTO pipelinereference (pipeline_id, reference_id, referencerelease_id)
 SELECT ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Transcriptome Analysis' AND globalpipeline_release = 'Apr 2012' ),
          reference_id, referencerelease_id FROM referencerelease NATURAL JOIN reference WHERE reference_description ~ 'Reference information';
+
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Set Versions for all existing pipelines
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+-- CeleraAssembly::Jun2010        | Celera Assembler | 6.0-beta
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '6.0-beta'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'Celera Assembler' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly::Jun2010';
+-- CeleraAssembly::Jun2010        | AMOS             | 2.0.8
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.0.8'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'AMOS' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'CeleraAssembly::Jun2010';
+-- ProkaryoticAnnotation::Feb2011 | LipoP            | 1.0
+-- ProkaryoticAnnotation::Jan2010 | LipoP            | 1.0
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.0'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'LipoP' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | ELPH             | 1.01
+-- ProkaryoticAnnotation::Jan2010 | ELPH             | 1.01
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.01'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'ELPH' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | Glimmer          | 3.02
+-- ProkaryoticAnnotation::Jan2010 | Glimmer          | 3.02
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '3.02'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'Glimmer' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | PS Scan          | 1.67
+-- ProkaryoticAnnotation::Jan2010 | PS Scan          | 1.67
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.67'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'PS Scan' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | HMMer            | 2.3.2
+-- ProkaryoticAnnotation::Jan2010 | HMMer            | 2.3.2
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.3.2'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'HMMer' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | tRNAscan-SE      | 1.23
+-- ProkaryoticAnnotation::Jan2010 | tRNAscan-SE      | 1.23
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.23'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'tRNAscan-SE' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | RNAmmer          | 1.2
+-- ProkaryoticAnnotation::Jan2010 | RNAmmer          | 1.2
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.2'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'RNAmmer' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+--  ProkaryoticAnnotation::Feb2011 | BER              | 20051118
+-- ProkaryoticAnnotation::Jan2010 | BER              | 20051118
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '20051118'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'BER' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | NCBI BLAST       | 2.2.19
+-- ProkaryoticAnnotation::Jan2010 | NCBI BLAST       | 2.2.19
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.2.19'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'NCBI BLAST' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | SignalP          | 3.0
+-- ProkaryoticAnnotation::Jan2010 | SignalP          | 3.0
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '3.0'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'SignalP' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | TransTermHP      | 2.06
+-- ProkaryoticAnnotation::Jan2010 | TransTermHP      | 2.06
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.06'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'TransTermHP' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | Asgard           | 1.5.3
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.5.3'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'Asgard' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Feb2011';
+-- ProkaryoticAnnotation::Feb2011 | asn2all          | 6.3
+-- ProkaryoticAnnotation::Jan2010 | asn2all          | 6.3
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '6.3'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'asn2all' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | tbl2asn          | 13.2
+-- ProkaryoticAnnotation::Jan2010 | tbl2asn          | 13.2
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '13.2'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'tbl2asn' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | MAST             | 4.3.0
+-- ProkaryoticAnnotation::Jan2010 | MAST             | 4.3.0
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '4.3.0'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'MAST' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | TMHMM            | 2.0c
+-- ProkaryoticAnnotation::Jan2010 | TMHMM            | 2.0c
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.0c'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'TMHMM' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Jan2010 | OligoPicker      | 2.3.2
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.3.2'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'OligoPicker' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
+-- ProkaryoticAnnotation::Jan2010 | WU-BLAST         | 2.0
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.0'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'WU-BLAST' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+-- ProkaryoticAnnotation::Jan2010 | Asgard           | 1.0
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.0'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'Asgard' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
+-- ShoreMapping::Apr2011          | SHORE            | 0.6unstable
+INSERT INTO runsoftware (run_id, softwarerelease_id)
+  SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '0.6unstable'
+                          AND software_id = ( SELECT software_id FROM software WHERE software_name = 'SHORE' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Jan2010';
+
+
+-- ProkaryoticAnnotation::Feb2011 | COG            | 2003-03-02
+-- ProkaryoticAnnotation::Jan2010 | COG            | 2003-03-02
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '2003-03-02'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'COG' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | Pfam           | 23
+-- ProkaryoticAnnotation::Jan2010 | Pfam           | 23
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '23'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'Pfam' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | Priam          | 2009-06-16
+-- ProkaryoticAnnotation::Jan2010 | Priam          | 2009-06-16
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '2009-06-16'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'Priam' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+
+-- ProkaryoticAnnotation::Feb2011 | TIGRFAM        | 8.0
+-- ProkaryoticAnnotation::Jan2010 | TIGRFAM        | 8.0
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '8.0'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'TIGRFAM' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | RegTransBase   | 1
+-- ProkaryoticAnnotation::Jan2010 | RegTransBase   | 1
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = ''
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
+-- ProkaryoticAnnotation::Feb2011 | PROSITE        | 20.70
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '20.70'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'PROSITE' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Feb2011';
+-- ProkaryoticAnnotation::Feb2011 | NCBI nr        | nr-02-19-2011
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'nr-02-19-2011'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Feb2011';
+-- ProkaryoticAnnotation::Jan2010 | UniRef100      | 2010_11
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '2010_11'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniRef100' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Feb2011';
+
+-- ProkaryoticAnnotation::Jan2010 | NIAA           | NIAA-07-27-2009
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'NIAA-07-27-2009'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'NIAA' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
+-- ProkaryoticAnnotation::Jan2010 | NCBI nr        | nr-09-20-2009
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'nr-09-20-2009'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010'
+                                                  AND run_createdat <= '2010-11-20';
+-- ProkaryoticAnnotation::Jan2010 | NCBI nr        | nr-11-19-2010
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'nr-11-19-2010'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'NCBI nr' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010'
+                                                  AND run_createdat > '2010-11-20';
+-- ProkaryoticAnnotation::Jan2010 | PROSITE        | 20.44
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '20.44'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'PROSITE' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
+-- ProkaryoticAnnotation::Jan2010 | UniRef100      | 15.0
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'PROSITE'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniRef100' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
 
 
