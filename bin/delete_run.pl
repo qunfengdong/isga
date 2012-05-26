@@ -98,8 +98,9 @@ eval {
   }
 
   foreach ( @{ISGA::RunInput->query( Run => $run )} ) {
-    $_->getFileResource->delete();
+    my $fr = $_->getFileResource;
     $_->delete;
+    $fr->delete;
   }
 
   # remove GBrowse Data
