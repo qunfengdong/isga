@@ -76,7 +76,7 @@ Builds the FormEngine object for the RunBuilder object.
     my $account = ISGA::Login->getAccount;
 
     # retrieve your runs of this type
-    my @runs = grep { $_->getGlobalPipeline == $gp } @{ISGA::Run->query( CreatedBy => $account )};
+    my @runs = grep { $_->getGlobalPipeline == $gp } @{ISGA::Run->query( CreatedBy => $account, Status => 'Complete' )};
 
     if ( @runs ) {
       push @groups,
@@ -88,11 +88,11 @@ Builds the FormEngine object for the RunBuilder object.
     }
 
     # retrieve shared runs of this type
-    my @shared = grep { $_->getGlobalPipeline == $gp } @{ $account->getSharedRuns() };
+    my @shared = grep { $_->getGlobalPipeline == $gp and $_->getStatus eq 'Complete' } @{ $account->getSharedRuns() };
 
     if ( @shared ) {
       push @groups,
-	{ LABEL => 'Your Previous Runs',
+	{ LABEL => 'Runs Shared With You',
 	  templ => 'group',
 	  OPTION => [map { $_->getName . ' (' . $_->getCreatedBy->getName . ')' } @shared],
 	  OPT_VAL => \@runs
