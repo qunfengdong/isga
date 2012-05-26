@@ -560,7 +560,7 @@ Install Gbrowse config file and gff file.
     # cleanup
     foreach my $mRNA ( @$mrna ) {
       foreach ( @{$mRNA->getExRefs} ) {
-	$mRNA->removeExREf($_);
+	$mRNA->removeExRef($_);
       }
     }
     
