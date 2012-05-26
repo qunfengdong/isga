@@ -78,12 +78,12 @@ eval {
     $fr->delete();
   }
 
-  foreach ( @{ISGA::RunReference->query( Run => $run )} ) {
-    $_->delete;
+  foreach ( @{$run->getReferenceReleases} ) {
+    $run->removeReferenceRelease($_);
   }
 
-  foreach ( @{ISGA::RunSoftware->query( Run => $run )} ) {
-    $_->delete;
+  foreach ( @{$run->getSoftwareReleases} ) {
+    $run->removeSoftwareRelease($_);
   }
 
   foreach ( @{ISGA::RunCluster->query( Run => $run )} ) {
