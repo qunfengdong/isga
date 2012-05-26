@@ -98,14 +98,15 @@ eval {
     $_->delete;
   }
 
+  # remove run
+  $run->delete();
+
   # remove files
   my $fc = $run->getFileCollection();
   $fc->delete();
 
   # remove GBrowse
 
-  # remove run
-  $run->delete();
 
   ISGA::DB->commit();
 };
