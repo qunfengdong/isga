@@ -538,7 +538,55 @@ Install Gbrowse config file and gff file.
     
     -d $dir and remove_tree($dir);
   }
-  
+
+#------------------------------------------------------------------------
+
+=item public void deleteGBrowseData();
+
+=cut
+#------------------------------------------------------------------------
+  sub deleteGBrowseData {
+
+    my $self = shift;
+
+    # retrieve contigs
+    my $contigs = ISGA::Contig->query( Run => $self );
+    my $genes = ISGA::Gene->query( Contig => $contigs );
+    my $mrna = ISGA::mRNA->query( Gene => $genes );
+    my $trna = ISGA::tRNA->query( Gene => $genes );
+    my $rrna = ISGA::rRNA->query( Gene => $genes );
+    my $cds = ISGA::CDS->query( mRNA => $mrna );
+			   
+    # cleanup
+    foreach my $mRNA ( @$mrna ) {
+      foreach ( @{$mRNA->getExRefs} ) {
+	$mRNA->removeExREf($_);
+      }
+    }
+    
+    $_->delete for @$cds;
+    $_->delete for @$rrna;
+    $_->delete for @$trna;
+    $_->delete for @$mrna;    
+    $_->delete for @$genes;
+    $_->delete for @$contigs;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void deleteGBrowse();
+
+=cut
+#------------------------------------------------------------------------
+  sub deleteGBrowseData {
+
+    my $self = shift;
+
+    $self->deleteGBrowseData();
+    $self->deleteGBrowseDatabase();
+    $self->deleteGBrowseConfigurationFile();    
+  }
+
 #------------------------------------------------------------------------
 
 =item public void writeGBrowseConfigurationFile();
