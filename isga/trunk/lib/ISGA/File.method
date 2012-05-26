@@ -32,7 +32,7 @@ Removes a file from the system.
 
     # remove ourselves from any collections
     my $collections = ISGA::FileCollectionContent->query( FileResource => $self );
-    $_->delete() for @$collections;
+    $_->delete(1) for @$collections;
 
     # delete the file
     $self->_deleteFile();
