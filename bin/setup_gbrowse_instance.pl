@@ -85,8 +85,7 @@ if ( $@ ) {
   my $email = join (",", @{ISGA::Site->getErrorNotificationEmail});
   my $server = ISGA::Site->getServerName();
   my $support_email = ISGA::SiteConfiguration->value('support_email');
-  my $run = $red->getRun();
-
+ 
   my %mail =
     ( To => $email,
       From => $server . " <$support_email>",
