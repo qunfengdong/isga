@@ -181,8 +181,8 @@ that do not exist outisde of the collection will also be deleted.
     my $collections = ISGA::FileCollectionContent->query( FileResource => $self );
     $_->delete() for @$collections;
 
-    $self->deleteContents();
     $self->deleteArchive();
+    $self->deleteContents();
 
     # delete the database entry
     $self->NEXT::delete();

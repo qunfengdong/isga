@@ -114,28 +114,58 @@ ALTER TABLE reference DROP CONSTRAINT "reference_reference_path_key";
 -------------------------------------------------------------------
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/SoftwareConfiguration/View', 'View Software Configuration', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/SoftwareConfiguration/View') );
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/SoftwareConfiguration/List', 'List Software Configurations', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/SoftwareConfiguration/List') );
 
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/SoftwareConfiguration/AddRelease', 'Add Software Release', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/SoftwareConfiguration/AddRelease') );
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Software/AddRelease', 'Software::AddRelease', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Software/AddRelease') );
 
 INSERT INTO usecase (usecase_name, usecase_title, usecase_requireslogin, usecase_stylesheet)
   VALUES ('/SoftwareConfiguration/EditRelease', 'Edit Software Release', TRUE, '2columnright');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/SoftwareConfiguration/EditRelease') );
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Software/EditRelease', 'Software::EditRelease', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Software/EditRelease') );
 
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Software/SetPipelineSoftware', 'Software::SetPipelineSoftware', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Software/SetPipelineSoftware') );
 
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Reference/AddRelease', 'Reference::AddRelease', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Reference/AddRelease') );
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Reference/EditRelease', 'Reference::EditRelease', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Reference/EditRelease') );
 INSERT INTO usecase (usecase_name, usecase_action, usecase_requireslogin, usecase_stylesheet) 
   VALUES ('/submit/Reference/SetPipelineReference', 'Reference::SetPipelineReference', TRUE, 'none');
+INSERT INTO grouppermission ( accountgroup_id, usecase_id ) 
+  VALUES ( (SELECT accountgroup_id FROM accountgroup WHERE accountgroup_name = 'Policy Administrators'), 
+           (SELECT usecase_id FROM usecase WHERE usecase_name = '/submit/Reference/SetPipelineReference') );
 
 
 -------------------------------------------------------------------

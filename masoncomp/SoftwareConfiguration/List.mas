@@ -42,3 +42,9 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
 </tbody>
 </table>
 </div>
+
+<sys:rightmenu>
+<ul>
+<& /Configuration/right_menu.mas &>
+</ul>
+</sys:rightmenu>
