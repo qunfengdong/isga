@@ -589,7 +589,7 @@ Install Gbrowse config file and gff file.
     # remove the blast databases
     my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
       or X::API::Configuration::Missing->throw( variable => 'file_repository' );
-    my $destination = "$file_repository/databases/".$run->getErgatisKey."/";
+    my $destination = "$file_repository/databases/".$self->getErgatisKey."/";
     -d $destination and remove_tree($destination);    
   }
 
