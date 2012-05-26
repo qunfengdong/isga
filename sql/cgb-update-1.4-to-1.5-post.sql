@@ -1002,9 +1002,14 @@ INSERT INTO runreference (run_id, referencerelease_id)
        FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
 -- ProkaryoticAnnotation::Jan2010 | UniRef100      | 15.0
 INSERT INTO runreference (run_id, referencerelease_id)
-  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'PROSITE'
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '15.0'
                           AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniRef100' ))
        FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
+-- ShoreMapping::Apr2011          | Homo Sapien             | GRCh37.p2
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'GRCh37.p2'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'Homo Sapien' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Apr2011';
 -- ShoreMapping::Apr2011          | Arabidopsis thaliana    | Tair10
 INSERT INTO runreference (run_id, referencerelease_id)
   SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'Tair10'
