@@ -266,7 +266,7 @@ UPDATE pipelinereference SET referencerelease_id = (SELECT CURRVAL('referencerel
                                 pipeline_name = 'Prokaryotic Annotation' AND globalpipeline_release = 'Feb 2011' )
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase');
 
-UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'hs_ref_GRCh37')
+UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'GRCh37.p2')
  WHERE pipeline_id = ( SELECT pipeline_id FROM pipeline NATURAL JOIN globalpipeline WHERE
                                 pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Homo Sapien');
@@ -919,7 +919,6 @@ INSERT INTO runsoftware (run_id, softwarerelease_id)
   SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '2.0'
                           AND software_id = ( SELECT software_id FROM software WHERE software_name = 'WU-BLAST' ))
        FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
-INSERT INTO runsoftware (run_id, softwarerelease_id)
 -- ProkaryoticAnnotation::Jan2010 | Asgard           | 1.0
 INSERT INTO runsoftware (run_id, softwarerelease_id)
   SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '1.0'
@@ -929,7 +928,7 @@ INSERT INTO runsoftware (run_id, softwarerelease_id)
 INSERT INTO runsoftware (run_id, softwarerelease_id)
   SELECT run_id, ( SELECT softwarerelease_id FROM softwarerelease WHERE softwarerelease_version = '0.6unstable'
                           AND software_id = ( SELECT software_id FROM software WHERE software_name = 'SHORE' ))
-       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Jan2010';
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Apr2011';
 
 
 -- ProkaryoticAnnotation::Feb2011 | COG            | 2003-03-02
@@ -960,7 +959,7 @@ INSERT INTO runreference (run_id, referencerelease_id)
 -- ProkaryoticAnnotation::Feb2011 | RegTransBase   | 1
 -- ProkaryoticAnnotation::Jan2010 | RegTransBase   | 1
 INSERT INTO runreference (run_id, referencerelease_id)
-  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = ''
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '1'
                           AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'RegTransBase' ))
        FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass IN ( 'ProkaryoticAnnotation::Feb2011', 'ProkaryoticAnnotation::Jan2010' );
 -- ProkaryoticAnnotation::Feb2011 | PROSITE        | 20.70
@@ -1006,5 +1005,19 @@ INSERT INTO runreference (run_id, referencerelease_id)
   SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'PROSITE'
                           AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'UniRef100' ))
        FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ProkaryoticAnnotation::Jan2010';
-
+-- ShoreMapping::Apr2011          | Arabidopsis thaliana    | Tair10
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'Tair10'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'Arabidopsis thaliana' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Apr2011';
+-- ShoreMapping::Apr2011          | Drosophila melanogaster | 5.31
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = '5.31'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'Drosophila melanogaster' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Apr2011';
+-- ShoreMapping::Apr2011          | Caenorhabditis elegans  | WS225
+INSERT INTO runreference (run_id, referencerelease_id)
+  SELECT run_id, ( SELECT referencerelease_id FROM referencerelease WHERE referencerelease_version = 'WS225'
+                          AND reference_id = ( SELECT reference_id FROM reference WHERE reference_name = 'Caenorhabditis elegans' ))
+       FROM run NATURAL JOIN globalpipeline WHERE globalpipeline_subclass = 'ShoreMapping::Apr2011';
 
