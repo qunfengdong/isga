@@ -179,7 +179,7 @@ that do not exist outisde of the collection will also be deleted.
 
     # remove ourselves from any collections
     my $collections = ISGA::FileCollectionContent->query( FileResource => $self );
-    $_->delete() for @$collections;
+    $_->delete(1) for @$collections;
 
     $self->deleteArchive();
     $self->deleteContents();

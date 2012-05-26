@@ -4,14 +4,17 @@
 
 =item public delete();
 
+=item public delete(bool $shallow);
+
 Removes a file resource from a collection. If that file resource
-doesn't exist outside of the collection, it is deleted.
+doesn't exist outside of the collection, it is deleted. If $shallow is
+defined the underlying File Resource will not be deleted.
 
 =cut 
 #------------------------------------------------------------------------
   sub delete {
 
-    my $self = shift;
+    my ($self, $shallow) = @_;
 
     # save collection and index
     my $collection = $self->getFileCollection();
@@ -22,7 +25,7 @@ doesn't exist outside of the collection, it is deleted.
     $self->NEXT::delete();
 
     # if the resource isn't referenced elsewhere, we delete it
-    if ( ! $resource->existsOutsideCollection 
+    if ( ! $shallow and ! $resource->existsOutsideCollection 
 	 and ! ISGA::FileCollectionContent->exists( FileResource => $resource ) ) {
       $resource->delete();
     }
