@@ -98,15 +98,13 @@ eval {
     $_->delete;
   }
 
-  # remove run
-  $run->delete();
+  # remove GBrowse Data
+  $run->deleteGBrowse if $run->hasGBrowseInstallation;
 
-  # remove files
+  # remove run and file collection
   my $fc = $run->getFileCollection();
+  $run->delete();
   $fc->delete();
-
-  # remove GBrowse
-
 
   ISGA::DB->commit();
 };
