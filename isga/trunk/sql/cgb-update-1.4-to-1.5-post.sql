@@ -286,25 +286,6 @@ UPDATE pipelinereference SET referencerelease_id = (SELECT referencerelease_id F
                                 pipeline_name = 'Shore SNP Mapping Pipeline' AND globalpipeline_release = 'Apr 2011' )
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'Caenorhabditis elegans');
 
-Databases:
-Human: hs_ref_GRCh37 (/nfs/bio/db/Homo_sapien/shore)
-Tair10: (/nfs/bio/db/Arabidopsis_thaliana/shore)
-Drosophila_melanogaster: 5.31 (/nfs/bio/db/Drosophila_melanogaster/shore)
-Caenorhabditis_elegans: WS225
-(/nfs/bio/db/Caenorhabditis_elegans/WS225/shore)
-
-     reference_name      |           reference_path            
--------------------------+-------------------------------------
- Homo Sapien             | /nfs/bio/db/Homo_sapien
- Arabidopsis thaliana    | /nfs/bio/db/Arabidopsis_thaliana
- Drosophila melanogaster | /nfs/bio/db/Drosophila_melanogaster
- Caenorhabditis elegans  | /nfs/bio/db/Caenorhabditis_elegans
-                   5 |            4 | GRCh37.p2                | GRCh37.p2             | 2010-07-30               |                 4
-                   6 |            5 | Tair10                   | Tair10                | 2010-11-17               |                 4
-                   7 |            6 | 5.31                     | 5.31                  | 2010-11-19               |                 4
-                   8 |            7 | WS225                    | WS225                 | 2011-05-19               |                 4
-(4 rows)
-
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add referencedb entries
