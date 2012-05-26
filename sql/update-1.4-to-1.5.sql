@@ -357,7 +357,6 @@ OPT_VAL: [1,2, 3]
 -------------------------------------------------------------------
 UPDATE configurationvariable SET configurationvariable_description = 'Full path to the temporary directory where Ergatis pipelines are built for this project (usually pipelines_building).' WHERE configurationvariable_name = 'ergatis_submission_directory';
 
-
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Add Run/Analysis page

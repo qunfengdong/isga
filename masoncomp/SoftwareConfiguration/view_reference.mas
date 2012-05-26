@@ -30,3 +30,9 @@ The following releases have been defined for this reference.</p>
 </tbody>
 </table>
 </div>
+
+<sys:rightmenu>
+<ul>
+<& /Configuration/right_menu.mas &>
+</ul>
+</sys:rightmenu>
