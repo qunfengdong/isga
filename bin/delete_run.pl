@@ -90,7 +90,7 @@ eval {
     $_->delete;
   }
 
-  foreach ( @{ISGA::RunShare->query( Run => $run )} ) {
+  foreach ( @{ISGA::RunShare->query( Resource => $run )} ) {
     $_->delete;
   }
 
