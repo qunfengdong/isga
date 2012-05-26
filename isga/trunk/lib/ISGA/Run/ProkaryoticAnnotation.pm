@@ -585,6 +585,12 @@ Install Gbrowse config file and gff file.
     $self->deleteGBrowseData();
     $self->deleteGBrowseDatabase();
     $self->deleteGBrowseConfigurationFile();    
+
+    # remove the blast databases
+    my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
+      or X::API::Configuration::Missing->throw( variable => 'file_repository' );
+    my $destination = "$file_repository/databases/".$run->getErgatisKey."/";
+    -d $destination and remove_tree($destination);    
   }
 
 #------------------------------------------------------------------------

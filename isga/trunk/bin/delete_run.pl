@@ -98,6 +98,7 @@ eval {
   }
 
   foreach ( @{ISGA::RunInput->query( Run => $run )} ) {
+    $_->getFileResource->delete();
     $_->delete;
   }
 
