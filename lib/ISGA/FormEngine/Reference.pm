@@ -90,6 +90,7 @@ sub AddRelease {
 	TITLE => 'Templates',
 	templ => 'select',
 	SIZE => scalar(@$template_ids),
+	MULTIPLE => 1,
 	OPTION => $template_names,
 	OPT_VAL => $template_ids,
        },
