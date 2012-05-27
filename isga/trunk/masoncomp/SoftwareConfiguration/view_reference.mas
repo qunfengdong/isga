@@ -4,9 +4,7 @@
 
 <h1><% $reference->getName %></h1>
 
-<p><a href="<% $reference->getLink %>"><% $reference->getLink %></a><br>
-The following releases have been defined for this reference.<br>
-URL: <a href="AddRelease?reference=<% $reference %>">Add New Release</a></p>
+<p>URL: <a href="<% $reference->getLink %>"><% $reference->getLink %></a></p>
 
 <div class="list">
 <table width="100%">
@@ -22,7 +20,7 @@ URL: <a href="AddRelease?reference=<% $reference %>">Add New Release</a></p>
  <td><a href="EditRelease?reference_release=<% $_ %>">Edit</a></td>
 </tr>
 <tr>
- <td></td><td colspan="3" class="hint"><% $_->getPath %></td>
+ <td></td><td colspan="3" class="hint">Path: <% $_->getPath %></td>
 </tr>
 % }
 </tbody>
@@ -31,6 +29,10 @@ URL: <a href="AddRelease?reference=<% $reference %>">Add New Release</a></p>
 
 <sys:rightmenu>
 <ul>
+ <li class="title">Configuration Tools</li>
+
+ <li class="rmbutton pointer"><a href="AddRelease?reference=<% $reference %>">Add Release</a></li>
+ <li class="pointer" onclick="window.location='AddRelease?reference=<% $reference %>'"><p>Add a new release for this reference.</p></li>
 <& /Configuration/right_menu.mas &>
 </ul>
 </sys:rightmenu>
