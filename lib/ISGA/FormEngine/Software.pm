@@ -152,7 +152,7 @@ sub EditRelease {
        {
 	NAME => 'release',
 	TITLE => 'Release Date',
-	VALUE => $release->getRelease,
+	VALUE => $release->getRelease->format('<YR>-<MN>-<DY>'),
 	SIZE => 10,
 	MAXLEN => 10,
 	HINT  => 'YYYY-MM-DD',

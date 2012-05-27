@@ -154,7 +154,7 @@ sub EditRelease {
 	TITLE => 'Release Date',
 	SIZE => 10,
 	MAXLEN => 10,
-	VALUE => $release->getRelease,
+	VALUE => $release->getRelease->format('<YR>-<MN>-<DY>'),
 	HINT  => 'YYYY-MM-DD',
 	ERROR => ['not_null', 'Text::checkDate'],
        },
