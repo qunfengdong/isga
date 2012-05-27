@@ -19,7 +19,7 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
 <tr>
  <td><strong><% $_->getName %></strong></td>
  <td><select class="dynamic_select">
- <option>select to edit</option>
+ <option selected="selected">select to edit</option>
 %   foreach ( @{ISGA::SoftwareRelease->query( Software => $_, OrderBy => { DESC => 'Release'  })} ) {
 <option value="EditRelease?software_release=<% $_ %>"><% $_->getVersion %></option>
 %   }
@@ -32,7 +32,7 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
 <tr>
  <td><strong><% $_->getName %></strong></td>
  <td><select class="dynamic_select">
- <option>select to edit</option>
+ <option selected="selected">select to edit</option>
 %   foreach ( @{ISGA::ReferenceRelease->query( Reference => $_, OrderBy => { DESC => 'Release'  })} ) {
 <option value="EditRelease><% $_->getVersion %>"><% $_->getVersion %></option>
 %   }
