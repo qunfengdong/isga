@@ -72,6 +72,46 @@ sub Software::AddRelease {
        
 #------------------------------------------------------------------------
 
+=item public void EditRelease();
+
+Method to edit a software package release.
+
+=cut
+#------------------------------------------------------------------------
+sub Software::EditRelease {
+
+  my $self = shift;
+  my $web_args = $self->args;
+  my $form = ISGA::FormEngine::Software->EditRelease($web_args);
+
+  my $release = $web_args->{software_release};
+  my $software = $release->getSoftware();
+
+  if ($form->canceled()) {
+    $self->redirect(uri => "/SoftwareConfiguration/View?software=$software" );
+  }
+  
+  if ( $form->ok ) {
+    
+    my %form_args = 
+      (
+       Path => $form->get_input('path'),
+       Version => $form->get_input('version'),
+       Status => $form->get_input('pipeline_status'),
+       Release => ISGA::Date->new($form->get_input('release')),
+      );
+
+    $release->edit(%form_args);
+
+    $self->redirect( uri => "/SoftwareConfiguration/View?software=$software" );
+  }
+
+  $self->_save_arg('form', $form);
+  $self->redirect( uri => "/SoftwareConfiguration/EditRelease?software_release=$release" );
+}
+
+#------------------------------------------------------------------------
+
 =item public void SetPipelineSoftware();
 
 Method to set a release as default for a pipeline.

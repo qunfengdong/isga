@@ -5,10 +5,9 @@
 <h1><% $software->getName %></h1>
 
 <p><a href="<% $software->getLink %>"><% $software->getLink %></a><br>
-The following releases have been defined for this software.</p>
-
-
-<a href="AddRelease?software=<% $software %>">Add New Release</a>
+The following releases have been defined for this software.<br>
+URL: <a href="AddRelease?software=<% $software %>">Add New Release</a>
+</p>
 
 <div class="list">
 <table width="100%">
@@ -24,7 +23,7 @@ The following releases have been defined for this software.</p>
  <td><a href="EditRelease?software_release=<% $_ %>">Edit</a></td>
 </tr>
 <tr>
- <td></td><td colspan="3"><% $_->getPath %></td>
+ <td></td><td colspan="3" class="hint"><% $_->getPath %></td>
 </tr>
 % }
 </tbody>

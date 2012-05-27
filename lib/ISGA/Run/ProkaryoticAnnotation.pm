@@ -586,7 +586,6 @@ Install Gbrowse config file and gff file.
     my $file_repository = ISGA::SiteConfiguration->value('file_repository') 
       or X::API::Configuration::Missing->throw( variable => 'file_repository' );
     my $destination = "$file_repository/databases/".$self->getErgatisKey."/";
-    warn "checking if $destination exists\n";
     -d $destination and remove_tree($destination);    
 
     # delete the database entry

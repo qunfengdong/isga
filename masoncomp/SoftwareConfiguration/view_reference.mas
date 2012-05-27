@@ -5,10 +5,8 @@
 <h1><% $reference->getName %></h1>
 
 <p><a href="<% $reference->getLink %>"><% $reference->getLink %></a><br>
-The following releases have been defined for this reference.</p>
-
-
-<a href="AddRelease?reference=<% $reference %>">Add New Release</a>
+The following releases have been defined for this reference.<br>
+URL: <a href="AddRelease?reference=<% $reference %>">Add New Release</a></p>
 
 <div class="list">
 <table width="100%">
@@ -24,7 +22,7 @@ The following releases have been defined for this reference.</p>
  <td><a href="EditRelease?reference_release=<% $_ %>">Edit</a></td>
 </tr>
 <tr>
- <td></td><td colspan="3"><% $_->getPath %></td>
+ <td></td><td colspan="3" class="hint"><% $_->getPath %></td>
 </tr>
 % }
 </tbody>
