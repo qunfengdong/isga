@@ -32,7 +32,7 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
  <td><strong><% $_->getName %></strong></td>
  <td><select class="dynamic_select">
 %   foreach ( @{ISGA::ReferenceRelease->query( Reference => $_, OrderBy => { DESC => 'Release'  })} ) {
-<option value="EditRelease><% $_->getVersion %></option>
+<option value="EditRelease><% $_->getVersion %>"></option>
 %   }
  </select></td>
  <td><a href="/SoftwareConfiguration/View?reference=<% $_ %>">View</a> | <a href="/SoftwareConfiguration/AddRelease?reference=<% $_ %>">Add Release</a></td>
