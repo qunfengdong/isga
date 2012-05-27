@@ -4,14 +4,22 @@
 
 <h1><% $reference->getName %></h1>
 
-<p>URL: <a href="<% $reference->getLink %>"><% $reference->getLink %></a></p>
+<p>URL: <a href="<% $reference->getLink %>"><% $reference->getLink %></a><br>
+Path: <% $reference->getPath %></p>
 
 <div class="list">
 <table width="100%">
 <thead>
-<tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
+<tr><th>Template</th><th colspan="3">Label</th></tr>
 </thead>
 <tbody>
+% foreach ( @{ISGA::ReferenceTemplate->query( Reference => $reference )} ) {
+<tr>
+ <td><% $_->getFormat %></td>
+ <td colspan="3"><% $_->getLabel %></td>
+</tr>
+% }
+<tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
 % foreach ( @{ISGA::ReferenceRelease->query( Reference => $reference, OrderBy => { DESC => 'Release' } )} ) {
 <tr>
  <td><% $_->getVersion %></td>
