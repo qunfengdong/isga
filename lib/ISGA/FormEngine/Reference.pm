@@ -89,7 +89,7 @@ sub AddRelease {
 	NAME => 'reference_template',
 	TITLE => 'Templates',
 	temp => 'select',
-	SIZE => scalar(@template_ids),
+	SIZE => scalar(@$template_ids),
 	OPTION => $template_names,
 	OPT_VAL => $template_ids,
        },
