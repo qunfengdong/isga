@@ -44,6 +44,17 @@ sub AddRelease {
   my $status_names = [map { $_->getName } @$status_ids];
   my $reference = $args->{reference};
   
+  # retrieve reference templates
+  my $template_ids = ISGA::ReferenceTemplate->query( Reference => $reference );
+  my $template_names;
+  foreach ( @$template_ids ) {
+    my $label = $_->getLabel;
+    my $name = $_->Format;
+    $label and $name .= " ($label)";
+
+    push @$template_names, $name;
+  }
+
   my @form =
     (
      {
@@ -73,6 +84,16 @@ sub AddRelease {
 	ERROR => ['not_null', 'Text::checkDate'],
        },
        
+       # templates
+       {
+	NAME => 'reference_template',
+	TITLE => 'Templates',
+	temp => 'select',
+	SIZE => scalar(@template_ids),
+	OPTION => $template_names,
+	OPT_VAL => $template_ids,
+       },
+
        # status
        {
 	NAME => 'pipeline_status',
