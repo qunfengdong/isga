@@ -69,7 +69,47 @@ sub Reference::AddRelease {
   $self->_save_arg('form', $form);
   $self->redirect( uri => "/SoftwareConfiguration/AddRelease?reference=$reference" );
 }
-       
+      
+#------------------------------------------------------------------------
+
+=item public void EditRelease();
+
+Method to edit a reference package release.
+
+=cut
+#------------------------------------------------------------------------
+sub Reference::EditRelease {
+
+  my $self = shift;
+  my $web_args = $self->args;
+  my $form = ISGA::FormEngine::Reference->EditRelease($web_args);
+
+  my $release = $web_args->{reference_release};
+  my $reference = $release->getReference;
+  
+  if ($form->canceled()) {
+    $self->redirect(uri => "/SoftwareConfiguration/View?reference=$reference" );
+  }
+  
+  if ( $form->ok ) {
+ 
+    my %form_args = 
+      (
+       Path => $form->get_input('path'),
+       Version => $form->get_input('version'),
+       Status => $form->get_input('pipeline_status'),
+       Release => ISGA::Date->new($form->get_input('release')),
+      );
+    
+    $release->edit(%form_args);
+
+    $self->redirect( uri => "/SoftwareConfiguration/View?reference=$reference" );
+  }
+
+  $self->_save_arg('form', $form);
+  $self->redirect( uri => "/SoftwareConfiguration/EditRelease?reference_release=$release" );
+}
+
 #------------------------------------------------------------------------
 
 =item public void SetPipelineReference();

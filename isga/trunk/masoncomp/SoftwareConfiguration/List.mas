@@ -18,9 +18,9 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
 % foreach ( @software ) {
 <tr>
  <td><strong><% $_->getName %></strong></td>
- <td><select>
+ <td><select class="dynamic_select">
 %   foreach ( @{ISGA::SoftwareRelease->query( Software => $_, OrderBy => { DESC => 'Release'  })} ) {
-<option><% $_->getVersion %></option>
+<option value="EditRelease?software_release=<% $_ %>"><% $_->getVersion %></option>
 %   }
  </select></td>
  <td><a href="/SoftwareConfiguration/View?software=<% $_ %>">View</a> | <a href="/SoftwareConfiguration/AddRelease?software=<% $_ %>">Add Release</a></td>
@@ -30,9 +30,9 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
 % foreach ( @reference ) {
 <tr>
  <td><strong><% $_->getName %></strong></td>
- <td><select>
+ <td><select class="dynamic_select">
 %   foreach ( @{ISGA::ReferenceRelease->query( Reference => $_, OrderBy => { DESC => 'Release'  })} ) {
-<option><% $_->getVersion %></option>
+<option value="EditRelease><% $_->getVersion %></option>
 %   }
  </select></td>
  <td><a href="/SoftwareConfiguration/View?reference=<% $_ %>">View</a> | <a href="/SoftwareConfiguration/AddRelease?reference=<% $_ %>">Add Release</a></td>
@@ -48,3 +48,17 @@ my @reference = map { $_->[1] } sort { $a->[0] cmp $b->[0] } map { [ $_->getName
 <& /Configuration/right_menu.mas &>
 </ul>
 </sys:rightmenu>
+
+<sys:script>
+    $(function(){
+      // bind change event to select
+      $('.dynamic_select').bind('change', function () {
+          var url = $(this).val(); // get selected value
+          if (url) { // require a URL
+              window.location = url; // redirect
+          }
+          return false;
+      });
+    });
+</sys:script>
+

@@ -116,6 +116,85 @@ Build a FormEngine object for editing software release.
 
 =cut
 #------------------------------------------------------------------------
+sub EditRelease {
+
+  my ($class, $args) = @_;
+
+  my $form = ISGA::FormEngine->new($args);
+  $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
+  
+  my $status_ids = ISGA::PipelineStatus->query( OrderBy => 'Name' );
+  my $status_names = [map { $_->getName } @$status_ids];
+  my $release = $args->{reference_release};
+  
+  my @form =
+    (
+     {
+      templ => 'fieldset',
+      TITLE => 'Release Information',
+      sub =>     
+      [
+       {
+	NAME => 'reference',
+	TITLE => 'Reference',
+	templ => 'print',
+	VALUE => $reference->getName,
+       },
+       {
+	NAME => 'version',
+	TITLE => 'Version',
+	SIZE => 25,
+	MAXLEN => 25,
+	VALUE => $release->getVersion,
+	ERROR => ['not_null', 'Text::checkHTML'],
+       },
+       {
+	NAME => 'release',
+	TITLE => 'Release Date',
+	SIZE => 10,
+	MAXLEN => 10,
+	VALUE => $release->getRelease,
+	HINT  => 'YYYY-MM-DD',
+	ERROR => ['not_null', 'Text::checkDate'],
+       },
+       
+       # status
+       {
+	NAME => 'pipeline_status',
+	TITLE => 'Status',
+	templ => 'select',
+	VALUE => $release->getStatus,
+	OPTION => $status_names,
+	OPT_VAL => $status_ids,
+       },
+       
+       # path
+       {
+	NAME => 'path',
+	TITLE => 'Path',
+	HINT => 'Path to directory containing executables',
+	VALUE => $release->getPath,
+	SIZE => 60,
+	ERROR => [ 'not_null', 'File::isPath' ],
+       },
+       
+      ]
+     },
+     { templ => 'hidden',
+       NAME => 'reference_release',
+       VALUE => $release
+     }
+    );
+  
+  $form->conf( { ACTION => '/submit/Reference/EditRelease',
+		 FORMNAME => 'reference_edit_release',
+		 SUBMIT => 'Edit Release',
+		 sub => \@form } );
+  
+  $form->make;
+  return $form;
+};
+
 
 1;
 __END__

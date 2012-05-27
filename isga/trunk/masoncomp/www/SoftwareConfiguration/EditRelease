@@ -1,0 +1,30 @@
+<%args> # -*- cperl -*-
+ $software_release => undef
+ $reference_release => undef
+</%args>
+
+<%perl>
+
+# check that we have a form cached and it is the correct type
+my $form = $ISGA::WebApp->saved_args->{'form'};
+
+if ( $software_release ) {
+
+  $form and $form->get_formname() eq 'software_edit_release'
+    or $form =  ISGA::FormEngine::Software->EditRelease(\%ARGS);
+  
+  $software_release ||= $form->get_input('software_release');
+  
+  return $m->comp('/SoftwareConfiguration/Edit_release.mas', software_release => $software_release, form => $form);
+
+} elsif ( $reference_release ) {
+
+  $form and $form->get_formname() eq 'reference_edit_release'
+    or $form =  ISGA::FormEngine::Reference->EditRelease(\%ARGS);
+  
+  $reference_release ||= $form->get_input('reference_release');
+  
+  return $m->comp('/SoftwareConfiguration/Edit_release.mas', reference_release => $reference_release, form => $form);
+
+}
+</%perl>
