@@ -49,7 +49,7 @@ sub AddRelease {
   my $template_names;
   foreach ( @$template_ids ) {
     my $label = $_->getLabel;
-    my $name = $_->Format;
+    my $name = $_->getFormat;
     $label and $name .= " ($label)";
 
     push @$template_names, $name;
