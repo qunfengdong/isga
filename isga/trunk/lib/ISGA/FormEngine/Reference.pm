@@ -49,7 +49,7 @@ sub AddRelease {
   my $template_names;
   foreach ( @$template_ids ) {
     my $label = $_->getLabel;
-    my $name = $_->getFormat;
+    my $name = $_->get2Format;
     $label and $name .= " ($label)";
 
     push @$template_names, $name;
@@ -88,7 +88,7 @@ sub AddRelease {
        {
 	NAME => 'reference_template',
 	TITLE => 'Templates',
-	temp => 'select',
+	templ => 'select',
 	SIZE => scalar(@$template_ids),
 	OPTION => $template_names,
 	OPT_VAL => $template_ids,
