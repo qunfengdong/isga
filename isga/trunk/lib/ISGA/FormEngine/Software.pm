@@ -126,7 +126,8 @@ sub EditRelease {
   my $status_ids = ISGA::PipelineStatus->query( OrderBy => 'Name' );
   my $status_names = [map { $_->getName } @$status_ids];
   my $release = $args->{software_release};
-  
+  my $software = $release->getSoftware;
+
   my @form =
     (
      {
