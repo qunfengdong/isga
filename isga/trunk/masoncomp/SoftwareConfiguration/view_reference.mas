@@ -46,6 +46,7 @@ Path: <% $reference->getPath %></p>
 
  <li class="rmbutton pointer"><a href="AddRelease?reference=<% $reference %>">Add Release</a></li>
  <li class="pointer" onclick="window.location='AddRelease?reference=<% $reference %>'"><p>Add a new release for this reference.</p></li>
+
 <& /Configuration/right_menu.mas &>
 </ul>
 </sys:rightmenu>

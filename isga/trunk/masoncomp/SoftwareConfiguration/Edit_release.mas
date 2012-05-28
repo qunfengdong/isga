@@ -9,8 +9,16 @@
 
 <% $form->get %>
 
+% if ( $reference_release ) {
+
+<hr>
+
+<p>Here's a list of databases. Edit, Add, or Remove them.</p>
+
+
 <sys:rightmenu>
 <ul>
 <& /Configuration/right_menu.mas &>
 </ul>
 </sys:rightmenu>
+
