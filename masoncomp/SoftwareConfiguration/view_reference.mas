@@ -20,16 +20,23 @@ Path: <% $reference->getPath %></p>
 </tr>
 % }
 <tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
-% foreach ( @{ISGA::ReferenceRelease->query( Reference => $reference, OrderBy => { DESC => 'Release' } )} ) {
+% foreach my $rr ( @{ISGA::ReferenceRelease->query( Reference => $reference, OrderBy => { DESC => 'Release' } )} ) {
 <tr>
- <td><% $_->getVersion %></td>
- <td><% $_->getRelease %></td>
- <td><% $_->getStatus->getName %></td>
- <td><a href="EditRelease?reference_release=<% $_ %>">Edit</a></td>
+ <td><% $rr->getVersion %></td>
+ <td><% $rr->getRelease %></td>
+ <td><% $rr->getStatus->getName %></td>
+ <td><a href="EditRelease?reference_release=<% $rr %>">Edit</a></td>
 </tr>
 <tr>
- <td></td><td colspan="3" class="hint">Path: <% $_->getPath %></td>
+%   foreach ( @{ISGA::ReferenceDB->query( Reference => $reference, Release => $rr )} ) {
+%     my $template = $_->getTemplate;
+%     my $format = $template->getFormat;
+%     my $label  = $template->getLabel;
+<tr>
+ <td class="a_right"><% $format %> <% $label ? "($label)" : '' %></td>
+ <td colspan="3">Path: <% $_->getFullPath %></td>
 </tr>
+%   }
 % }
 </tbody>
 </table>
