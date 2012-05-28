@@ -91,6 +91,12 @@ DROP TABLE referencetype;
 ALTER TABLE reference DROP COLUMN referencetag_id;
 DROP TABLE referencetag;
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Fix GBrowse capitalization
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE notificationtype SET notificationtype_name = 'GBrowse Instance Ready' WHERE notificationtype_name = 'Gbrowse Instance Ready';
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------

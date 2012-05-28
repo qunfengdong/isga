@@ -1,0 +1,16 @@
+<%args>
+ $notification
+</%args>
+
+<%perl>
+my $run = $notification->getRun();
+my $account = $run->getCreatedBy();
+</%perl>
+<% $account->getName %>,
+
+Your request to prepare a GBrowse instance for <% $run->getName %> is now
+complete. You can view this instance at:
+
+  <% ISGA::Site->getBaseURI  %>Run/View?run=<% $run %>
+
+

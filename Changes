@@ -16,6 +16,7 @@ Revision history for ISGA
 	* Add Transcriptome database query and view pages
 	* Added link to reset all parameters for a component when building a custom pipeline
 	* Migrated form tips into current page
+	* GBrowse instance is now built by a command line script and email sent to the user on completion
 
 	PIPELINE CHANGES
 
