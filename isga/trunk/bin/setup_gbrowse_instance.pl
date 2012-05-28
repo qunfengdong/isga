@@ -57,8 +57,13 @@ eval {
   
   ISGA::DB->begin_work();
 
-
   $run->installGBrowseData();
+
+  # send email
+  ISGA::RunNotification->create( 
+      Type => ISGA::NotificationType->new( Name => 'GBrowse Instance Ready' ),
+      Run => $run,
+      Account => $run->getCreatedBy );
 
   # delete notification request
   ISGA::DB->commit();
