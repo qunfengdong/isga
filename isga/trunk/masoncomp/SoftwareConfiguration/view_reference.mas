@@ -28,7 +28,7 @@ Path: <% $reference->getPath %></p>
  <td><a href="EditRelease?reference_release=<% $rr %>">Edit</a></td>
 </tr>
 <tr>
-%   foreach ( @{ISGA::ReferenceDB->query( Reference => $reference, Release => $rr )} ) {
+%   foreach ( @{ISGA::ReferenceDB->query( Release => $rr )} ) {
 %     my $template = $_->getTemplate;
 %     my $format = $template->getFormat;
 %     my $label  = $template->getLabel;
