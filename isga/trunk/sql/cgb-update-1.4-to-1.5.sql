@@ -27,6 +27,7 @@ UPDATE siteconfiguration SET siteconfiguration_value = '/research/projects/isga/
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 UPDATE filetype SET filetype_help = 'This is the raw results produced by HMMER. For detailed information, please see this pdf document: ftp://selab.janelia.org/pub/hmmer/CURRENT/Userguide.pdf' WHERE filetype_name = 'HMM Search Result';
+UPDATE fileformat SET fileformat_extension = 'raw' WHERE fileformat_name = 'TargetP Raw Result';
 
 UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/' WHERE reference_name = 'Homo Sapien';
 UPDATE reference SET reference_link = 'ftp://ftp.ncbi.nih.gov/genomes/Arabidopsis_thaliana/' WHERE reference_name = 'Arabidopsis thaliana';
