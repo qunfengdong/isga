@@ -13,7 +13,7 @@ use ISGA;
 # pass run as first argument
 my $run = ISGA::Run->new( Id => $ARGV[0] );
 
-return unless $run->getStatus eq 'Complete';
+exit unless $run->getStatus eq 'Complete';
 
 # set login
 my $account = $run->getCreatedBy;    
