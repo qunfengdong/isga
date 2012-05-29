@@ -78,7 +78,7 @@ eval {
   foreach ( @{ISGA::RunOutput->query( Run => $run )} ) {
     my $fr = $_->getFileResource;
     $_->delete();
-    $fr and $fr->delete();
+    $fr->delete() if ( $fr and ISGA::RunOutput->query( FileResource => $fr ) == 1 );
   }
 
   foreach ( @{$run->getReferenceReleases} ) {
@@ -100,7 +100,7 @@ eval {
   foreach ( @{ISGA::RunInput->query( Run => $run )} ) {
     my $fr = $_->getFileResource;
     $_->delete;
-    $fr->delete;
+    $fr->delete() if ( $fr and ISGA::RunInput->query( FileResource => $fr ) == 1 );
   }
 
   # remove GBrowse Data
