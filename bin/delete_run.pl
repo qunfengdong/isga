@@ -9,6 +9,7 @@ Ergatis installation.
 
 USAGE: delete_run.pl
          --run=run_id
+         --email=email@address
        [ --help
        ]
 
@@ -19,6 +20,10 @@ USAGE: delete_run.pl
 B<--run>
 
 Remove the specified run from the system.
+
+B<--email>
+
+Safety check to make sure the correct run is being deleted
 
 B<--help,-h> 
     This help message
@@ -48,6 +53,7 @@ my %options = ();
 
 my $result = GetOptions (\%options,
                          'run=i',
+			 'email=s',
                          'help|h') || pod2usage();
 
 &check_parameters(\%options);
@@ -128,4 +134,6 @@ sub check_parameters {
   my ($options) = @_;
 
   $options->{run} = ISGA::Run->new( Id => $options->{run} );
+
+  $options->{run}->getCreatedBy->getEmail eq $options->{email} or die "Run $options->{run} was not created by $options->{email}\n";
 }

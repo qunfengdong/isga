@@ -3,6 +3,11 @@
 use strict;
 use warnings;
 
+#
+# This is a utlity to script to help with the migration to 1.5, after which all runs are archived on completion.
+# This will save inodes and rows in the file table at the potential cost of some hard disk space.
+#
+
 use ISGA;
 
 # pass run as first argument
