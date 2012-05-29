@@ -38,13 +38,10 @@ sub isPath {
     
   my $data = shift;
   
-  my @files = split( /\//, $data );
-
-  foreach ( @files ) {
-    if ( $_ !~ /^[-A-Za-z0-9_ \.]+$/ ) {
-      return "Must not contain special characters. ($_)";
-    }
+  if ( $data !~ /^[-A-Za-z0-9_ \.\/]+$/ ) {
+    return "Must not contain special characters. ($data)";
   }
+
   return '';
 }
 
