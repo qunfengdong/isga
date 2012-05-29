@@ -78,7 +78,7 @@ eval {
   foreach ( @{ISGA::RunOutput->query( Run => $run )} ) {
     my $fr = $_->getFileResource;
     $_->delete();
-    $fr->delete();
+    $fr and $fr->delete();
   }
 
   foreach ( @{$run->getReferenceReleases} ) {
