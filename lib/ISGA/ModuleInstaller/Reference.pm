@@ -80,7 +80,7 @@ sub insert {
 
   $ps_args{Note} = $t->{Note} if exists $t->{Note};
 
-  ISGA::PipelineReference->create(%ps_args);
+  ISGA::PipelineReference->create(%ps_args) unless ISGA::PipelineReference->exist(%ps_args);
 }
 
 #------------------------------------------------------------------------
