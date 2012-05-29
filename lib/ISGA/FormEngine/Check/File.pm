@@ -42,7 +42,7 @@ sub isPath {
 
   foreach ( @files ) {
     if ( $_ !~ /^[-A-Za-z0-9_ \.]+$/ ) {
-      return 'Must not contain special characters.';
+      return "Must not contain special characters. ($_)";
     }
   }
   return '';
