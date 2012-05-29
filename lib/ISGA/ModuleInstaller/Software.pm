@@ -138,7 +138,7 @@ sub checkEquality {
 		);
   
   $ps_args{Note} = $t->{Note} if exists $t->{Note};  
-  ISGA::PipelineSoftware->create(%ps_args);
+  ISGA::PipelineSoftware->create(%ps_args) unless ISGA::PipelineSoftware->exist(%ps_args);
 }
 
 1;
