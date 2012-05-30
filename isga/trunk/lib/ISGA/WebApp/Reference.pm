@@ -63,9 +63,9 @@ sub Reference::AddRelease {
   
     my $reference_release = ISGA::ReferenceRelease->create(%form_args);
     
-    foreach ( $form->get_input('reference_template') ) {
-      ISGA::ReferenceDB->create( ReferenceTemplate => $_, ReferenceRelease => $reference_release );
-    }
+#    foreach ( $form->get_input('reference_template') ) {
+#      ISGA::ReferenceDB->create( ReferenceTemplate => $_, ReferenceRelease => $reference_release );
+#    }
 
     $self->redirect( uri => "/SoftwareConfiguration/View?reference=$reference" );
   }
