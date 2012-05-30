@@ -188,6 +188,9 @@ by other components.
 
 =cut
 #------------------------------------------------------------------------
+
+  my %dep_priority = { Required => 3, Optional => 2, 'Internal Only' => 1 };
+  
   sub getInputs {
     my $self = shift;
 
@@ -199,11 +202,19 @@ by other components.
 
     my $inputs = ISGA::ClusterInput->query( Component => $components );    
     for (@$inputs){
-      $results{ $_->getType } = $_;
+
+      my $type = $_->getType;
+
+      next if exists $results{$type} and 
+	$dep_priority{$_->getDependency} <= $dep_priority{$results{$type}->getDependency};
+
+      $results{$type} = $_;
     }
+
     foreach ( @{ISGA::ClusterOutput->query( Component => $components )} ) {
       exists $results{ $_->getType } and delete $results{ $_->getType };
     }
+    
     return [ map { $results{$_} } keys %results];
   }
 
