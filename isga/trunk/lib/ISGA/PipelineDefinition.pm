@@ -366,6 +366,21 @@ Returns true if the Pipeline has parameters.
 
 #------------------------------------------------------------------------
 
+=item public boolean hasParameter( string name );
+
+Returns true if the parameter exists for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasParameter {
+    
+    my ($self, $param) = @_;
+
+    return exists $self->{ParameterLookup}{$param};
+  }
+
+#------------------------------------------------------------------------
+
 =item public [hashref] getParameters();
 
 Returns the run builder parameters.
