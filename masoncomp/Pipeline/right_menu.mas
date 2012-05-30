@@ -24,11 +24,13 @@ my $account = ISGA::Login->getAccount;
 my $template = $pipeline->getGlobalTemplate();
 my $is_available = $template->getStatus->isAvailable();
 my $may_access = $account ? ISGA::PipelineConfiguration->value('access_permitted', Pipeline => $template, UserClass => $account->getUserClass) : 0;
-my $is_published = $pipeline->getStatus->getName eq 'Published' ? 1 : 0;
+my $is_published; 
 my $published;
 if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
+$is_published = $pipeline->getStatus->getName eq 'Published' ? 1 : 0;
 $published = ISGA::GlobalPipeline->new(Name => $pipeline->getName(), Status => ISGA::PipelineStatus->new( Name => 'Published' ));
 } else {
+$is_published = $pipeline->getTemplate->getStatus->getName eq 'Published' ? 1 : 0;
 $published = ISGA::GlobalPipeline->new(Name => $pipeline->getGlobalTemplate->getName(), Status => ISGA::PipelineStatus->new( Name => 'Published' ));
 }
 </%perl>
@@ -119,7 +121,7 @@ Your user class <strong><% $account->getUserClass->getName %></strong> is not al
       <a href="#">> You Have <% scalar @pipelines %> Customized Pipeline(s)</a>
       <ul>
 %      foreach my $userpipeline (@pipelines){
-        <li class="rmbutton"><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %></a></li>
+        <li class="rmbutton"><a href="/Pipeline/View?pipeline=<% $userpipeline %>"><% $userpipeline->getName %><br>(<% $userpipeline->getTemplate->getName %>)</a></li>
 %        push(@runs, @{ISGA::Run->query( CreatedBy => ISGA::Login->getAccount, Type => $userpipeline )});
 %      }
       </ul>

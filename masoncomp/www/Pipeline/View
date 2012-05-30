@@ -3,20 +3,23 @@
 </%args>
 
 <%perl>
-my $status = $pipeline->getStatus->getName;
-if( $status ne 'Published' ){
-$m->comp("/site/old_pipeline_warn.mas", pipeline => $pipeline);
-}
 
 # handle global pipelines
 if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
+  my $status = $pipeline->getStatus->getName;
+  if( $status ne 'Published' ){
+    $m->comp("/site/old_pipeline_warn.mas", pipeline => $pipeline);
+  }
 
   my $plugin = $pipeline->getWebPluginDirectory();
   $m->comp("/plugin/$plugin/pipeline-view.mas", pipeline => $pipeline);
 
 # handle user pipelines
 } else {
-
+  my $status = $pipeline->getTemplate->getStatus->getName;
+  if( $status ne 'Published' ){
+    $m->comp("/site/old_pipeline_warn.mas", pipeline => $pipeline);
+  }
   # retrieve the account to test credentials
   my $account = ISGA::Login->getAccount or X::User::Denied::RequiresLogin->throw();
 
