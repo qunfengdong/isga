@@ -56,6 +56,9 @@ actual file from the filesystem.
 
     my $name = $self->getName;
 
+    #as a hack assume that there are more empty files in ISGA
+    $self->getSize == 0 and return;
+
     ISGA::File->exists( Name => $name, Id => { '!=' => $self->getId } )
 	and return;
 
