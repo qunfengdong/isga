@@ -84,17 +84,6 @@ sub AddRelease {
 	ERROR => ['not_null', 'Text::checkDate'],
        },
        
-       # templates
-       {
-	NAME => 'reference_template',
-	TITLE => 'Templates',
-	templ => 'select',
-	SIZE => scalar(@$template_ids),
-	MULTIPLE => 1,
-	OPTION => $template_names,
-	OPT_VAL => $template_ids,
-       },
-
        # status
        {
 	NAME => 'pipeline_status',
