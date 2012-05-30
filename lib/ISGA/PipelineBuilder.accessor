@@ -189,7 +189,7 @@ by other components.
 =cut
 #------------------------------------------------------------------------
 
-  my %dep_priority = { Required => 3, Optional => 2, 'Internal Only' => 1 };
+  my %dep_priority = ( Required => 3, Optional => 2, 'Internal Only' => 1 );
   
   sub getInputs {
     my $self = shift;

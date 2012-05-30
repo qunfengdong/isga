@@ -45,5 +45,9 @@ UPDATE componenttemplate SET componenttemplate_name = 'asgard_simple'
         ( SELECT ergatisinstall_id FROM ergatisinstall WHERE ergatisinstall_name = 'ergatis-v2r11-cgbr1' );
 UPDATE componenttemplate SET componenttemplate_name = 'lipop' WHERE componenttemplate_name = 'lipoprotein_motif';
 
-
-   
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- add an index on filecollectioncontent_child
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CREATE INDEX filecollectioncontent_child_index ON filecollectioncontent(filecollectioncontent_child);
