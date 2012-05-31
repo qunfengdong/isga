@@ -57,4 +57,4 @@ CREATE INDEX filecollectioncontent_child_index ON filecollectioncontent(filecoll
 -- update asm file format to binary
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-UPDATE file
+UPDATE fileformat SET fileformat_isbinary = TRUE WHERE fileformat_name = 'ASM';
