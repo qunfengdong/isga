@@ -46,9 +46,9 @@ sub checkLibraryName {
 
   foreach my $rbi ( @rbi ) {
     foreach ( @{$rbi->getParameters} ) {
-      next if($current_rbi->getId eq $rbi->getId);
+      next if(defined $current_rbi and $current_rbi->getId eq $rbi->getId);
       if($_->{TITLE} eq 'Library Name'){
-          return "Library names must be unique, and you have already assigned a library with this name. If two SFF files require the same library, you can select mulitiple files using ctrl+click in the input selection form." if($_->{VALUE} eq $value);
+          return "Library names must be unique, and you have already assigned a library with this name. If two SFF files require the same library, you can select mulitiple files using ctrl click in the input selection form." if($_->{VALUE} eq $value);
   
       }
     }
