@@ -51,3 +51,10 @@ UPDATE componenttemplate SET componenttemplate_name = 'lipop' WHERE componenttem
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 CREATE INDEX filecollectioncontent_child_index ON filecollectioncontent(filecollectioncontent_child);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- update asm file format to binary
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE file
