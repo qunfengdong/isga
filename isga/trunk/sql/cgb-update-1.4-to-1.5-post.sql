@@ -117,7 +117,7 @@ UPDATE pipelinereference SET referencerelease_id =
            AND reference_id = (SELECT reference_id FROM reference WHERE reference_name = 'UniRef100');
 
 INSERT INTO referencerelease (reference_id, referencerelease_release, referencerelease_version, pipelinestatus_id, referencerelease_path)
-  VALUES((SELECT reference_id FROM reference WHERE reference_name='UniRef100'), '04-14-2009', '15.0', 4, '/nfs/bio/db/Asgard/asgard_data-09-23-2009/');
+  VALUES((SELECT reference_id FROM reference WHERE reference_name='UniRef100'), '04-14-2009', '15.0', 1, '/nfs/bio/db/Asgard/asgard_data-09-23-2009/');
 INSERT INTO referencedb (referencerelease_id, referencedb_path, referencetemplate_id)
   VALUES ( (SELECT CURRVAL('referencerelease_referencerelease_id_seq')), 'UniRef100',
     (SELECT referencetemplate_id FROM referencetemplate WHERE referencetemplate_format = 'BLAST Amino Acid Database' 
