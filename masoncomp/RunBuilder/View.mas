@@ -19,8 +19,6 @@ my $plugin = $run_builder->getWebPluginDirectory();
 $accepting_jobs or $m->comp('/site/sge_outage.mas');
 </%perl>
 
-<a href="ViewProtocol?run_builder=<% $run_builder %>">View Protocol</a>
-
 <h1>Submission Builder</h1>
 
 % if( $runs >= $quota ){
