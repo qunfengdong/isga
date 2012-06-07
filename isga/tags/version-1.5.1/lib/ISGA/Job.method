@@ -1,0 +1,401 @@
+# -*- cperl -*-
+
+use File::Basename;
+use YAML;
+use IO::String;
+
+#------------------------------------------------------------------------
+
+=item public Job new()
+
+We override the base constructor to promote our class to what is
+defined by the JobType for this object.
+
+=cut
+#------------------------------------------------------------------------
+sub new {
+
+  my $class = shift;
+
+  # build the object as normal
+  my $self = $class->NEXT::new(@_);
+
+  bless($self, $self->getType->getClass);
+
+  return $self;
+}
+
+#------------------------------------------------------------------------
+
+=item public Job query()
+
+We override the base constructor to promote our class to what is
+defined by the JobType for this object.
+
+=cut
+#------------------------------------------------------------------------
+sub query {
+
+  my $class = shift;
+
+  # build the object as normal
+  my $selves = $class->NEXT::query(@_);
+
+  # do the new trick on all the found jobs
+  return [map { bless($_, $_->getType->getClass) } @$selves];
+}
+
+#------------------------------------------------------------------------
+
+=item public void updateStatus();
+
+Updates the job status by running qstat on sge. This will
+update the job status.
+
+=cut
+#------------------------------------------------------------------------
+sub updateStatus {
+
+  my $self = shift;
+
+  my $old_status = $self->getStatus;
+  return if $old_status eq 'Finished';
+  return if $old_status eq 'Error';
+  return if $old_status eq 'Failed';
+
+  my $pid = $self->getPid;
+
+  eval {
+
+    ISGA::DB->begin_work();
+
+    my $sge=ISGA::SGEScheduler->new(
+       -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
+    );
+
+    my $new_status = $sge->checkStatus( $pid );
+
+    $new_status eq $old_status or
+      $self->edit( Status => $new_status );
+
+    if ( $new_status eq 'Finished' ){
+        my $collection = $self->getCollection;
+        my $contents = $collection->getContents;
+        my $list;
+        foreach (@$contents){
+                if ($_->getType->getName eq 'Toolbox Job Configuration'){
+                        use YAML;
+                        $list = YAML::LoadFile($_->getPath);
+                }
+        }
+        
+        my $output_file = $list->{'output_file'};
+        if (-e $output_file) {
+          my $type = $list->{'output_type'};
+          my $format = $list->{'output_format'};
+          if (defined $type){
+            $self->addOutputToCollection($output_file, $type, $format);
+          }else{
+            $self->addOutputToCollection($output_file);
+          }
+        } else {
+          $new_status = 'Error';
+          $self->edit( Status => $new_status );
+        }
+
+        if (-e "$output_file.xls") {
+          my $html = "$output_file.xls";
+          $self->addHTMLOutputToCollection($html);
+        }
+        if (-e "$output_file.txt") {
+          my $html = "$output_file.txt";
+          $self->addHTMLOutputToCollection($html);
+        }
+    }
+
+    if ( $new_status eq 'Finished' || $new_status eq 'Error' ||  $new_status eq 'Failed' ) {
+      $self->edit( FinishedAt => ISGA::Timestamp->new() );
+    }
+    ISGA::DB->commit();
+  };
+
+  if ( $@ ) {
+    ISGA::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );    
+    $e->rethrow();
+  }  
+ 
+}
+
+#------------------------------------------------------------------------
+
+=item public void submitJob();
+
+Submit staged jobs.
+
+=cut
+#------------------------------------------------------------------------
+sub submitJob {
+  my $self = shift;
+
+  my $status = $self->getStatus;
+  my $pid = $self->getPid;
+
+  eval {
+
+    ISGA::DB->begin_work();
+    my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+    my $files_path = "$tmp_dir/workbench/" . $self->getType->getName . "/";
+    my $log_name  = $self->getType->getName . "_" .  $self->getId;
+    my $out_directory = $files_path.$log_name;
+    my $command = "$out_directory/${log_name}_sge.sh";
+    $self->edit( Status => 'Pending' );
+
+    my $sge=ISGA::SGEScheduler->new(
+                                    -executable  => {qsub=>'___sge_executables___'.'/qsub -q ___SGE_QUEUE___', qstat=>'___sge_executables___'.'/qstat'},
+                                    -output_file => "$tmp_dir/workbench/sge_log/".$log_name.".sgeout",
+                                    -error_file => "$tmp_dir/workbench/sge_log/".$log_name.".sgeerror",
+                                   );
+
+    $sge->command($command);
+    my $pid = $sge->execute();
+    X->throw(message => 'Error submitting job.') unless($pid);
+    $self->edit( Pid => $pid );
+
+    ISGA::DB->commit();
+  };
+
+  if ( $@ ) {
+    ISGA::DB->rollback();
+
+    my $e = ( X->caught() ? $@ : X::Dropped->new(error => $@) );
+    $e->rethrow();
+  }
+
+}
+
+
+###################### New Classy Stuff ######################
+
+#------------------------------------------------------------------------
+
+=item public File buildQueryFile( File => $file, Upload => $fh, String => $string);
+
+This method takes query sequences in any of three formats and combines
+them to create an input file for the Hawkeye conversion and saves them as an
+ISGA file.
+
+=cut
+#------------------------------------------------------------------------
+sub buildQueryFile {
+
+  my ($class, %args) = @_;
+
+  # both of these are undefined to start with, lines may set them to circumvent unecessary work
+  my $input_file = undef;
+  my $fh = undef;
+
+  # we no longer allow users to mix a stored file with text input or upload
+
+  # do we have a file
+  if ( exists $args{File} ) {
+    $input_file = $args{File};
+
+  # do we have a filehandle
+  } elsif ( exists $args{Upload} ) {
+    $fh = $args{Upload};
+
+  # do we have a string
+  } elsif ( exists $args{String} ) {
+    open $fh, '<', \$args{String};
+
+  # otherwise we forgot input
+  } else { X::API->throw( error => 'No input was supplied for workbench Job' ); }
+
+  # if we have a filehandle, lets create an object out of it
+  if ( $fh ) {
+
+    $fh = ISGA::FileFormat::FASTA->format($fh) if($args{Format} eq 'FASTA');
+
+    $input_file = ISGA::File->upload($fh,
+                                         UserName => $args{Username},
+                                         Type => ISGA::FileType->new( Name => $args{Type} ),
+                                         Format => ISGA::FileFormat->new( Name => $args{Format} ),
+                                         Description => $args{Description},
+                                         CreatedBy => ISGA::Login->getAccount,
+                                         CreatedAt => ISGA::Timestamp->new(),
+                                         IsHidden => 0,
+                                         ExistsOutsideCollection => 0
+                                        );
+  }
+
+  $class->addInputToCollection($input_file);
+
+  # save the file into the YAML config for this job
+  return $input_file;
+}
+
+#------------------------------------------------------------------------
+
+=item public void buildConfigFile( String => $string);
+
+This method creates the ConfigFile for a BLAST job in yaml format.
+The file contains information about the job id, the query databases,
+the blast parameters, and the input file.
+
+=cut
+#------------------------------------------------------------------------
+sub buildConfigFile{
+  my ($self, $config_args) = @_;
+
+  my $tmp_dir = ISGA::SiteConfiguration->value('shared_tmp');
+  my $tmp = '$tmp_dir' . time . $$ . $self->getType->getName . 'Config.yaml';
+
+  my %args = ( Type => ISGA::FileType->new( Name => 'Toolbox Job Configuration'),
+               Format => ISGA::FileFormat->new( Name => 'YAML' ),
+               IsHidden => 1, UserName => basename($tmp),
+               CreatedAt => ISGA::Timestamp->new(),
+               CreatedBy => ISGA::Login->getAccount,
+               ExistsOutsideCollection => 0, Description => 'Config for ' . $self->getType->getName );
+
+  my $fh = File::Temp->new(DIR => $tmp_dir);
+  print $fh YAML::Dump($config_args);
+  seek($fh,0,0);
+
+  my $file = ISGA::File->addToRepository( $fh, %args );
+
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $self->getCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $self->getCollection,
+                                           FileResource => $file,
+                                           Index => $next_index++
+                                         );
+
+
+}
+
+#------------------------------------------------------------------------
+
+=item public void addInputToCollection( String => $string);
+
+This method adds the input file to the collection. 
+
+=cut
+#------------------------------------------------------------------------
+sub addInputToCollection {
+  my ($self, $input) = @_;
+
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $self->getCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $self->getCollection,
+                                           FileResource => $input,
+                                           Index => $next_index++
+                                         );
+
+
+}
+
+#------------------------------------------------------------------------
+
+=item public void addOuputToCollection( String => $string);
+
+This method adds the output file to the collection. 
+
+=cut
+#------------------------------------------------------------------------
+sub addOutputToCollection {
+  my ($self, $output) = @_;
+
+  open my $fh, '<', $output or X::File->throw( error => "Cant open $output - $!" );
+
+  seek($fh,0,0);
+
+  my $output_file = 
+    ISGA::File->addToRepository( $fh,
+				 UserName => basename($output),
+				 Type => ISGA::FileType->new( Name => $self->getOutputType ),
+				 Format => ISGA::FileFormat->new( Name =>  $self->getOutputFormat ),
+				 Description => 'Output file for '.$self->getType->getName.' job',
+				 CreatedBy => ISGA::Login->getAccount,
+				 CreatedAt => ISGA::Timestamp->new(),
+				 IsHidden => 0,
+				 ExistsOutsideCollection => 0
+			       );
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $self->getCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $self->getCollection,
+                                       FileResource => $output_file,
+                                       Index => $next_index++
+                                     );
+#  return $output_file;
+
+}
+
+
+#------------------------------------------------------------------------
+
+=item public void addHTMLOuputToCollection( String => $string);
+
+This method adds the preprocessed HTML output file to the collection. 
+
+=cut
+#------------------------------------------------------------------------
+sub addHTMLOutputToCollection {
+  my ($self, $output) = @_;
+
+  open my $fh, '<', $output or X::File->throw( error => "Cant open $output - $!" );
+
+  seek($fh,0,0);
+  my $output_file = 
+    ISGA::File->addToRepository( $fh,
+				 UserName => basename($output),
+				 Type => ISGA::FileType->new( Name => 'BLAST HTML Result'),
+				 Format => ISGA::FileFormat->new( Name => 'BLAST Raw Results' ),
+				 Description => 'Output file for BLAST job',
+				 CreatedBy => ISGA::Login->getAccount,
+				 CreatedAt => ISGA::Timestamp->new(),
+				 IsHidden => 0,
+				 ExistsOutsideCollection => 0
+			       );
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $self->getCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $self->getCollection,
+                                       FileResource => $output_file,
+                                       Index => $next_index++
+                                     );
+}
+
+#------------------------------------------------------------------------
+
+=item public void addXLSOuputToCollection( String => $string);
+
+This method adds the preprocessed HTML output file to the collection. 
+
+=cut
+#------------------------------------------------------------------------
+sub addXLSOutputToCollection {
+  my ($self, $output) = @_;
+
+  open my $fh, '<', $output or X::File->throw( error => "Cant open $output - $!" );
+
+  seek($fh,0,0);
+  my $output_file = 
+    ISGA::File->addToRepository( $fh,
+				 UserName => basename($output),
+				 Type => ISGA::FileType->new( Name => 'BLAST HTML Result'),
+				 Format => ISGA::FileFormat->new( Name => 'BLAST Raw Results' ),
+				 Description => 'Output file for BLAST job',
+				 CreatedBy => ISGA::Login->getAccount,
+				 CreatedAt => ISGA::Timestamp->new(),
+				 IsHidden => 0,
+				 ExistsOutsideCollection => 0
+			       );
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $self->getCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $self->getCollection,
+                                       FileResource => $output_file,
+                                       Index => $next_index++
+                                     );
+}
+

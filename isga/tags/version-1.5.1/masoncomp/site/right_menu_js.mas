@@ -1,0 +1,23 @@
+<sys:script type="text/javascript">
+$(document).ready(sectionHighlight);
+function sectionHighlight() {
+  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
+  var url = window.location.href;
+  for(var i = 0; i < menuLinks.length; i++){
+    if(url == menuLinks[i].href)
+    {
+      var link = menuLinks[i];
+      var li = link.parentNode;
+      li.style.backgroundColor = "#D8E47C";
+      if($.browser.msie)
+      {
+          var nextLi = li.nextSibling;
+          nextLi.style.backgroundColor = "#D8E47C";
+      }else{
+          var nextLi = li.nextSibling.nextSibling;
+          nextLi.style.backgroundColor = "#D8E47C";
+      }
+    }
+  }
+}
+</sys:script>

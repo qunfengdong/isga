@@ -1,0 +1,52 @@
+<%args>
+ $reference
+</%args>
+
+<h1><% $reference->getName %></h1>
+
+<p>URL: <a href="<% $reference->getLink %>"><% $reference->getLink %></a><br>
+Path: <% $reference->getPath %></p>
+
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Template</th><th colspan="3">Label</th></tr>
+</thead>
+<tbody>
+% foreach ( @{ISGA::ReferenceTemplate->query( Reference => $reference )} ) {
+<tr>
+ <td colspan="2"><% $_->getFormat %></td>
+ <td colspan="2"><% $_->getLabel %></td>
+</tr>
+% }
+<tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
+% foreach my $rr ( @{ISGA::ReferenceRelease->query( Reference => $reference, OrderBy => { DESC => 'Release' } )} ) {
+<tr>
+ <th class="subhead"><% $rr->getVersion %></td>
+ <th class="subhead"><% $rr->getRelease %></td>
+ <th class="subhead"><% $rr->getStatus->getName %></td>
+ <th class="subhead"><a href="EditRelease?reference_release=<% $rr %>">Edit</a></td>
+</tr>
+<tr>
+%   foreach ( @{ISGA::ReferenceDB->query( Release => $rr )} ) {
+%     my $template = $_->getTemplate;
+%     my $format = $template->getFormat;
+%     my $label  = $template->getLabel;
+<tr><td colspan="4">Database: <% $format %> <% $label ? "($label)" : '' %></td></tr>
+<tr><td colspan="4">Path: <% $_->getFullPath %></td></tr>
+%   }
+% }
+</tbody>
+</table>
+</div>
+
+<sys:rightmenu>
+<ul>
+ <li class="title">Configuration Tools</li>
+
+ <li class="rmbutton pointer"><a href="AddRelease?reference=<% $reference %>">Add Release</a></li>
+ <li class="pointer" onclick="window.location='AddRelease?reference=<% $reference %>'"><p>Add a new release for this reference.</p></li>
+
+<& /Configuration/right_menu.mas &>
+</ul>
+</sys:rightmenu>

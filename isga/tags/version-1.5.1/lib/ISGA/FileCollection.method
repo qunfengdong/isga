@@ -1,0 +1,257 @@
+# -*- cperl -*-
+
+use File::Copy;
+use File::Temp;
+
+#------------------------------------------------------------------------
+
+=item public void archive();
+
+Create an archive for the FileCollection. This command will flatten
+any nested FileCollections rather than created nested tar files.
+
+=cut 
+#------------------------------------------------------------------------
+  sub archive {
+
+    my $self = shift;
+
+    $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
+      message => 'archive() not supported by archived FileCollections' );
+
+    # only do it for file list collections
+    $self->getType eq ISGA::FileCollectionType->new( Name => 'File List' )
+      or X::API->throw( message => 'Can only archive file list collections' );
+
+    # do not archive an empty collection
+    ISGA::FileCollectionContent->query( FileCollection => $self ) 
+      or X::API->throw( message => 'Can not archive an empty collection' );
+
+    # if we don't have type and format, grab the first elements
+    if ( ! $self->getFileType or ! $self->getFileFormat ) {
+
+      if ( my @contents = @{$self->getContents()} ) {	
+	$self->edit( FileType => $contents[0]->getType, FileFormat => $contents[0]->getFormat );
+      }
+    }
+
+    # create temp file
+    my $tar =  $self->getPath;
+    open my $fh, '<', $tar or X->throw( message => "unable to open $tar : $!" );
+    
+    # create file
+    my $archive = ISGA::File->addToRepository( $fh, 
+					       UserName => $self->getUserName . '.tar.gz',
+					       Type => ISGA::FileType->new( Name => 'Archived File Collection'),
+					       Format => ISGA::FileFormat->new( Name => 'Compressed Tar Archive'),
+					       Description => ''
+					     );
+    
+    # save as archive
+    $self->edit( Archive => $archive );
+
+    # now delete the contents
+    $self->deleteContents();
+
+    # unlink the archive
+    unlink($tar);
+
+  }
+
+#------------------------------------------------------------------------
+
+=item public void inflate();
+
+Inflate an archived FileCollection, creating distinct objects and
+files for each of its contents.
+
+=cut 
+#------------------------------------------------------------------------
+  sub inflate {
+
+    my $self = shift;
+
+    # if any contents exist for this collection, die
+    ISGA::FileCollectionContent->exists(FileCollection => $self) 
+	and X::API->throw( message => 'Can not inflate a FileCollection with existing contents' );
+
+    # retrieve archive
+    my $archive = $self->getArchive or X::API->throw( message => 'inflate() requires an archive');
+    my $archive_path = $archive->getPath;
+
+    # inflate to temporary directory
+    my $lcl_tmp = ISGA::SiteConfiguration->value('local_tmp');
+
+    my $tmp_dir = File::Temp->newdir(DIR => $lcl_tmp);
+    $tmp_dir->unlink_on_destroy(0);
+    system("tar x -f $archive_path -C $tmp_dir ");
+
+    # process all files in directory
+    my $dir = $tmp_dir . "/" . $self->getUserName;
+    opendir(my $dh, $dir) || X::API->throw( message => "unable to open dir $dir: $!" );
+
+    foreach ( readdir($dh) ) {
+
+      next if $_ eq '.' or $_ eq '..';
+
+      # open file
+      open my $fh, '<', "$dir/$_" or X::API->throw( message => "unable to open file $dir/$_ : $!" );
+
+      warn "adding $dir/$_\n";
+
+      # add file to repository
+      my $file = ISGA::File->addToRepository( $fh, 
+					      UserName => $_,
+					      Type => $self->getFileType,
+					      Format => $self->getFileFormat,
+					      Description => '',
+					      
+					      CreatedBy => $self->getCreatedBy,
+					      CreatedAt => $self->getCreatedAt,
+					      IsHidden => 0,
+					      StripDosLineBreaks => 0
+					    );
+
+      $self->addContents($file);
+    } 
+    
+    # add file to collection
+
+    # unlink archive
+    $self->edit( Archive => undef );
+    
+    # remove the archive
+    $archive->delete();    
+  }
+
+#------------------------------------------------------------------------
+
+=item public void archive();
+
+Create an archive for the FileCollection.
+
+=cut 
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+
+=item public filehandle addToTar( Archive::Tar $archive, string $prefix );
+
+Adds the contents of the current file collection the the passed tar
+archive reference. This nests a file collection inside another one.
+
+=cut 
+#------------------------------------------------------------------------
+  sub addToTar {
+
+    my ($self, $archive, $prefix) = @_;
+
+    my $contents = $self->getContents;
+
+    $prefix .= '/' . $self->getUserName;
+
+    foreach ( @$contents ) {
+
+      if ( $_->isa('ISGA::File') ) {
+        my $logical_path = $prefix . "/" . $_->getUserName;
+        my ( $file ) = $archive->add( $logical_path, $_->getPath );
+
+      # process nested collections
+      } else {
+	$_->addToTar( $archive, $prefix );
+      }
+    }
+
+  }
+
+#------------------------------------------------------------------------
+
+=item public void delete();
+
+Removes a file collection from the database. Any files or collections
+that do not exist outisde of the collection will also be deleted.
+
+=cut 
+#------------------------------------------------------------------------
+  sub delete {
+
+    my $self = shift;
+
+    # remove ourselves from any collections
+    my $collections = ISGA::FileCollectionContent->query( FileResource => $self );
+    $_->delete(1) for @$collections;
+
+    $self->deleteArchive();
+    $self->deleteContents();
+
+    # delete the database entry
+    $self->NEXT::delete();
+  }
+
+#------------------------------------------------------------------------
+
+=item public void deleteArchive();
+
+Removes the archive of a FileCollection. If the collection hasn't
+first been expanded, the data will be permanently lost.
+
+=cut 
+#------------------------------------------------------------------------
+  sub deleteArchive {
+
+    my $self = shift;
+
+    my $archive = $self->getArchive() or return;
+
+    $self->edit( Archive => undef );
+    $archive->delete();
+  }
+
+#------------------------------------------------------------------------
+
+=item public void deleteContents();
+
+Removes a file collections contents from the system.
+
+=cut 
+#------------------------------------------------------------------------
+  sub deleteContents {
+
+    my $self = shift;
+
+    # delete all the contents
+    my $contents = ISGA::FileCollectionContent->query( FileCollection => $self,
+						       OrderBy => 'Index' );
+    $_->delete for reverse @$contents;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void stage(string $dir);
+
+Stages this file for an ergatis run.
+
+=cut 
+#------------------------------------------------------------------------
+  sub stage {
+
+    my ($self, $dir) = @_;
+
+    $self->getArchive and X::FileCollection::ArchivedUnsupported->throw( 
+       message => 'stage() not supported by archived FileCollections' );
+
+    my $name = $self->getName;
+
+    # open file for writing
+    open my $fh, '>', "$dir/$name" or X::File->throw( error => $! );
+
+    foreach ( @{$self->getFlattenedContents} ) {
+
+      # write the file to the file system
+      $_->stage($dir);
+
+      print $fh $dir, "/", $_->getName, "\n";
+    }
+    
+    close $fh;
+  }

@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Partition
+class: JobNotification
+partition_of: Notification
+attributes:
+  - { name: Account, type: Account, options: [ REQUIRED ] }
+  - { name: Job, type: Job, options: [ REQUIRED ] }

@@ -1,0 +1,7 @@
+
+
+<%perl>
+my $accounts = ISGA::Account->query( OrderBy => 'Name' );
+</%perl>
+
+<& /Account/List.mas, accounts => $accounts &>

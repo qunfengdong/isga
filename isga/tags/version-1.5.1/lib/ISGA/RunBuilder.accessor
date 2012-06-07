@@ -1,0 +1,537 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public boolean isMaskedComponent(Component $component);
+
+Returns true if the supplied component should be masked at run time.
+
+=cut 
+#------------------------------------------------------------------------
+  sub isMaskedComponent {
+
+    my ($self, $component) = @_;
+
+    exists $self->{masked_components} or $self->maskComponents;
+
+    exists $self->{masked_components}{$component->getErgatisName} and return 1;
+
+    # check component we depend on
+    if ( my $depends_on = $component->getDependsOn ) {
+      exists $self->{masked_components}{$depends_on->getErgatisName} and return 1;
+    }
+
+    return 0;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getMaskedComponents();
+
+Returns the components that were masked at run time.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getMaskedComponents {
+
+    my $self = shift;
+
+    exists $self->{masked_components} or $self->maskComponents;
+
+    my $ei = $self->getPipeline->getErgatisInstall();
+
+    return [map { ISGA::Component->new( ErgatisName => $_, ErgatisInstall => $ei ) } keys %{$self->{masked_components}}];
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getParameter();
+
+Returns the ergatis config value for the supplied parameter.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getParameter {
+
+    my ($self, $name) = @_;
+
+    my $p_def = $self->getPipelineDefinition();
+
+    my $parameter = $p_def->getParameter($name) or X::API->throw( message => "$name not found as run parameter" );
+
+    my $result = '';
+    if ( defined $parameter->{VALUE} ) {
+      $result = exists $parameter->{FLAG} ? "$parameter->{FLAG} $parameter->{VALUE}" : "$parameter->{VALUE}";
+    }
+
+    return $result;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getSoftware(Software $software);
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getSoftware {
+    
+    my ($self, $software) = @_;
+    
+    # are we over-writing the software with a different run????
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      # default to no match
+      my $return = '';
+      $return = $_->getPath for grep { $_->getSoftware == $software } @{$run->getSoftwareReleases};
+      return $return;
+    }
+
+    # check for a release
+    my $ps = ISGA::PipelineSoftware->new( Pipeline => $self->getGlobalPipeline, Software => $software );
+    my $release = $ps->getSoftwareRelease;
+
+    return $release ? $release->getPath : '';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getSoftwareVersion(Software $software);
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getSoftwareVersion {
+    
+    my ($self, $software) = @_;
+    
+    # are we over-writing the software with a different run????
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      # default to no match
+      my $return = 'Not Available';
+      $return = $_->getVersion for grep { $_->getSoftware == $software } @{$run->getSoftwareReleases};
+      return $return;
+    }
+
+    # check for a release
+    my $ps = ISGA::PipelineSoftware->new( Pipeline => $self->getGlobalPipeline, Software => $software );
+    my $release = $ps->getSoftwareRelease;
+
+    return $release ? $release->getVersion : 'Not Available';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getReferencePath(ReferenceTemplate $template );
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getReferencePath {
+    
+    my ($self, $template) = @_;
+    
+    my $reference = $template->getReference;
+    my $release = undef;
+
+    # are we over-writing the reference with a different run?
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      $release = $_ for grep { $_->getReference == $reference } @{$run->getReferenceReleases};
+      
+    } else {
+
+      # check for a release
+      my $pr = ISGA::PipelineReference->new( Pipeline => $self->getGlobalPipeline, Reference => $reference );
+      $release = $pr->getReferenceRelease;
+    }
+    
+    # if we don't have a release then return nothing now
+    $release or return '';
+
+    return ISGA::ReferenceDB->new( Template => $template, Release => $release )->getFullPath;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getReferenceVersion(Reference $reference );
+
+Returns the configured path for the database.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub getReferenceVersion {
+    
+    my ($self, $reference) = @_;
+    
+    my $release = undef;
+
+    # are we over-writing the reference with a different run?
+    if ( my $run = $self->getCopySoftwareFrom ) {
+      
+      $release = $_ for grep { $_->getReference == $reference } @{$run->getReferenceReleases};
+      
+    } else {
+
+      # check for a release
+      my $pr = ISGA::PipelineReference->new( Pipeline => $self->getGlobalPipeline, Reference => $reference );
+      $release = $pr->getReferenceRelease;
+    }
+
+    return $release ? $release->getVersion : 'Not Available';
+  }
+
+#------------------------------------------------------------------------
+
+=item public GlobalPipeline getGlobalPipeline();
+
+Returns the global pipeline for the run builder.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getGlobalPipeline {
+    return shift->getPipeline->getGlobalTemplate();
+  }
+
+#------------------------------------------------------------------------
+
+=item public PipelineDefinition getPipelineDefinition();
+
+Returns the pipeline definition for this RunBuilder.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getPipelineDefinition {
+
+    my $self = shift;
+
+    return $self->{pipeline_definition} || ( $self->{pipeline_definition} = ISGA::PipelineDefinition->new($self) );
+  }
+
+#------------------------------------------------------------------------
+
+=item public HashRef getComponentParameterValues(Component $component);
+
+Returns a hashref of name => values for all parameters to the supplied component.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentParameterValues {
+
+    my ($self, $component) = @_;
+
+    my $pd = $self->getPipelineDefinition();
+    
+    return $pd->getComponentParameterValues($self, $component);
+  }
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder with this objects parameter mask applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my $self = shift;
+
+    return ISGA::ComponentBuilder->new(shift, $self->getGlobalPipeline, @_ );
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getFullErgatisPath();
+
+Returns a string giving the full path to to the ergatis directory for
+this run builder.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getFullErgatisPath {
+
+    my $self = shift;
+    return join( '/', $self->getPipeline->getErgatisSubmissionDirectory, $self->getErgatisDirectory );
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getProtocolPath();
+
+Returns the path to this components protocol file relative to the package include directory.
+
+=cut 
+#------------------------------------------------------------------------
+   sub getProtocolPath {
+
+     my $self = shift;
+     my $gp = $self->getGlobalPipeline;
+
+     return '/' . $gp->getErgatisInstall->getName . '/' . $gp->getLabel . '.protocol';
+   }
+
+#------------------------------------------------------------------------
+
+=item public string getWebPluginDirectory();
+
+Returns the directory for storing global-pipeline specific mason components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWebPluginDirectory {
+    return shift->getPipeline->getWebPluginDirectory();
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getScrubbedName();
+
+Returns the name of the RunBuilder after being scrubbed so that it can
+be safely interpretted as a perl variable by ergatis scripts.
+
+=cut
+#------------------------------------------------------------------------
+  sub getScrubbedName {
+    
+    my $id_root = shift->getName;
+    $id_root =~ s/\s/_/g;
+    $id_root =~ s/\./_/g;
+    $id_root = "My_$id_root" if $id_root =~ /^[0-9]/;
+    
+    # formatdb fails for long strings, so let's control the length
+    length($id_root) > 39 and $id_root = substr($id_root, 0, 39);
+    return $id_root;
+  }
+
+#------------------------------------------------------------------------
+
+=item public integer getIterationCount(Cluster $c);
+
+Returns the number of times the provided cluster will be excuted.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getIterationCount {
+
+    my ($self, $c) = @_;
+    
+    my $p = $self->getPipeline();
+    my $ci = $c->getIteratesOn() or return 0;
+
+    my $pi = ISGA::PipelineInput->new( ClusterInput => $ci, Pipeline => $p );
+    
+    return ISGA::RunBuilderInput->exists( RunBuilder => $self, PipelineInput => $pi );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getComponents(Cluster $cluster);
+
+Return a list of activated components in cluster of the run builder.This method will take into effect iterations as well as components masked by run parameters.
+
+=cut 
+#------------------------------------------------------------------------
+sub getComponents {
+
+  my ($self, $cluster) = @_;
+
+  my $p = $self->getPipeline;
+
+  my $clusters = ( $cluster ? [$cluster] : $p->getClusters );
+  my @return;
+
+  foreach ( @$clusters ) {
+    
+    # retrieve components, filtered by parameters
+    my @components = grep { ! $self->isMaskedComponent($_) } @{$p->getComponents($_)};
+
+    if ( my $ci = $_->getIteratesOn ) {
+
+      my $iterations = $self->getIterationCount($_);
+      for my $c ( @components ) {
+	push @return, ISGA::Component::Iterated->new($c, $_) for ( 1 .. $iterations );
+      }
+      
+    } else {
+      push @return, @components;
+    }
+  }
+
+  return \@return;  
+}
+
+#------------------------------------------------------------------------
+
+=item public [PipelineInput] getRequiredInputs();
+
+Returns an reference to an array of pipeline inputs required by this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getRequiredInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{required};
+}
+
+#------------------------------------------------------------------------
+
+=item public [PipelineInput] getOptionalInputs();
+
+Returns an reference to an array of pipeline inputs required by this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getOptionalInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{optional};
+}
+
+#------------------------------------------------------------------------
+
+=item public int getMissingRequiredInputs();
+
+Returns the number of required inputs that have not been specified for
+this run.
+
+=cut 
+#------------------------------------------------------------------------
+sub getMissingRequiredInputs {
+
+  my $self = shift;
+  $self->_processInputs();
+
+  return $self->{_cached_inputs}{missing};
+}
+
+#------------------------------------------------------------------------
+
+=item public [RunBuilderInput] getInputs();
+
+Retrieves all the inputs for the Run Builder.
+
+=item public [RunBuilderInput] getInputs(PipelineInput $pi);
+
+Retrieves all the inputs for the Run Builder matching the supplied Pipeline Input.
+
+=cut
+#------------------------------------------------------------------------
+sub getInputs { 
+
+  my ($self, $pi) = shift;
+
+  my %args = ( RunBuilder => $self );
+  $pi and $args{PipelineInput} = $pi;
+
+  return ISGA::RunBuilderInput->query( %args ); 
+}
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask {
+    return ISGA::ParameterMask->new($_[0]->{runbuilder_parametermask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return $_[0]->{runbuilder_parametermask}; }
+
+#------------------------------------------------------------------------
+
+=item public bool hasParameters();
+
+Returns true if the RunBuilder has any defined run parameters. 
+
+=cut
+#------------------------------------------------------------------------
+  sub hasParameters { return shift->getPipelineDefinition->hasParameters(); }
+
+#------------------------------------------------------------------------
+
+=item public bool hasUnconfiguredParameters();
+
+Returns true if the RunBuilder has any parameters that still need to
+be configured.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasUnconfiguredParameters {
+
+    my $self = shift;
+
+    my $p_def = $self->getPipelineDefinition();
+
+    foreach ( @{$p_def->getParameters} ) {
+      exists $_->{VALUE} or return 1;
+    }
+
+    return 0;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [['parameter','value']] getParametersToPrint();
+
+Returns [string $parametername, string $value] for each runbuilder parameter.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParametersToPrint {
+
+    my $self = shift;
+
+    my $p_def = $self->getPipelineDefinition();
+
+    my @params;
+
+    foreach my $field ( @{$p_def->getParameters} ) {
+      next if ( exists $field->{templ} and $field->{templ} eq 'hidden' );
+
+      my @details = ( $field->{TITLE} );
+      push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
+      
+      # check boxes are different
+      if ( $field->{templ} eq 'check' and exists $field->{VALUE} ) {
+	$details[1] = $field->{OPTION} || 'Yes';
+	$details[1] = 'No' if (not defined $field->{VALUE});
+      # for forms with multiple options map back to the option for pretty printing
+      } elsif(exists $field->{OPT_VAL} && exists $field->{VALUE}){
+	my( $index )= grep { ${$field->{OPT_VAL}}[$_] eq $details[1] } 0..$#{$field->{OPT_VAL}};
+	if ( defined($index) ) {
+	  $details[1] = ${$field->{OPTION}}[$index];
+	} else {
+	  $details[1] = 'None';
+	}
+      }
+      push @params, \@details;
+    }
+
+    return \@params;
+  }

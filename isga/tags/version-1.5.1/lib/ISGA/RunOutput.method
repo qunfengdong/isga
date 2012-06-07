@@ -1,0 +1,153 @@
+# -*- cperl -*-
+
+use File::Basename;
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutput();
+
+Copies Ergatis output into our system. This should not be called until
+the underlying cluster is complete to avoid getting partial results.
+
+=cut 
+#------------------------------------------------------------------------
+  sub saveErgatisOutput {
+
+    my $self = shift;
+
+    # learn about our run
+    my $run = $self->getRun;
+    my $run_name = $run->getName();
+    my $run_collection = $run->getFileCollection();
+    my $id = $run->getErgatisKey;
+
+    my $cout = $self->getClusterOutput();
+
+    # search for the who and now
+    my $account = ISGA::Login->getAccount();
+    my $now = ISGA::Timestamp->new();
+
+    my $raw_output =  join( '/', $run->getType->getErgatisOutputRepository, $cout->getFileLocation );
+    $raw_output =~ s/___id___/$id/go;
+    
+    -e $raw_output or X::File::NotFound->throw( $raw_output );  
+
+    my $format = $cout->getFormat;
+    my $username = defined $cout->getBaseName ? $run_name . ' ' . $cout->getBaseName : $run_name . '.' . $format->getExtension;
+    # build args hash for create statements
+    my %args = ( Type => $cout->getType, Format => $format, IsHidden => 0,
+                 UserName => $username,
+		 CreatedAt => $now, CreatedBy => $account, ExistsOutsideCollection => 0,
+		 Description => "Output from $run_name" );
+
+    my $resource;
+    my $is_file;
+
+    # one file vs many files
+    if ( $cout->getErgatisFormat eq 'File List' ) {
+      
+      # read in our list of files
+      open my $fh, '<', $raw_output or X->throw( error => "$raw_output - $!" ); 
+      my @list = <$fh>;
+      close $fh; 
+      
+      if ( @list == 1 ) {
+	chomp $list[0];
+	$raw_output = $list[0];
+	$is_file = 1;
+      # if there are no results, leave it blank
+      } elsif ( @list == 0 ) {
+	return;
+
+      } else {
+	my $prefix = $run_name . " " . $cout->getType->getName;    
+	$resource = $self->saveErgatisOutputFileCollection( \@list, $prefix, %args );
+      }      
+    }
+
+    # if not a 'File List' or list has one file
+    if ( $cout->getErgatisFormat eq 'File' or $is_file ) {
+      $resource = $self->saveErgatisOutputFile($raw_output, %args);
+    }
+    
+    # whatever we built, add it to the run collection
+    $run_collection->addContents($resource);
+    $self->edit( FileResource => $resource );
+  }
+
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutputFileCollection(array_ref $paths, string $prefix, hash $file_args);
+
+Copies Ergatis output consisting of multiple files to the Repository
+and adds them to the run collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub saveErgatisOutputFileCollection {
+
+    my ($self, $raw_outputs, $prefix, %args) = @_;
+    
+    # create the archive
+    my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+  
+    my $tar = ISGA::Tar->new(tmpdir => "$tmp_dir");
+   
+    # walk through files
+    foreach ( @$raw_outputs ) {
+      chomp;
+      my $logical_path = $prefix . "/" . basename($_);
+      my ($file) = $tar->add( $logical_path, $_ );
+    }
+ 
+    # open a "temporary" file, but we'll let it hang around
+    my $tmp = File::Temp->new(DIR => $tmp_dir);
+    $tar->write( $tmp->filename(), 1);
+
+    seek($tmp,0,0);
+    
+    # create file
+    my $archive = ISGA::File->addToRepository( $tmp, 
+					       UserName => "$prefix.tar.gz",
+					       Type => ISGA::FileType->new( Name => 'Archived File Collection'),
+					       Format => ISGA::FileFormat->new( Name => 'Compressed Tar Archive'),
+					       Description => 'file collection archive',
+					       CreatedAt => $args{CreatedAt},
+					       CreatedBy => $args{CreatedBy},
+					     );
+
+    # create the collection
+    my $collection = ISGA::FileCollection->create
+      ( Type => ISGA::FileCollectionType->new('File List'),
+	CreatedAt => $args{CreatedAt},
+	CreatedBy => $args{CreatedBy},
+	Description => $args{Description},
+	IsHidden => 0,
+	ExistsOutsideCollection => 0,
+	FileFormat => $args{Format},
+	FileType => $args{Type},
+	UserName => $prefix,
+	Archive => $archive
+      );
+
+    return $collection;
+  }
+
+#------------------------------------------------------------------------
+
+=item public void saveErgatisOutputFile(string $path, hash $file_args);
+
+Copies Ergatis output consisting of a single file to the Repository
+and adds it to the run collection.
+
+=cut 
+#------------------------------------------------------------------------
+  sub saveErgatisOutputFile {
+
+    my ($self, $raw_output, %args) = @_;
+
+    open my $fh, '<', $raw_output or X::File->throw( error => "Cant open $_ - $!" );
+        
+    return ISGA::File->addToRepository( $fh, %args );    
+  }

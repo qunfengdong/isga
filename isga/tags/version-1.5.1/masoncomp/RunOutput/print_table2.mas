@@ -1,0 +1,102 @@
+<%args>
+  $run
+  $embed => 0
+</%args>
+
+<%perl>
+
+my %results;
+
+foreach ( @{ISGA::RunOutput->query( Run => $run)} ) {
+  
+  my $coutput = $_->getClusterOutput;
+  next unless $coutput->getVisibility eq 'Pipeline';
+
+  my $cluster = $coutput->getComponent->getCluster;
+
+  if ( exists $results{$cluster} ) {
+    push @{$results{$cluster}{Output}}, $_;
+  } else {
+    $results{$cluster} = { Cluster => $cluster, Output => [ $_ ] };
+  }
+}
+
+my $run_status = $run->getStatus;
+
+</%perl>
+
+% if ( $embed ) {
+ <tr>
+  <td colspan="3">Results for Run <% $run->getName %></td>
+  <td><% $run->getCreatedAt->brief %></td>
+ </tr>
+% } else {
+<table width="100%">
+ <thead>
+  <tr><th>Contents</th><th>Format</th><th>Created On</th><th>View / Download</th></tr>
+ </thead>
+ <tbody>
+% }
+
+% foreach my $cluster ( values %results ) {
+%   my $cname = $cluster->{Cluster}->getName;
+<tr class="list_label">
+ <td colspan="4" style="font-weight: bold;"><% $cluster->{Cluster}->getName %>\
+ <a href="#" title='<% $cname %>|<% $cluster->{Cluster}->getDescription() %>'><span class="sup">?</span></a>
+ </td>
+</tr>
+
+
+%   my $row_counter = 0;
+%   foreach my $run_output ( @{$cluster->{Output}} ) {
+%     my $tr_class = ++$row_counter % 2 ? "even" : "odd";
+%     my $output = $run_output->getClusterOutput;
+%     my $type = $output->getType;
+%     my $tname = $type->getName;
+<tr class="<% $tr_class %>" >
+ <td><% $tname %>\
+  <a href="#" title='<% $tname %>|<% $type->getHelp %>'><span class="sup">?</span></a>
+ </td>
+
+%     my $format = $output->getFormat;
+%     my $fname = $format->getName;
+ <td><% $fname %>\
+  <a href="#" title='<% $fname %>|<% $format->getHelp %>'><span class="sup">?</span></a>
+ </td>
+%     my $file = $run_output->getFileResource;
+%     if ( $file ) {
+ <td> <% $file->getCreatedAt->getDate->text %></td>
+ <td>
+%       if ( $file->isa('ISGA::File') ) {
+   <a href="/File/View?file=<% $file %>">View</a> |\
+   <a  href="/Download/<% $file->getUserName %>?file_resource=<% $file %>">Download</a>
+
+%       } elsif ( my $archive = $file->getArchive ) {
+   <a href="/Download/<% $archive->getUserName %>?file_resource=<% $archive %>">Download</a>
+
+%       } else {
+   <a href="/FileCollection/View?file_collection=<% $file %>">View</a> |\
+   <a  class="downloadRemove" href="/Download/<% $file->getUserName %>.tar.gz?file_resource=<% $file %>">Download</a>
+%       } 
+ </td>
+%     } else {
+  <td></td>
+% if ( $run_status eq 'Complete' ) {
+  <td>No Output</td>
+% } else {
+  <td>Not Available Yet</td>
+% }
+%     }
+</tr>
+%   }
+% }
+
+% # print the table
+% if ( ! $embed ) {
+ </tbody>
+</table>
+% }
+
+<%once>
+my $complete = ISGA::RunStatus->new( Name => 'Complete' );
+</%once>

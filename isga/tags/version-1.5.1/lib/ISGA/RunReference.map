@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: runreference
+attributes:
+  - { name: Run, type: Run }
+  - { name: ReferenceRelease, type: ReferenceRelease }

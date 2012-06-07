@@ -1,0 +1,20 @@
+<%args>
+ $notification
+</%args>
+<%perl>
+my $run = $notification->getRun();
+my $account = $run->getCreatedBy();
+my $message = $notification->getVar1();
+</%perl>
+<% $account->getName %>,
+
+Your recent ISGA pipeline <% $run->getName %> was not able to finish
+and has been canceled by an administrator. A detailed explanation of
+the problem is included below:
+
+<% $message %>
+
+If you are not sure how to proceed with resubmitting your data, you
+can reply to this message for additional support.
+
+

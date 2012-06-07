@@ -1,0 +1,12 @@
+<%args> # -*- cperl -*-
+ $transcriptome_contig
+</%args>
+
+<%perl>
+  
+my $group = ISGA::TranscriptomeContig->query( ParalogGroup => $transcriptome_contig->getParalogGroup,
+					      Transcriptome => $transcriptome_contig->getTranscriptome );
+
+return $m->comp('/TranscriptomeContig/View.mas', contig => $transcriptome_contig, group => $group);
+</%perl>
+

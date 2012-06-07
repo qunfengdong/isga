@@ -1,0 +1,19 @@
+<%args> # -*- cperl -*-
+ @active => ()
+</%args>
+
+<%perl>
+
+# build a cache of active news posts
+my $active = {};
+$active->{$_} = 1 for @active;
+
+my $type_map = {};
+
+# query active news
+
+my $news = ISGA::News->query( IsArchived => 0, OrderBy => { DESC => 'CreatedAt' } );
+
+</%perl>
+
+<& /News/recent.mas, active => $active, news => $news &>

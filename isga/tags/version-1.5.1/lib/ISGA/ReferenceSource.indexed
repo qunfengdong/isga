@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ReferenceSource 
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: Description, type: string }

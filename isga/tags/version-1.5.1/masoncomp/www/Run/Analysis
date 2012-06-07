@@ -1,0 +1,27 @@
+<%args> # -*- cperl -*-
+ $run 
+</%args>
+
+<%perl>
+
+if ( ! ISGA::Login->hasGroup( $admin ) ) {
+  ISGA::Login->getAccount->mayRead($run)
+      or X::User::Denied->throw;
+}
+
+if ($run->hasRunAnalysis){
+
+  my $plugin = $run->getGlobalPipeline->getWebPluginDirectory();
+
+</%perl>
+
+<& "/plugin/$plugin/analysis.mas", run => $run &>
+% } else {
+<& "/Run/no_analysis.mas", run => $run &>
+% }
+
+<%once>
+
+  my $admin = ISGA::Group->new( Name => 'Run Administrators' );
+
+</%once>

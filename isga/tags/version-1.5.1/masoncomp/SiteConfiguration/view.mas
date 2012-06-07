@@ -1,0 +1,27 @@
+<%perl>  
+my @sorted = map { $_->[1] }
+    sort { $a->[0] cmp $b->[0] }
+      map { [ $_->getVariable->getName, $_ ] } @{ISGA::SiteConfiguration->query()};
+</%perl>  
+
+<h1>Site Configuration</h1>
+
+<p>This page lists site-wide configuration variables for ISGA that can be updated in real time by administrators.</p>
+
+<& /Configuration/list.mas, sorted => \@sorted &>
+
+<& /site/right_menu_js.mas &>
+
+<sys:rightmenu>
+<ul>
+ <li class="title">Configuration Tools</li>
+
+ <li class="rmbutton pointer"><a href="/SiteConfiguration/Edit">Edit</a></li>
+ <li class="pointer" onclick="window.location='/SiteConfiguration/Edit'"><p>Edit the ISGA Site Configuration.</p></li>
+
+<& /Configuration/right_menu.mas &>
+
+</ul>
+
+
+</sys:rightmenu>

@@ -1,0 +1,22 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getName();
+
+Returns the name associated with this template.
+
+=cut
+#------------------------------------------------------------------------
+  sub getName {
+    
+    my $self = shift;
+
+    my $name= $self->getReference->getName;
+
+    if ( my $label = $self->getLabel ) {
+      $name .= " $label";
+    }
+    
+    return $name;
+  }

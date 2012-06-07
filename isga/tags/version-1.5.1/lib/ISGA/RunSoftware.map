@@ -1,0 +1,5 @@
+--- !perl/MasonX::Foundation::Class::Map
+table: runsoftware
+attributes:
+  - { name: Run, type: Run }
+  - { name: SoftwareRelease, type: SoftwareRelease }

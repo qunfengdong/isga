@@ -1,0 +1,10 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ClusterOutput
+attributes:
+  - { name: Component, type: Component, options: [ REQUIRED ] }
+  - { name: Type, type: FileType, options: [ REQUIRED ] }
+  - { name: Format, type: FileFormat, options: [ REQUIRED ] }
+  - { name: ErgatisFormat, type: string, options: [ REQUIRED ] }
+  - { name: Visibility, column: outputvisibility_name, type: string, options: [ REQUIRED ] }
+  - { name: FileLocation, column: clusteroutput_fileloc, type: string, options: [ REQUIRED ] }
+  - { name: BaseName, column: clusteroutput_basename, type: string }

@@ -1,0 +1,37 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public delete();
+
+=item public delete(bool $shallow);
+
+Removes a file resource from a collection. If that file resource
+doesn't exist outside of the collection, it is deleted. If $shallow is
+defined the underlying File Resource will not be deleted.
+
+=cut 
+#------------------------------------------------------------------------
+  sub delete {
+
+    my ($self, $shallow) = @_;
+
+    # save collection and index
+    my $collection = $self->getFileCollection();
+    my $index = $self->getIndex();
+    my $resource = $self->getFileResource();
+    
+    # delete the database entry
+    $self->NEXT::delete();
+
+    # if the resource isn't referenced elsewhere, we delete it
+    if ( ! $shallow and ! $resource->existsOutsideCollection 
+	 and ! ISGA::FileCollectionContent->exists( FileResource => $resource ) ) {
+      $resource->delete();
+    }
+
+    # grab entries with a higher index
+    my $contents = ISGA::FileCollectionContent->query( FileCollection => $collection,
+						       Index => { '>' => $index } );
+    $_->edit( Index => $_->getIndex-1 ) for @$contents;
+  }

@@ -1,0 +1,19 @@
+<%args>
+ $form
+</%args>
+
+<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
+<script src="/CustomUploadProgress/progress.js"></script>
+<script src="/CustomUploadProgress/progress.jmpl.js"></script>
+
+<sys:style type="text/css" media="screen">
+ @import "/CustomUploadProgress/progress.css";
+</sys:style>
+
+<sys:style type="text/css" media="screen">
+  @import "/include/css/jtip.css";
+</sys:style>
+
+<div id="progress"></div>
+
+<% $form->get %>

@@ -1,0 +1,73 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public void draw();
+
+Assigns colors and draw pipline workflow.
+
+=cut
+#------------------------------------------------------------------------
+  sub draw {
+    
+    my ($self, $wf_mask) = @_;
+
+    my $image = GD::Image->new( '___package_masoncomp___/www/' . $self->getImage );
+    my $green = $image->colorClosest(160,199,98);
+    my $yellow = $image->colorClosest(223,210,91);
+    my $grey =  $image->colorClosest(204,204,204);
+    my $red = $image->colorClosest(255,153,153);
+
+    # if we weren't passed clusters and a workflow mask from a pipeline, retrieve our own
+    defined $wf_mask or $wf_mask = $self->getWorkflowMask;
+
+    # find any disabled components and then mark the owning cluster as partial
+    my %partial_cluster = map { $_->getCluster => undef } @{$wf_mask->getDisabledComponents};
+
+    # loop through all clusters
+    foreach my $cluster ( @{$self->getClusters} ) {
+      
+      # retrieve workflow - it's a bit less efficient to retrieve it now, but more readable
+      my $wf = ISGA::Workflow->new( Pipeline => $self, Cluster => $cluster );
+      next if $wf->isHidden();
+      my @coords = split ( /,/, $wf->getCoordinates );
+
+      # is it disabled?
+      if ( ! $wf_mask->isActive($cluster) ) {
+
+	for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+	    $image->setPixel($i,$j, $red) if ($image->getPixel($i,$j) == $green);
+	  }
+	}
+
+      # is it partial
+      } elsif ( exists $partial_cluster{$cluster} ) {
+
+	for ( my $i = $coords[0]; $i <= $coords[2]; $i++ ) {
+	  for ( my $j = $coords[1]; $j <= $coords[3]; $j++ ) {
+	    $image->setPixel($i,$j, $grey) if ($image->getPixel($i,$j) == $green);
+	  }
+	}	
+      }
+    }
+
+    print $image->png;
+  }    
+
+
+#------------------------------------------------------------------------
+
+=item public void verifyUpload( string $name, PipelineInput $pi);
+
+This method generates a verification callback to be used on uploaded
+files. By default we do nothing.
+
+=cut 
+#------------------------------------------------------------------------
+sub verifyUpload {
+  
+  return [ sub {
+    my $fh = shift;
+    return $fh;
+  } ];
+}

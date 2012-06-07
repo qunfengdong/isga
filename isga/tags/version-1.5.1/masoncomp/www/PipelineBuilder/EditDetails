@@ -1,0 +1,14 @@
+<%args> # -*- cperl -*-
+ $pipeline_builder
+</%args>
+
+<%perl>
+
+# check that we have the correct form cached
+my $form = $ISGA::WebApp->saved_args->{'form'};
+$form and $form->get_formname() eq 'pipeline_builder_edit_details'
+  or $form = ISGA::FormEngine::PipelineBuilder->EditDetails(\%ARGS);
+
+return $m->comp('/PipelineBuilder/edit_details.mas', 
+		pipeline_builder => $pipeline_builder, form => $form);
+</%perl>

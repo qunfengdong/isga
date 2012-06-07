@@ -1,0 +1,28 @@
+<%args>
+ $notification
+</%args>
+% my $account_request = ISGA::AccountRequest->new( Id => $notification->getVar1());
+Your request for a CGB Pipeline Service account has been processed. To
+activate your account, click on the following URL, or copy and paste
+it into a web browser.  This request is only valid for 48 hours. If
+you wait longer than that, you may need to resubmit the request.
+
+If you did not request this account, you do not need to do
+anything. The request will expire and no account will be created. Your
+email address will not be visible to other users of the site.
+
+Confirmation Link:
+
+  <% ISGA::Site->getBaseURI  %>submit/Account/Confirm?hash=<% $account_request->getHash %>
+
+Name: 
+
+  <% $account_request->getName %> 
+
+Email:
+
+  <% $account_request->getEmail %>
+
+Request Time: 
+
+  <% $account_request->getCreatedAt->standard %>

@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ReferenceDB
+attributes:
+  - { name: Release, type: ReferenceRelease, options: [ REQUIRED ] }
+  - { name: Path, type: string, options: [ REQUIRED ] }
+  - { name: Template, type: ReferenceTemplate, options: [ REQUIRED ] }

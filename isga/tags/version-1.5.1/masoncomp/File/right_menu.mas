@@ -1,0 +1,39 @@
+<%args>
+ $file
+</%args>
+
+% my $name = $file->getUserName;
+% my $is_mine = ( $file->getCreatedBy == ISGA::Login->getAccount );
+
+<sys:rightmenu>
+<ul>
+<li class="title">Tools</li>
+
+<li class="rmbutton pointer"><a href="/Download/<% $name %>?file_resource=<% $file %>">Download</a></li>
+<li class="pointer" onclick="window.location='/Download/<% $name %>?file_resource=<% $file %>'"><p>Download this file to your local machine.</p></li>
+
+% if ( $is_mine ) {
+<li class="rmbutton pointer"><a href="/File/EditDescription?file=<% $file %>">Edit Description</a></li>
+<li class="pointer" onclick="window.location='/File/EditDescription?file=<% $file %>'"><p>View and edit the description of this file.</p></li>
+
+%   if ( $file->isHidden ) {
+
+<li class="rmbutton pointer"><a href="/submit/File/Restore?file=<% $file %>">Restore File</a></li>
+<li class="pointer" onclick="window.location='/submit/File/Restore?file=<% $file %>'"><p>This file has been hidden. If you restore the file it will be
+listed when browsing your files, and will be available to select as
+input for runs.</p></li>
+%   } else {
+
+<li class="rmbutton pointer"><a href="/submit/File/Hide?file=<% $file %>">Hide File</a></li>
+<li class="pointer" onclick="window.location='/submit/File/Hide?file=<% $file %>'"><p>Hiding a file will not delete it, but the file will no longer
+be listed when selecting input for a run, or browsing your files. You
+can access and restore a hidden a file by selecting 'Show hidden
+files' while listing your files.</p></li>
+%   }
+% }
+
+<li class="rmbutton pointer"><a href="/File/BrowseMy">Browse Files</a></li>
+<li class="pointer" onclick="window.location='/File/BrowseMy'"><p>Go back to the list of your files.</p></li>
+
+</ul>
+</sys:rightmenu>

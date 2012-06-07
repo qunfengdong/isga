@@ -1,0 +1,50 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public void writeConfigFile( RunBuilder $rb, { ClusterInput => HashRef } $cluster_inputs );
+
+Write the config file for this component in support of an Ergatis run.
+
+=item public void writeConfigFile( RunBuilder $rb, { ClusterInput => HashRef } $cluster_inputs, int $iteration );
+
+Write the $iteration-th config file for this component in support of an Ergatis run.
+
+=cut
+#------------------------------------------------------------------------
+  sub writeConfigFile {
+
+    my ($self, $rb, $cluster_inputs, $iteration) = @_;
+    # nuke mask from this!
+
+    # register RunBuilder
+    $self->{run_builder} = $rb;
+    $self->{cluster_inputs} = $cluster_inputs;
+    $iteration and $self->{iteration} = $iteration;
+
+    # process parameters
+    $self->{parameters} = $rb->getComponentParameterValues($self);
+    
+    # use Mason to generate the config file
+    my $out_buffer;
+    my $interp = HTML::Mason::Interp->new( comp_root  => '___package_include___', out_method => \$out_buffer );
+    $interp->exec( $self->getConfigFilePath, self => $self );
+
+    # write the file
+    my $path = $rb->getFullErgatisPath . '/'. $self->getErgatisName . '.config';
+    ISGA::Utility->writeFile($path, $out_buffer);
+  }
+  
+#------------------------------------------------------------------------
+
+=item public ISGA::Component formatArrayParam(ParameterMaskValue $array);
+
+Formats an array of values for a component input value.
+
+=cut
+
+#------------------------------------------------------------------------
+  sub formatArrayParam{
+   my ($self, $array);
+     return $array;
+  }
