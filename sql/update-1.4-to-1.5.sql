@@ -474,3 +474,36 @@ ERROR: ''File::isPath''
 -- blank to start with
 INSERT INTO siteconfiguration ( configurationvariable_id, siteconfiguration_value ) VALUES (
  (SELECT configurationvariable_id FROM configurationvariable WHERE configurationvariable_name = 'shared_tmp'), '');
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Update cluster workflow coordinates to match new images
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE workflow SET workflow_coordinates = '12,209,152,269' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'TFBS Search' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '168,112,308,172' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'ORF Prediction' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '260,300,401,360' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Additional Gene Analysis' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '350,209,490,269' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Protein Domain Search' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '181,209,321,269' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Sequence Similarity Search' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '510,112,649,172' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'RNA Prediction' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '329,13,490,92' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Process Annotation Input Files' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+UPDATE workflow SET workflow_coordinates = '329,403,490,481' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Output' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Prokaryotic Annotation' );
+
+
+UPDATE workflow SET workflow_coordinates = '66,50,206,110' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'SFF Preperation' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Celera Assembly' );
+
+UPDATE workflow SET workflow_coordinates = '66,155,206,214' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Assembly Step' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Celera Assembly' );
+
+UPDATE workflow SET workflow_coordinates = '66,256,206,315' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Hawkeye Step' ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Celera Assembly' );
+
+
+UPDATE workflow SET workflow_coordinates = '66,50,206,423' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Run shore'  ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Shore SNP Mapping Pipeline' );
+
