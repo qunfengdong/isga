@@ -5,6 +5,13 @@
 # retrieve the run
 my $path = $r->path_info();
 my ($run) = $path =~ /^\/(\d+)/;
+
+# make sure we have a run
+$run or X::User::Denied->throw();
+
+#      ISGA::Login->getAccount->mayRead($run)
+#	or X::User::Denied->throw();
+
 $run = ISGA::Run->new(Id => $run);
 
 my $html = $m->scomp( '/Browser/contig_select.mas', run => $run );
