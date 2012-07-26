@@ -10,7 +10,7 @@ my ($run) = $path =~ /^\/(\d+)/;
 #	or X::User::Denied->throw();
 
 # if it's not a valid run, throw permission denied
-eval { $run = ISGA::Run->new(Id => $run) }
+eval { $run = ISGA::Run->new(Id => $run) };
 $@ and X::User::Denied->throw();
 
 my $html = $m->scomp( '/Browser/contig_select.mas', run => $run );
