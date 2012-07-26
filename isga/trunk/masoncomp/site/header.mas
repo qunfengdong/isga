@@ -9,8 +9,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 % if ( exists $siteTags{title} ) {
 <% $siteTags{title} %>
+% } elsif ( my $usecase = ISGA::Login->getUseCase ) {
+<title><% $usecase->getTitle %></title>
 % } else {
-<title><% ISGA::Login->getUseCase->getTitle %></title>
+<title>ISGA</title>
 % }
 
 %#<script type="text/javascript" src="/include/js/jquery-1.3.1.min.js"></script>
