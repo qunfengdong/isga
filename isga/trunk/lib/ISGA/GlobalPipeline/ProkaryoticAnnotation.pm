@@ -79,6 +79,15 @@ sub verifyUpload {
 	
 	$e->rethrow();
       }
+
+
+      # we know the fasta file passes general tests, do prok. annotation specific tests
+      seek($fh,0,0);
+      while (<$fh>) {	
+	X::User->throw( error => "For compatibility with NCBI's tbl2asn sequence headers may not begin with the word 'assembly'" )
+	    if /^>assembly/i ;	
+      }
+
     }
 
     # this filter doesn't modify the fh
