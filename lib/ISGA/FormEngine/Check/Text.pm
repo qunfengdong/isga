@@ -125,6 +125,7 @@ sub checkDate {
 }
 
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkHTML');
+ISGA::FormEngine::SkinUniform->_register_check('Text::checkEmail');
 ISGA::FormEngine::SkinUniform->_register_check('Text::alphaNumeric');
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkUnixFileName');
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkDate');
