@@ -91,17 +91,14 @@ sub isUniqueName {
       and return $message;
 
   # then check other run builders
-  my ($rb) = 
-    @{ISGA::RunBuilder->query( Name => $data, CreatedBy => ISGA::Login->getAccount)};
-
-  if ( $rb ) {
-
+  my $pipeline = $form->get_input('pipeline');
+  foreach my $rb ( @{ISGA::RunBuilder->query( Name => $data, CreatedBy => ISGA::Login->getAccount)} ) {
+    
     if ( $form->get_formname eq 'run_builder_create' ) {
-      my $pipeline = $form->get_input('pipeline');
-      $rb->getPipeline == $pipeline or return $message;
+      $pipeline == $rb->getPipeline->getId() or return $message;
     } else {
-     $form->get_input('run_builder') == $rb or return $message;
-   }
+      $form->get_input('run_builder') == $rb->getId() or return $message;
+    }
   }
 
   return '';
