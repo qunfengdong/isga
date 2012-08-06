@@ -85,7 +85,7 @@ sub verifyUpload {
       while (<$fh>) {	
 
 	X::User->throw( error => "For compatibility with NCBI's tbl2asn sequence headers may not begin with the word 'assembly'" )
-	    if =~ /^>assembly/i;
+	    if $_ =~ /^>assembly/i;
       }
     }
 

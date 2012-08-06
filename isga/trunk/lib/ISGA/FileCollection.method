@@ -41,6 +41,7 @@ any nested FileCollections rather than created nested tar files.
     
     # create file
     my $archive = ISGA::File->addToRepository( $fh, 
+					       CreatedBy => $self->getCreatedBy,
 					       UserName => $self->getUserName . '.tar.gz',
 					       Type => ISGA::FileType->new( Name => 'Archived File Collection'),
 					       Format => ISGA::FileFormat->new( Name => 'Compressed Tar Archive'),
@@ -146,6 +147,16 @@ archive reference. This nests a file collection inside another one.
 
     my ($self, $archive, $prefix) = @_;
 
+    # if we are archived, write the archive
+    if ( my $arch = $self->getArchive ) {
+      warn "my user name is " , $arch->getUserName;
+      my $logical_path = $prefix . "/" . $arch->getUserName;
+      warn "my path is $logical_path\n";
+      $archive->add( $logical_path, $arch->getPath );
+      return;
+    }
+    
+    # otherwise recurse through the collection
     my $contents = $self->getContents;
 
     $prefix .= '/' . $self->getUserName;

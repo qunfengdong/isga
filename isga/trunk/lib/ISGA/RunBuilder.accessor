@@ -518,7 +518,7 @@ Returns [string $parametername, string $value] for each runbuilder parameter.
       push @details, ( exists $field->{VALUE} ? $field->{VALUE} : '<span class="alert">None</span>' );
       
       # check boxes are different
-      if ( $field->{templ} eq 'check' and exists $field->{VALUE} ) {
+      if ( exists $field->{templ} and $field->{templ} eq 'check' and exists $field->{VALUE} ) {
 	$details[1] = $field->{OPTION} || 'Yes';
 	$details[1] = 'No' if (not defined $field->{VALUE});
       # for forms with multiple options map back to the option for pretty printing
