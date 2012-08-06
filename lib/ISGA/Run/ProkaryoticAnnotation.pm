@@ -210,7 +210,7 @@ hash containing the genome features.
 
     my $self = shift;
     
-    my $gff_file = ISGA::RunOutput->new( ClusterOutput => $self->getClusterOutput, 
+    my $gff_file = ISGA::RunOutput->new( ClusterOutput => $self->getGFFClusterOutput, 
 					 Run => $self )->getFileResource; 
 
     # default is a file
