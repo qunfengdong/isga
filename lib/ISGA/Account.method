@@ -45,6 +45,11 @@ Returns true if the supplied account has permission to access this file and fals
     my $containers = $file->getContainers();
     push @$containers, $file;
     
+    # if this is a collection archive, check the collection
+    if ( $file->getType eq 'Archived File Collection' ) {
+      push @$containers, ISGA::FileCollection->new( Archive => $file );
+    }
+
     # we can read files shared with us
     ISGA::FileResourceShare->exists( Resource => $containers, Party => $parties ) and return 1;
 
