@@ -2,7 +2,7 @@
 mason_data_directory: /data/web/isga.cgb/mason 
 apache_session_directory: /data/web/isga.cgb/session
 apache_session_lock_directory: /data/web/isga.cgb/session
-database: { name: isga_dev, user: isga, type: Pg }
+database: { name: isga_dev, user: abuechle, type: Pg }
 test_database: { name: isga, user: cgb, type: Pg }
 mail_config: mail.cgb.indiana.edu
 log_file: /data/web/isga.cgb/log
@@ -13,11 +13,11 @@ custom_parameters:
 # Email address to send notification mail from
   mail_sender: 'ISGA Aaron System <biohelp@cgb.indiana.edu>'
 # The URL for the cgi directory of the Ergatis installation that ISGA will use.
-  ergatis_base_uri: https://aaron1-ergatis.cgb.indiana.edu/cgi/
+  ergatis_base_uri: https://aaron2-ergatis.cgb.indiana.edu/cgi/
 # The time allowed between resetting a password and confirming the password change.  e.g., 24h
   password_reset_cutoff: 24h
 # The base url for your local ISGA web server
-  base_uri: http://aaron1-dev.cgb.indiana.edu/
+  base_uri: http://aaron2-dev.cgb.indiana.edu/
 # Path to your local copies of searchable databases, i.e., NCBI nr, PFAM, etc.  Please use full path.
   database_path: /data/
 # Path to the bin directory containing scripts used in ISGA.  Please use full path.
