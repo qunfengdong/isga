@@ -166,8 +166,12 @@ sub getInputFiles {
 
   my @files;
 
-  foreach (@{$self->getInputs}){
-    push @files, @{$_->getFileResource->getContents};
+  foreach (map { $_->getFileResource } @{$self->getInputs}){
+    if ( $_->isa('ISGA::FileCollection') ) {
+      push @files, @{$_->getFlattenedContents};
+    } else {
+      push @files, $_;
+    }
   }
 
   return \@files;
