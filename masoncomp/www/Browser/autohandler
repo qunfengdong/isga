@@ -6,12 +6,13 @@
 my $path = $r->path_info();
 my ($run) = $path =~ /^\/(\d+)/;
 
-#      ISGA::Login->getAccount->mayRead($run)
-#	or X::User::Denied->throw();
-
 # if it's not a valid run, throw permission denied
 eval { $run = ISGA::Run->new(Id => $run) };
 $@ and X::User::Denied->throw();
+
+my $account = ISGA::Login->getAccount or X::User::Denied::RequiresLogin->throw();
+$account->mayRead($run) or X::User::Denied->throw();
+
 
 my $html = $m->scomp( '/Browser/contig_select.mas', run => $run );
 
