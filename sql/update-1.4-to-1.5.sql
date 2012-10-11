@@ -507,3 +507,11 @@ UPDATE workflow SET workflow_coordinates = '66,256,206,315' WHERE cluster_id IN 
 
 UPDATE workflow SET workflow_coordinates = '66,50,206,423' WHERE cluster_id IN ( SELECT cluster_id FROM cluster WHERE cluster_name = 'Run shore'  ) AND pipeline_id IN ( SELECT pipeline_id FROM pipeline WHERE pipeline_name = 'Shore SNP Mapping Pipeline' );
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-- Distinguish CDS and Translated CDS sequences in file name
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+UPDATE clusteroutput SET clusteroutput_basename = 'CDS.fsa' WHERE filetype_id = ( SELECT filetype_id FROM filetype WHERE filetype_name = 'CDS' );
+UPDATE clusteroutput SET clusteroutput_basename = 'Translated CDS.fsa' WHERE filetype_id = ( SELECT filetype_id FROM filetype WHERE filetype_name = 'Translated CDS' );
+
