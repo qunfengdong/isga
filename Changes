@@ -1,5 +1,17 @@
 Revision history for ISGA
 
+1.5.2   Jun 22 2012
+
+	BUG FIXES
+
+	* Fixed Celera form validation that wasn't working properly
+	* Fixed database update script to use correct coordinates for new pipeline images
+	* Fixed FileCollection archive method to inherit ownership of the file collection
+	* Fixed archival of FileCollection that contains archived FileCollections
+	* Some pages showed permission denied error rather than login box when viewed without being logged in
+	* CheckEmail form validator was not properly registered so invalid email addresses caused an
+	  exception
+
 1.5.1   Jun 6 2012
 	
 	BUG FIXES
