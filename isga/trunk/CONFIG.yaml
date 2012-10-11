@@ -2,22 +2,22 @@
 mason_data_directory: /data/web/isga.cgb/mason 
 apache_session_directory: /data/web/isga.cgb/session
 apache_session_lock_directory: /data/web/isga.cgb/session
-database: { name: isga_dev, user: isga, type: Pg }
+database: { name: isga_test, user: chemmeri, type: Pg }
 test_database: { name: isga, user: cgb, type: Pg }
 mail_config: mail.cgb.indiana.edu
 log_file: /data/web/isga.cgb/log
 minimum_log_level: warning
-error_notification_email: [ 'abuechle@cgb.indiana.edu' ]
-server_name: ISGA Aaron
+error_notification_email: [ 'chemmeri@islay.cgb.indiana.edu' ]
+server_name: Chris-ISGA Test
 custom_parameters:
 # Email address to send notification mail from
-  mail_sender: 'ISGA Aaron System <biohelp@cgb.indiana.edu>'
+  mail_sender: 'ISGA Chris System <biohelp@cgb.indiana.edu>'
 # The URL for the cgi directory of the Ergatis installation that ISGA will use.
-  ergatis_base_uri: https://aaron1-ergatis.cgb.indiana.edu/cgi/
+  ergatis_base_uri: http://chris-ergatis.cgb.indiana.edu/cgi/
 # The time allowed between resetting a password and confirming the password change.  e.g., 24h
   password_reset_cutoff: 24h
 # The base url for your local ISGA web server
-  base_uri: http://aaron1-dev.cgb.indiana.edu/
+  base_uri: http://chris-isga.cgb.indiana.edu/
 # Path to your local copies of searchable databases, i.e., NCBI nr, PFAM, etc.  Please use full path.
   database_path: /data/
 # Path to the bin directory containing scripts used in ISGA.  Please use full path.
@@ -25,7 +25,7 @@ custom_parameters:
 # Full path to your shell e.g., /bin/sh
   sh_executable: /bin/sh
 # Full path to SGE executables.
-  sge_executables: /cluster/sge-62u4/bin/sol-amd64
+  sge_executables: /cluster/sge/bin/sol-amd64
 # Full path to blast.
   blast_executable: /nfs/bio/sw/encap/ncbi_blast-2.2.25/bin/
 # Full path to cdbfasta.
@@ -39,7 +39,7 @@ custom_parameters:
 # SGE Qmaster Port number
   SGE_QMASTER_PORT: 6444
 # SGE root path directory
-  SGE_ROOT: /cluster/sge-62u4
+  SGE_ROOT: /cluster/sge
 # SGE Queue
   SGE_QUEUE: workbench 
 # Full path to toAmos

@@ -13,7 +13,7 @@ custom_parameters:
 # Email address to send notification mail from
   mail_sender: 'ISGA Chris System <biohelp@cgb.indiana.edu>'
 # The URL for the cgi directory of the Ergatis installation that ISGA will use.
-  ergatis_base_uri: https://chris-ergatis.cgb.indiana.edu/cgi/
+  ergatis_base_uri: http://chris-ergatis.cgb.indiana.edu/cgi/
 # The time allowed between resetting a password and confirming the password change.  e.g., 24h
   password_reset_cutoff: 24h
 # The base url for your local ISGA web server
