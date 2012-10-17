@@ -46,7 +46,6 @@ use Exception::Class
  'X::File::FASTA::Header' => { isa => 'X::File::FASTA', fields => ['line'] },
  'X::File::FASTA::Header::BeginningSpace' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::BeginningNumber' => { isa => 'X::File::FASTA::Header' },
- 'X::File::FASTA::Header::TooLong' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::Duplicate' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::EmptySequence' => { isa => 'X::File::FASTA::Header' },
  'X::File::FASTA::Header::MissingSymbol' => { isa => 'X::File::FASTA::Header' },
@@ -140,14 +139,6 @@ sub X::File::FASTA::Header::BeginningNumber::message {
   my $name = $e->name;
 
   return "Fasta header should not begin with a number after '>' at line $line in $name.";
-}
-
-sub X::File::FASTA::Header::TooLong::message {
-  my $e = shift;
-  my $line = $e->line;
-  my $name = $e->name;
-
-  return "Fasta header must be 150 characters or less at line $line in $name.";
 }
 
 sub X::File::FASTA::Header::Duplicate::message {

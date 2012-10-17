@@ -171,9 +171,6 @@ sub verify {
       
       X::File::FASTA::Header::EmptySequence->throw( name => $name, line => $line-1 ) if $in_seq and $seq_length == 0;
 
-      #header has to be less 150 characters or less for RepeatMasker
-      X::File::FASTA::Header::TooLong->throw( name => $name, line => $line ) if ( length($_) > 151 );
-
       $fasta{seq_count}++;
       
       # form now on sequence characters are valid
