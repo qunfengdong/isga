@@ -1,0 +1,90 @@
+<%args>
+ $cds
+ $mrna
+ $gene
+ $upstream
+ $downstream
+</%args>
+
+<& format_sequence_display.mas &>
+
+<h1><% $gene->getLocus %></h1>
+
+<div class="data">
+
+<table width="100%">
+ <tbody>
+  <tr>
+   <th width="30%">Locus</th><td width="70%"><% $gene->getLocus %></td>
+  </tr>
+  <tr>
+% my $contig = $gene->getContig;
+% my $run = $contig->getRun;
+   <th>Position</th><td><a href="/Browser/gbrowse/<% $run %>/?name=<% $contig->getUniqueName %>:<% $gene->getStart %>..<% $gene->getEnd %>"><% $gene->getStart %> - <% $gene->getEnd %> on <% $gene->getStrand eq '+' ? 'plus' : 'minus' %> strand</a></td>
+  </tr>
+  <tr>
+   <th>Length</th><td><% $gene->getEnd - $gene->getStart + 1 %></td>
+  </tr>
+  <tr>
+   <th>Gene Symbol</th><td><% $mrna->getGeneSymbol %></td>
+  </tr>
+  <tr>
+   <th>Gene Symbol Source</th><td><% $mrna->getGeneSymbolSource ? '<a href = "' . $mrna->getGeneSymbolSource->getURI . '">' . $mrna->getGeneSymbolSource->getValue . '</a>' : '' %></td>
+  </tr>
+  <tr>
+   <th>Description</th><td><% $gene->getNote %></td>
+  </tr>
+  <tr>
+   <th>TIGR_role</th><td><% $mrna->getTIGRRole ? '<a href = "' . $mrna->getTIGRRole->getURI . '">' . $mrna->getTIGRRole->getValue . '</a>' : '' %></td>
+  </tr>
+  <tr>
+   <th>Gene Product Name Source</th><td><% $mrna->getGeneProductNameSource %></td>
+  </tr>
+  <tr>
+   <th>Top COG Hit</th><td><% $cds->getTopCogHit %></td>
+  </tr>
+  <tr>
+   <th>Enzyme Nomenclature</th><td><a href=""><% $mrna->getEC ? '<a href = "' . $mrna->getEC->getURI . '">' . $mrna->getEC->getValue . '</a>' : '' %></td>
+  </tr>
+  <tr>
+   <th>Gene Ontology</th><td>
+% if (my $refExRefs = $mrna->getExRefs) {
+%	my @exRefs = @$refExRefs;
+%	foreach (@exRefs) {
+		<a href="<% $_->getURI %>"><% $_->getValue %></a><br>
+%	}
+% }
+</td>
+  </tr>
+  <tr> 
+   <th width="30%">Gene Name</th><td width="70%"><% $gene->getUniqueName %></td>
+  </tr>
+  <tr> 
+   <th width="30%">mRNA Name</th><td width="70%"><% $mrna->getUniqueName %></td>
+  </tr>
+  <tr> 
+   <th width="30%">CDS Name</th><td width="70%"><% $cds->getUniqueName %></td>
+  </tr>
+ </tbody>
+</table>
+
+<b>Gene Sequence</b> 
+
+<& display_sequence.mas, genome_feature => $gene, upstream => $upstream, downstream => $downstream &>
+
+
+<b>CDS Sequence</b> 
+<br>&nbsp;<br>
+<a class="button" href="/WorkBench/Form?job_type=<% ISGA::JobType->new( Name => 'Blast' ) %>&feature_id=<% $cds %>">BLAST the Sequence</a>
+<br>&nbsp;<br>
+<a class="button" href="/Download/<% $gene->getLocus %>.fasta?genome_feature=<% $cds %>">Download the Sequence</a>
+<br>&nbsp;<br>
+<pre>
+&gt;<% $gene->getLocus . "\n" . getPrintableSequence($cds->getResidues, 0) %>
+</pre>
+<br>
+</div> 
+
+
+
+

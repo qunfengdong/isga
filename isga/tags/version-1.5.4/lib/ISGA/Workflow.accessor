@@ -1,0 +1,41 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public boolean isStart()
+
+Returns true if this node is a start node.
+
+=cut
+#------------------------------------------------------------------------
+sub isStart { exists shift->{start} ? 1 : 0; }
+
+#------------------------------------------------------------------------
+
+=item public boolean isStop();
+
+Returns true if this node is a stop node.
+
+=cut
+#------------------------------------------------------------------------
+sub isStop { exists shift->{stop} ? 1 : 0; }
+
+#------------------------------------------------------------------------
+
+=item public boolean isOn();
+
+Returns true if this node is turned on.
+
+=cut
+#------------------------------------------------------------------------
+sub isOn { exists shift->{on} ? 1 : 0; }
+
+#------------------------------------------------------------------------
+
+=item public boolean isHidden();
+
+Returns true if this node is hidden meaning it has no coordinates.
+
+=cut
+#------------------------------------------------------------------------
+sub isHidden { defined shift->getCoordinates ? 0 : 1; }
+

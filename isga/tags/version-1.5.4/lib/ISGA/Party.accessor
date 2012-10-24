@@ -1,0 +1,50 @@
+#! -*- cperl -*- 
+
+#------------------------------------------------------------------------
+
+=item public [Parties] getParties();
+
+Returns all of the parties this party is a member of. Default
+information returns only the current party.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParties {
+    return [shift];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Run] getSharedRuns();
+
+Returns a list of the runs that have been shared with this group.
+
+=cut
+#------------------------------------------------------------------------
+  sub getSharedRuns { 
+
+    my $self = shift;
+
+    # retrieve share objects
+    my $shares = ISGA::RunShare->query( Party => $self->getParties );
+
+    # transform to runs
+    return [map { $_->getResource } @$shares];
+  }
+
+#------------------------------------------------------------------------
+
+=item public int getSharedRunCount();
+
+Returns a list of the runs that have been shared with this group.
+
+=cut
+#------------------------------------------------------------------------
+  sub getSharedRunCount { 
+
+    my $self = shift;
+
+    # retrieve share objects
+    return  ISGA::RunShare->exists( Party => $self->getParties );
+  }
+

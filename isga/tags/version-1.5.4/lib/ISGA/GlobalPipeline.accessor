@@ -1,0 +1,264 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public undef getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask { return undef; }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return ''; }
+
+#------------------------------------------------------------------------
+
+=item public GlobalPipeline getGlobalTemplate();
+
+Returns the current pipline object. This method is provided for polymorphism.
+
+=cut
+#------------------------------------------------------------------------
+  sub getGlobalTemplate { return shift; }
+
+#------------------------------------------------------------------------
+
+=item public string getLabel();
+
+Returns the name and release of the pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getLabel {
+    my $self = shift;
+    return $self->getName() . ' (' . $self->getRelease() . ')';
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getWebPluginDirectory();
+
+Returns the directory for storing global-pipeline specific mason components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWebPluginDirectory {
+    my $path = shift->getSubClass;
+    $path =~ s{::}{/};
+    return $path;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getFormPath();
+
+Returns a string containing the path to this pipelines form
+configuration file.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getFormPath {
+
+    my $self = shift;
+
+    # check for existance of file based on ergatis install
+    my $file = join( '/', '___package_include___', $self->getErgatisInstall->getName(), 
+		     $self->getLabel);
+    $file .= ".yaml";
+    -f $file or X::API->throw( message => "Pipeline configuration file: $file is missing" );
+
+    return $file;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Workflow] getWorkflow();
+
+Returns the Workflow objects associated with this pipeline.
+
+=item public Workflow getWorkflow(Cluster $cluster);
+
+Returns the Workflow object associates with this pipeline and the
+supplied Cluster. Raises an exception if the Workflow does not exist.
+
+=cut
+#------------------------------------------------------------------------
+  sub getWorkflow { 
+    
+    my $self = shift;
+    
+    $_[0] or return ISGA::Workflow->query( Pipeline => $self );
+
+    return ISGA::Workflow->new( Pipeline => $self, Cluster => shift );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getClusters();
+
+Convenience method to return a list of clusters in this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getClusters { 
+
+    my $self = shift;
+
+    my @clusters = map {$_->getCluster} @{$self->getWorkflow};
+
+    if ( my $wf_mask = $self->getWorkflowMask ) {
+      return [grep { $wf_mask->isActive($_) } @clusters];
+    }
+    
+    return \@clusters;
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Cluster] getAllClusters();
+
+Convenience method to return a list of all clusters in this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getAllClusters { 
+
+    my $self = shift;
+    return [map {$_->getCluster} @{$self->getWorkflow}];
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getComponents();
+
+Returns a list of components in this pipeline.
+
+=item public [Component] getComponents(Cluster $cluster);
+
+Returns a list of components in the provided cluster of this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponents { 
+
+    my ($self, $cluster) = @_;
+
+    if ( $cluster and ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $self )) {
+      return ISGA::Component->query(Cluster => $cluster);
+    }
+    
+    return ISGA::Component->query( Cluster => $self->getClusters );
+  }
+
+#------------------------------------------------------------------------
+
+=item public [Component] getAllComponents();
+
+Returns a list of components in this pipeline.
+
+=item public [Component] getAllComponents(Cluster $cluster);
+
+Returns a list of components in the provided cluster of this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getAllComponents { 
+
+    my ($self, $cluster) = @_;
+
+    if ( $cluster and ISGA::Workflow->exists(Cluster => $cluster, Pipeline => $self )) {
+      return ISGA::Component->query(Cluster => $cluster);
+    }
+    
+    return ISGA::Component->query( Cluster => $self->getAllClusters );
+  }
+
+#------------------------------------------------------------------------
+
+=item public ComponentBuilder getComponentBuilder(Component $component);
+
+Returns a component builder for the passed component. No parmater mask is applied.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponentBuilder {
+
+    my ($self, $component) = @_;
+    return ISGA::ComponentBuilder->new($component, $self);
+  }
+
+#------------------------------------------------------------------------
+
+=item public boolean hasGBrowseData();
+
+Returns true if the pipeline generates data for display in GBrowse
+
+=cut
+#------------------------------------------------------------------------
+  sub hasGBrowseData { return 0; }
+
+#------------------------------------------------------------------------
+
+=item public boolean hasBlastDatabase();
+
+Returns true if the pipeline provides a Blast database.
+
+=cut
+#------------------------------------------------------------------------
+  sub hasBlastDatabase { return 0; }
+
+#------------------------------------------------------------------------
+
+=item public boolean generatesTranscriptomeData();
+
+Returns true if the pipeline generates transcriptome data.
+
+=cut
+#------------------------------------------------------------------------
+  sub generatesTranscriptomeData { return 0; }
+
+#------------------------------------------------------------------------
+
+=item public [PipelineConfiguration] getConfiguration();
+
+Returns the global configuration settings for this pipeline.
+
+=item public [PipelineConfiguration] getConfiguration(UserClass user_class);
+
+Returns the configuration settings for this pipeline as they apply to
+the supplied user class.
+
+=cut
+#------------------------------------------------------------------------
+  sub getConfiguration { 
+
+    # user_class is either defined or unde, i.e. global
+    my ($self, $user_class) = @_;
+
+    # retrieve global configuration
+    my $global_config = ISGA::PipelineConfiguration->query( Pipeline => $self,
+							    UserClass => undef );
+    my %config = map { $_->getVariable->getName => $_ } @$global_config;
+    
+    
+    # if they supply a user class, look for overriding configuration 
+    if ( $user_class ) {
+
+      my $custom_config = ISGA::PipelineConfiguration->query( Pipeline => $self,
+							      UserClass => $user_class );
+
+      $config{ $_->getVariable->getName } = $_ for @$custom_config;
+    }
+
+    # return array ref ordered by variable name
+    return [map { $config{$_} } sort keys(%config)];
+  }

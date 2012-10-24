@@ -1,0 +1,32 @@
+<%init> 
+ use POSIX qw(ceil floor); 
+</%init>
+
+% sub getPrintableSequence {
+% 	my ($sequence, $isDNA, $offset) = @_;
+% 	my $printableSequence = '';
+%       my $i = 0;
+%	my $c = 0;
+%	my $clusterSize = 10;
+%	$clusterSize = 1 unless ($isDNA);
+%	$offset = 0 unless ($offset);
+%	$c = floor($offset / $clusterSize);
+%	$offset %= $clusterSize;
+%	my $clusterCountPerLine = 7;
+%	$clusterCountPerLine = 38 unless ($isDNA);
+%	$c %= $clusterCountPerLine;
+%	my $cluster = '';
+%	while ($i < length($sequence)) {
+%		$cluster = substr $sequence, $i, $clusterSize - $offset;
+%		$printableSequence .= "$cluster "; 
+%		$i += ($clusterSize - $offset); 
+%		$offset = 0;
+%		$c++; 
+%		if ($c == $clusterCountPerLine) { 
+%			$c = 0; 
+%			$printableSequence .= "\n"; 
+%		} 
+%	}
+%	$printableSequence =~ s/\s+$// unless (length($cluster) == $clusterSize);
+%	$printableSequence;
+%}

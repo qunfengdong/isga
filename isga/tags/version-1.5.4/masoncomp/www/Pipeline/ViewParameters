@@ -1,0 +1,14 @@
+<%args> # -*- cperl -*-
+ $pipeline
+ $component
+ $hide_unset => 1
+</%args>
+
+<%perl>
+
+my $builder = $pipeline->getComponentBuilder($component);
+
+</%perl>
+
+<& /Pipeline/view_parameters.mas, component => $component, 
+  component_builder => $builder, pipeline => $pipeline, hide_unset => $hide_unset &>

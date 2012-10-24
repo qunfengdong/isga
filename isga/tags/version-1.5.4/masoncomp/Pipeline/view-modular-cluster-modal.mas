@@ -1,0 +1,53 @@
+<%args>
+ $pipeline
+ $workflow
+</%args>
+
+% my $cluster = $workflow->getCluster();
+% my $c_name = $cluster->getName();
+
+<h1 class="component"><%  $c_name %></h1>
+
+<p class="component"><% $c_name %> has the following components
+available.</p>
+
+%# loop through and print components on and link to params
+<div class="modaltable">
+<table>
+  <tbody>
+   <tr class="list_label">
+     <td align="left">Component</td>
+     <td align="left">View Parameters</td>
+     <td align="left">Turned On/Off</td>
+   </tr>
+<%perl>
+
+# let's try to figure out why this is so complicated?
+my $components = ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index', DependsOn => undef, Name => {'NOT NULL' => undef} );
+my $wf_mask = $pipeline->getWorkflowMask;
+my @components;
+
+foreach my $component ( @$components ) {
+  push @components, $component, 
+       @{ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index', DependsOn => $component, Name => {'NOT NULL' => undef})};
+}
+
+foreach ( @components ) {
+  my $builder = $pipeline->getComponentBuilder($_);
+</%perl>
+<tr class="odd">
+ <td><em class="clustermodal"><% $_->getName %></em></td>
+ </td>
+%   if ( $builder ) {
+ <td><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>">View Parameters</a></td>
+%   } else {
+ <td>No parameters to configure.</td>
+%   }
+ </td>
+ <td class="centertext" align="right"><% $wf_mask->isActive($_) ? 'on' : 'off' %></td>
+</tr>
+%   if ( $builder ) {
+<tr class="odd"><td colspan="2"><p class="clustermodal"><% $builder->getComponentDescription  %></p></td></tr>
+%   }
+
+% }

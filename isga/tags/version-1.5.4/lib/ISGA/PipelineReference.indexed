@@ -1,0 +1,7 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: PipelineReference
+attributes:
+  - { name: Pipeline, type: GlobalPipeline, options: [ REQUIRED ] }
+  - { name: Reference, type: Reference, options: [ REQUIRED ] }
+  - { name: ReferenceRelease, type: ReferenceRelease }
+  - { name: Note, type: string }

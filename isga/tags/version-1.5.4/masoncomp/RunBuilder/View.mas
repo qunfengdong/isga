@@ -1,0 +1,88 @@
+<%args>
+ $run_builder
+</%args>
+
+<sys:style type="text/css" media="screen"> 
+  @import "/include/css/uni-form.css"; 
+</sys:style>
+
+<%perl>
+use List::Util qw(min);
+
+my $account = ISGA::Login->getAccount;
+my $quota = ISGA::UserClassConfiguration->value('pipeline_quota', UserClass => $account->getUserClass);
+my $accepting_jobs = ISGA::SiteConfiguration->value('allow_sge_requests');
+my $has_run_parameters = $run_builder->hasParameters();
+my $runs = ISGA::Run->getCurrentRunCount($account);
+my $plugin = $run_builder->getWebPluginDirectory();
+
+$accepting_jobs or $m->comp('/site/sge_outage.mas');
+</%perl>
+
+<h1>Submission Builder</h1>
+
+% if( $runs >= $quota ){
+<div class="downtime"><p>You are currently at your quota for the allowable number of simultaneously running pipelines. ISGA currently only allows users to run <% $quota %> pipelines at the same time.  We apologize for 
+any inconvenience this may cause you.</p></div>
+% }
+
+<p>Before submitting your run, you must select the data files the submission
+will process. Additionally, you may need to set information specific to
+the file being submitted.</p>
+
+<div class="data">
+<table width="100%" class="fixed">
+ <tbody>
+  <tr>
+   <th width="15%">Name</th><td width="35%"><% $run_builder->getName %></td>
+% my $pipeline = $run_builder->getPipeline;
+   <th width="15%">Pipeline</th>
+   <td width="35%">
+    <a href="/Pipeline/View?pipeline=<% $pipeline %>"><% $pipeline->getName %></a>
+   </td>
+  </tr>
+  <tr>
+   <th>Description</th>
+   <td colspan="3"><% $run_builder->getDescription %></td>
+  </tr> 
+ </tbody>
+</table>
+
+</div>
+
+<& "/plugin/$plugin/walkthrough-run-builder.mas" &>
+
+% if ( $has_run_parameters ) {
+
+<& "/plugin/$plugin/run-builder-parameters.mas" &>
+
+<div class="list">
+
+<table width="100%">
+<thead>
+ <tr><th width="40%">Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+% foreach ( @{$run_builder->getParametersToPrint} ) {
+ <tr><th class="parameter"><% $_->[0] %></th><td><% $_->[1] %></td></tr>
+% }
+ <tr><th class="parameter">Software Versions</th><td>\
+% if ( my $run = $run_builder->getCopySoftwareFrom ) {
+Inherited from <% $run->getName %>\
+%   if ( $run->getCreatedBy != ISGA::Login->getAccount ) {
+ shared by <% $run->getCreatedBy->getAccount %>\
+%   }
+% } else {
+Use Latest Installed\
+% }
+</td></tr>
+</tbody>
+</table>
+</div>
+
+% }
+
+<& view_inputs.mas, run_builder => $run_builder &>
+
+
+<& right_menu.mas, run_builder => $run_builder &>

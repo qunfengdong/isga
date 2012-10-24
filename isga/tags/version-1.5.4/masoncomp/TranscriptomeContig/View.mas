@@ -1,0 +1,37 @@
+<%args>
+ $contig
+ @group => ()
+</%args>
+
+<%perl>
+my $name = $contig->getName;
+</%perl>
+
+<h1><% $name %></h1>
+
+<div class="data">
+
+<table width="100%">
+<tbody>
+ <tr>
+  <th width="30%">Contig</th><td width="70%"><% $name %></td>
+ </tr>
+ <tr> 
+  <th>Length</th><td><% $contig->getLength %></td>
+ </tr>
+
+ <tr><th colspan="2">Best NR hit</th></tr>
+% if ( my $nrhit = $contig->getNRHit ) {
+%   my $hit = $nrhit->getHit;
+ <tr>
+  <th>Hit</th><td><a href="http://www.ncbi.nlm.nih.gov/protein/<% $hit %>"><% $hit %></a></td>
+ </tr>
+ <tr>
+  <th>Description</th><td><% $nrhit->getDescription %></td>
+ </tr>
+ <tr>
+  <th>E-value</th><td><% $nrhit->getEvalue %></td>
+ </tr>
+% } else {
+ <tr><td colspan="2">No signficant matches against NR</td></tr>
+% }

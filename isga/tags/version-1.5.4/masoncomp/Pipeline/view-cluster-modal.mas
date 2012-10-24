@@ -1,0 +1,47 @@
+<%args>
+ $pipeline
+ $workflow
+</%args>
+
+% my $cluster = $workflow->getCluster();
+% my $c_name = $cluster->getName();
+% my @components = grep { $_->getName } @{$pipeline->getComponents($cluster)};
+
+<h1 class="component"><% $c_name %></h1>
+
+% if ( $workflow->isRequired ) {
+<p class="component"><%  $c_name %> is a required module and must be run.</p>
+% } else {
+<p class="component"><%  $c_name %> is <% $pipeline->getWorkflowMask->isActive($cluster) ? 'on' : 'off' %>.</p>
+% }
+
+% if ( @components ) {
+<div class="modaltable">
+  <table>
+    <thead>
+      <tr class="list_label">
+        <td colspan="2">Component</td>
+      </tr>
+    </thead>
+    <tbody>
+%   foreach ( @components ){
+%     my $builder = $pipeline->getComponentBuilder($_);
+      <tr>
+        <td><em class="clustermodal"><% $_->getName %></em>\
+%     if ( $builder ) {
+<p class="clustermodal"><% $builder->getComponentDescription  %></p>\
+%     }
+</td>
+%     if ( $builder ) {
+	<td><a href="/Pipeline/ViewParameters?pipeline=<% $pipeline %>&component=<% $_ %>">View Parameters</a></td>
+%     } else {
+        <td>No parameters to configure.</td>
+%     }
+%   }
+    </tbody>
+  </table>
+</div>
+
+% } else {
+<p><% $cluster->getName %> does not have any parameters.</p>
+% }

@@ -1,0 +1,4 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: Transcriptome
+attributes:
+  - { name: Run, type: Run, options: [ REQUIRED ] }

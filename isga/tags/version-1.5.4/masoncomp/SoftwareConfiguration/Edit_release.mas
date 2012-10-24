@@ -1,0 +1,26 @@
+<%args>
+ $reference_release => undef
+ $software_release => undef
+ $form
+</%args>
+
+
+<h1>Edit the Release</h1>
+
+<% $form->get %>
+
+% if ( $reference_release ) {
+
+<br>
+<hr>
+
+<p>Here's a list of databases. Edit, Add, or Remove them.</p>
+
+% }
+
+<sys:rightmenu>
+<ul>
+<& /Configuration/right_menu.mas &>
+</ul>
+</sys:rightmenu>
+

@@ -1,0 +1,49 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getFullPath();
+
+Returns the full path for a ReferenceDB.
+
+=cut
+#------------------------------------------------------------------------
+  sub getFullPath {
+
+    my $self = shift;
+
+    my $path = $self->getPath;
+    return $path if $path =~ m{^/};
+
+    my $release = $self->getRelease;
+    $path = $release->getPath . '/' . $path;
+    return $path if $path =~ m{^/};
+
+    $path = $release->getReference->getPath . '/' . $path;
+    return $path;
+  }
+
+#------------------------------------------------------------------------
+
+=item public string getName();
+
+Returns the full name for a ReferenceDB.
+This is the Reference name and Release for Organisms and only Reference 
+name for collections.
+
+=cut
+#------------------------------------------------------------------------
+  sub getName {
+
+    my $self = shift;
+
+    my $release = $self->getRelease;
+         
+    my $name= $release->getReference->getName . ' (' . $release->getVersion . ')';
+    if ( my $label = $self->getTemplate->getLabel ) {
+      $name .= " $label";
+    }
+
+    return $name;
+  }
+

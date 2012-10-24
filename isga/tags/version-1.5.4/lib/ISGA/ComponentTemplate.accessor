@@ -1,0 +1,21 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public string getFormPath();
+
+Returns a string containing the path to this components form
+configuration file or undef if no form configuration file exists.
+
+=cut 
+#------------------------------------------------------------------------
+  sub getFormPath {
+
+    my $self = shift;
+
+    # check for existance of file based on ergatis install
+    my $file = join( '/', '___package_include___', $self->getErgatisInstall->getName(), 
+		     $self->getName);
+    $file .= ".yaml";
+    return -f $file ? $file : undef;
+  }

@@ -1,0 +1,16 @@
+<%args>
+ $reference => undef
+ $software => undef
+ $form
+</%args>
+
+
+<h1>Add a Release</h1>
+
+<% $form->get %>
+
+<sys:rightmenu>
+<ul>
+<& /Configuration/right_menu.mas &>
+</ul>
+</sys:rightmenu>

@@ -1,0 +1,20 @@
+<%args>
+ $pipeline
+</%args>
+
+<%perl>
+my $published;
+if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
+$published = ISGA::GlobalPipeline->new(Name => $pipeline->getName(), Status => ISGA::PipelineStatus->new( Name => 'Published' ));
+} else {
+$published = ISGA::GlobalPipeline->new(Name => $pipeline->getGlobalTemplate->getName(), Status => ISGA::PipelineStatus->new( Name => 'Published' ));
+}
+</%perl>
+
+<div class="downtime">
+<p>The Pipeline you are viewing is no longer the most up-to-date verion. The up-to-date version is 
+<% $published->getLabel %>.  It can be found 
+<a href="/Pipeline/View?pipeline=<% $published %>">Here</a>.
+
+</p>
+</div>

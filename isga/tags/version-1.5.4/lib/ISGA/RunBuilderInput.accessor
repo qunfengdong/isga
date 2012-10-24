@@ -1,0 +1,66 @@
+# -*- cperl -*-
+#------------------------------------------------------------------------
+
+=item public ParameterMask getParameterMask();
+
+Returns the parameter mask for this pipeline.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameterMask {
+
+    return ISGA::ParameterMask->new($_[0]->{runbuilderinput_parametermask});
+  }
+
+#------------------------------------------------------------------------
+
+=item public ParameterMask getRawParameterMask();
+
+Returns the string for the parameter mask for this pipeline. Useful
+when you dont want to pay to load the YAML object.
+
+=cut
+#------------------------------------------------------------------------
+  sub getRawParameterMask { return $_[0]->{runbuilderinput_parametermask}; }
+
+#------------------------------------------------------------------------
+
+=item public [parameter] getParameters();
+
+Returns an array of parameter hashes for this run builder input.
+
+=cut
+#------------------------------------------------------------------------
+  sub getParameters {
+
+    my $self = shift;
+    
+    # get the pipeline input mask
+    my $pi = $self->getPipelineInput;
+    my $mask = $self->getParameterMask;
+    
+    my $params = $pi->getParameters();
+
+    foreach ( @$params ) {
+      exists $mask->{$_->{NAME}} and $_->{VALUE} = $mask->{$_->{NAME}}{Value};
+    }
+
+    return $params;
+  }
+
+#------------------------------------------------------------------------
+
+=item public HashRef getForm();
+
+Returns the form for the RunBuilderInput.
+
+=cut
+#------------------------------------------------------------------------
+  sub getForm {
+
+    my $params = shift->getParameters;
+    
+    return  { templ => 'fieldset',
+	      'sub' => $params,
+	    };
+  }   

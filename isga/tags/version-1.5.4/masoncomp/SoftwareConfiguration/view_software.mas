@@ -1,0 +1,38 @@
+<%args>
+ $software
+</%args>
+
+<h1><% $software->getName %></h1>
+
+<p>URL: <a href="<% $software->getLink %>"><% $software->getLink %></a></p>
+
+<div class="list">
+<table width="100%">
+<thead>
+<tr><th>Version</th><th>Release Date</th><th>Status</th><th>Edit</th></tr>
+</thead>
+<tbody>
+% foreach ( @{ISGA::SoftwareRelease->query( Software => $software, OrderBy => { DESC => 'Release' } )} ) {
+<tr>
+ <td><% $_->getVersion %></td>
+ <td><% $_->getRelease %></td>
+ <td><% $_->getStatus->getName %></td>
+ <td><a href="EditRelease?software_release=<% $_ %>">Edit</a></td>
+</tr>
+<tr>
+ <td></td><td colspan="3" class="hint">Path: <% $_->getPath %></td>
+</tr>
+% }
+</tbody>
+</table>
+</div>
+
+<sys:rightmenu>
+<ul>
+ <li class="title">Configuration Tools</li>
+
+ <li class="rmbutton pointer"><a href="AddRelease?software=<% $software %>">Add Release</a></li>
+ <li class="pointer" onclick="window.location='AddRelease?software=<% $software %>'"><p>Add a new release for this software package.</p></li>
+<& /Configuration/right_menu.mas &>
+</ul>
+</sys:rightmenu>

@@ -1,0 +1,208 @@
+# -*- cperl -*-
+
+use LWP::UserAgent;
+use File::Copy;
+use YAML;
+use File::Temp;
+
+#----------------------------------------------------------------------
+
+=item public Run submit(RunBuilder $builder);
+
+Submits a run to ergatis. This method will create a directory in
+ergatis for the new run, copy input files to there, write a
+pipelinelayout.xml file and config files for each component. The
+method then submits the run to ergatis over http.
+
+=cut 
+#------------------------------------------------------------------------
+sub submit {
+
+  my ($class, $builder) = @_;
+
+  # write config files and layout.xml to ergatis submit directory
+  my $protocol = $builder->stage();
+  my $name = $builder->getName();
+
+  # submit job
+  my $id = $class->_submitToErgatis($builder);
+
+  # make sure we got a run id
+  if ( $id !~ m{\A\d+\z} ) {
+   
+    # set recipients
+    my $recipient = ___ERRORNOTIFICATIONEMAIL___;
+
+    if ( ref $recipient ) {
+      $recipient = join ( ',', @$recipient );
+    }
+      
+    # send special email
+    my %mail =
+      ( To => $recipient,
+	FROM => '___mail_sender___',
+        Subject => 'Ergatis Submission Error',
+        Message => "Run Builder $builder Failed:\n$id"
+      );
+    
+    Mail::Sendmail::sendmail(%mail) 
+	or X::Mail::Send->throw( text => $Mail::Sendmail::error, message => \%mail );    
+    
+    # log error
+    X::Ergatis::Submit->throw( message => "Illegal Ergatis id: $id" );
+    
+  }
+
+  # create a file collection
+  my $collection = ISGA::FileCollection->create
+    ( CreatedBy => ISGA::Login->getAccount,
+      ExistsOutsideCollection => 1,
+      Type => ISGA::FileCollectionType->new( Name => 'Run Results' ),
+      CreatedAt => ISGA::Timestamp->new,
+      UserName => $name . ' Results',
+      Description => 'Result files for the Run ' . $name,
+      IsHidden => 0 );
+
+  # create run
+  my $pipeline = $builder->getPipeline();
+  my %run_args = 
+    ( CreatedBy => ISGA::Login->getAccount, Type => $pipeline,
+      FileCollection => $collection,
+      RawDataStatus => 'Available',
+      Status => ISGA::RunStatus->new( Name => 'Running' ),
+      Name => $name,
+      Description => $builder->getDescription,
+      CreatedAt => ISGA::Timestamp->new,
+      IsHidden => 0, 
+      ErgatisKey => $id );
+
+  if ( my $subclass = $pipeline->getGlobalTemplate->getSubClass ) {
+    $run_args{SubClass} = $subclass;
+  }
+
+  my $run = ISGA::Run->create(%run_args);
+
+  # save the id to our protocol
+  $protocol =~ s/___Run_ID___/$run/g;
+
+
+  # log the inputs
+  my $inputs = ISGA::RunBuilderInput->query( RunBuilder => $builder);
+  
+  ISGA::RunInput->create( Run => $run, FileResource => $_->getFileResource,
+			   PipelineInput => $_->getPipelineInput,
+			   ParameterMask => $_->getParameterMask ) for @$inputs;
+
+  # log any masked components
+  foreach ( @{$builder->getMaskedComponents} ) {
+    $run->addMaskedComponent($_);
+  }
+
+  # prepare the outputs
+  $run->_initializeOutputs($builder);
+
+  # prepare the clusters
+  $run->_initializeClusters($builder);
+
+  # write protocol to collection
+  $run->writeProtocol($protocol, $name);
+
+  # get parameter mask and write to file
+  my $parametermask = $builder->getParameterMask();
+  
+  my %args = ( Type => ISGA::FileType->new( Name => 'Run Parameters'),
+               Format => ISGA::FileFormat->new( Name => 'YAML' ),
+               IsHidden => 1, UserName => $name . ' Run Parameters',
+               CreatedAt => ISGA::Timestamp->new(),
+               CreatedBy => ISGA::Login->getAccount,
+               ExistsOutsideCollection => 1, Description => 'Post run analysis for ' . $name );
+
+  my $tmp_dir = ISGA::SiteConfiguration->value('local_tmp');
+  my $fh = File::Temp->new(DIR => $tmp_dir);
+  print $fh YAML::Dump($parametermask);
+  seek($fh,0,0);
+
+  my $file = ISGA::File->addToRepository( $fh, %args );
+
+  my $next_index = ISGA::FileCollectionContent->exists( FileCollection => $run->getFileCollection );
+
+  ISGA::FileCollectionContent->create( FileCollection => $run->getFileCollection,
+                                       FileResource => $file,
+                                       Index => $next_index++
+                                     );
+
+  return $run;
+}
+
+#------------------------------------------------------------------------
+
+=item PRIVATE int _submitToErgatis(string $dir);
+
+Submits a pipeline template directory to ergatis and returns the new pipeline id.
+
+=cut 
+#------------------------------------------------------------------------
+sub _submitToErgatis {
+
+  my ($class, $builder) = @_;
+
+  my $ua = LWP::UserAgent->new;
+
+  my $project = ISGA::PipelineConfiguration->value( 'ergatis_project_name', 
+						    Pipeline => $builder->getPipeline->getGlobalTemplate() );
+  
+  my $dir = $builder->getErgatisDirectory();
+
+  my $response = 
+    $ua->get("___ergatis_base_uri___run_prepared_pipeline.cgi?build_directory=$dir&project=$project");
+
+  $response->is_success and return $response->decoded_content;
+
+  X::Ergatis::Submit->throw( $response );
+}
+
+#------------------------------------------------------------------------
+
+=item int getCurrentRunCount(Account $account);
+
+Returns the number of runs the user has that count againt their quota.
+
+=cut 
+#------------------------------------------------------------------------
+my @statuses = 
+  map { ISGA::RunStatus->new( Name => $_ ) } 
+  qw( Running Submitting Error Incomplete Failed Interrupted );
+
+sub getCurrentRunCount {
+
+  my ($class, $account) = @_;
+
+  return ISGA::Run->exists( CreatedBy => $account, Status => \@statuses);
+}
+
+#------------------------------------------------------------------------
+
+=item public [Run] query();
+
+Wrapper around query method to parse objects into subclass if it
+exists for the pipeline this runbuilder processes.
+
+=cut
+#------------------------------------------------------------------------
+  sub query {
+
+    my $class = shift;
+
+    my $results = $class->NEXT::query(@_);
+
+    foreach ( @$results ) {
+      
+      if ( my $subclass = $_->getSubClass ) {
+	my $full_subclass = $class . '::' . $subclass;
+	eval "require $full_subclass";
+	$full_subclass->can('new') and bless $_, $full_subclass;
+      }
+    }
+    
+    return $results;
+  }  

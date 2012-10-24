@@ -1,0 +1,24 @@
+<%perl>
+my @errors = $ISGA::WebApp->errors();
+
+if ( @errors > 1 ) {
+  my $message = join ( "\n". map { $_->user_message() } @errors	);
+
+  use Data::Dumper;
+  warn Dumper(\@errors);
+
+  ISGA::Log->alert("/Error received multiple error messages\n".$message);
+  $m->comp('/site/error/system_error.mas');	     	
+
+# if there aren't any errors, redirect them to the home page
+} elsif ( @errors == 0 ) {
+  $m->redirect('/Home');
+} elsif ( $errors[0]->isa('X::User::Denied::RequiresLogin') ) {
+  $m->comp('/site/error/denied-login.mas');
+} elsif ( $errors[0]->isa('X::User') ) {
+  $m->comp('/site/error/user_error.mas', error => $errors[0]);
+} else {
+  $m->comp('/site/error/system_error.mas');
+}
+
+</%perl>

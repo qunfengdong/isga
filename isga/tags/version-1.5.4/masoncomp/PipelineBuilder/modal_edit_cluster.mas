@@ -1,0 +1,28 @@
+<%args>
+ $pipeline_builder
+ $cluster
+</%args>
+% my $noParams;
+% my $wf_mask = $pipeline_builder->getWorkflowMask();
+<div class="modaltable">
+  <table>
+    <tbody>
+      <tr class="list_label">
+        <td>Component</td>
+        <td>Edit Parameters</td>
+      </tr>
+%foreach ( @{ISGA::Component->query( Cluster => $cluster, OrderBy => 'Index' )} ) {
+%  if ( my $builder = $pipeline_builder->getComponentBuilder($_) ) {
+      <tr>
+        <td><em class="clustermodal"><% $_->getName %></em><p class="clustermodal"><% $builder->getComponentDescription  %></p></td>
+%      if ( $wf_mask->isActive($_) ) {
+        <td><a href="/PipelineBuilder/EditComponent?pipeline_builder=<% $pipeline_builder %>&component=<% $_ %>">Edit Parameters</a></td>
+%      } else {
+        <td><em class="red">You have disabled this analysis.</em></td>
+%      }
+      </tr>
+%  }
+%}
+    </tbody>
+  </table>
+</div>

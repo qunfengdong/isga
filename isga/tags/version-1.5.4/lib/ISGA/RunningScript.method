@@ -1,0 +1,16 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public void fail(string $error);
+
+Records an error for this task.
+
+=cut 
+#------------------------------------------------------------------------
+  sub fail {
+  
+    my ($self, $error) = @_;
+
+    $self->edit( PID => undef, Error => $error );
+  }

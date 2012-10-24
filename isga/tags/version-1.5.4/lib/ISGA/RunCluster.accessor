@@ -1,0 +1,32 @@
+# -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public [Component] getComponents();
+
+Retrieve the components used in this pipeline. If the cluster has
+iterations, it will create Iterated Components.
+
+=cut
+#------------------------------------------------------------------------
+  sub getComponents {
+
+    my $self = shift;
+
+    my $run = $self->getRun();
+    my $pipeline = $run->getType();
+    my @components = grep { ! $run->hasMaskedComponent($_) } @{$pipeline->getComponents($self->getCluster)};
+
+    my $iterations = $self->getIterations;
+
+    # we are done if this isn't an iterated cluster
+    return \@components unless $iterations;
+
+    my @return;
+    
+    for my $c ( @components ) {
+      push @return, ISGA::Component::Iterated->new($c, $_) for ( 1 .. $iterations );
+    }
+
+    return \@return;
+  }

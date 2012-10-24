@@ -1,0 +1,6 @@
+--- !perl/MasonX::Foundation::Class::Indexed
+class: ReferenceType
+attributes:
+  - { name: Name, type: string, options: [ REQUIRED, UNIQUE ] }
+  - { name: FileType, type: FileType, options: [ REQUIRED ] }
+  - { name: FileFormat, type: FileFormat, options: [ REQUIRED ] }

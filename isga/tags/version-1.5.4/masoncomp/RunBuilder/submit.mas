@@ -1,0 +1,12 @@
+<%args>
+ $run_builder
+</%args>
+
+<h1>Submit your Run Builder?</h1>
+<p>This will run your pipeline with your current configuration.</p>
+<p>
+<div id="submitHolder">
+<a href="/RunBuilder/View?run_builder=<% $run_builder %>" class="button cancel">No</a>
+<button class='button clickmeupdate' value='Yes' name='Yes' type='submit'>Yes</button>
+</div>
+</p>

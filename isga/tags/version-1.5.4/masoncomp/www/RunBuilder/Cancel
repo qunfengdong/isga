@@ -1,0 +1,5 @@
+<%args> # -*- cperl -*-
+ $run_builder
+</%args>
+
+<& /RunBuilder/cancel.mas, run_builder => $run_builder &>
