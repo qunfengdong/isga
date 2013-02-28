@@ -12,5 +12,5 @@
 </pre>
 </div>
 % } else {
-<p>This file is two big to preview in your browser, please use the download link on the right.</p>
+<p>This file is too large to preview in your browser, please use the download link on the right.</p>
 % }
