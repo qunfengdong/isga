@@ -6,7 +6,7 @@
 
 <div id="workflow">
 
-<img alt="pipeline workflow diagram" id="workflowimage" class="mapper" usemap="#clusters" src="<% $src %>">
+<img alt="pipeline workflow diagram" id="workflowimage" usemap="#clusters" src="<% $src %>">
 
 <map name="clusters" >
 
@@ -18,12 +18,12 @@
   alt="<% $_->getCluster->getName %>" \
   title="<% $_->getCluster->getName %>" \
   coords="<% $_->getCoordinates %>" \
-  rel="component_selection" \
+%#  rel="component_selection" \
   href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
 %   if ($_->getCustomization eq 'IO' ) {
-  class="noborder nofade jTip nolink" \
+  class="noborder nofade nolink" \
 %   } else {
-  class="noborder nofade cluster jTip modal" \
+  class="noborder nofade cluster" \
 %   }
  >
 % }

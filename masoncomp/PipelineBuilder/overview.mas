@@ -2,7 +2,6 @@
  $pipeline_builder
 </%args>
 
-<h1>Build Your Pipeline</h1>
 <%perl>
 my $template = $pipeline_builder->getPipeline;
 my $status = $template->getStatus->getName;
@@ -15,22 +14,84 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   $m->comp("/plugin/$plugin/walkthrough-pipeline-builder-overview.mas");
 }
 </%perl>
-<p>
-<strong>Template Pipeline:</strong> <a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getName %></a><br>
-<strong>Started On:</strong> <% $pipeline_builder->getStartedOn->text %>
-% if(defined $pipeline_builder->getDescription && $pipeline_builder->getDescription ne ''){
-<br><strong>Description:</strong> <% $pipeline_builder->getDescription %>
-% }
-</p>
-<p>
-1. Hover your mouse over a module to view a desciption of the programs within that module.<br>
-2. Click on the module you wish to modify to see the actions available for that module.
-</p>
+
+<sys:script type="text/javascript" src="/include/js/jquery.jeditable.mini.js"></sys:script>
+<sys:script type="text/javascript">
+ $(document).ready(function() {
+
+    $('#editable_name').editable('/submit/PipelineBuilder/Edit', {
+        data : '<% $pipeline_builder->getName %>',
+        name : 'name',
+        width : 100,
+        submitdata: { pipeline_builder: "<% "$pipeline_builder" %>"},
+        submit : 'OK',
+        onerror : function(settings, original, xhr) {
+            $('#pb_error').html(xhr.responseText).show();
+            original.reset();
+        },
+        callback: function(value, settings) {
+            $('#pb_error').html('').hide();            
+        },        
+        style: 'inherit'
+      }); 
+
+    $('#editable_description').editable('/submit/PipelineBuilder/Edit', {
+        data : '<% $pipeline_builder->getDescription %>',
+        name : 'description',
+        type : 'textarea',
+        submitdata: { pipeline_builder: "<% "$pipeline_builder" %>"},
+        cols: 60,
+        rows: 3,
+        submit : 'OK',
+        onerror : function(settings, original, xhr) {
+            $('#pb_error').html(xhr.responseText).show();
+            original.reset();
+        },
+        callback: function(value, settings) {
+            $('#pb_error').html('').hide();            
+        },        
+        style: 'inherit'
+      }); 
+
+ });
+</sys:script>
+
+
+<div class="modal" id="choose_component_modal"></div>
+
+
+<h1>Build Your Pipeline</h1>
+
+<div class="data">
+<div class="error_message" id="pb_error" class="hidden"></div>
+
+<table>
+ <tbody>
+ <tr>
+  <th>Name</th><td colspan="3"><span class="editable" id="editable_name"><% $pipeline_builder->getName %></span></td>
+ </tr>
+ <tr>
+  <th>Description</th><td colspan="3"><span class="editable" id="editable_description"><% $pipeline_builder->getDescription %></span></td>
+ </tr>
+ <tr>
+  <th>Template</th><td colspan="3"><a href="/Pipeline/View?pipeline=<% $template %>"><% $template->getLabel %></a></td>
+ </tr>
+ <tr>
+  <th>Started On</th><td colspan="3"><% $pipeline_builder->getStartedOn->text %></td>
+ </tr>
+ </tbody>
+</table>
+</div>
+
+<ul>
+<li>* Hover your mouse over a module to view a desciption of the programs within that module.</li>
+<li>* Click on the module you wish to modify to see the actions available for that module.</li>
+</ul>
 
 
 <div id="workflow">
 
-<img id="workflowimage" class="mapper" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
+<img id="workflowimage" usemap="#clusters" src="/PipelineBuilder/DrawWorkflow?pipeline_builder=<% $pipeline_builder %>" >
 
 <map name="clusters" >
 
@@ -43,20 +104,15 @@ if ( ! ISGA::Login->getAccount->isWalkthroughDisabled ) {
   alt="<% $_->getCluster->getName %>" \
   title="<% $_->getCluster->getName %>" \
   coords="<% $_->getCoordinates %>" \
-  rel="component_selection" \
   href="/Cluster/GetClusterDescription?cluster=<% $_->getCluster %>" \
 %   if ($_->getCustomization eq 'IO' ) {
-  class="noborder nofade jTip nolink" \
+  class="noborder nofade nolink" \
 %   } else {
-  class="noborder nofade cluster jTip modal" \
+  class="noborder nofade cluster" \
 %   }
  >
 % }
 </map>
 </div>
-
-<div id="component_selection" class="hidden">
-</div>
-
 
 <& right_menu.mas, pipeline_builder => $pipeline_builder &>

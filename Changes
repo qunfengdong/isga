@@ -1,5 +1,24 @@
 Revision history for ISGA
 
+1.6.1
+
+	BUG FIXES
+
+	* Some error messages were not being correctly propogated to the browser
+
+	WEB CHANGES
+
+	* Account details are not editable via inline AJAX fields
+	* Replaced smartmodal js library with simplemodal
+	* Migrated some simple URIs to /Echo
+	* Migrated some small AJAX calls to hidden divs
+
+	API CHANGES
+
+	* Walkthrough flags were moved from the Party abstract class to the Account class
+	* All email addresses are now converted to lowercase before further use by ISGA
+	* Migrated subject line definition from database column to mason components
+
 1.5.4   Oct 24 2012
 
 	BUG FIXES

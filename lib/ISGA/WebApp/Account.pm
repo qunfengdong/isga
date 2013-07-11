@@ -32,94 +32,71 @@ use Digest::MD5;
 
 #------------------------------------------------------------------------
 
-=item public void EditUserClass();
+=item public void Edit();
 
-Edit a user's class.
+Edit account information.
 
 =cut
 #------------------------------------------------------------------------
-sub Account::EditUserClass {
+sub Account::Edit {
 
   my $self = shift;
   my $web_args = $self->args;
 
-  # we need a user class
-  exists $web_args->{user_class} or X::API::Parameter::Missing->throw( parameter => 'UserClass' );
-  exists $web_args->{account} or X::API::Parameter::Missing->throw( parameter => 'Account' );
-  my $user_class = $web_args->{user_class};
-  my $account = $web_args->{account};
+  # start with the caller
+  my $account = ISGA::Login->getAccount;
 
-  # edit the user class
-  $account->edit(UserClass => $user_class);
-
-  # save result
-  $self->_save_arg( echo => $user_class->getName );
-  
-  # redirect to what
-  $self->redirect( uri => '/Echo' );
-}
-
-#------------------------------------------------------------------------
-
-=item public void EditStatus();
-
-Edit a user's class.
-
-=cut
-#------------------------------------------------------------------------
-sub Account::EditStatus {
-
-  my $self = shift;
-  my $web_args = $self->args;
-
-  # we need a user class
-  exists $web_args->{party_status} or X::API::Parameter::Missing->throw( parameter => 'PartyStatus' );
-  exists $web_args->{account} or X::API::Parameter::Missing->throw( parameter => 'Account' );
-  my $party_status = $web_args->{party_status};
-  my $account = $web_args->{account};
-
-  # edit the user class
-  $account->edit(Status => $party_status);
-
-  # save result
-  $self->_save_arg( echo => $party_status->getName );
-  
-  # redirect to what
-  $self->redirect( uri => '/Echo' );
-}
-
-#------------------------------------------------------------------------
-
-=item public void EditMyDetails();
-
-Edit account details.
-
-=cut
-#------------------------------------------------------------------------
-sub Account::EditMyDetails {
-
-  my $self = shift;
-  my $web_args = $self->args;
-  my $form = ISGA::FormEngine::Account->EditMyDetails($web_args);
-
-  if ( $form->canceled ) {
-    $self->redirect( uri => '/Account/MyAccount' );
-  } elsif ( $form->ok ) {
-
-    my $disablewalkthrough =  $form->get_input('disablewalkthrough');
-    my $account = ISGA::Login->getAccount;
-    $account->edit( Name => $form->get_input('name'),
-		    Institution => $form->get_input('institution'),
-		    IsWalkthroughDisabled => $disablewalkthrough,
-		    Email => $form->get_input('email') );
+  # if they pass an account, check their authorization and then change the account we will change
+  if ( exists $web_args->{account} ) {
+    $account->hasGroup(ISGA::Group->new( Name => 'Account Administrators' )) or X::User::PermissionDenied->throw();
+    $account = $web_args->{account};
     
-    $self->redirect( uri => '/Account/MyAccount' );
+    if ( exists $web_args->{user_class} ) {
+      
+      $account->edit(UserClass => $web_args->{user_class});
+      $self->_save_arg( echo => $web_args->{user_class}->getName );
+
+    } elsif ( exists $web_args->{party_status} ) {
+
+      $account->edit( Status => $web_args->{party_status});
+      $self->_save_arg( echo => $web_args->{party_status}->getName );
+    }
   }
+  
+  if ( exists $web_args->{email} ) {
+
+    # ERROR => ['not_null', 'Text::checkHTML', 'Account::emailIsAvailableOrMine'],
+
+    $self->_add_error_message( "I don't like that email." );
+
+    # check html
+    # check available or mine
+
+    my $email = lc($web_args->{email});
+
+    $account->edit( Email => $email);
+    $self->_save_arg( echo => $email );
     
-  # bounce!!!!!
-  $self->_save_arg( 'form', $form);
-  $self->redirect( uri => '/Account/EditMyDetails' );
-}   
+
+  } elsif ( exists $web_args->{walkthrough} ) {
+    
+
+    $account->edit( IsWalkthroughDisabled => $web_args->{walkthrough} );
+    $self->_save_arg( echo => ( $web_args->{walkthrough} ? 'off' : 'on' ) );
+    
+  } elsif ( exists $web_args->{institution} ) {
+   
+    if ( my $error = ISGA::FormEngine::Check::Text::checkHTML($web_args->{institution}) ) {
+      $self->_add_error_message($error);
+      
+    } else {
+      $account->edit(Institution => $web_args->{institution} );
+      $self->_save_arg( echo => $web_args->{institution} );
+    }
+  }
+
+  $self->redirect( uri => '/Echo' );
+}
 
 #------------------------------------------------------------------------
 

@@ -1,0 +1,14 @@
+<%args>
+ $invitation
+</%args>
+
+<h1>ISGA Group Invitation</h1>
+
+% my $group = $invitation->getUserGroup;
+% my $account = $group->getCreatedBy;
+
+<p><% $account->getName %> has invited you to the ISGA group "<% $group->getName %>".</p>
+
+<p><strong>If you have an ISGA account: </strong> <a href="#" class="open_login">Login</a> to accept or refuse the invitation.</p>
+
+<p><strong>If you do not have an ISGA account: </strong> <a href="/Account/Request">Request an account</a> to accept the invitation or do nothing to refuse.</p> 

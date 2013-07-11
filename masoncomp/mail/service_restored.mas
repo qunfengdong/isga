@@ -1,3 +1,10 @@
+<%args>
+ $subject
+</%args>
+<%method .subject>
+ISGA Service Available\
+</%method>
+% $$subject = $m->scomp( 'SELF:.subject' );
 ISGA service has been restored.  You may continue to submit jobs to the service at this time.
 
 We apologize for any inconvenience this has caused.

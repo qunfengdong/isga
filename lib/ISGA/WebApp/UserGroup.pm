@@ -19,6 +19,8 @@ ISGA::WebApp manages the interface to MASON for ISGA.
 use strict;
 use warnings;
 
+use Digest::SHA;
+
 #========================================================================
 
 =head2 CLASS METHODS
@@ -30,87 +32,191 @@ use warnings;
 
 #------------------------------------------------------------------------
 
-=item public void InviteAccount();
+=item public void Leave()
 
-Invite an ISGA account to join your User Group.
+Remove yourself from a user group.
 
 =cut
 #------------------------------------------------------------------------
-sub UserGroup::InviteAccount {
+sub UserGroup::Leave {
 
   my $self = shift;
-  my $web_args = $self->args;
-  
-  my $user_group = $web_args->{user_group};
-  my $account = $web_args->{account};
-  
-  # make sure we are the owner of the user_group
-  ISGA::Login->getAccount = $user_group->getCreatedBy() 
-      or X::User::Denied->throw( "You do not have permission to manage this group" );
-  
-  # make sure the account is not private
-  $account->isPrivate and X::User->throw( "Ths details for this account are private. Please invite this user by email address" );
-  
-  # don't re-invite
-  ISGA::UserGroupInvitation->exists( UserGroup => $user_group, Account => $account ) or $user_group->hasAccount($account)
-      and $self->redirect( "/UserGroup/View?user_group=$user_group");
-    
-  ISGA::UserGroupInvitation->create( UserGroup => $user_group,
-				     Account => $account,
-				     CreatedAt => ISGA::Timestamp->new()
-				   );
-  
-  # mail request
 
+  my $group = $self->args->{user_group};
+  my $account = ISGA::Login->getAccount;
 
-  # redirect
-  $self->redirect( "/UserGroup/View?user_group=$user_group" );
+  # make sure I am in this group
+  $group->hasMember($account)
+      or X::User::PermissionDenied->throw();
+
+  $group->removeMember($account);
+
+  $self->redirect(uri => "/Account/MyAccount");
 }
 
 #------------------------------------------------------------------------
 
-=item public void InviteEmail();
+=item public void RevokeInvitation()
 
-Invite an ISGA account to join your User Group.
+Revoke an invitation to your user group.
 
 =cut
 #------------------------------------------------------------------------
-sub UserGroup::InviteEmail {
+sub UserGroup::RevokeInvitation {
 
   my $self = shift;
-  my $web_args = $self->args;
-  
-  my $user_group = $web_args->{user_group};
-  my $email = $web_args->{email};
 
-  # make sure we are the owner of the user_group
-  ISGA::Login->getAccount = $user_group->getCreatedBy() 
-      or X::User::Denied->throw( "You do not have permission to manage this group" );
-  
-  # account invitations
-  if ( my ( $account ) = @{ISGA::Account->query( Email => $email )} ) {
+  my $invitation = $self->args->{user_group_invitation};
+  my $group = $invitation->getUserGroup();
 
-    next if ISGA::UserGroupInvitation->exists( UserGroup => $user_group, Account => $account );
-    next if $user_group->hasAccount( $account );
+  # make sure I own this group
+  ISGA::Login->getAccount == $group->getCreatedBy
+      or X::User::PermissionDenied->throw();
 
-    ISGA::UserGroupInvitation->create( UserGroup => $user_group,
-				       Account => $account,
-				       CreatedAt => ISGA::Timestamp->new()
-				     );
+  $invitation->delete();
+
+  $self->redirect(uri => "/UserGroup/View?user_group=$group");
+}
+
+#------------------------------------------------------------------------
+
+=item public void AcceptInvitation()
+
+Accept an invitation to a group.
+
+=cut
+#------------------------------------------------------------------------
+sub UserGroup::AcceptInvitation {
+
+  my $self = shift;
+
+  my $group = $self->args->{user_group};
+  my $account = ISGA::Login->getAccount;
+
+  # make sure I have an invitation
+  my ($invitation) = @{ISGA::UserGroupInvitation->query( UserGroup => $group, Email => $account->getEmail)};
+  $invitation or X::User::PermissionDenied->throw();
+
+  $group->addMember($account);
+  $invitation->delete();
+
+  $self->redirect(uri => "/UserGroup/View?user_group=$group");
+}
+
+#------------------------------------------------------------------------
+
+=item public void TransferInvitation()
+
+Associate an invitation with your ISGA account.
+
+=cut
+#------------------------------------------------------------------------
+sub UserGroup::TransferInvitation {
+
+  my $self = shift;
+
+  my $code = $self->args->{code};
+
+  my $invitation = ISGA::UserGroupInvitation->new( Hash => $code );
+  my $group = $invitation->getUserGroup;
+  my $account = ISGA::Login->getAccount();
+
+  if ( $invitation->getEmail ne $account->getEmail ) {
+
+    # if the email belongs to someone else we can't do it
+    ISGA::Account->exists( Email => $invitation->getEmail )
+	and X::User::Denied->throw();
     
-    # email invitations
-  } else {
-    
-    next if 
-      ISGA::UserGroupEmailInvitation->exists( UserGroup => $user_group, Email => $_ );
-    
-    ISGA::UserGroupEmailInvitation->create( UserGroup => $user_group,
-					    Email => $_,
-					    CreatedAt => ISGA::Timestamp->new()
-					  );
+    # if the account is already invited to this group, delete the duplicate
+    if ( ISGA::UserGroupInvitation->exists( UserGroup => $group, Email => $account->getEmail ) ) {
+      $invitation->delete();
+    } else {
+      $invitation->edit( Email => $account->getEmail );
+    }
   }
-
+  
+  $self->redirect(uri => "/UserGroup/View?user_group=$group");
 }
+
+#------------------------------------------------------------------------
+
+=item public void Invite();
+
+Invite an email address to join your User Group.
+
+=cut
+#------------------------------------------------------------------------
+sub UserGroup::Invite {
+
+  my $self = shift;
+  my $web_args = $self->args;
+  
+  my $form = ISGA::FormEngine::UserGroup->Invite($web_args);
+
+  my $group = $form->get_input('user_group');
+
+  # make sure I own this group
+  ISGA::Login->getAccount == $group->getCreatedBy
+      or X::User::PermissionDenied->throw();
+
+  if ( $form->canceled() ) {
+    $self->redirect( uri => "/UserGroup/View?user_group=$group" );
+
+  } elsif ( $form->ok ) {
+
+    my @email;
+
+    my $finder = Email::Find->new(sub { push( @email, ISGA::Utility->cleanEmail($_[0]) ); });
+
+    foreach ( split(/\n/, $form->get_input('invite')) ) {   
+      $finder->find(\$_);
+    }
+
+    foreach ( @email ) {
+
+      next if ISGA::UserGroupInvitation->exists( UserGroup => $group, Email => $_ );
+
+      # create a hash key for the invite
+      my $code;
+      do { 
+	$code = substr(Digest::SHA::sha256_base64($group, $_, time), -8);
+	$code =~ tr{+/}{-_};
+      } while ( ISGA::UserGroupInvitation->exists(Hash => $code) );        
+      
+      if ( my ( $account ) = @{ISGA::Account->query( Email => $_ )} ) {
+	next if $group->hasMember( $account );
+
+	ISGA::UserGroupInvitation->create( UserGroup => $group,
+					   Email => $_,
+					   Hash => $code,
+					   CreatedAt => ISGA::Timestamp->new()
+					 );
+
+	# send email
+	ISGA::AccountNotification->create( Account => $account, Var1 => $group, 
+					   Type => ISGA::NotificationType->new( Name => 'Group Invitation' ) );
+	
+      } else {
+
+	ISGA::UserGroupInvitation->create( UserGroup => $group,
+					   Email => $_,
+					   Hash => $code,
+					   CreatedAt => ISGA::Timestamp->new()
+					 );
+	
+	ISGA::EmailNotification->create( Email => $_, Var1 => $group, Var2 => $code,
+					 Type => ISGA::NotificationType->new( Name => 'Group Invitation by Email' ) );
+	
+      }
+    } 
+
+    $self->redirect( uri => "/UserGroup/View?user_group=$group" );
+  }
+  
+  # bounce!!!!!
+  $self->_save_arg( 'form', $form);
+  $self->redirect( uri => "/UserGroup/View?user_group=$group" );
+}  
 
 #------------------------------------------------------------------------
 
@@ -194,34 +300,33 @@ Create a new user group.
 
 =cut
 #------------------------------------------------------------------------
-  sub UserGroup::Create {
+sub UserGroup::Create {
 
-    my $self = shift;
-    my $web_args = $self->args;
-    my $form = ISGA::FormEngine::UserGroup->Create($web_args);
-
-    if ( $form->canceled() ) {
-
-      $self->redirect( uri => '/Account/MyAccount' );
-    } elsif ( $form->ok ) {
-      
-      my $name = $form->get_input('name');
-      my $account = ISGA::Login->getAccount;
-      
-      my $group = ISGA::UserGroup->create( Name => $form->get_input('name'),
-					   IsPrivate => ! $form->get_input('sharename'),
-					   Status => ISGA::PartyStatus->new('Active'),
-					   CreatedBy => $account );
-      $group->addAccount($account);
-      
-      $self->redirect( uri => "/UserGroup/Edit?user_group=$group" );
-    }
+  my $self = shift;
+  my $web_args = $self->args;
+  my $form = ISGA::FormEngine::UserGroup->Create($web_args);
+  
+  if ( $form->canceled() ) {
     
-    # bounce!!!!!
-    $self->_save_arg( 'form', $form);
-    $self->redirect( uri => '/Account/EditMyDetails' );   
+    $self->redirect( uri => '/Account/MyAccount' );
+  } elsif ( $form->ok ) {
+    
+    my $name = $form->get_input('name');
+    my $account = ISGA::Login->getAccount;
+    
+    my $group = ISGA::UserGroup->create( Name => $form->get_input('name'),
+					 IsPrivate => ! $form->get_input('sharename'),
+					 Status => ISGA::PartyStatus->new('Active'),
+					 CreatedBy => $account );
+    $group->addMember($account);
+    
+    $self->redirect( uri => "/UserGroup/View?user_group=$group" );
   }
   
+  # bounce!!!!!
+  $self->_save_arg( 'form', $form);
+  $self->redirect( uri => '/Account/EditMyDetails' );   
+}
 
 1;
 __END__

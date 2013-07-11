@@ -1,0 +1,10 @@
+<%args>
+ $account
+</%args>
+
+% my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
+%                                  Status => { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) } );
+% if ( @$runs ) {
+
+<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => 0, show_hidden => 0 &>
+% }

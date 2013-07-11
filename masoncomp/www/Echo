@@ -1,4 +1,14 @@
 <%perl> # -*- cperl -*-
+
+# if there is an error, then we are done
+if ( my @errors = $ISGA::WebApp->errors ) {
+ warn "returning $errors[0]\n";
+ print $errors[0];
+ $m->flush_buffer;
+ $r->status(409);
+ return;
+}
+
 my $echo = $ISGA::WebApp->saved_args->{'echo'};
 my $type = $ISGA::WebApp->saved_args->{'type'};
 if(defined $type){

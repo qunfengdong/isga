@@ -14,7 +14,7 @@ Please send any feedback to <a class="normal" href="mailto:<% $support_email %>"
 
 <p>To begin using the service, please use the <a class="normal" href="/Account/Request">Request an Account</a> 
 option now and follow the directions as necessary.  If you already have an account, please use 
-the <a href="#" rel='modal_hidden' class="modal normal">Login</a> link in the upper right of the web 
+the <a href="#" class="open_login">Login</a> link in the upper right of the web 
 page to log into the service.</p>
 
 % }

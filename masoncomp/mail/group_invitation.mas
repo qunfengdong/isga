@@ -1,0 +1,22 @@
+<%args>
+ $notification
+ $subject
+</%args>
+<%method .subject>
+ <%args>
+ $owner
+ </%args>
+<% $owner->getName %> has invited you to an ISGA group\
+</%method>
+<%perl>
+my $account = $notification->getAccount();
+my $group = ISGA::UserGroup->new( Id => $notification->getVar1() );
+my $owner = $group->getCreatedBy();
+$$subject = $m->scomp( 'SELF:.subject',  owner => $owner );
+</%perl>
+<% $account->getName %>,
+
+<% $owner->getName %> has created the "<% $group->getName %>" group for sharing ISGA pipelines and results. You can view this group and accept or reject the invitation at
+
+  <% ISGA::Site->getBaseURI  %>UserGroup/View?usergroup=<% $group %>
+

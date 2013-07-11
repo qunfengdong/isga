@@ -1,17 +1,31 @@
 <& /site/right_menu_js.mas &>
 
 <sys:rightmenu>
+
+
 <ul>
  <li class="title">Account Tools</li>
 
  <li class="rmbutton pointer"><a href="/Account/MyAccount">Overview</a></li>
  <li class="pointer" onclick="window.location='/Account/MyAccount'"><p>Return to the account overview page.</p></li>
 
- <li class="rmbutton pointer"><a href="/Account/EditMyDetails">Edit Details</a></li>
- <li class="pointer" onclick="window.location='/Account/EditMyDetails'"><p>Change your name, email address and other account details.</p></li>
-
  <li class="rmbutton pointer"><a href="/Account/ChangeMyPassword">Change Password</a></li>
- <li class="pointer" onclick="window.location='/Account/ChangeMyPassword'"><p>Change your account password. You will need to enter your current password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a> to create a new one.</p></li>
+ <li class="pointer" onclick="window.location='/Account/ChangeMyPassword'"><p>Change your account password. If you do not remember your password, use the <a href="/Account/LostPassword">Lost Password Tool</a>.</p></li>
+
+ <li class="title">Resources</li>
+
+<%perl>
+
+my $account = ISGA::Login->getAccount;
+
+my $runs = ISGA::Run->exists( CreatedBy => $account, Status => { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) } );
+my $userpipes = ISGA::UserPipeline->exists( CreatedBy => $account );
+
+</%perl>
+
+ <li class="rmbutton pointer"><a href="/Account/MyAccount?tab=runs">Pipeline Runs (<% $runs %>)</a></li>
+ <li class="rmbutton pointer"><a href="/Account/MyAccount?tab=pipelines">Customized Pipelines (<% $userpipes %>)</a></li>
+ <li class="rmbutton pointer"><a href="/Account/MyAccount?tab=groups">Groups</a></li>
 
 </ul>
 

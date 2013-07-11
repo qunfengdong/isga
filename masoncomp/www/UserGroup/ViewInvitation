@@ -1,0 +1,34 @@
+<%args> # -*- cperl -*-
+ $code
+</%args>
+
+<%perl>
+
+# make sure the code is the correct length
+length($code) == 8 
+  or X::User->throw( "The code ('$code') must be eight characters. Please make sure you have copied the complete URL from your email client.");
+
+ISGA::UserGroupInvitation->exists( Hash => $code )
+  or X::User->throw( "The invitation code is invalid. Please make sure you have not already joined the group and that you are using the correct URL sent to you via email." );
+
+my $invitation = ISGA::UserGroupInvitation->new( Hash => $code );
+
+if ( my $account = ISGA::Login->getAccount ) {
+
+  if ( $invitation->getEmail ne $account->getEmail ) {
+    
+    # if the address in the invitation does not exist in ISGA, we consider the hash proof that the person is the same
+    # but if the address is tied to a different ISGA account do not allow the current user to take the invitation
+    if ( ISGA::Account->exists( Email => $invitation->getEmail ) ) {
+      X::User->throw( "This invitation is for a different ISGA account." );
+    } 
+
+    $m->redirect("/submit/UserGroup/TransferInvitation?code=$code");
+  } 
+ 
+  # if the email addresses match, forward them to 
+  $m->redirect("View?usergroup=<$ $invitation->getUserGroup %>");
+}
+
+$m->comp('/UserGroup/view_invitation.mas', invitation => $invitation );
+</%perl>

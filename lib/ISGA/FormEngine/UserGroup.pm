@@ -27,9 +27,54 @@ use warnings;
 
 #------------------------------------------------------------------------
 
-=item public hashref form Create();
+=item public hashref form Invite();
 
-Builds a FormEngine object for creating new user groups.
+Builds a FormEngine object for inviting email addresses to a group.
+
+=cut
+#------------------------------------------------------------------------
+sub Invite {
+
+  my ($class, $args) = @_;
+
+  my $form = ISGA::FormEngine->new($args);
+  $form->set_skin_obj('ISGA::FormEngine::SkinUniform');
+
+  my $group = $args->{user_group};
+
+  my @form =
+    (
+     {
+      templ => 'textarea',
+      ROWS => 10,
+      COLS => 60,
+      NAME => 'invite',
+      TITLE => '',
+      HINT => 'Enter the email addresses one per line',
+      ERROR => ['Text::checkEmailList'],
+     },
+     { templ => 'hidden',
+       NAME  => 'user_group',
+       VALUE => $group,
+       ERROR => ['not_null', 'UserGroup::isMine'],
+     }
+    );
+
+  $form->conf( { ACTION => '/submit/UserGroup/Invite',
+		 FORMNAME => 'user_group_invite',
+		 SUBMIT => 'Invite New members',
+		 sub => \@form } );
+
+  $form->make;
+  return $form;
+}
+
+
+#------------------------------------------------------------------------
+
+=item public hashref form Edit();
+
+Builds a FormEngine object for editting user groups.
 
 =cut
 #------------------------------------------------------------------------
@@ -46,7 +91,7 @@ sub Edit {
   my $sharename = ! $group->isPrivate;
 
 
-  foreach ( @{$group->getAccounts} ) {
+  foreach ( @{$group->getMembers} ) {
 
     push @$members, {
 		     NAME => 'account',
@@ -178,8 +223,8 @@ sub Create {
         {
 	NAME => 'name',
 	TITLE => 'Name',
-	SIZE => 60,
-	MAXLEN => 60,
+	SIZE => 30,
+	MAXLEN => 30,
 	REQUIRED => 1,
 	LABEL => 'name',
 	ERROR => ['not_null', 'Text::checkHTML', 'UserGroup::nameIsAvailable'],
@@ -202,7 +247,8 @@ sub Create {
 	NAME => 'sharename',
 	TITLE => 'Share Name with Other Users',
 	templ => 'check',
-	VALUE => 1,
+	OPT_VAL => 1,
+	OPTION => '',
 	HINT => 'Check this box to allow other users to see your group and request membership ( you may deny requests ).'
        }
       ]

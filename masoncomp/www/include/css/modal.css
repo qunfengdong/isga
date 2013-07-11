@@ -1,5 +1,59 @@
 /*modal*/
-.hidden{display:none;}
+
+/* should be able to nuke this one */
+.hidden {display: none;}
+
+.simplemodal-overlay {background-color:#000; height: 100%; opacity: 0.5; cursor: wait;}
+
+.simplemodal-container {
+  z-index: 2000;
+  height: auto !important;
+  display: none;
+  position: fixed;
+  left: 55%;
+  padding: 15px;
+  top: 120px;
+  -webkit-box-shadow: 0px 0px 8px #111;
+  box-shadow: 0px 0px 8px #111;
+  background: #FFF;
+  width: 455px; /* 400px originally */
+  margin-left:-455px; /* -200px originally */
+  text-align: left;
+  clear: none;
+  border-radius: 10px; 
+  -webkit-border-radius: 10px; /* all corners */
+}
+
+.modal-close, .modal-close:link, .modal-close:active, .modal-close:visited {
+    font-size: 1.5em;
+    font-weight: bold;
+    position: absolute;
+    right: 8px;
+    text-decoration: none;
+    top: -1px;
+    color: #000;
+}
+
+.modal-close:hover {color: #30a8c3; }
+
+.modal { display: none; }
+
+.modal h1 { margin: 0 0 15px 0; padding: 0 0 5px 0; }
+
+em.clustermodal {
+  font-weight: bold;
+}
+
+p.clustermodal {
+  font-size: 7pt;
+  line-height: 1em;
+  margin: 0;
+  padding: 0 0 0 10px;
+  width: 320px;
+}
+
+/* EVERYTHING BELOW HERE GOES AWAY */
+
 
 #modal_content {
   z-index: 2000;

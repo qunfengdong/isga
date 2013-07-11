@@ -96,7 +96,7 @@ sub cleanEmail {
   my ($address, $object) = Email::Valid->address($string);
   $address or X::API::Parameter::Invalid::MalformedEmail->throw( $string );
 
-  return $object->user . '@' . lc( $object->host );
+  return lc($object->user) . '@' . lc( $object->host );
 }
 
 #------------------------------------------------------------------------
@@ -119,7 +119,7 @@ sub parseAndCleanEmails {
   $finder->find(\$string);
 
   foreach ( @tmp ) {
-    push @emails, $_->user . '@' . lc($_->host);
+    push @emails, lc($_->user) . '@' . lc($_->host);
   }
 
   return \@emails;

@@ -30,93 +30,46 @@ if ( $pipeline->isa('ISGA::GlobalPipeline') ) {
 }
 </%perl>
 
-<sys:script type="text/javascript" src="/include/js/wz_jsgraphics.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/mapper.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.qtip.min.js"></sys:script>
-<sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
-
-<sys:style type="text/css" media="screen">
-  @import "/include/css/jquery.qtip.css";
-</sys:style>
-
-<sys:style type="text/css" media="screen">
-  @import "/include/css/uni-form.css";
-</sys:style>
-<sys:style type="text/css" media="screen">
-  @import "/include/css/workflow-modal.css";
-</sys:style>
-
-
-
-<sys:script type="text/javascript">
-$(document).ready(modalUpdate);
-function modalUpdate() {
-  $('.modal').modal({hide_on_overlay_click:false});
-}
-</sys:script>
-
-<sys:script type="text/javascript">
-$(document).ready(modalclose);
-function modalclose(){
-$('input.cancel')
-    .livequery('click', function(event) {
-        $("#modal_content").remove();
-        $("#modal_overlay").remove();
-        return false;
-    });
-}
-</sys:script>
-
-<sys:script type="text/javascript">
-$(document).ready(showActions);
-function showActions() {
-  $("area.cluster")
-   .click(
-     function(){
-    $("#JT").remove();
-      $.ajax({
-        url: "/Pipeline/ClusterOptions?pipeline=<% $pipeline %>&cluster="+this.id,
-        success: function(html){
-          $('#modal_content').append(html);
-        }
-      });
-      return false;
-     });
-  $("area.nolink")
-   .click(function(){return false});
-}
-</sys:script>
 
 <sys:script type="text/javascript">
 $(document).ready(function() {
- $('area').each(function(){
-   $(this).qtip({
-    content: {
-      text: 'Loading...',
-      ajax: {
-        url: $(this).attr('href'),
-        type: 'GET',
-        data: {}
+
+  $('area.cluster').click(function(){
+    $.ajax({
+      url: "/Pipeline/ClusterOptions?pipeline=<% $pipeline %>&cluster="+this.id,
+      success: function(html){ 
+        $('#cluster_component_modal').html(html);
+	$('#cluster_component_modal').modal({ minWidth: 600, overlayClose: 1, closeHTML: "<a href='#' class='modal-close'>x</a>"});
       }
-    },
-    hide: {
-      delay: 1000,
-      fixed: true
-    },
-    style: {
-        classes: 'ui-tooltip-tipped'
-    },
-    position: {
-        my: 'left center',
-        at: 'top right'
-    },
-    events: {
-      show: function(event, api){
+    });
+    return false;
+  });
+
+  $("area.nolink").click(function(){return false});
+
+  $('area').each(function(){
+    $(this).qtip({
+      content: {
+        text: 'Loading...',
+        ajax: {
+          url: $(this).attr('href'),
+          type: 'GET',
+          data: {}
+        }
+      },
+      hide: { delay: 1000, fixed: true },
+      style: { classes: 'ui-tooltip-tipped' },
+      position: { my: 'left center', at: 'top right' },
+      events: {
+        show: function(event, api){
         $('.ui-tooltip').hide();
+        }
       }
-    }
-   });
- });
+    });
+  });
+
 });
 </sys:script>
 
+<div class="modal" id="cluster_component_modal"></div>

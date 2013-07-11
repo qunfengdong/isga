@@ -2,21 +2,9 @@
  $pipeline
 </%args>
 
-<sys:script type="text/javascript">
-$(document).ready(sectionHighlight);
-function sectionHighlight() {
-  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
-  var url = window.location.href;
-  
-  for(var i = 0; i < menuLinks.length; i++){
-    if(url == menuLinks[i].href){
-      var link = menuLinks[i];
-      var li = link.parentNode;
-      li.style.backgroundColor = "#D8E47C";
-    }
-  }
-}
-</sys:script>
+<& /site/right_menu_js.mas &>
+
+%# do we still need this?
 <sys:script type="text/javascript" src="/include/js/menu.js"></sys:script>
 
 <%perl>
@@ -35,6 +23,25 @@ $published = ISGA::GlobalPipeline->new(Name => $pipeline->getGlobalTemplate->get
 }
 </%perl>
 
+<div class="modal" id="run_old_modal">
+  <h1>Run Old Pipeline Version?</h1>
+  <p>The Pipeline you wish to run is no longer the most up-to-date version. The current release is <% $published->getLabel %>, and can be found <a href="/Pipeline/View?pipeline=<% $published %>">Here</a>.</p>
+  <p>Are you sure you wish to run the old version?</p>
+  <p>
+   <a class="simplemodal-close cancel button" href="#">No</a>
+   <a href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>" class="button">Yes, Run Pipeline</a>
+  </p>
+</div>
+
+<sys:script type="text/javascript">
+$(document).ready(function() {
+
+  $('.run_old').click(function() {
+      $('#run_old_modal').modal();
+  });
+
+});
+</sys:script>
 
 <sys:rightmenu>
 <ul>
@@ -42,11 +49,11 @@ $published = ISGA::GlobalPipeline->new(Name => $pipeline->getGlobalTemplate->get
 
 % if ( $account && $is_available && $may_access  ) {
 %  if ($is_published) {
-<li class="rmbutton pointer"><a href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>">Run Pipeline</a></li>
+<li class="rmbutton"><a href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>">Run Pipeline</a></li>
 <li class="pointer" onclick="window.location='/submit/RunBuilder/Create?pipeline=<% $pipeline %>'">
 % } else {
-<li class="rmbutton pointer"><a href="#" rel='modal_status' class="modal">Run Pipeline</a></li>
-<li class="pointer modal" onclick="window.location=modal_status">
+<li class="rmbutton"><a href="#" class="run_old">Run Pipeline</a></li>
+<li class="pointer run_old">
 % }
 <p>Run this pipeline with \
 % if ( $pipeline->isa( 'ISGA::GlobalPipeline' ) ) {
@@ -59,7 +66,7 @@ your customized settings.\
 <li class="rmbutton disabled">Run Pipeline</li>
 <li class="disabled"><p>
 %   if ( ! $account ) {
-You must <a href="#" rel='modal_hidden' class="modal">Login</a> to run this pipeline.
+You must <a href="#" class="open_login">Login</a> to run this pipeline.
 %   } elsif ( ! $is_available ) {
 This pipeline has been retired and can no longer be run.
 %   } elsif ( ! $may_access ) {
@@ -78,7 +85,7 @@ Your user class <strong><% $account->getUserClass->getName %></strong> is not al
 <li class="rmbutton disabled">Customize Pipeline</li>
 <li class="disabled"><p>
 %     if ( ! $account ) {
-You must <a href="#" rel='modal_hidden' class="modal">Login</a> to customize this pipeline.
+You must <a href="#" class="open_login">Login</a> to customize this pipeline.
 %     } elsif ( ! $is_available ) {
 This pipeline has been retired and can no longer be customized.
 %     } elsif ( ! $may_access ) {
@@ -141,14 +148,5 @@ Your user class <strong><% $account->getUserClass->getName %></strong> is not al
     <li class="rmbutton pointer"><a href="/Pipeline/List">View All ISGA Pipelines</a></li>
   </ul>
 </ul>
-
-<div class="modal_status hidden">
-  <h1>Run Old Pipeline Version?</h1>
-  <p>The Pipeline you wish to run is no longer the most up-to-date verion. The up-to-date version is
-  <% $published->getLabel %>, and can be found 
-  <a href="/Pipeline/View?pipeline=<% $published %>">Here</a>.</p>
-  <p>Are you sure you wish to run the old version?</p>
-  <p><a href="/submit/RunBuilder/Create?pipeline=<% $pipeline %>" class="button">Run Pipeline</a></p>
-</div>
 
 </sys:rightmenu> 
