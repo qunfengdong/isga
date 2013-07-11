@@ -1,1 +1,1 @@
-<& /Account/my_account.mas &>
+<& /Account/my_account.mas, %ARGS &>

@@ -6,21 +6,23 @@
 
 % $pipeline_input ||= $run_builder_input->getPipelineInput;
 
+
+<div class="modal" id="file_upload_modal"></div>
+
 <sys:script type="text/javascript">
-  $(document).ready(confirm_upload);
-  function confirm_upload() {
-  $(".upload")
-   .click(
-     function(){
-      $.ajax({
+$(document).ready(function() {
+
+  $('.file_upload').click(function() {
+    $.ajax({
         url: "/RunBuilder/UploadInput?run_builder=<% $run_builder %>&pipeline_input=<% $pipeline_input %>",
         success: function(html){
-          $('#modal_content').append(html);
-        }
-      });
-      return false;
-     });
-  }
+          $('#file_upload_modal').html(html);
+          $('#file_upload_modal').modal({ minWidth: 600, overlayClose: 1, closeHTML: "<a href='#' class='modal-close'>x</a>"});
+      }
+    });
+    return false;
+  });
+});
 </sys:script>
 
 <%perl> 

@@ -68,6 +68,34 @@ sub checkEmail {
 
 #------------------------------------------------------------------------
 
+=item public String checkEmailList(string value);
+
+Parses the supplied text by line and verifies that an email address
+can be extracted from each one.
+
+=cut 
+#------------------------------------------------------------------------
+sub checkEmailList {
+  
+  my $value = shift;
+
+  my $finder = Email::Find->new(sub {$_[1]});
+
+  my $sum = 0;
+
+  foreach ( split(/\n/, $value) ) {
+
+    $_ =~ /\S/ or next;
+
+    my $new = $finder->find(\$_) or return "'$_' doesn't seem to contain an email address";
+    $sum += $new;
+  }
+
+  return ( $sum ? '' : 'no email addresses found' );
+}
+
+#------------------------------------------------------------------------
+
 =item public String checkUnixFileName(string value);
 
 Returns an error if the supplied text contains code to break a unix file path.
@@ -126,6 +154,7 @@ sub checkDate {
 
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkHTML');
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkEmail');
+ISGA::FormEngine::SkinUniform->_register_check('Text::checkEmailList');
 ISGA::FormEngine::SkinUniform->_register_check('Text::alphaNumeric');
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkUnixFileName');
 ISGA::FormEngine::SkinUniform->_register_check('Text::checkDate');

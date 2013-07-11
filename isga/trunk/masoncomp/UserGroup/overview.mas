@@ -1,7 +1,7 @@
 <h1>Group Overview</h1>
 
 % if ( ! ISGA::Login->exists ) {
-<p>To create or join a group you need to either <a href="#" rel='modal_hidden' class="modal">Login</a> or 
+<p>To create or join a group you need to either <a href="#" class="open_login">Login</a> or 
 <a href="/Account/Request">request an account</a>.</p>
 % }
 

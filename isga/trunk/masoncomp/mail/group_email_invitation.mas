@@ -1,0 +1,25 @@
+<%args>
+ $notification
+ $subject
+</%args>
+<%method .subject>
+ <%args>
+ $owner
+ </%args>
+<% $owner->getName %> has invited you to an ISGA group
+</%method>
+<%perl>
+my $email = $notification->getEmail();
+my $group = ISGA::UserGroup->new( Id => $notification->getVar1() );
+my $code = $notification->getVar2();
+my $owner = $group->getCreatedBy();
+$$subject = $m->scomp( 'SELF:.subject',  owner => $owner );
+</%perl>
+Hello,
+
+Integrated Services for Genomic Analysis (ISGA) is a web-based system for running bioinformatics workflows.
+<% $owner->getName %> has created the "<% $group->getName %>" group for sharing ISGA pipelines and results and invited you to this group.
+
+Follow the link below to accept the invitation (and create an ISGA account if you do not have one):
+
+  <% ISGA::Site->getBaseURI  %>UserGroup/ViewInvitation?code=<% $code %>

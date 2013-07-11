@@ -1,45 +1,52 @@
+<%args>
+ $tab => 'none'
+</%args>
+
 % my $account = ISGA::Login->getAccount;
 
-<& view_header.mas, account => $account &>
+<& header.mas, account => $account, view => 'admin' &>
 
-% my $runs = ISGA::Run->query( CreatedBy => $account, OrderBy => 'CreatedAt',
-%                                  Status => { '!=' => ISGA::RunStatus->new( Name => 'Canceled' ) } );
-% if ( @$runs ) {
-
-<& /Run/list_my.mas, account => $account, runs => $runs, show_canceled => 0, show_hidden => 0 &>
+% if ( my $method = $tabs{$tab} ) {
+<& $method, account => $account, %ARGS &>
 % }
 
-% my $userpipes = ISGA::UserPipeline->query( CreatedBy => $account, OrderBy => 'CreatedAt' );
-% if ( @$userpipes ) {
-<h2>Customized Pipelines</h2>
-<& /UserPipeline/list.mas, pipelines => $userpipes &>
-% }
+<%once>
+
+my %tabs =
+  (
+   runs => 'my_runs.mas',
+   pipelines => 'my_pipelines.mas',
+   groups => 'my_groups.mas',
+  );
+
+</%once>
 
 <& right_menu.mas &>
 
 
-
-
-
-<%doc>
-
 <h3>My Groups</h3>
 
+<h4>Groups I Manage</h4>
+
+<div><a href="/UserGroup/Create">Create a new Group</a></div>
+
 % if ( my @groups = @{$account->getUserGroups} ) {
-<div id="list">
+<div class="list">
 <table>
- <tr>
+ <tr><th colspan="0">Groups I Belong To</th></tr>
+ <tr class="label">
   <th>Name</th>
-  <th>Created By</th>
-  <th>Members</th>
+  <th>Owner</th>
+  <th class="a_right">Members</th>
  </tr>
 %   my $counter=0;
 %   foreach ( @groups ) {
 %     my $tr_class = ++$counter % 2 ? "odd" : "even";
  <tr class="<% $tr_class %>">
   <td><a href="/UserGroup/View?user_group=<% $_ %>"><% $_->getName %></a></td>
-  <td><% $_->getCreatedBy->getName %></td>
-  <td><% scalar @{$_->getAccounts} %></td>
+% my $owner = $_->getCreatedBy;
+  <td><% $owner->getName %></td>
+  <td class="a_right"><% scalar @{$_->getMembers} %></td>
  </tr>      
 %   }
 </table>
@@ -48,5 +55,29 @@
 <p>You are not a member of any groups. For more information on groups, visit the <a href="/UserGroup/Overview">Group Overview</a> page.</p>
 % }
 
-</%doc>
 
+% if ( my @invites = @{ISGA::UserGroupInvitation->query( Email => $account->getEmail )} ) {
+
+<div class="list">
+<table>
+ <tr><th colspan="0">My Group Invitations</th></tr>
+ <tr class="label">
+  <th>Name</th>
+  <th>Owner</th>
+  <th>Institution</th>
+ </tr>
+%   my $counter=0;
+%   foreach ( @invites ) {
+%     my $group = $_->getUserGroup;
+%     my $tr_class = ++$counter % 2 ? "odd" : "even";
+ <tr class="<% $tr_class %>">
+  <td><a href="/UserGroup/View?user_group=<% $group %>"><% $group->getName %></a></td>
+% my $owner = $group->getCreatedBy;
+  <td><% $owner->getName %></td>
+  <td><% $owner->getInstitution %></td>
+ </tr>      
+%   }
+</table>
+</div>
+
+% }

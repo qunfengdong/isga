@@ -2,4 +2,109 @@
  $user_group
 </%args>
 
-<& /UserGroup/view.mas, user_group => $user_group &>
+<%perl> 
+my $owner = $user_group->getCreatedBy;
+my $account = ISGA::Login->getAccount or X::User::Denied->throw();
+my $form = undef;
+my %actions;
+
+# if they are the owner, they can invite new members
+if ( $owner == $account ) {
+
+  # check that we have a form cached and it is the correct type
+  $form = $ISGA::WebApp->saved_args->{'form'};
+  $form and $form->get_formname() eq 'user_group_invite'
+    or $form =  ISGA::FormEngine::UserGroup->Invite(\%ARGS);
+
+  # the owner can delete the group
+  $actions{manage} = undef;
+
+# otherwise we let members of the group see it
+} elsif ( $user_group->hasMember($account) ) {
+  $actions{leave} = undef;
+
+# finally we let people that have been invited see it
+} elsif ( ISGA::UserGroupInvitation->exists( UserGroup => $user_group, Email => $account->getEmail ) ) {
+  @actions{'accept', 'refuse'} = (undef, undef);
+
+} else {
+  X::User::Denied->throw();
+}
+
+</%perl>
+
+% if ( exists $actions{leave} ) {
+
+<sys:script type="text/javascript">
+$(document).ready(function() {
+  $('.leave_group').click(function() { 
+    $('#leave_group_modal').modal();
+  });
+});
+</sys:script>
+
+<div class="modal" id="leave_group_modal" >
+<h1>Leave this group?</h1>
+<p>If you leave this group you will no longer be able to access pipelines or files shared with the group and will not be able to rejoin the group unless the owner invites you again.</p>
+<p>
+<a class="simplemodal-close cancel button" href="#">No</a>
+<a class="button" href="/submit/UserGroup/Leave?user_group=<% $user_group %>">Yes, Leave Group</a>
+</p>
+</div>
+
+% }
+
+% if ( exists $actions{refuse} ) {
+
+<sys:script type="text/javascript">
+$(document).ready(function() {
+  $('.refuse_invitation').click(function() { 
+    $('#refuse_invitation_modal').modal();
+  });
+});
+</sys:script>
+
+<div class="modal" id="refuse_invitation_modal" >
+<h1>Refuse Invitation?</h1>
+<p>If you refuse this invitation you will not be able to join this group unless the owner invites you again.</p>
+<p>
+<a href="View?user_group=<% $user_group %>">No</a>
+<a href="/submit/UserGroup/RefuseInvitation?user_group=<% $user_group %>">Yes, Refuse Invitation</a>
+</p>
+</div>
+
+% }
+
+<& /UserGroup/view.mas, form => $form, account => $account, owner => $owner, user_group => $user_group &>
+
+<& /site/right_menu_js.mas &>
+<sys:rightmenu>
+<ul>
+
+% if ( %actions ) {
+<li class="title">Group Tools</li>
+
+%   if ( exists $actions{manage} ) {
+ <li class="rmbutton"><a href="/Account/MyAccount">Manage Group</a></li>
+ <li class="pointer" onclick="window.location='/Account/MyAccount'"><p>Return to the account overview page.</p></li>
+%   }
+
+%   if ( exists $actions{leave} ) {
+ <li class="rmbutton leave_group"><a href="#">Leave Group</a></li>
+ <li class="pointer leave_group"><p>Leave this group.</p></li>
+%   }
+
+%   if ( exists $actions{accept} ) {
+ <li class="rmbutton pointer"><a href="/submit/UserGroup/AcceptInvitation?user_group=<% $user_group %>">Accept Invitation</a></li>
+ <li class="pointer" onclick="window.location='/submit/UserGroup/AcceptInvitation?user_group=<% $user_group %>'"><p>Accept the invitation to this group.</p></li>
+%   }
+
+%   if ( exists $actions{refuse} ) {
+ <li class="rmbutton"><a href="#" class="refuse_invitation">Refuse Invitation</a></li>
+ <li class="pointer refuse_invitation" ><p>Refuse the invitation to this group.</p></li>
+%   }
+% }
+
+</ul>
+</sys:rightmenu>
+

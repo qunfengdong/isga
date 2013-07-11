@@ -106,48 +106,48 @@ sub PipelineBuilder::Create {
 
 #------------------------------------------------------------------------
 
-=item public void EditDetails();
+=item public void Edit();
 
 Method to edit the details for a pipeline builder
 
 =cut
 #------------------------------------------------------------------------
-sub PipelineBuilder::EditDetails {
+sub PipelineBuilder::Edit {
 
   my $self = shift;
   my $web_args = $self->args;
-  my $form = ISGA::FormEngine::PipelineBuilder->EditDetails($web_args);
-  
-  my $pipeline_builder = $web_args->{pipeline_builder};
 
-  if ($form->canceled( )) {
+  # start with the caller
+  my $account = ISGA::Login->getAccount;
+  my $pb = $web_args->{pipeline_builder};
 
-    $self->redirect( 
-     uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" 
-		   );
+  $pb->getCreatedBy == $account or X::User::Denied->throw();
+
+  if ( exists $web_args->{name} ) {
+
+    if ( $web_args->{name} eq '' ) {
+      $self->_add_error_message("A pipeline must have a name.");
+
+    } elsif ( my $error = ISGA::FormEngine::Check::Text::checkHTML($web_args->{name}) ) {
+      $self->_add_error_message($error);
+      
+    } else {
+      $pb->edit(Name => $web_args->{name} );
+      $self->_save_arg( echo => $web_args->{name} );
+    }
+
+  } elsif ( exists $web_args->{description} ) {
+
+    if ( my $error = ISGA::FormEngine::Check::Text::checkHTML($web_args->{description}) ) {
+      $self->_add_error_message($error);
+      
+    } else {
+      $pb->edit(Description => $web_args->{description} );
+      $self->_save_arg( echo => $web_args->{description} );
+    }
   }
 
-  if ( $form->ok ) {
-
-    my %form_args =
-      ( 
-       Name => $form->get_input('name'),
-       Description => $form->get_input('description')
-      );
-
-    $pipeline_builder->edit( %form_args );
-
-    $self->redirect
-      ( uri => "/PipelineBuilder/Overview?pipeline_builder=$pipeline_builder" );
-  }
-  
-  $self->_save_arg( 'form', $form);
-  warn "about to die on redirect";
-  $self->redirect( uri => "/PipelineBuilder/EditDetails?pipeline_builder=$pipeline_builder" );
-}
-
-sub Exception::PipelineBuilder::EditDetails {
-
+  $self->redirect( uri => '/Echo' );
 }
 
 #------------------------------------------------------------------------

@@ -67,7 +67,7 @@ if ( $e->isa('X::User::Denied::RequiresLogin') ) {
 } elsif ( $e->isa('X::User::Denied') ) {
   $m->comp('/site/error/denied.mas');
 } elsif ( $e->isa('X::User') ) {
-  $m->comp('/site/error/user_error.mas');
+  $m->comp('/site/error/user_error.mas', error => $e);
 } else { 
   $m->comp('/site/error/system_error.mas');
 }

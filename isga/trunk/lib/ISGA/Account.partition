@@ -5,3 +5,5 @@ attributes:
   - { name: Email, type: string, options: [ REQUIRED, UNIQUE ] }
   - { name: Password, type: string, options: [ REQUIRED ] }
   - { name: UserClass, type: UserClass, options: [ REQUIRED ] }
+  - { name: IsWalkthroughDisabled, type: boolean, options: [ REQUIRED ] }
+  - { name: IsWalkthroughHidden, type: boolean, options: [ REQUIRED ] }

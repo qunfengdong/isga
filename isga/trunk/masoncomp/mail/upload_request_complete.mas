@@ -1,12 +1,15 @@
 <%args>
  $notification
+ $subject
 </%args>
-
+<%method .subject>
+Your ISGA upload request is complete\
+</%method>
 <%perl>
 my $account = $notification->getAccount();
 my $request = ISGA::UploadRequest->new( Id => $notification->getVar1()); 
+$$subject = $m->scomp( 'SELF:.subject' );
 </%perl>
-
 <% $account->getName %>,
 
 Your request to upload the file at 

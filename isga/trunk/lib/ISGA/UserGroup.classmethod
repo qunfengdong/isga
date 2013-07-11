@@ -1,0 +1,28 @@
+#! -*- cperl -*-
+
+#------------------------------------------------------------------------
+
+=item public [array] queryPublished(Account $account);
+
+Returns a reference to an array of UserGroups that are publically
+browseable.
+
+=item public [array] queryPublished(Account $account);
+
+Returns a reference to an array of UserGroups that are publically
+browseable and the supplied account is not a member of.
+
+=cut
+#------------------------------------------------------------------------
+  sub queryPublished {
+
+    my ($class, $account) = @_;
+
+    my $res =  $class->query( IsPrivate => 0, Status => ISGA::PartyStatus->new( Name => 'Active' ) );
+
+    if ( $account ) {
+      $res = [ grep { ! $_->hasMember($account) } @$res];
+    }
+
+    return $res;
+  }

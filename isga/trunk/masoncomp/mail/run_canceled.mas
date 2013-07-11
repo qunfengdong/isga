@@ -1,10 +1,15 @@
 <%args>
  $notification
+ $subject
 </%args>
+<%method .subject>
+Your ISGA pipeline was canceled\
+</%method>
 <%perl>
 my $run = $notification->getRun();
 my $account = $run->getCreatedBy();
 my $message = $notification->getVar1();
+$$subject = $m->scomp( 'SELF:.subject' )
 </%perl>
 <% $account->getName %>,
 

@@ -1,12 +1,15 @@
 <%args>
  $notification
+ $subject
 </%args>
-
+<%method .subject>
+Your ISGA upload request failed\
+</%method>
 <%perl>
 my $account = $notification->getAccount();
-my $request = ISGA::UploadRequest->new( Id => $notification->getVar1());
+my $request = ISGA::UploadRequest->new( Id => $notification->getVar1()); 
+$$subject = $m->scomp( 'SELF:.subject' );
 </%perl>
-
 <% $account->getName %>,
 
 ISGA was unable to complete your request to upload the file at

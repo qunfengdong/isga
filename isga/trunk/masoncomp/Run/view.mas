@@ -2,23 +2,6 @@
  $run
 </%args>
 
-<sys:script type="text/javascript">
-$(document).ready(sectionHighlight);
-function sectionHighlight() {
-  var menuLinks = document.getElementById('col1_content').getElementsByTagName("a");
-  var url = window.location.href;
-
-  for(var i = 0; i < menuLinks.length; i++){
-    if(url == menuLinks[i].href){
-      var link = menuLinks[i];
-      var li = link.parentNode;
-      li.style.backgroundColor = "#D8E47C";
-      li.nextElementSibling.style.backgroundColor = "#D8E47C";
-    }
-  }
-}
-</sys:script>
-
 <h1><% $run->getType->getName %> Run Status</h1>
 
 % my $running = $run->isRunning;
@@ -63,12 +46,6 @@ run.</p>
 <sys:script type="text/javascript" src="/include/js/jquery.livequery.js"></sys:script>
 <sys:script type="text/javascript" src="/include/js/jquery.treeTable.js"></sys:script>
 
-<sys:style type="text/css" media="screen">
-  @import "/include/css/jquery.qtip.css";
-</sys:style>
-<sys:style type="text/css" media="screen">
-  @import "/include/css/modal.css";
-</sys:style>
 <sys:style type="text/css" media="all">
  @import "/include/css/jquery.treeTable.css";
 </sys:style>
@@ -125,6 +102,8 @@ $(document).ready(function() {
 </sys:script>
 
 % my $is_admin = ISGA::Login->hasGroup( ISGA::Group->new( Name => 'Run Administrators' ));
+
+<& /site/right_menu_js.mas &>
 
 <sys:rightmenu>
 <ul>

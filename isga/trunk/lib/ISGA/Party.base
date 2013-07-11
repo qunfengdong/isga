@@ -7,5 +7,3 @@ attributes:
   - { name: Status, type: PartyStatus, options: [ REQUIRED ] }
   - { name: Institution, type: string }
   - { name: IsPrivate, type: boolean, options: [ REQUIRED ] }
-  - { name: IsWalkthroughDisabled, type: boolean, options: [ REQUIRED ] }
-  - { name: IsWalkthroughHidden, type: boolean, options: [ REQUIRED ] }

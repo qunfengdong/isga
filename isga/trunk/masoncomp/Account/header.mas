@@ -1,0 +1,144 @@
+<%args>
+ $account
+ $view => 'user'
+</%args>
+
+<%perl>
+
+use List::MoreUtils qw(any);
+use JSON;
+
+my $email = $account->getEmail;
+my $user_class = $account->getUserClass;
+my $party_status = $account->getStatus;
+my $institution = $account->getInstitution;
+my $wt_status = $account->isWalkthroughDisabled ? 'off' : 'on';
+
+my ($uc, $ps);
+
+if ( $view eq 'admin' ) {
+
+  $uc->{$_} = $_->getName for @{ISGA::UserClass->query( OrderBy => 'Name' )};
+  $uc->{selected} = "$user_class";
+
+  $ps->{$_} = $_->getName for @{ISGA::PartyStatus->query( OrderBy => 'Name' )};
+  $ps->{selected} = "$party_status";
+}
+
+my $wt = { 1 => 'off', 0 => 'on' };
+$wt->{selected} = $wt_status;
+
+</%perl>
+
+<sys:script type="text/javascript" src="/include/js/jquery.jeditable.mini.js"></sys:script>
+<sys:script type="text/javascript">
+ $(document).ready(function() {
+
+     $('#account_error').hide();
+
+% if ( $view eq 'admin' ) {
+     $('#editable_user_class').editable('/submit/Account/Edit', {
+        data : '<% encode_json($uc) %>',
+        name : 'user_class',
+        type : 'select',
+        submitdata: { account: "<% "$account" %>"}, 
+        callback: function(value, settings) {
+            $('#account_error').html('').hide();            
+        },        
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+
+     $('#editable_party_status').editable('/submit/Account/Edit', {
+        data : '<% encode_json($ps) %>',
+        name : 'party_status',
+        type : 'select',
+        callback: function(value, settings) {
+            $('#account_error').html('').hide();            
+        },        
+        submitdata: { account: "<% "$account" %>"},
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+% }
+
+    $('#editable_email').editable('/submit/Account/Edit', {
+        data : '<% $email %>',
+        name : 'email',
+% if ( $view eq 'admin' ) {
+        submitdata: { account: "<% "$account" %>"},
+% }
+        submit : 'OK',
+        onerror : function(settings, original, xhr) {
+            $('#account_error').html(xhr.responseText);
+            original.reset();
+        },
+        callback: function(value, settings) {
+            $('#account_error').html('').hide();            
+        },
+        style: 'inherit'
+      }); 
+
+     $('#editable_walkthrough').editable('/submit/Account/Edit', {
+        data : '<% encode_json($wt) %>',
+        name : 'walkthrough',
+        type : 'select',
+        callback: function(value, settings) {
+            $('#account_error').html('').hide();            
+        },        
+% if ( $view eq 'admin' ) {
+        submitdata: { account: "<% "$account" %>"},
+% }
+        submit : 'OK',
+        style: 'inherit'
+      }); 
+
+    $('#editable_institution').editable('/submit/Account/Edit', {
+        data : '<% $institution %>',
+        name : 'institution',
+% if ( $view eq 'admin' ) {
+        submitdata: { account: "<% "$account" %>"},
+% }
+        submit : 'OK',
+        onerror : function(settings, original, xhr) {
+            $('#account_error').html(xhr.responseText).show();
+            original.reset();
+        },
+        callback: function(value, settings) {
+            $('#account_error').html('').hide();            
+        },        
+        style: 'inherit'
+      }); 
+      
+ });
+</sys:script>
+
+<h1><% $account->getName %></h1>
+
+<div class="data">
+
+<div class="downtime" id="account_error"></div>
+
+<table>
+ <tbody>
+  <tr> 
+   <th>Email</th>
+   <td><span class="editable" id="editable_email"><% $email %></span></td>
+   <th>Walkthroughs</th><td><span class="editable" id="editable_walkthrough"><% $wt_status %></span></td>
+  </tr>
+  <tr>
+   <th>User Class</th>
+% if ( $view eq 'admin' ) {
+   <td><span class="editable" id="editable_user_class"><% $user_class->getName %></span></td>
+   <th>Status</th><td><span class="editable" id="editable_party_status"><% $party_status->getName %></span></td>
+% } else {
+   <td colspan="3"><% $account->getUserClass->getName %></td>
+% }
+  </tr>
+  <tr>
+   <th>Institution</th><td colspan="3"><span class="editable" id="editable_institution"><% $account->getInstitution %></span></td>
+  </tr>
+ </tbody>
+</table>
+
+</div> 
